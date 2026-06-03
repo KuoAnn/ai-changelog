@@ -49,7 +49,7 @@ Hero 的 Date Span、Total Versions、Tab meta 都由 JS 動態計算 — 不要
      ico: "<emoji>", color: "<purple|blue|orange|green|red|gold|teal>",
      feat: "<短標題（含英文 feature 名）>", ver: "<vX.Y.Z · YYYY-MM-DD>",
      desc: "<1-2 句說明>",
-     scen: "<b>場景：</b><帶入 Frontend(iOS/Android/Web)/銀行/Sprint 的應用建議>",
+     scen: "<b>場景：</b><帶入 Frontend(iOS/Android/Web)/Sprint 的應用建議>",
      roles: [<frontend/backend/designer/qa/pm 擇 1-4>],
      d: [
        { h: "為什麼有用", p: "<繁中段落>" },
