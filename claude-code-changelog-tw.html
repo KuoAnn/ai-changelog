@@ -114,7 +114,10 @@
   .role-picker .chips {
     display: flex;
     gap: 6px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    flex: 1 1 auto;
+    min-width: 0;
   }
   .role-chip {
     font-size: 12px;
@@ -130,6 +133,8 @@
     align-items: center;
     gap: 5px;
     font-family: inherit;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
   .role-chip .role-icn { font-size: 13px; }
   .role-chip:hover { border-color: var(--line-strong); color: var(--ink); }
@@ -217,11 +222,12 @@
     padding: 6px;
     margin-bottom: 22px;
     box-shadow: var(--shadow);
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: auto;
   }
   .tab {
     flex: 1 1 auto;
-    min-width: 180px;
+    min-width: 0;
     background: transparent;
     border: none;
     border-radius: 10px;
@@ -869,22 +875,21 @@
   <!-- Role picker -->
   <div class="role-picker">
     <div class="chips" id="roleChips"></div>
-    <span class="hint">會自動篩選下方靈感卡，timeline 內容不變</span>
   </div>
 
   <!-- Tab bar -->
   <div class="tab-bar" id="tabBar">
     <button class="tab active" data-tab="claude-code" type="button">
       <span class="tab-title"><span class="tab-dot"></span>Claude Code</span>
-      <span class="tab-meta" data-meta-for="claude-code">Anthropic · —</span>
+      <span class="tab-meta" data-meta-for="claude-code">—</span>
     </button>
     <button class="tab" data-tab="codex-app" type="button">
       <span class="tab-title"><span class="tab-dot"></span>Codex App</span>
-      <span class="tab-meta" data-meta-for="codex-app">OpenAI · —</span>
+      <span class="tab-meta" data-meta-for="codex-app">—</span>
     </button>
     <button class="tab" data-tab="codex-cli" type="button">
       <span class="tab-title"><span class="tab-dot"></span>Codex CLI</span>
-      <span class="tab-meta" data-meta-for="codex-cli">OpenAI · —</span>
+      <span class="tab-meta" data-meta-for="codex-cli">—</span>
     </button>
   </div>
 
@@ -935,7 +940,7 @@
       <h2>
         <span class="num-tag">04</span>
         團隊合作 AI 工作流建議
-        <span class="desc">— iOS / Android / Backend / Designer / QA / PM 之間怎麼用 AI 協作</span>
+        <span class="desc">— Frontend / Backend / Designer / QA / PM 之間怎麼用 AI 協作</span>
       </h2>
       <div class="board">
         <div class="col today">
@@ -1856,6 +1861,18 @@
     auto:true
   });
 
+  // Fold legacy role ids (ios / android / web) into the merged "frontend" role, dedupe.
+  function normalizeRoles(arr){
+    arr.forEach(c => {
+      if (!c.roles) return;
+      const mapped = c.roles.map(r => (r === "ios" || r === "android" || r === "web") ? "frontend" : r);
+      c.roles = [...new Set(mapped)];
+    });
+  }
+  normalizeRoles(INSP_CC);
+  normalizeRoles(INSP_CA);
+  normalizeRoles(INSP_CI);
+
   const PRODUCTS = {
     "claude-code": {
       data: DATA_CC, insp: INSP_CC,
@@ -1891,16 +1908,18 @@
      =========================== */
   const ROLES = [
     { id:"all",      label:"全部",        ico:"✦" },
-    { id:"ios",      label:"iOS RD",      ico:"📱" },
-    { id:"android",  label:"Android RD",  ico:"🤖" },
-    { id:"backend",  label:"Backend RD",  ico:"⚙️" },
+    { id:"frontend", label:"Frontend",    ico:"💻" },
+    { id:"backend",  label:"Backend",     ico:"⚙️" },
     { id:"designer", label:"Designer",    ico:"🎨" },
     { id:"qa",       label:"QA / Tester", ico:"🧪" },
     { id:"pm",       label:"PM",          ico:"📋" }
   ];
   const ROLE_LABEL_MAP = Object.fromEntries(ROLES.map(r => [r.id, r.label]));
   const ROLE_KEY = "ctx_active_role_v1";
-  let activeRole = localStorage.getItem(ROLE_KEY) || "ios";
+  let activeRole = localStorage.getItem(ROLE_KEY) || "frontend";
+  // Legacy role ids (iOS / Android / Web all folded into Frontend)
+  if (activeRole === "ios" || activeRole === "android" || activeRole === "web") activeRole = "frontend";
+  if (!ROLES.some(r => r.id === activeRole)) activeRole = "frontend";
 
   // Build role chips
   const roleChipsRoot = document.getElementById("roleChips");
@@ -2237,7 +2256,7 @@
     const rng = versionRange(m.arr);
     const el = document.querySelector(`[data-meta-for="${k}"]`);
     if (!el) return;
-    const parts = [m.vendor, `${m.arr.length} ${m.unit}`];
+    const parts = [`${m.arr.length} ${m.unit}`];
     if (rng && rng.oldest && rng.newest && rng.oldest !== rng.newest) {
       parts.push(`${rng.oldest} → ${rng.newest}`);
     } else if (rng && rng.newest) {
