@@ -3,6 +3,12 @@
 > 一鍵安裝 **Cathay AI Coding Tools 更新摘要** Cowork live artifact。
 > 涵蓋 Claude Code、Codex App、Codex CLI 三個工具，附 6 角色化（iOS / Android / Backend / Designer / QA / PM）應用靈感卡，每 2 天自動更新。
 
+## 🌐 線上版（GitHub Page）
+
+**👉 <https://kuoann.github.io/ai-changelog/>**
+
+不用安裝、不用 Cowork，瀏覽器直接開即可。內容由排程每 2 天自動抓三個官方 changelog、更新後 push 回此 repo，Pages 自動重建（見 [自動更新並發佈到 GitHub Page](#自動更新並發佈到-github-page)）。
+
 維護者：[@charliechen](https://cubegit.cubeapps.work/charliechen) · AI Scrum Team
 
 ---
@@ -121,6 +127,34 @@ skill 內容會跟著更新。
 | Codex App | `developers.openai.com/codex/changelog/rss.xml`（**RSS feed**，避開 CDN cache） |
 
 `update_summary` 會明確列出三個來源各自檢查結果（即使沒新版也標 ✓），你打開 Cowork 通知就有信心知道任務真的有跑。
+
+---
+
+## 自動更新並發佈到 GitHub Page
+
+線上版 <https://kuoann.github.io/ai-changelog/> 的內容由 **Claude Code 排程 (schedule)** 維護，流程：
+
+```text
+排程觸發 → agent 抓三來源 → Edit 更新 HTML → push-changelog.ps1 → git push → Pages 自動重建
+```
+
+| 檔案 | 用途 |
+| --- | --- |
+| [`scripts/refresh-prompt.md`](scripts/refresh-prompt.md) | 排程 agent 每次執行的完整指示（抓來源 → 改 HTML → 呼叫 push 腳本） |
+| [`scripts/push-changelog.ps1`](scripts/push-changelog.ps1) | git pull → commit（含台北時間戳）→ push；無變更時自動跳過 |
+
+### 設定排程
+
+在這個 repo 目錄開 Claude Code，跑 `/schedule`，建立一個 cron 任務（建議 `0 9 */2 * *`＝每 2 天 09:00），prompt 直接用 [`scripts/refresh-prompt.md`](scripts/refresh-prompt.md) 的內容。
+
+也可手動觸發一次：
+```powershell
+# 1. 開 Claude Code，貼 refresh-prompt.md 內容讓它更新 HTML
+# 2. 或內容已改好，只想 push：
+pwsh scripts/push-changelog.ps1 -Message "手動更新"
+```
+
+> ⚠️ push 需要本機已設定 git 認證（這台機器已用 `gh auth` 登入 KuoAnn）。若排程在不同機器跑，需確保該環境也能 push 到 `origin`。
 
 ---
 
