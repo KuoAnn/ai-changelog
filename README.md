@@ -141,20 +141,27 @@ skill 內容會跟著更新。
 | 檔案 | 用途 |
 | --- | --- |
 | [`scripts/refresh-prompt.md`](scripts/refresh-prompt.md) | 排程 agent 每次執行的完整指示（抓來源 → 改 HTML → 呼叫 push 腳本） |
-| [`scripts/push-changelog.ps1`](scripts/push-changelog.ps1) | git pull → commit（含台北時間戳）→ push；無變更時自動跳過 |
+| [`scripts/push-changelog.sh`](scripts/push-changelog.sh) | **遠端 / Linux** 用：git pull → commit（台北時間戳）→ push；無變更自動跳過 |
+| [`scripts/push-changelog.ps1`](scripts/push-changelog.ps1) | **本機 / Windows** 用，同上 |
 
-### 設定排程
+### 設定排程（Claude Code 遠端 routine）
 
-在這個 repo 目錄開 Claude Code，跑 `/schedule`，建立一個 cron 任務（建議 `0 9 */2 * *`＝每 2 天 09:00），prompt 直接用 [`scripts/refresh-prompt.md`](scripts/refresh-prompt.md) 的內容。
+用 `/schedule` 建立一個 **遠端 routine**（在 Anthropic 雲端執行，不依賴你的電腦開機）：
 
-也可手動觸發一次：
+- **cron**：`0 1 */2 * *`（UTC）＝每 2 天 **09:00 台北時間**
+- **repo source**：`https://github.com/KuoAnn/ai-changelog`（routine 會自動 clone）
+- **prompt**：直接用 [`scripts/refresh-prompt.md`](scripts/refresh-prompt.md) 的內容
+- agent 在雲端 clone repo → 改 HTML → 跑 `scripts/push-changelog.sh` → push → Pages 重建
+
+> ⚠️ 遠端 routine 要能 `git push` 回此 repo，需該雲端環境具備對 `origin` 的寫入權限（GitHub 整合 / token）。第一次設定後建議「Run now」跑一次驗證 push 成功。
+
+也可在本機手動更新：
+
 ```powershell
 # 1. 開 Claude Code，貼 refresh-prompt.md 內容讓它更新 HTML
 # 2. 或內容已改好，只想 push：
 pwsh scripts/push-changelog.ps1 -Message "手動更新"
 ```
-
-> ⚠️ push 需要本機已設定 git 認證（這台機器已用 `gh auth` 登入 KuoAnn）。若排程在不同機器跑，需確保該環境也能 push 到 `origin`。
 
 ---
 
