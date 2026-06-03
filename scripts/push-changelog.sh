@@ -23,10 +23,13 @@ echo "[push-changelog] repo: $REPO_ROOT"
 echo "[push-changelog] Taipei time: $TAIPEI"
 
 # Identity for the commit (remote env may have none configured)
-git config user.name  >/dev/null 2>&1 || git config user.name  "cathay-changelog-bot"
+git config user.name  >/dev/null 2>&1 || git config user.name  "ai-changelog-bot"
 git config user.email >/dev/null 2>&1 || git config user.email "bot@users.noreply.github.com"
 
-# Fast-forward first so the push lands cleanly
+# Rebase onto main first so the push to main lands as a fast-forward.
+# (The remote scheduler may start us on an auto-created branch — we still
+#  commit here and push straight to main below, never opening a PR.)
+git fetch origin main || true
 git pull --rebase --autostash origin main || true
 
 git add claude-code-changelog-tw.html index.html
@@ -42,7 +45,8 @@ $MSG
 
 Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 
-git push origin main
+# Push current HEAD straight to main, regardless of the local branch name.
+git push origin HEAD:main
 
-echo "[push-changelog] pushed. Pages will rebuild within ~1 min:"
+echo "[push-changelog] pushed to main. Pages will rebuild within ~1 min:"
 echo "  https://kuoann.github.io/ai-changelog/"

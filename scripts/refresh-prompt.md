@@ -1,4 +1,4 @@
-# 自動刷新 prompt — Cathay AI Changelog GitHub Page
+# 自動刷新 prompt — AI Changelog GitHub Page
 
 > 這份 prompt 給 **Claude Code 排程 (schedule / cron)** 使用。每次觸發時，agent 會抓三個官方 changelog、更新 repo 內的 HTML、然後 push 回 GitHub 讓 Pages 重建。
 >
@@ -41,7 +41,7 @@ Hero 的 Date Span、Total Versions、Tab meta 都由 JS 動態計算 — 不要
 
    **🚨 一律用 Edit 工具 surgical 替換，禁止用 Write 重寫整檔**（HTML 已 160KB+）。
 
-4) 自動生成靈感卡（每次最多 2 張，每個 INSP_* 最多 1 張）— 嚴格節制。只在新版本有明確破天荒功能時產（新 slash command、新模型、新功能類別首發）。寫不出有意義的 Cathay 情境就跳過，寧缺勿濫。
+4) 自動生成靈感卡（每次最多 2 張，每個 INSP_* 最多 1 張）— 嚴格節制。只在新版本有明確破天荒功能時產（新 slash command、新模型、新功能類別首發）。寫不出有意義的應用情境就跳過，寧缺勿濫。
 
    往對應 INSP_* 陣列末尾 push 一個 object，必須含 `auto: true`：
    ```js
@@ -49,7 +49,7 @@ Hero 的 Date Span、Total Versions、Tab meta 都由 JS 動態計算 — 不要
      ico: "<emoji>", color: "<purple|blue|orange|green|red|gold|teal>",
      feat: "<短標題（含英文 feature 名）>", ver: "<vX.Y.Z · YYYY-MM-DD>",
      desc: "<1-2 句說明>",
-     scen: "<b>Cathay 場景：</b><帶入 iOS/Android/銀行/Sprint 的應用建議>",
+     scen: "<b>場景：</b><帶入 iOS/Android/銀行/Sprint 的應用建議>",
      roles: [<ios/android/backend/designer/qa/pm 擇 1-4>],
      d: [
        { h: "為什麼有用", p: "<繁中段落>" },
@@ -79,8 +79,11 @@ Hero 的 Date Span、Total Versions、Tab meta 都由 JS 動態計算 — 不要
 
    兩個腳本都會自動偵測「無變更」→ 不 commit、直接結束。push 成功後 Pages 約 1 分鐘內重建。
 
+   **🚨 一律直接更新 main 分支：** 不要開 PR、不要把變更留在工作分支。push 腳本內部用 `git push origin HEAD:main` 把當前 commit 直接推到 `main`（與排程環境起始在哪個分支無關）。**不要自己另外開分支或發 PR。**
+
 == 約束 ==
 - 所有新增內容必須繁中。
+- **一律在 main 上作業並 push 到 main**，不開 PR、不留工作分支（用 push 腳本即可，它已處理）。
 - 不要修改 Chart.js 的 `<script src=...>` 標籤。
 - 不要刪舊條目、不要動既有手寫靈感卡。
 - 不要 find-replace「Anthropic · 36 versions · ...」這類字串 — 已改為動態計算。

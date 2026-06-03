@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>AI Coding Tools 更新摘要 — AI Scrum RD 視角</title>
+<title>AI Coding Tools 更新摘要</title>
 <style>
   :root {
     color-scheme: light;
@@ -75,113 +75,7 @@
     backdrop-filter: blur(8px);
     z-index: 1;
   }
-  .refresh-badge .pulse {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 0 0 rgba(77,122,58,0.4);
-    animation: pulse 2.4s infinite;
-  }
-  @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(77,122,58,0.45); }
-    70% { box-shadow: 0 0 0 6px rgba(77,122,58,0); }
-    100% { box-shadow: 0 0 0 0 rgba(77,122,58,0); }
-  }
   .refresh-badge b { color: var(--ink); font-weight: 600; }
-  .refresh-badge .schedule {
-    color: var(--ink-muted);
-    border-left: 1px solid var(--line);
-    padding-left: 8px;
-    margin-left: 2px;
-  }
-  .method-tag {
-    font-family: var(--mono);
-    font-size: 10.5px;
-    padding: 2px 7px;
-    border-radius: 999px;
-    background: var(--surface-2);
-    color: var(--ink-soft);
-    border: 1px solid var(--line);
-    letter-spacing: 0.04em;
-    font-weight: 500;
-  }
-  .method-tag.manual {
-    background: var(--accent-soft);
-    color: var(--accent);
-    border-color: var(--accent);
-  }
-  .method-tag.pending {
-    background: #fef6e3;
-    color: #8b6921;
-    border-color: #e8c98a;
-  }
-  .method-tag.pending::before {
-    content: "⟳";
-    margin-right: 3px;
-    display: inline-block;
-    animation: spin 1.4s linear infinite;
-  }
-  .refresh-btn {
-    background: var(--ink);
-    color: #fff;
-    border: 1px solid var(--ink);
-    border-radius: 999px;
-    padding: 5px 12px 5px 9px;
-    font-family: inherit;
-    font-size: 11px;
-    font-weight: 500;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    letter-spacing: 0.02em;
-    margin-left: 6px;
-    transition: all .15s ease;
-    white-space: nowrap;
-  }
-  .refresh-btn:hover:not(:disabled) {
-    background: var(--accent);
-    border-color: var(--accent);
-  }
-  .refresh-btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-  .refresh-btn .icn {
-    display: inline-block;
-    transform-origin: center;
-    font-size: 12px;
-  }
-  .refresh-btn.spinning .icn {
-    animation: spin 0.9s linear infinite;
-  }
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  .refresh-toast {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--ink);
-    color: #fff;
-    padding: 10px 18px;
-    border-radius: 999px;
-    font-size: 13px;
-    box-shadow: 0 8px 24px -8px rgba(0,0,0,0.4);
-    opacity: 0;
-    pointer-events: none;
-    transition: all .25s ease;
-    z-index: 1100;
-    font-family: inherit;
-  }
-  .refresh-toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-  .refresh-toast.error { background: var(--red); }
-  .refresh-toast.success { background: var(--green); }
   @media (max-width: 720px) {
     .refresh-badge {
       position: static;
@@ -191,14 +85,6 @@
       flex-wrap: wrap;
     }
   }
-  .eyebrow {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 600;
-  }
   h1 {
     font-family: var(--serif);
     font-size: 30px;
@@ -207,12 +93,6 @@
     font-weight: 600;
     letter-spacing: -0.01em;
   }
-  .subtitle {
-    color: var(--ink-soft);
-    max-width: 760px;
-    font-size: 14.5px;
-  }
-
   /* Role picker */
   .role-picker {
     background: var(--surface);
@@ -225,25 +105,6 @@
     align-items: center;
     gap: 14px;
     flex-wrap: wrap;
-  }
-  .role-picker .label {
-    font-family: var(--serif);
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--ink);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-shrink: 0;
-  }
-  .role-picker .label .ic {
-    width: 22px; height: 22px;
-    background: var(--accent-soft);
-    color: var(--accent);
-    border-radius: 6px;
-    display: grid;
-    place-items: center;
-    font-size: 12px;
   }
   .role-picker .hint {
     font-size: 11.5px;
@@ -994,20 +855,9 @@
 
   <header class="hero">
     <div class="refresh-badge">
-      <span class="pulse"></span>
       <span>最後更新 <b id="lastRefreshed">2026-06-02 15:11 (Taipei)</b></span>
-      <span class="method-tag" id="refreshMethod" title="此次更新由排程任務自動觸發">排程觸發</span>
-      <span class="schedule">每 2 天自動</span>
-      <button class="refresh-btn" id="manualRefreshBtn" type="button" title="立即觸發更新（背景執行）">
-        <span class="icn">↻</span><span class="lbl">立即更新</span>
-      </button>
     </div>
-    <div class="eyebrow">Live Brief · 國泰世華 AI Scrum RD</div>
     <h1>AI Coding Tools 更新摘要</h1>
-    <div class="subtitle">
-      Charlie 你好 — 這是針對 <b>iOS app 工程師 / AI Scrum RD</b> 視角整理的三大 AI 編碼工具變更日誌。
-      上方點 Tab 切換產品，每個產品都有 <b>應用靈感卡片 → 類別分布 → 完整時間軸</b>。
-    </div>
     <div class="stat-row">
       <div class="stat"><span class="num" id="totalVersions">61</span><span class="lbl">Total Versions</span></div>
       <div class="stat"><span class="num">3</span><span class="lbl">Products Tracked</span></div>
@@ -1018,7 +868,6 @@
 
   <!-- Role picker -->
   <div class="role-picker">
-    <div class="label"><span class="ic">👤</span>我的角色</div>
     <div class="chips" id="roleChips"></div>
     <span class="hint">會自動篩選下方靈感卡，timeline 內容不變</span>
   </div>
@@ -1094,7 +943,7 @@
           <ul>
             <li><b>共用 <code>/recap</code> 格式做 daily standup</b>：所有人用同一個 prompt 產進度摘要貼進 Slack #ios-daily — PM/RD/QA 看到結構化資訊一致。</li>
             <li><b>PR 自動跑 <code>/code-review</code></b>：每支 PR 推上去後 webhook 觸發，AI 先給 review，reviewer 從「找問題」變「審判 AI 找的問題」，瓶頸不在人。</li>
-            <li><b>team-skills repo 共建</b>：你已經把 cathay-ai-changelog 上架了，鼓勵每位同事把自己常用 prompt / skill 也推上去，每週看誰新增了什麼。</li>
+            <li><b>team-skills repo 共建</b>：你已經把 ai-changelog 上架了，鼓勵每位同事把自己常用 prompt / skill 也推上去，每週看誰新增了什麼。</li>
           </ul>
         </div>
         <div class="col sprint">
@@ -1247,8 +1096,6 @@
   </footer>
 </div>
 
-<div class="refresh-toast" id="refreshToast"></div>
-
 <!-- Modal for inspiration details -->
 <div class="modal-backdrop" id="modalBackdrop">
   <div class="modal" id="modalCard" role="dialog" aria-modal="true">
@@ -1383,16 +1230,16 @@
      scen:"<b>iOS 場景：</b>每次 PR 進 develop 前自動跑 <code>claude ultrareview</code>，產出 Swift Concurrency、SwiftUI 效能、銀行交易資安、團隊 Style 四份報告。RD 不再瓶頸於 Senior Reviewer。",
      d:[
        {h:"為什麼對 iOS RD 有用", p:"傳統 PR review 一個人要兼顧資安、效能、Style、可讀性，常顧此失彼。<code>/ultrareview</code> 把 review 拆成多個 agent 平行跑，每個專注一個視角，最後合併摘要。"},
-       {h:"基本指令", c:"bash", b:"# 對 develop 跑 review\nclaude ultrareview origin/develop\n\n# 從 PR URL 啟動\nclaude ultrareview --from-pr https://github.com/cathay/ios-app/pull/1234"},
-       {h:"四種 iOS 視角分工建議", l:["<b>Concurrency</b>：actor 隔離、Sendable、@MainActor 違規","<b>Security</b>：Keychain、APIClient、TLS pinning、log 是否漏個資","<b>UI Perf</b>：SwiftUI body 重繪、Combine 訂閱洩漏","<b>Cathay Style</b>：內部命名規範、SwiftLint warnings"]},
-       {h:"包成團隊 Slash Command", c:"bash", b:"# .claude/commands/cathay-review.md\nclaude ultrareview $1 \\\n  --agent concurrency-swift \\\n  --agent security-banking \\\n  --agent ui-perf \\\n  --agent cathay-style"}
+       {h:"基本指令", c:"bash", b:"# 對 develop 跑 review\nclaude ultrareview origin/develop\n\n# 從 PR URL 啟動\nclaude ultrareview --from-pr https://github.com/your-org/ios-app/pull/1234"},
+       {h:"四種 iOS 視角分工建議", l:["<b>Concurrency</b>：actor 隔離、Sendable、@MainActor 違規","<b>Security</b>：Keychain、APIClient、TLS pinning、log 是否漏個資","<b>UI Perf</b>：SwiftUI body 重繪、Combine 訂閱洩漏","<b>團隊 Style</b>：內部命名規範、SwiftLint warnings"]},
+       {h:"包成團隊 Slash Command", c:"bash", b:"# .claude/commands/review.md\nclaude ultrareview $1 \\\n  --agent concurrency-swift \\\n  --agent security-banking \\\n  --agent ui-perf \\\n  --agent style"}
      ]},
     {ico:"🔒", color:"orange", feat:"Hooks 條件式 if + permission 語法", ver:"v2.1.85 · 2026-03-26",
      desc:"Hooks 可加 <code>if</code> 條件，使用 <code>Bash(git push *)</code> 這類 permission 規則精準觸發。",
      scen:"<b>銀行 APP 場景：</b>偵測 <code>Bash(git push origin main)</code> 自動 block；<code>Edit(*Secrets.swift)</code> 強制二次確認。",
      d:[
        {h:"為什麼有用", p:"PreToolUse hooks 加 <code>if</code> 後可以「只在符合條件時觸發」。配合 permission-rule 語法，可以攔截高風險操作而不影響日常工具呼叫。"},
-       {h:"擋直接 push 到 main", c:"json", b:"// .claude/hooks/block-main-push.json\n{\n  \"event\": \"PreToolUse\",\n  \"if\": \"Bash(git push origin main) || Bash(git push origin master)\",\n  \"action\": {\n    \"decision\": \"block\",\n    \"message\": \"國泰 iOS 團隊規範：請開 PR，不要直接推 main\"\n  }\n}"},
+       {h:"擋直接 push 到 main", c:"json", b:"// .claude/hooks/block-main-push.json\n{\n  \"event\": \"PreToolUse\",\n  \"if\": \"Bash(git push origin main) || Bash(git push origin master)\",\n  \"action\": {\n    \"decision\": \"block\",\n    \"message\": \"iOS 團隊規範：請開 PR，不要直接推 main\"\n  }\n}"},
        {h:"Secrets.swift 編輯需二次確認", c:"json", b:"{\n  \"event\": \"PreToolUse\",\n  \"if\": \"Edit(**/Secrets.swift) || Edit(**/*ApiKey*.swift)\",\n  \"action\": { \"decision\": \"ask\" }\n}"},
        {h:"延伸玩法", l:["改 <code>.pbxproj</code> 自動寄通知到 Slack","或自動標記 PR 需資安 sign-off","可疊加多個 hook 互不干擾"]}
      ]},
@@ -1407,12 +1254,12 @@
      ]},
     {ico:"🧩", color:"blue", feat:"Plugin 可內附 bin/ 執行檔", ver:"v2.1.91 · 2026-04-02",
      desc:"Plugins 可打包 <code>bin/</code> 執行檔，配合 marketplace 內部分發。",
-     scen:"<b>iOS 場景：</b>把 xcodegen wrapper、SwiftLint custom rules、API mock server 打成 plugin，新人 <code>claude plugin install cathay-ios-toolkit</code> 一行入手。",
+     scen:"<b>iOS 場景：</b>把 xcodegen wrapper、SwiftLint custom rules、API mock server 打成 plugin，新人 <code>claude plugin install ios-toolkit</code> 一行入手。",
      d:[
        {h:"為什麼有用", p:"原本內部工具要每個 RD 自己安裝、版本各異。打包成 plugin 後集中分發，工具升級走 plugin update。"},
-       {h:"plugin 結構範例", c:"bash", b:"cathay-ios-toolkit/\n├── plugin.json\n├── bin/\n│   ├── cathay-mock         # API mock server\n│   ├── cathay-xcgen        # xcodegen + 預設配置\n│   └── cathay-secrets-scan # 偵測 hard-coded API keys\n├── skills/\n│   ├── cathay-style.md\n│   └── cathay-api-spec.md\n└── hooks/\n    └── block-main-push.json"},
-       {h:"plugin.json 範例", c:"json", b:"{\n  \"name\": \"cathay-ios-toolkit\",\n  \"version\": \"1.0.0\",\n  \"bin\": {\n    \"cathay-mock\": \"./bin/cathay-mock\",\n    \"cathay-xcgen\": \"./bin/cathay-xcgen\"\n  }\n}"},
-       {h:"安裝與分發", l:["內網架 plugin marketplace（HTTP 即可）","新人執行 <code>claude plugin install cathay-ios-toolkit</code>","版本控管走 semver，破壞性變更升 major"]}
+       {h:"plugin 結構範例", c:"bash", b:"ios-toolkit/\n├── plugin.json\n├── bin/\n│   ├── mock         # API mock server\n│   ├── xcgen        # xcodegen + 預設配置\n│   └── secrets-scan # 偵測 hard-coded API keys\n├── skills/\n│   ├── style.md\n│   └── api-spec.md\n└── hooks/\n    └── block-main-push.json"},
+       {h:"plugin.json 範例", c:"json", b:"{\n  \"name\": \"ios-toolkit\",\n  \"version\": \"1.0.0\",\n  \"bin\": {\n    \"mock\": \"./bin/mock\",\n    \"xcgen\": \"./bin/xcgen\"\n  }\n}"},
+       {h:"安裝與分發", l:["內網架 plugin marketplace（HTTP 即可）","新人執行 <code>claude plugin install ios-toolkit</code>","版本控管走 semver，破壞性變更升 major"]}
      ]},
     {ico:"🛡️", color:"red", feat:"Sandbox + 子程序 PID namespace", ver:"v2.1.98 · 2026-04-09",
      desc:"Linux 子程序加 PID namespace、<code>CLAUDE_CODE_SUBPROCESS_ENV_SCRUB</code> 自動清除憑證 env var。",
@@ -1420,7 +1267,7 @@
      d:[
        {h:"為什麼對銀行 RD 重要", p:"金融開發機常存 token、AWS key、Bedrock 憑證。Claude 子程序若不慎漏給外部 server 是合規風險。<code>SUBPROCESS_ENV_SCRUB</code> 會自動清掉敏感變數；Linux 額外加 PID namespace 隔離程序樹。"},
        {h:"開啟方式", c:"bash", b:"# ~/.zshrc\nexport CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1"},
-       {h:"配合 deniedDomains 雙重保險", c:"json", b:"// .claude/settings.json\n{\n  \"sandbox\": {\n    \"network\": {\n      \"deniedDomains\": [\"*.production.cathaybk.com\"],\n      \"failIfUnavailable\": true\n    }\n  }\n}"},
+       {h:"配合 deniedDomains 雙重保險", c:"json", b:"// .claude/settings.json\n{\n  \"sandbox\": {\n    \"network\": {\n      \"deniedDomains\": [\"*.production.example.com\"],\n      \"failIfUnavailable\": true\n    }\n  }\n}"},
        {h:"哪些變數會被 scrub", l:["<code>AWS_*</code>、<code>ANTHROPIC_API_KEY</code>、<code>OPENAI_API_KEY</code>","結尾為 <code>_TOKEN</code>、<code>_SECRET</code>、<code>_PASSWORD</code> 的變數","自訂前綴可透過設定加入"]}
      ]},
     {ico:"📐", color:"gold", feat:"/team-onboarding 指令", ver:"v2.1.101 · 2026-04-10",
@@ -1428,7 +1275,7 @@
      scen:"<b>AI Scrum 場景：</b>新進 iOS RD 第一天執行，自動帶過 repo 結構、CI flow、銀行 API gateway、code review checklist。學習曲線從 1-2 週壓到半天。",
      d:[
        {h:"為什麼有用", p:"新人第一天最痛是「不知道從哪開始讀 code」。<code>/team-onboarding</code> 自動帶過 repo 結構、CI flow、團隊內部慣例、code review checklist。"},
-       {h:"建立團隊 onboarding 模板", c:"yaml", b:"# .claude/commands/onboarding.md\n---\nname: cathay-ios-onboarding\ndescription: 國泰 iOS 新進 RD 入門導覽\n---\n你是新人。請依序帶我認識：\n1. 專案結構（先讀 README.md、Package.swift）\n2. CI flow（.github/workflows、fastlane）\n3. 銀行 API gateway 的呼叫慣例（讀 NetworkLayer/）\n4. Code review checklist（從 .claude/skills/cathay-style.md）\n5. 第一個練習 task：實作假交易明細頁"},
+       {h:"建立團隊 onboarding 模板", c:"yaml", b:"# .claude/commands/onboarding.md\n---\nname: ios-onboarding\ndescription: iOS 新進 RD 入門導覽\n---\n你是新人。請依序帶我認識：\n1. 專案結構（先讀 README.md、Package.swift）\n2. CI flow（.github/workflows、fastlane）\n3. 銀行 API gateway 的呼叫慣例（讀 NetworkLayer/）\n4. Code review checklist（從 .claude/skills/style.md）\n5. 第一個練習 task：實作假交易明細頁"},
        {h:"執行流程", l:["新人第一天 <code>claude /team-onboarding</code>","Claude 邊讀 code 邊解釋，每步問「有問題嗎」","結束後產出個人版 onboarding.md 摘要","Mentor 看摘要快速確認新人理解程度"]}
      ]},
     {ico:"🪝", color:"orange", feat:"CwdChanged / FileChanged Hooks", ver:"v2.1.83 · 2026-03-25",
@@ -1445,8 +1292,8 @@
      scen:"<b>Scrum 場景：</b>定義 Sprint Planner（只連 Jira）、UI Reviewer（只連 Figma）、Compliance Bot（只連 Confluence + 資安規則）。互不干擾、可平行。",
      d:[
        {h:"為什麼有用", p:"以前所有 agent 共用一份 MCP 工具 — Sprint Planner 也能存取 Figma、Compliance Bot 也能戳 Slack。Forked subagent + agent frontmatter 的 <code>mcpServers</code> 可分開，達到最小權限原則。"},
-       {h:"Sprint Planner agent", c:"yaml", b:"# .claude/agents/sprint-planner.md\n---\nname: sprint-planner\nmcpServers:\n  - jira\n  - confluence\n---\n你是 Cathay iOS 的 Sprint Planner。\n專注於：故事點估算、依賴拆解、風險識別。\n禁止：直接改 code（沒有 file tool）。"},
-       {h:"Compliance Bot agent", c:"yaml", b:"# .claude/agents/compliance-bot.md\n---\nname: compliance-bot\nmcpServers:\n  - confluence\n  - cathay-policy-api\n---\n你是金融合規檢查員。\n對任何 PR 比對 .claude/policies/ 規則。\n如違反則建議補丁，不直接改 code。"},
+       {h:"Sprint Planner agent", c:"yaml", b:"# .claude/agents/sprint-planner.md\n---\nname: sprint-planner\nmcpServers:\n  - jira\n  - confluence\n---\n你是 iOS 的 Sprint Planner。\n專注於：故事點估算、依賴拆解、風險識別。\n禁止：直接改 code（沒有 file tool）。"},
+       {h:"Compliance Bot agent", c:"yaml", b:"# .claude/agents/compliance-bot.md\n---\nname: compliance-bot\nmcpServers:\n  - confluence\n  - policy-api\n---\n你是金融合規檢查員。\n對任何 PR 比對 .claude/policies/ 規則。\n如違反則建議補丁，不直接改 code。"},
        {h:"啟用 forked 平行跑", c:"bash", b:"export CLAUDE_CODE_FORK_SUBAGENT=1\nclaude --agent sprint-planner /plan-next-sprint &\nclaude --agent compliance-bot /review HEAD &\nwait"}
      ]},
     {ico:"📡", color:"blue", feat:"Status Line worktree / 模型 / effort", ver:"v2.1.97 · 2026-04-08",
@@ -1454,8 +1301,8 @@
      scen:"<b>iOS RD 場景：</b>Status Line 顯示「Sprint · 分支 · Xcode scheme · 跑了幾分鐘」，搭配 <code>Ctrl+O</code> 切 verbose。",
      d:[
        {h:"為什麼有用", p:"Status Line 一直在視野底部，是放「上下文」最好的位置。把 Sprint、分支、Xcode scheme、effort 集中顯示，不再切視窗看狀態。"},
-       {h:"設定範例", c:"json", b:"// .claude/settings.json\n{\n  \"statusLine\": {\n    \"refreshInterval\": 5000,\n    \"format\": \"{sprint} · {branch} · {scheme} · {effort.level} · {duration}\",\n    \"command\": \"./scripts/cathay-statusline.sh\"\n  }\n}"},
-       {h:"自製腳本範例", c:"bash", b:"#!/bin/bash\n# scripts/cathay-statusline.sh\nSPRINT=$(jq -r '.sprint' .claude/sprint.json)\nBRANCH=$(git branch --show-current)\nSCHEME=$(xcodebuild -list -json | jq -r '.workspace.schemes[0]')\necho \"{\\\"sprint\\\":\\\"$SPRINT\\\",\\\"branch\\\":\\\"$BRANCH\\\",\\\"scheme\\\":\\\"$SCHEME\\\"}\""},
+       {h:"設定範例", c:"json", b:"// .claude/settings.json\n{\n  \"statusLine\": {\n    \"refreshInterval\": 5000,\n    \"format\": \"{sprint} · {branch} · {scheme} · {effort.level} · {duration}\",\n    \"command\": \"./scripts/statusline.sh\"\n  }\n}"},
+       {h:"自製腳本範例", c:"bash", b:"#!/bin/bash\n# scripts/statusline.sh\nSPRINT=$(jq -r '.sprint' .claude/sprint.json)\nBRANCH=$(git branch --show-current)\nSCHEME=$(xcodebuild -list -json | jq -r '.workspace.schemes[0]')\necho \"{\\\"sprint\\\":\\\"$SPRINT\\\",\\\"branch\\\":\\\"$BRANCH\\\",\\\"scheme\\\":\\\"$SCHEME\\\"}\""},
        {h:"小技巧", l:["<b>Ctrl+O</b> 切 verbose 看詳細上下文","<code>workspace.git_worktree</code> 顯示目前 worktree 名","<code>effort.level</code> 顯示目前思考強度（避免不小心開 xhigh 燒額度）"]}
      ]},
     {ico:"⏰", color:"green", feat:"排程任務 + Monitor 工具", ver:"v2.1.98, 2.1.110 · 2026-04",
@@ -1469,11 +1316,11 @@
      ]},
     {ico:"🪪", color:"gold", feat:"Skills 用 ${CLAUDE_EFFORT}", ver:"v2.1.120 · 2026-04-28",
      desc:"Skills 可依 effort 動態調整內容；描述上限 250 字讓觸發更精準。",
-     scen:"<b>AI Scrum 場景：</b>建立 <i>cathay-ios-style</i>、<i>cathay-api-mock</i>、<i>compliance-checklist</i> skills。Effort 高時詳列規則，平常給摘要。",
+     scen:"<b>AI Scrum 場景：</b>建立 <i>ios-style</i>、<i>api-mock</i>、<i>compliance-checklist</i> skills。Effort 高時詳列規則，平常給摘要。",
      d:[
        {h:"為什麼有用", p:"Skills 可根據當前 effort 動態調整內容 — high effort 時詳列規則、平常只給摘要，節省 token 又保持精確度。"},
-       {h:"cathay-ios-style skill 範例", c:"yaml", b:"# .claude/skills/cathay-ios-style.md\n---\nname: cathay-ios-style\ndescription: 國泰 iOS 命名與架構規範（250 字內）\n---\n# 摘要規則（永遠載入）\n- ViewModel 後綴：xxxViewModel\n- 網路層放 NetworkLayer/，protocol-driven\n- 不可在 View 裡呼叫 URLSession\n\n${CLAUDE_EFFORT == 'high' ? `\n# 完整規則（high effort 才載入）\n... [50+ 條詳列]\n` : ''}"},
-       {h:"建議的 skill 清單", l:["<b>cathay-ios-style</b>：命名 / 架構規範","<b>cathay-api-mock</b>：產生符合內部 API 規格的 mock","<b>compliance-checklist</b>：金管會 / 個資法 checklist","<b>swift-perf-tips</b>：SwiftUI / Combine 效能陷阱"]},
+       {h:"ios-style skill 範例", c:"yaml", b:"# .claude/skills/ios-style.md\n---\nname: ios-style\ndescription: iOS 命名與架構規範（250 字內）\n---\n# 摘要規則（永遠載入）\n- ViewModel 後綴：xxxViewModel\n- 網路層放 NetworkLayer/，protocol-driven\n- 不可在 View 裡呼叫 URLSession\n\n${CLAUDE_EFFORT == 'high' ? `\n# 完整規則（high effort 才載入）\n... [50+ 條詳列]\n` : ''}"},
+       {h:"建議的 skill 清單", l:["<b>ios-style</b>：命名 / 架構規範","<b>api-mock</b>：產生符合內部 API 規格的 mock","<b>compliance-checklist</b>：金管會 / 個資法 checklist","<b>swift-perf-tips</b>：SwiftUI / Combine 效能陷阱"]},
        {h:"觸發精準度", p:"description 上限 250 字後 skill 觸發更穩 — 把 description 寫成「什麼情境會用到」，而不是 skill 內容本身的摘要。"}
      ]},
     {ico:"🔍", color:"red", feat:"/resume 用 PR URL 搜尋", ver:"v2.1.122 · 2026-04-28",
@@ -1481,9 +1328,9 @@
      scen:"<b>iOS 工作流：</b>同事丟 PR 連結，貼到 <code>/resume</code> 立刻接回上下文，不用重讀 diff。",
      d:[
        {h:"為什麼有用", p:"以前同事丟 PR 連結要重新 git fetch、checkout、claude --continue 翻歷史 session。現在貼一條 URL 進 <code>/resume</code> 就回到當時的 Claude 上下文（含 review 思路、待辦）。"},
-       {h:"實際操作", c:"bash", b:"claude\n> /resume\n> https://github.com/cathay/ios-app/pull/1234\n# Claude 自動：\n#  1. 找出對應 session（依 commit hash + branch）\n#  2. 載入當時的對話、TODO、思考紀錄\n#  3. 提示「上次討論到 XX，要繼續嗎？」"},
+       {h:"實際操作", c:"bash", b:"claude\n> /resume\n> https://github.com/your-org/ios-app/pull/1234\n# Claude 自動：\n#  1. 找出對應 session（依 commit hash + branch）\n#  2. 載入當時的對話、TODO、思考紀錄\n#  3. 提示「上次討論到 XX，要繼續嗎？」"},
        {h:"支援的 git host", l:["GitHub / GitHub Enterprise","GitLab / GitLab Self-managed","Bitbucket Cloud + Data Center","可自訂 <code>prUrlTemplate</code> 對應內網 git server"]},
-       {h:"進階：自動帶上 review checklist", p:"配合 <code>--print</code> 非互動式跑：<code>claude /resume &lt;PR&gt; --print '依 cathay-style skill 給 review 意見'</code>，產出當下分析給 ChatOps bot。"}
+       {h:"進階：自動帶上 review checklist", p:"配合 <code>--print</code> 非互動式跑：<code>claude /resume &lt;PR&gt; --print '依 style skill 給 review 意見'</code>，產出當下分析給 ChatOps bot。"}
      ]}
   ];
 
@@ -1522,7 +1369,7 @@
        {h:"為什麼有用", p:"銀行 APP 開發常跨工具 — iOS 用 Xcode，Backend / Web 用 VS Code 或 Cursor。GPT-5.3-Codex 在三邊都能用，跨團隊 review 時不必切模型。"},
        {h:"安裝與啟用", l:["VS Code：搜尋 Codex extension、登入 ChatGPT","Cursor：設定 → Models → 選 GPT-5.3-Codex","桌面 Codex App：自動帶過 ChatGPT 帳號"]},
        {h:"iOS 的隱性好處", p:"雖然 Xcode 沒有 native extension，但 Cursor / VS Code 可以開啟 .swift 檔做小型編輯後再回 Xcode build。對 SwiftPM 為主的 iOS 專案很順手。"},
-       {h:"Cathay 內部協作建議", l:["前端 / 後端 / iOS 共用同一個 Codex thread 討論 API spec","SwiftLint / ESLint 都用 Codex 一鍵修","跨團隊 PR 都用 Codex 摘要"]}
+       {h:"團隊協作建議", l:["前端 / 後端 / iOS 共用同一個 Codex thread 討論 API spec","SwiftLint / ESLint 都用 Codex 一鍵修","跨團隊 PR 都用 Codex 摘要"]}
      ]},
     {ico:"📎", color:"gold", feat:"附加任意檔案類型 + PDF 預覽", ver:"v260205, v260204",
      desc:"可拖曳任何格式的檔案；review 面板可預覽 PDF。",
@@ -1550,16 +1397,16 @@
      scen:"<b>銀行內網 CI 場景：</b>把 codex exec-server 跑在內網 build agent，CI pipeline 透過 IPC 呼叫做 PR 審查 / 測試生成；不用每次都 spin up CLI。",
      d:[
        {h:"為什麼有用", p:"原本要呼叫 Codex 都要 spawn 一個新 process（慢、要重新 auth）。<code>codex exec-server</code> 變成長駐 server，外部以 IPC / WebSocket 呼叫，秒回。"},
-       {h:"啟動 server", c:"bash", b:"# 在內網 build agent 上\ncodex exec-server \\\n  --bind 0.0.0.0:7878 \\\n  --auth-token $CATHAY_CODEX_TOKEN \\\n  --sandbox read-only-access"},
-       {h:"CI pipeline 呼叫範例", c:"yaml", b:"# .github/workflows/pr-review.yml\n- name: Codex PR review\n  run: |\n    curl -X POST http://build-agent.cathay/codex \\\n      -H \"Authorization: Bearer $TOKEN\" \\\n      -d '{\"prompt\":\"review PR #${{ github.event.number }}\"}'"},
+       {h:"啟動 server", c:"bash", b:"# 在內網 build agent 上\ncodex exec-server \\\n  --bind 0.0.0.0:7878 \\\n  --auth-token $CODEX_AUTH_TOKEN \\\n  --sandbox read-only-access"},
+       {h:"CI pipeline 呼叫範例", c:"yaml", b:"# .github/workflows/pr-review.yml\n- name: Codex PR review\n  run: |\n    curl -X POST http://build-agent.internal/codex \\\n      -H \"Authorization: Bearer $TOKEN\" \\\n      -d '{\"prompt\":\"review PR #${{ github.event.number }}\"}'"},
        {h:"和 Claude /ultrareview 的差別", l:["<b>Claude /ultrareview</b>：適合「在我桌機上跑 4 個視角」","<b>codex exec-server</b>：適合「CI / 內網長駐共用」","可以兩個都用 — 桌機跑 Claude、CI 跑 Codex"]}
      ]},
     {ico:"🛡️", color:"red", feat:"Windows Proxy-only Sandbox", ver:"0.118.0 · 2026-03-31",
      desc:"Windows 在 OS 層強制只能透過 proxy 出網。",
      scen:"<b>銀行合規場景：</b>RD 工作機常被要求所有出網都要走 proxy 並記錄。Codex CLI 在這環境直接合規，不用額外封裝。",
      d:[
-       {h:"為什麼對銀行 RD 重要", p:"國泰內部規定所有出網要走 proxy 並記錄。Codex CLI 在 Windows OS 層強制 proxy-only egress — 不需要再用第三方軟體封裝，直接合規。"},
-       {h:"設定方式", c:"bash", b:"# PowerShell\n$env:CODEX_PROXY = \"http://proxy.cathay.local:8080\"\n$env:CODEX_SANDBOX_NETWORK = \"proxy-only\"\n\ncodex"},
+       {h:"為什麼對銀行 RD 重要", p:"銀行內部規定所有出網要走 proxy 並記錄。Codex CLI 在 Windows OS 層強制 proxy-only egress — 不需要再用第三方軟體封裝，直接合規。"},
+       {h:"設定方式", c:"bash", b:"# PowerShell\n$env:CODEX_PROXY = \"http://proxy.internal.local:8080\"\n$env:CODEX_SANDBOX_NETWORK = \"proxy-only\"\n\ncodex"},
        {h:"和 Mac 比較", l:["Mac 沒有 OS 層強制 — 但可靠 <code>requirements.toml</code> 限制 domain","Windows 是 OS 層 — 連 Codex spawn 的子程序都受限","建議：Windows 工作機開 proxy-only，Mac 用 deniedDomains 補強"]},
        {h:"資安團隊 sign-off 要點", l:["所有對外 request 經 proxy 留 log","違規連線在 OS 層被拒，Codex 自身無法繞過","可搭配 <code>requirements.toml</code> 白名單 domain"]}
      ]},
@@ -1586,7 +1433,7 @@
      scen:"<b>原型驗證場景：</b>iOS RD 偶爾要驗 backend JSON / API 行為，直接在 Codex 內 js_repl 跑 fetch 測試，不用切 Postman。",
      d:[
        {h:"為什麼有用", p:"iOS RD 偶爾要驗 backend / Web 端的 JSON、API 行為。原本要切 Postman 或寫 .js 檔。js_repl 直接在 Codex 內，跨 turn 保留變數狀態。"},
-       {h:"iOS 開發場景", c:"bash", b:"$ codex\n> /js_repl\nrepl> const r = await fetch('https://api.cathay/test/transfer', { ... })\nrepl> const data = await r.json()\nrepl> console.log(data.amount)\n# 驗 API 回傳格式對不對"},
+       {h:"iOS 開發場景", c:"bash", b:"$ codex\n> /js_repl\nrepl> const r = await fetch('https://api.internal/test/transfer', { ... })\nrepl> const data = await r.json()\nrepl> console.log(data.amount)\n# 驗 API 回傳格式對不對"},
        {h:"進階：模擬 Combine pipeline 邏輯", p:"用 RxJS 模擬 Combine 行為，先在 JS 跑通邏輯再翻成 Swift — 比起直接寫 Swift 更快迭代。"},
        {h:"小提醒", l:["js_repl 是實驗性功能，可能 break","狀態跨 turn 保留，但 session 結束就清空","不要拿來跑生產資料"]}
      ]},
@@ -1700,7 +1547,7 @@
     roles:["android","designer"],
     d:[
       {h:"為什麼有用", p:"Compose Preview 的迭代節奏跟 SwiftUI 預覽類似，需要快速 try-and-see。Spark 的高速 streaming 對「短改動」特別有感。"},
-      {h:"設定", c:"bash", b:"# Cursor / VS Code\ncodex --model gpt-5.3-codex-spark\n\n# 然後在 Composable 上方加註解：\n# @Preview(name = \"Cathay 主題\", showBackground = true)\n# @Composable\n# fun TransferCardPreview() { ... }"},
+      {h:"設定", c:"bash", b:"# Cursor / VS Code\ncodex --model gpt-5.3-codex-spark\n\n# 然後在 Composable 上方加註解：\n# @Preview(name = \"App 主題\", showBackground = true)\n# @Composable\n# fun TransferCardPreview() { ... }"},
       {h:"什麼時候切回 5.3-Codex", p:"複雜的 State / ViewModel 重構、跨檔案的 Compose 架構改動還是要深度推理，切回 5.3-Codex。"}
     ]
   });
@@ -1714,18 +1561,18 @@
     d:[
       {h:"為什麼對 Designer 有用", p:"以前設計師交付 spec 只能寫文字描述。現在可以「順便」產一份參考實作給 RD，溝通效率提升、減少實作偏差。"},
       {h:"操作流程", l:["Figma 中選中要轉換的 frame，<code>Cmd+Shift+C</code> 截圖","拖進 Codex App","Prompt：「請用 SwiftUI（iOS）和 Jetpack Compose（Android）兩種版本實作，並標註關鍵尺寸」","複製貼進 spec 文件"]},
-      {h:"進階技巧", l:["指定設計系統：「使用 Cathay Design Token」","指定 accessibility：「VoiceOver / TalkBack 標籤要齊全」","要求多狀態：「請含 default / pressed / disabled」"]}
+      {h:"進階技巧", l:["指定設計系統：「使用 Design Token」","指定 accessibility：「VoiceOver / TalkBack 標籤要齊全」","要求多狀態：「請含 default / pressed / disabled」"]}
     ]
   });
   INSP_CC.push({
     ico:"🎨", color:"gold", feat:"Skills 產生 Design Token 程式碼", ver:"v2.1.120 · 2026-04-28",
     desc:"設計師更新色票後，由 Skill 自動產 Swift / Kotlin / Web 多平台 Token 檔。",
-    scen:"<b>Designer 場景：</b>更新 Figma colors 後，跑 <code>/cathay-design-tokens</code>，Skill 讀 Figma export → 產三個平台的 Token 檔給 RD。",
+    scen:"<b>Designer 場景：</b>更新 Figma colors 後，跑 <code>/design-tokens</code>，Skill 讀 Figma export → 產三個平台的 Token 檔給 RD。",
     roles:["designer","ios","android"],
     d:[
       {h:"為什麼有用", p:"設計系統最痛的是「色票改了，三個平台沒同步」。把 Token 轉檔做成 Skill，設計師自己就能驅動。"},
-      {h:"Skill 範例", c:"yaml", b:"# .claude/skills/cathay-design-tokens.md\n---\nname: cathay-design-tokens\ndescription: 從 Figma export JSON 產出 iOS/Android/Web 三平台 Design Token\n---\n讀取 design-tokens.json（從 Figma Tokens plugin export）\n產出：\n  - iOS/CathayColors.swift（Color extension）\n  - android/CathayColors.kt（Compose Color object）\n  - web/_tokens.scss\n命名遵循 Cathay 規則：cathayBrand500、cathayNeutral100 等"},
-      {h:"設計師工作流", l:["Figma → Tokens plugin → Export JSON","Drop JSON 進 Claude → <code>/cathay-design-tokens</code>","Skill 產三個檔 → 提交 PR","RD 收到 PR → review → merge"]}
+      {h:"Skill 範例", c:"yaml", b:"# .claude/skills/design-tokens.md\n---\nname: design-tokens\ndescription: 從 Figma export JSON 產出 iOS/Android/Web 三平台 Design Token\n---\n讀取 design-tokens.json（從 Figma Tokens plugin export）\n產出：\n  - iOS/AppColors.swift（Color extension）\n  - android/AppColors.kt（Compose Color object）\n  - web/_tokens.scss\n命名遵循團隊規則：brand500、neutral100 等"},
+      {h:"設計師工作流", l:["Figma → Tokens plugin → Export JSON","Drop JSON 進 Claude → <code>/design-tokens</code>","Skill 產三個檔 → 提交 PR","RD 收到 PR → review → merge"]}
     ]
   });
 
@@ -1733,11 +1580,11 @@
   INSP_CC.push({
     ico:"🧪", color:"green", feat:"Skills 自動產 Test Case", ver:"v2.1.120 · 2026-04-28",
     desc:"PRD 變動後最痛苦的就是補 test case。Skill 把這變成半自動。",
-    scen:"<b>QA 場景：</b>把 PRD 段落貼進 Claude，跑 <code>/cathay-test-cases</code>，Skill 用 Given-When-Then 格式產出 happy path / edge case / negative case 三組。",
+    scen:"<b>QA 場景：</b>把 PRD 段落貼進 Claude，跑 <code>/test-cases</code>，Skill 用 Given-When-Then 格式產出 happy path / edge case / negative case 三組。",
     roles:["qa"],
     d:[
       {h:"為什麼對 QA 有用", p:"傳統流程要靠 QA 一條條手寫 test case。Skill 自動產出後 QA 改成審核者角色，效率大幅提升。"},
-      {h:"Skill 範例", c:"yaml", b:"# .claude/skills/cathay-test-cases.md\n---\nname: cathay-test-cases\ndescription: 從 PRD 段落產出 Given-When-Then 格式 test case\n---\n步驟：\n1. 讀 user input PRD 段落\n2. 識別 actor、action、expected outcome\n3. 產出三組 case：\n   - Happy path（正常流程）\n   - Edge cases（邊界值、空值、極端輸入）\n   - Negative cases（錯誤輸入、權限不足、網路失敗）\n4. 每個 case 用 Given-When-Then 格式\n5. 標註對應的 acceptance criteria"},
+      {h:"Skill 範例", c:"yaml", b:"# .claude/skills/test-cases.md\n---\nname: test-cases\ndescription: 從 PRD 段落產出 Given-When-Then 格式 test case\n---\n步驟：\n1. 讀 user input PRD 段落\n2. 識別 actor、action、expected outcome\n3. 產出三組 case：\n   - Happy path（正常流程）\n   - Edge cases（邊界值、空值、極端輸入）\n   - Negative cases（錯誤輸入、權限不足、網路失敗）\n4. 每個 case 用 Given-When-Then 格式\n5. 標註對應的 acceptance criteria"},
       {h:"進階：跨平台同步", p:"產出時可指定平台（iOS/Android/Web），Skill 會用對應 UI 操作詞彙（tap / click / long-press）。"}
     ]
   });
@@ -1779,11 +1626,11 @@
   INSP_CC.push({
     ico:"🗄️", color:"blue", feat:"MCP 接公司內部 DB / API", ver:"v2.1.121 · 2026-04-28",
     desc:"用 MCP 把內網 DB、API gateway 接進 Claude，agent 可以查資料解 bug。",
-    scen:"<b>Backend 場景：</b>寫一個 cathay-internal MCP server，包 Postgres read-only 連線、API gateway 查詢。Claude 解 ticket 時直接 query 確認資料、找 root cause。",
+    scen:"<b>Backend 場景：</b>寫一個 internal MCP server，包 Postgres read-only 連線、API gateway 查詢。Claude 解 ticket 時直接 query 確認資料、找 root cause。",
     roles:["backend"],
     d:[
       {h:"為什麼有用", p:"Backend 解 bug 常常要切 terminal 跑 psql 或 curl。把這些變成 MCP tool，Claude 可以自己查、自己驗證假設。"},
-      {h:"MCP server 結構", c:"json", b:"// .claude/mcp/cathay-internal.json\n{\n  \"command\": \"node\",\n  \"args\": [\"./scripts/cathay-mcp-server.js\"],\n  \"alwaysLoad\": true,\n  \"env\": {\n    \"DB_READ_ONLY_URL\": \"$DB_READ_ONLY_URL\"\n  }\n}"},
+      {h:"MCP server 結構", c:"json", b:"// .claude/mcp/internal.json\n{\n  \"command\": \"node\",\n  \"args\": [\"./scripts/mcp-server.js\"],\n  \"alwaysLoad\": true,\n  \"env\": {\n    \"DB_READ_ONLY_URL\": \"$DB_READ_ONLY_URL\"\n  }\n}"},
       {h:"工具範例", l:["<code>db_query</code>：read-only SQL 查詢","<code>api_inspect</code>：對內部 API 發 GET 看 response","<code>trace_lookup</code>：用 trace_id 查 distributed tracing","<code>config_get</code>：查 LaunchDarkly feature flag 狀態"]},
       {h:"安全提醒", l:["DB 一定要 read-only role","API 限制 staging / dev 環境","所有查詢進 audit log","plug ENV scrub 防止 token 漏出"]}
     ]
@@ -1797,7 +1644,7 @@
     roles:["pm"],
     d:[
       {h:"為什麼對 PM 有用", p:"Sprint Planning 最花時間的是「整理 backlog 狀態、找依賴」。讓 agent 先做這部分，會議上直接審核就好。"},
-      {h:"Agent 定義", c:"yaml", b:"# .claude/agents/sprint-planner.md\n---\nname: sprint-planner\nmcpServers:\n  - jira\n  - confluence\n---\n你是 Cathay iOS Scrum Team 的 Sprint Planner。\n\n任務：\n1. 從 Jira 拉 backlog 前 30 個 ticket\n2. 識別跨 ticket 依賴（label \"depends-on\"）\n3. 估算故事點（基於歷史相似 ticket）\n4. 分組成可投票的 sprint candidates\n5. 標註風險：規格不清、跨團隊依賴、技術未知\n\n禁止：直接修改 Jira 狀態（你是建議者，不是執行者）"},
+      {h:"Agent 定義", c:"yaml", b:"# .claude/agents/sprint-planner.md\n---\nname: sprint-planner\nmcpServers:\n  - jira\n  - confluence\n---\n你是 iOS Scrum Team 的 Sprint Planner。\n\n任務：\n1. 從 Jira 拉 backlog 前 30 個 ticket\n2. 識別跨 ticket 依賴（label \"depends-on\"）\n3. 估算故事點（基於歷史相似 ticket）\n4. 分組成可投票的 sprint candidates\n5. 標註風險：規格不清、跨團隊依賴、技術未知\n\n禁止：直接修改 Jira 狀態（你是建議者，不是執行者）"},
       {h:"PM 工作流", l:["週一早上 <code>claude --agent sprint-planner /plan-next-sprint</code>","Review 產出的 sprint candidates","跟 RD lead 確認故事點","會議上直接投票，不再「現場才開始想」"]}
     ]
   });
@@ -1817,7 +1664,7 @@
   INSP_CC.push({
     ico:"👁️", color:"purple", feat:"Agent View — 一個畫面看所有 sessions", ver:"v2.1.139 · 2026-05-11",
     desc:"<code>claude agents</code> 開啟 Research Preview 視圖，看所有執行中、待回應、完工的 Claude session。",
-    scen:"<b>Cathay 場景：</b>同時跑 main app、watch app、widget、internal tools 重構時，不再要切多個 tmux 視窗。一畫面看哪個 session 在等你回話、哪個跑完可以 review、哪個還在跑。",
+    scen:"<b>場景：</b>同時跑 main app、watch app、widget、internal tools 重構時，不再要切多個 tmux 視窗。一畫面看哪個 session 在等你回話、哪個跑完可以 review、哪個還在跑。",
     roles:["ios","android","backend"],
     d:[
       {h:"為什麼有用", p:"多 session 工作流的痛點是「我現在有幾個 Claude 在跑」「哪個需要我關心」。Agent View 把這個盲點解決。"},
@@ -1829,7 +1676,7 @@
   INSP_CA.push({
     ico:"🖥️", color:"orange", feat:"Codex 變通用工作空間：In-app Browser + Computer Use", ver:"2026-04-16",
     desc:"Codex App 大改版：內建瀏覽器（可對渲染頁面留言）、操作 macOS 原生 App、artifact viewer 預覽 PDF/試算表/簡報、Memories、多視窗、多終端機。",
-    scen:"<b>Cathay 場景：</b>用 in-app browser 開內部 admin 系統，邊操作邊讓 Codex 觀察並建議改進；artifact viewer 可直接預覽從 backend 撈出來的 Excel report，不用切到 Numbers 或瀏覽器。讓 Codex App 從「對話介面」變成「整個工作環境」。",
+    scen:"<b>場景：</b>用 in-app browser 開內部 admin 系統，邊操作邊讓 Codex 觀察並建議改進；artifact viewer 可直接預覽從 backend 撈出來的 Excel report，不用切到 Numbers 或瀏覽器。讓 Codex App 從「對話介面」變成「整個工作環境」。",
     roles:["ios","android","backend","designer","qa","pm"],
     d:[
       {h:"為什麼是重大更新", p:"這次不只是加功能 — Codex App 從「聊天框」升級為「通用工作空間」。In-app browser、Computer Use、artifact viewer、Memories 加在一起，讓你不必離開 Codex 就能完成大部分桌面工作。"},
@@ -1843,7 +1690,7 @@
   INSP_CA.push({
     ico:"📱", color:"teal", feat:"ChatGPT 手機 app 連到你的 Mac Codex", ver:"2026-05-14",
     desc:"<b>手機 app 連你執行中的 Mac Codex</b>，共用同一份專案、檔案、認證、plugins、skills、設定。Hooks 同步 GA。",
-    scen:"<b>Cathay 場景：</b>會議空檔在手機接手 sprint 任務 — 「Codex，看一下 #PR-1234 並寫 review summary」「跑一下 SwiftLint 看 warning」。Mac 上的 Cowork 環境一致，不需切上下文。",
+    scen:"<b>場景：</b>會議空檔在手機接手 sprint 任務 — 「Codex，看一下 #PR-1234 並寫 review summary」「跑一下 SwiftLint 看 warning」。Mac 上的 Cowork 環境一致，不需切上下文。",
     roles:["ios","android","backend","pm"],
     d:[
       {h:"為什麼有趣", p:"桌面開發者最大的痛是「離開電腦就斷線」。手機 app 連 Mac host 讓你可在通勤、會議空檔接手任務，且環境完全一致（同 skills、同 plugins、同認證）。"},
@@ -1860,7 +1707,7 @@
     roles:["pm"],
     d:[
       {h:"為什麼有用", p:"Roadmap 維護的痛點是「資料散在多處」。把資料收集自動化，PM 專注在策略而非搬運。"},
-      {h:"排程設定", c:"yaml", b:"# .claude/scheduled/roadmap-refresh.md\n---\ncron: 0 9 * * 1   # 每週一 09:00\nmcpServers: [jira, github, confluence]\n---\n1. 從 Jira 拉所有 Epic 狀態（fixVersion = current quarter）\n2. 從 GitHub 拉 milestone 進度\n3. 合併為 roadmap：epic / 進度 / 風險 / ETA\n4. Push 到 Confluence: /Cathay/iOS-Roadmap-Q2\n5. 變動超過 20% 進度的 epic → 標紅 + Slack 通知"},
+      {h:"排程設定", c:"yaml", b:"# .claude/scheduled/roadmap-refresh.md\n---\ncron: 0 9 * * 1   # 每週一 09:00\nmcpServers: [jira, github, confluence]\n---\n1. 從 Jira 拉所有 Epic 狀態（fixVersion = current quarter）\n2. 從 GitHub 拉 milestone 進度\n3. 合併為 roadmap：epic / 進度 / 風險 / ETA\n4. Push 到 Confluence: /team/iOS-Roadmap-Q2\n5. 變動超過 20% 進度的 epic → 標紅 + Slack 通知"},
       {h:"配合 Plan Mode", p:"PM 開週會前先跑一次 plan mode 對話：「下個季度該如何排優先順序」，Claude 結合 roadmap + 歷史 velocity 給建議。"}
     ]
   });
@@ -1871,7 +1718,7 @@
   INSP_CC.push({
     ico:"⚡", color:"gold", feat:"Opus 4.8 + 動態工作流 /workflows", ver:"v2.1.154 · 2026-05-28",
     desc:"<b>Opus 4.8 釋出</b>，預設 high effort、可開 <code>/effort xhigh</code> 應戰最難任務；<b>動態工作流</b>讓 Claude 在背景同時編排數十到上百個 agent，<code>/workflows</code> 檢視進度。",
-    scen:"<b>Cathay 場景：</b>銀行 APP 的「跨 module migration」「全 repo 安全掃描」「大型 refactor」這類任務，過去要手動拆給多個 RD 跑。現在 <code>/workflows</code> 一句話讓 Claude 編排 50+ subagent 平行處理，Opus 4.8 xhigh 確保品質。",
+    scen:"<b>場景：</b>銀行 APP 的「跨 module migration」「全 repo 安全掃描」「大型 refactor」這類任務，過去要手動拆給多個 RD 跑。現在 <code>/workflows</code> 一句話讓 Claude 編排 50+ subagent 平行處理，Opus 4.8 xhigh 確保品質。",
     roles:["ios","android","backend","qa","pm"],
     d:[
       {h:"為什麼是重大更新", p:"Opus 4.8 是目前最強模型；動態工作流則是新工作模式 — 你描述目標，Claude 自己拆解、編排、執行數十個 subagent。對大規模任務（migration、scan、refactor）效率提升一個數量級。"},
@@ -1882,7 +1729,7 @@
   INSP_CC.push({
     ico:"🔍", color:"green", feat:"/code-review（+ --fix 直接套用）", ver:"v2.1.147, 2.1.152 · 2026-05",
     desc:"<b>/simplify 改名為 /code-review</b>，依 effort 等級回報問題；新 <code>--fix</code> 直接套用修改到工作樹；<code>--comment</code> 把意見貼進 PR。",
-    scen:"<b>Cathay 場景：</b>每支 PR 推上去自動跑 <code>/code-review --comment</code>，意見直接貼到 GitLab PR；reviewer 不再做「找小問題」。<code>--fix</code> 可選擇性套用安全的修補。",
+    scen:"<b>場景：</b>每支 PR 推上去自動跑 <code>/code-review --comment</code>，意見直接貼到 GitLab PR；reviewer 不再做「找小問題」。<code>--fix</code> 可選擇性套用安全的修補。",
     roles:["ios","android","backend"],
     d:[
       {h:"為什麼有用", p:"原本的 /simplify 比較窄；/code-review 是完整 review 工具，配 --fix 與 --comment 兩個 flag 就能整套自動化進 CI。"},
@@ -1895,10 +1742,10 @@
   INSP_CA.push({
     ico:"🖱️", color:"purple", feat:"Windows Computer Use + Mobile Remote Control", ver:"2026-05-28",
     desc:"<b>Computer Use 登陸 Windows</b>：Codex 看得到、點得了、能輸入到 Windows 原生 App。<b>Mobile remote control</b> 也支援 Windows 主機 — 從 ChatGPT iOS/Android 啟動並追蹤 Windows 工作。",
-    scen:"<b>Cathay 場景：</b>銀行內部很多 Windows-only 系統（Outlook、Office、內部 CRM）。讓 Codex 自動填表、跨 App 搬資料；QA 跨平台測試；通勤時用手機看 Windows 主機在跑什麼。",
+    scen:"<b>場景：</b>銀行內部很多 Windows-only 系統（Outlook、Office、內部 CRM）。讓 Codex 自動填表、跨 App 搬資料；QA 跨平台測試；通勤時用手機看 Windows 主機在跑什麼。",
     roles:["ios","android","backend","qa"],
     d:[
-      {h:"為什麼對銀行有用", p:"國泰內部系統多是 Windows-only — Outlook、ServiceNow、行內 CRM。Computer Use 讓 Codex 可自動化這些原本「不能 API 化」的流程。"},
+      {h:"為什麼對銀行有用", p:"銀行內部系統多是 Windows-only — Outlook、ServiceNow、行內 CRM。Computer Use 讓 Codex 可自動化這些原本「不能 API 化」的流程。"},
       {h:"設定", c:"bash", b:"# 1. Windows 上開 Codex App、啟用 Computer Use（設定 → 進階）\n# 2. ChatGPT 手機 app 配對：QR scan\n# 3. 手機隨時送指令：「打開 Outlook，寄這個 review summary」\n# 4. Codex 在 Windows 替你操作"},
       {h:"iOS RD 場景", l:["銀行 Windows-only 工具：用 Codex 搬資料","QA：跨平台測試（同一支 Codex 跑 Mac + Windows）","通勤：手機監看 Windows 上的 batch script"]},
       {h:"歐盟例外", p:"Computer Use 在 EEA/UK/瑞士暫不提供。台灣可用。"}
@@ -1907,7 +1754,7 @@
   INSP_CA.push({
     ico:"🪟", color:"blue", feat:"Codex App for Windows 正式版", ver:"2026-03-04",
     desc:"Codex App 原生 Windows 版本，用 <b>PowerShell + 原生 Windows sandbox</b> 提供受限權限，無需 WSL/VM。支援 Skills、Automations、Worktrees。",
-    scen:"<b>Cathay 場景：</b>銀行 RD 多數用 Windows 開發機。Codex App 原生版讓你不必架 WSL 環境也能用，sandbox 又符合資安要求。一份 ChatGPT 帳號跨 Mac + Windows 共用。",
+    scen:"<b>場景：</b>銀行 RD 多數用 Windows 開發機。Codex App 原生版讓你不必架 WSL 環境也能用，sandbox 又符合資安要求。一份 ChatGPT 帳號跨 Mac + Windows 共用。",
     roles:["android","backend","qa","pm"],
     d:[
       {h:"為什麼重要", p:"以前 Windows 上要跑 Codex 得透過 WSL 或 VM，效能、相容性都打折。原生 Windows 版用 PowerShell 與 OS 層 sandbox，全部原生，安裝走 Microsoft Store。"},
@@ -1920,18 +1767,18 @@
   INSP_CI.push({
     ico:"🩺", color:"red", feat:"codex doctor — 全面環境診斷", ver:"0.131.0 · 2026-05-18",
     desc:"<code>codex doctor</code> 一鍵跑全套診斷：runtime、auth、terminal、network、config、local state。新人 onboarding 或環境出問題第一個跑的指令。",
-    scen:"<b>Cathay 場景：</b>新進 RD 第一天裝 Codex，跑 <code>codex doctor</code> 自動檢查所有相依、認證、proxy、sandbox 狀態，產出 report 給 mentor 看哪邊還沒設好。debug 環境問題從幾小時降到幾分鐘。",
+    scen:"<b>場景：</b>新進 RD 第一天裝 Codex，跑 <code>codex doctor</code> 自動檢查所有相依、認證、proxy、sandbox 狀態，產出 report 給 mentor 看哪邊還沒設好。debug 環境問題從幾小時降到幾分鐘。",
     roles:["ios","android","backend","qa"],
     d:[
       {h:"為什麼有用", p:"以前環境出問題要手動逐項檢查：proxy 通嗎？auth 過期了嗎？sandbox 設對了嗎？<code>codex doctor</code> 把這些自動化成一張 health report。"},
-      {h:"基本用法", c:"bash", b:"# 跑全套診斷\ncodex doctor\n\n# 輸出範例：\n# ✓ Runtime: codex 0.135.0\n# ✓ Auth: ChatGPT Pro account\n# ✗ Network: proxy.cathay.local:8080 unreachable\n# ✓ Sandbox: bwrap 0.10.0 installed\n# ✓ Config: ~/.codex/config.toml valid\n# ✓ Threads: 47 local, 12 paged"},
+      {h:"基本用法", c:"bash", b:"# 跑全套診斷\ncodex doctor\n\n# 輸出範例：\n# ✓ Runtime: codex 0.135.0\n# ✓ Auth: ChatGPT Pro account\n# ✗ Network: proxy.internal.local:8080 unreachable\n# ✓ Sandbox: bwrap 0.10.0 installed\n# ✓ Config: ~/.codex/config.toml valid\n# ✓ Threads: 47 local, 12 paged"},
       {h:"團隊化用法", l:["新人入職 day 1 跑一次，產 report 給 mentor","CI workflow 用 <code>codex doctor --json</code> 驗證 build agent","每月 IT 健檢全團隊跑一次，看誰環境壞了"]}
     ]
   });
   INSP_CI.push({
     ico:"🎯", color:"green", feat:"Goals 預設開啟 — 跨 turn 持續工作", ver:"0.133.0 · 2026-05-21",
     desc:"Goals 從實驗性升為預設開啟。設一個目標後，Codex 跨 turn 自動推進直到完成（或 usage limit / blocker）。",
-    scen:"<b>Cathay 場景：</b>「把 NetworkLayer 整個改用 async/await」這種大任務設成 goal，Codex 自動拆 PR、跑 test、改 callsite，跨數十個 turn 推進。你只需要 review、回 question、不必每次重述目標。",
+    scen:"<b>場景：</b>「把 NetworkLayer 整個改用 async/await」這種大任務設成 goal，Codex 自動拆 PR、跑 test、改 callsite，跨數十個 turn 推進。你只需要 review、回 question、不必每次重述目標。",
     roles:["ios","android","backend"],
     d:[
       {h:"為什麼有用", p:"以前每個 turn 結束你要重提醒「下一步做 X」「記得別忘 Y」。Goals 把目標當持久狀態存著，Codex 自動推進、自動回報進度。"},
@@ -1945,7 +1792,7 @@
   INSP_CC.push({
     ico:"🎯", color:"green", feat:"/goal — 跨 turn 持續推進至完成", ver:"v2.1.139 · 2026-05-11",
     desc:"Claude Code 新 <code>/goal</code> 指令：設一個目標後，Claude 跨 turn 持續工作直到達成。",
-    scen:"<b>Cathay 場景：</b>大型 refactor 或 bug hunt，告訴 Claude「目標：把所有 callback API 改 async/await，含 tests」，Claude 自己一輪一輪做下去，你只在 blocker 時介入。",
+    scen:"<b>場景：</b>大型 refactor 或 bug hunt，告訴 Claude「目標：把所有 callback API 改 async/await，含 tests」，Claude 自己一輪一輪做下去，你只在 blocker 時介入。",
     roles:["ios","android","backend"],
     d:[
       {h:"為什麼有用", p:"和 Codex 的 Goals 對應 — Claude 也能跨 turn 自動推進。把「我要 Claude 做什麼」變成持久狀態，不必每次重述。"},
@@ -1957,7 +1804,7 @@
   INSP_CC.push({
     ico:"🚫", color:"red", feat:"Skills/slash frontmatter 加 disallowed-tools", ver:"v2.1.152 · 2026-05-27",
     desc:"Skills 與 slash command frontmatter 可加 <code>disallowed-tools</code> 限制能用的工具，最小權限原則。",
-    scen:"<b>Cathay 場景：</b>合規 skill 禁止用 Bash（不能跑 shell）；review skill 禁止用 Edit/Write（只能讀）。確保不同 skill 各自有適當權限邊界，避免越權操作。",
+    scen:"<b>場景：</b>合規 skill 禁止用 Bash（不能跑 shell）；review skill 禁止用 Edit/Write（只能讀）。確保不同 skill 各自有適當權限邊界，避免越權操作。",
     roles:["ios","android","backend","qa","pm"],
     d:[
       {h:"為什麼有用", p:"以前所有 skill 共用同一份工具權限。現在每個 skill 可宣告自己不能用什麼，從架構上避免越權。"},
@@ -1969,7 +1816,7 @@
   INSP_CA.push({
     ico:"📟", color:"blue", feat:"Codex 可讀取整合終端機輸出", ver:"2026-03-11",
     desc:"Codex 能讀取目前 thread 的 <b>integrated terminal</b> 輸出 — 確認 dev server 狀態、回查失敗的 build。",
-    scen:"<b>Cathay 場景：</b>iOS build 失敗時不用複製貼上 error log；Codex 直接看 Xcode build output 找 root cause。Backend 跑 server 時 Codex 即時看 stderr 確認服務狀態。",
+    scen:"<b>場景：</b>iOS build 失敗時不用複製貼上 error log；Codex 直接看 Xcode build output 找 root cause。Backend 跑 server 時 Codex 即時看 stderr 確認服務狀態。",
     roles:["ios","android","backend"],
     d:[
       {h:"為什麼有用", p:"以前你要把 terminal output 複製貼到 Codex 對話框。現在 Codex 直接看 — 對話更自然「為什麼 build 失敗」一句話 Codex 自己去看。"},
@@ -1981,7 +1828,7 @@
   INSP_CI.push({
     ico:"🗄️", color:"gold", feat:"/archive 封存 session（防誤刪）", ver:"0.136.0 · 2026-06-01",
     desc:"新 <code>/archive</code> slash 指令 + <code>codex archive</code>/<code>codex unarchive</code> CLI，封存的 session 不會被 resume/fork 誤動。",
-    scen:"<b>Cathay 場景：</b>重要 incident review session、跨團隊討論 session 封存起來不會誤刪；之後審計/重看時 unarchive 即可。當 session 是 audit trail 時特別實用。",
+    scen:"<b>場景：</b>重要 incident review session、跨團隊討論 session 封存起來不會誤刪；之後審計/重看時 unarchive 即可。當 session 是 audit trail 時特別實用。",
     roles:["ios","android","backend","qa","pm"],
     d:[
       {h:"為什麼有用", p:"resume picker 列表太長後容易誤點。重要 session 封存後從 picker 隱藏，但仍可從 archived list 找回。"},
@@ -1993,7 +1840,7 @@
   INSP_CI.push({
     ico:"🎨", color:"teal", feat:"CLI 0.131.0 TUI 大更新（@ mention + plugin marketplace）", ver:"0.131.0 · 2026-05-18",
     desc:"TUI 多項升級：service-tier、token 用量、permissions/approval mode、響應式 Markdown 表格；<code>@</code> mention 一鍵搜尋檔案/目錄/plugin/skill；plugin marketplace CLI 指令。",
-    scen:"<b>Cathay 場景：</b>@ mention 一秒帶入內部 skill；plugin marketplace 找團隊共用工具；TUI 顯示當下 effort / approval mode 上下文。日常用 codex CLI 整體體驗大幅升級。",
+    scen:"<b>場景：</b>@ mention 一秒帶入內部 skill；plugin marketplace 找團隊共用工具；TUI 顯示當下 effort / approval mode 上下文。日常用 codex CLI 整體體驗大幅升級。",
     roles:["ios","android","backend"],
     d:[
       {h:"為什麼有用", p:"0.131.0 是 TUI 大改版，把過去散落的 UX 痛點集中解決。新人學 CLI 的曲線變平。"},
@@ -2130,7 +1977,7 @@
           return `<span class="insp-role-tag${isMatch ? " match" : ""}">${ROLE_LABEL_MAP[r] || r}</span>`;
         }).join("");
 
-        const autoBadgeHtml = c.auto ? `<span class="auto-badge" title="自動生成的卡片 — Charlie 還沒手動 review 過">auto</span>` : "";
+        const autoBadgeHtml = c.auto ? `<span class="auto-badge" title="自動生成的卡片 — 尚未手動 review 過">auto</span>` : "";
 
         el.innerHTML = `
           ${autoBadgeHtml}
@@ -2185,7 +2032,7 @@
     modalIcon.textContent = card.ico || "";
     modalFeat.textContent = card.feat;
     modalVer.textContent = card.ver;
-    const autoNotice = card.auto ? `<div class="modal-auto-notice"><div>這張卡是 <b>自動生成</b> 的（由排程任務從 changelog 衍生）— 內容尚未經 Charlie 手動 review，把它當作起點，細節以官方 changelog 為準。看到怪怪的請回報。</div></div>` : "";
+    const autoNotice = card.auto ? `<div class="modal-auto-notice"><div>這張卡是 <b>自動生成</b> 的（由排程任務從 changelog 衍生）— 內容尚未經人工手動 review，把它當作起點，細節以官方 changelog 為準。看到怪怪的請回報。</div></div>` : "";
     const lead = `<div class="lead">${card.scen}</div>`;
     const sections = (card.d || []).map(renderSection).join("");
     const fallback = card.d ? "" : `<div class="modal-section"><p>更多說明補充中…</p></div>`;
@@ -2478,91 +2325,6 @@
     t.addEventListener("click", () => switchTab(t.dataset.tab));
   });
   switchTab(initialTab);
-
-  /* ===========================
-     MANUAL REFRESH BUTTON
-     =========================== */
-  const refreshBtn = document.getElementById("manualRefreshBtn");
-  const refreshToast = document.getElementById("refreshToast");
-  const SCHEDULED_TASK_ID = "refresh-ai-changelog-artifact";
-
-  function showToast(msg, kind){
-    refreshToast.className = "refresh-toast show " + (kind || "");
-    refreshToast.textContent = msg;
-    clearTimeout(showToast._t);
-    showToast._t = setTimeout(() => {
-      refreshToast.className = "refresh-toast";
-    }, kind === "error" ? 5000 : 4000);
-  }
-
-  // Render method tag based on localStorage manual-click history vs current HTML timestamp
-  const METHOD_KEY_TIME = "ctx_manualClickTime";
-  const METHOD_KEY_TS_AT_CLICK = "ctx_htmlTsAtClick";
-  function renderRefreshMethod(){
-    const tag = document.getElementById("refreshMethod");
-    if (!tag) return;
-    const currentHtmlTs = document.getElementById("lastRefreshed")?.textContent.trim() || "";
-    const clickAt = parseInt(localStorage.getItem(METHOD_KEY_TIME) || "0", 10);
-    const tsAtClick = localStorage.getItem(METHOD_KEY_TS_AT_CLICK) || "";
-    const now = Date.now();
-    const WINDOW_MS = 30 * 60 * 1000; // 30 min window from click
-
-    if (clickAt && (now - clickAt) < WINDOW_MS) {
-      if (currentHtmlTs && currentHtmlTs !== tsAtClick) {
-        // HTML updated after our click → manual completed
-        tag.textContent = "手動觸發";
-        tag.className = "method-tag manual";
-        tag.title = "此次更新由你按「立即更新」觸發";
-      } else {
-        // Within window but HTML hasn't changed yet → pending
-        tag.textContent = "手動更新中";
-        tag.className = "method-tag pending";
-        tag.title = "你剛剛按了立即更新，任務還在背景跑";
-      }
-    } else {
-      tag.textContent = "排程觸發";
-      tag.className = "method-tag";
-      tag.title = "此次更新由排程任務自動觸發";
-    }
-  }
-  renderRefreshMethod();
-
-  refreshBtn.addEventListener("click", async () => {
-    if (refreshBtn.disabled) return;
-
-    // Record manual trigger time + current HTML timestamp for method-tag detection
-    const currentHtmlTs = document.getElementById("lastRefreshed")?.textContent.trim() || "";
-    localStorage.setItem(METHOD_KEY_TIME, Date.now().toString());
-    localStorage.setItem(METHOD_KEY_TS_AT_CLICK, currentHtmlTs);
-    renderRefreshMethod(); // immediately show "手動更新中"
-
-    refreshBtn.disabled = true;
-    refreshBtn.classList.add("spinning");
-    const lblEl = refreshBtn.querySelector(".lbl");
-    const origLbl = lblEl.textContent;
-    lblEl.textContent = "觸發中…";
-
-    try {
-      if (!window.cowork || typeof window.cowork.runScheduledTask !== "function") {
-        throw new Error("此環境不支援 runScheduledTask（請從 Cowork 應用內開啟）");
-      }
-      await window.cowork.runScheduledTask(SCHEDULED_TASK_ID);
-      lblEl.textContent = "已啟動";
-      showToast("✓ 更新任務已在背景啟動。完成後（約 1–2 分鐘）按右上角 Reload 即可看到新內容。", "success");
-      setTimeout(() => {
-        lblEl.textContent = origLbl;
-        refreshBtn.classList.remove("spinning");
-        refreshBtn.disabled = false;
-      }, 3500);
-    } catch (err) {
-      console.error("runScheduledTask failed:", err);
-      lblEl.textContent = origLbl;
-      refreshBtn.classList.remove("spinning");
-      refreshBtn.disabled = false;
-      const msg = err && err.message ? err.message : String(err);
-      showToast("✗ 觸發失敗：" + msg, "error");
-    }
-  });
 </script>
 </body>
 </html>

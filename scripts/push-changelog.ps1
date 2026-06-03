@@ -59,7 +59,8 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
 "@
 
 git commit -m $commitMsg 2>&1 | Write-Host
-git push origin main 2>&1 | Write-Host
+# Push current HEAD straight to main, regardless of the local branch name.
+git push origin HEAD:main 2>&1 | Write-Host
 
-Write-Host "[push-changelog] pushed. Pages will rebuild within ~1 min:" -ForegroundColor Green
+Write-Host "[push-changelog] pushed to main. Pages will rebuild within ~1 min:" -ForegroundColor Green
 Write-Host "  https://kuoann.github.io/ai-changelog/"
