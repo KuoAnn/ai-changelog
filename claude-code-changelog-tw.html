@@ -1,0 +1,2568 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AI Coding Tools 更新摘要 — AI Scrum RD 視角</title>
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #fafaf7;
+    --surface: #ffffff;
+    --surface-2: #f4f1ec;
+    --ink: #1a1a1a;
+    --ink-soft: #555047;
+    --ink-muted: #8b8578;
+    --line: #e6e1d6;
+    --line-strong: #d4ccba;
+    --accent: #c96442;
+    --accent-soft: #f4dfd5;
+    --gold: #b48a3c;
+    --green: #4d7a3a;
+    --blue: #3b6c8c;
+    --purple: #6e4d8b;
+    --red: #b14233;
+    --teal: #2b6f6a;
+    --shadow: 0 1px 0 rgba(20,20,20,0.04), 0 8px 24px -12px rgba(60,40,20,0.12);
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --serif: "Iowan Old Style", "Palatino Linotype", "Source Serif Pro", Georgia, serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang TC", "Noto Sans TC", sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 28px 28px 80px; }
+
+  header.hero {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: linear-gradient(135deg, #fffdf8 0%, #f7efe4 100%);
+    padding: 28px 32px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  header.hero::before {
+    content: ""; position: absolute; right: -60px; top: -60px;
+    width: 240px; height: 240px; border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(201,100,66,0.10), transparent);
+    pointer-events: none;
+  }
+  .refresh-badge {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.7);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: 0.04em;
+    backdrop-filter: blur(8px);
+    z-index: 1;
+  }
+  .refresh-badge .pulse {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 0 rgba(77,122,58,0.4);
+    animation: pulse 2.4s infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(77,122,58,0.45); }
+    70% { box-shadow: 0 0 0 6px rgba(77,122,58,0); }
+    100% { box-shadow: 0 0 0 0 rgba(77,122,58,0); }
+  }
+  .refresh-badge b { color: var(--ink); font-weight: 600; }
+  .refresh-badge .schedule {
+    color: var(--ink-muted);
+    border-left: 1px solid var(--line);
+    padding-left: 8px;
+    margin-left: 2px;
+  }
+  .method-tag {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    color: var(--ink-soft);
+    border: 1px solid var(--line);
+    letter-spacing: 0.04em;
+    font-weight: 500;
+  }
+  .method-tag.manual {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .method-tag.pending {
+    background: #fef6e3;
+    color: #8b6921;
+    border-color: #e8c98a;
+  }
+  .method-tag.pending::before {
+    content: "⟳";
+    margin-right: 3px;
+    display: inline-block;
+    animation: spin 1.4s linear infinite;
+  }
+  .refresh-btn {
+    background: var(--ink);
+    color: #fff;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    padding: 5px 12px 5px 9px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    letter-spacing: 0.02em;
+    margin-left: 6px;
+    transition: all .15s ease;
+    white-space: nowrap;
+  }
+  .refresh-btn:hover:not(:disabled) {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .refresh-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  .refresh-btn .icn {
+    display: inline-block;
+    transform-origin: center;
+    font-size: 12px;
+  }
+  .refresh-btn.spinning .icn {
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .refresh-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    box-shadow: 0 8px 24px -8px rgba(0,0,0,0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: all .25s ease;
+    z-index: 1100;
+    font-family: inherit;
+  }
+  .refresh-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .refresh-toast.error { background: var(--red); }
+  .refresh-toast.success { background: var(--green); }
+  @media (max-width: 720px) {
+    .refresh-badge {
+      position: static;
+      margin-bottom: 12px;
+      width: max-content;
+      max-width: 100%;
+      flex-wrap: wrap;
+    }
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-size: 30px;
+    line-height: 1.15;
+    margin: 8px 0 6px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .subtitle {
+    color: var(--ink-soft);
+    max-width: 760px;
+    font-size: 14.5px;
+  }
+
+  /* Role picker */
+  .role-picker {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .role-picker .label {
+    font-family: var(--serif);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .role-picker .label .ic {
+    width: 22px; height: 22px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 6px;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+  }
+  .role-picker .hint {
+    font-size: 11.5px;
+    color: var(--ink-muted);
+    margin-left: 4px;
+  }
+  .role-picker .chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .role-chip {
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all .15s ease;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: inherit;
+  }
+  .role-chip .role-icn { font-size: 13px; }
+  .role-chip:hover { border-color: var(--line-strong); color: var(--ink); }
+  .role-chip.active {
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+  }
+  .insp-role-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 2px;
+  }
+  .insp-role-tag {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    background: var(--surface-2);
+    color: var(--ink-muted);
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+  }
+  .insp-role-tag.match {
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .auto-badge {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, #fef6e3 0%, #fce8c5 100%);
+    border: 1px solid #e8c98a;
+    color: #8b6921;
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+  }
+  .auto-badge::before {
+    content: "🆕";
+    font-size: 11px;
+  }
+  .modal-auto-notice {
+    background: linear-gradient(135deg, #fef6e3 0%, #fce8c5 100%);
+    border: 1px solid #e8c98a;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 0 0 18px;
+    font-size: 12.5px;
+    color: #8b6921;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .modal-auto-notice::before {
+    content: "🆕";
+    font-size: 14px;
+    line-height: 1;
+  }
+  .modal-auto-notice b { color: #5a440f; }
+  .insp-grid.empty-state {
+    border: 1px dashed var(--line-strong);
+    border-radius: 12px;
+    padding: 28px 20px;
+    text-align: center;
+    color: var(--ink-muted);
+    font-size: 13px;
+    grid-template-columns: 1fr;
+  }
+
+  /* Tabs */
+  .tab-bar {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 6px;
+    margin-bottom: 22px;
+    box-shadow: var(--shadow);
+    flex-wrap: wrap;
+  }
+  .tab {
+    flex: 1 1 auto;
+    min-width: 180px;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 16px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink-soft);
+    transition: all .18s ease;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    position: relative;
+  }
+  .tab:hover { background: var(--surface-2); }
+  .tab.active {
+    background: var(--ink);
+    color: #fff;
+  }
+  .tab .tab-title {
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tab .tab-meta {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--ink-muted);
+    letter-spacing: 0.04em;
+  }
+  .tab.active .tab-meta { color: rgba(255,255,255,0.65); }
+  .tab .tab-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    flex-shrink: 0;
+    background: var(--accent);
+  }
+  .tab[data-tab="codex-app"] .tab-dot { background: #10a37f; }
+  .tab[data-tab="codex-cli"] .tab-dot { background: #4f4b87; }
+
+  .stat-row {
+    display: flex;
+    gap: 28px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+  .stat { display: flex; flex-direction: column; gap: 2px; }
+  .stat .num {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .stat .lbl {
+    font-size: 10.5px;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* Section */
+  .panel { display: none; }
+  .panel.active { display: block; }
+  section { margin: 32px 0; }
+  h2 {
+    font-family: var(--serif);
+    font-size: 21px;
+    font-weight: 600;
+    margin: 0 0 14px;
+    letter-spacing: -0.005em;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  h2 .num-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 3px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.06em;
+  }
+  h2 .desc {
+    font-family: -apple-system, sans-serif;
+    font-size: 13px;
+    color: var(--ink-muted);
+    font-weight: 400;
+  }
+
+  /* Inspiration cards */
+  .insp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 14px;
+  }
+  .insp {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .insp:hover { transform: translateY(-1px); box-shadow: 0 1px 0 rgba(20,20,20,0.04), 0 14px 28px -14px rgba(60,40,20,0.18); }
+  .insp .insp-head { display: flex; align-items: center; gap: 10px; }
+  .insp .icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: grid; place-items: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .insp .feat { font-weight: 600; font-size: 15px; }
+  .insp .ver { font-family: var(--mono); font-size: 11px; color: var(--ink-muted); }
+  .insp p { margin: 0; color: var(--ink-soft); font-size: 13.5px; }
+  .insp .scenario {
+    background: var(--surface-2);
+    border-left: 3px solid var(--accent);
+    padding: 10px 12px;
+    border-radius: 0 6px 6px 0;
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .insp .scenario b { color: var(--accent); }
+
+  /* Filter bar */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+    align-items: center;
+  }
+  .filter-bar > .chips-wrap {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .chip {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all .15s ease;
+    user-select: none;
+    letter-spacing: 0.02em;
+  }
+  .chip:hover { border-color: var(--line-strong); color: var(--ink); }
+  .chip.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .search {
+    margin-left: auto;
+    padding: 7px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    font-size: 13px;
+    width: 220px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color .15s;
+  }
+  .search:focus { border-color: var(--accent); }
+
+  /* Timeline */
+  .timeline { margin-top: 6px; }
+  .month-group { margin-bottom: 28px; }
+  .month-label {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .month-label .count {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-muted);
+    font-weight: 400;
+  }
+
+  .entry {
+    display: grid;
+    grid-template-columns: 100px 130px 1fr;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--line);
+    align-items: start;
+  }
+  .entry:last-child { border-bottom: none; }
+  .entry .ver-badge {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink);
+    font-weight: 600;
+    background: var(--surface-2);
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-align: center;
+    width: max-content;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .entry .cat-badge {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    width: max-content;
+    font-weight: 500;
+  }
+  .entry .body { color: var(--ink-soft); font-size: 13.5px; }
+  .entry .body code {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--surface-2);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: var(--ink);
+  }
+  .entry .body b { color: var(--ink); font-weight: 600; }
+  .entry .body .title-line { color: var(--ink); font-weight: 600; margin-bottom: 3px; }
+
+  /* Category colors (subtle) */
+  .cat-Subagents-Skills { background: #efe4f3; color: #6e4d8b; }
+  .cat-Plugins-MCP { background: #e0eef6; color: #3b6c8c; }
+  .cat-Hooks { background: #f6e4d6; color: #b06530; }
+  .cat-Slash-Commands { background: #ebf3df; color: #4d7a3a; }
+  .cat-IDE-Editor { background: #e8e6f1; color: #4f4b87; }
+  .cat-Settings-Config { background: #f3eedf; color: #8b7530; }
+  .cat-Permissions-Security { background: #f5dfdb; color: #b14233; }
+  .cat-UI-UX { background: #e1eee9; color: #3c7a65; }
+  .cat-Performance-Bug-Fix { background: #ece9e3; color: #6c6657; }
+  .cat-Other { background: #ede9e3; color: #6c6657; }
+  .cat-Models-Inference { background: #e8f1ee; color: #2b6f6a; }
+  .cat-Cloud-Web { background: #e0eef6; color: #3b6c8c; }
+  .cat-Local-Sandbox { background: #f6e4d6; color: #b06530; }
+  .cat-MCP-Tools { background: #e0eef6; color: #3b6c8c; }
+
+  .insp .icon.purple { background: #efe4f3; color: #6e4d8b; }
+  .insp .icon.blue { background: #e0eef6; color: #3b6c8c; }
+  .insp .icon.orange { background: #f6e4d6; color: #b06530; }
+  .insp .icon.green { background: #ebf3df; color: #4d7a3a; }
+  .insp .icon.red { background: #f5dfdb; color: #b14233; }
+  .insp .icon.gold { background: #f3eedf; color: #8b7530; }
+  .insp .icon.teal { background: #e8f1ee; color: #2b6f6a; }
+
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+  }
+  .chart-card h3 { margin: 0 0 4px; font-size: 14px; font-weight: 600; }
+  .chart-card .desc { font-size: 12px; color: var(--ink-muted); margin-bottom: 14px; }
+  .chart-wrap { position: relative; width: 100%; height: 360px; }
+
+  .load-more-row { display: flex; justify-content: center; margin-top: 18px; }
+  .load-more {
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 9px 22px;
+    font-size: 13px;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all .15s ease;
+    font-family: inherit;
+  }
+  .load-more:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .load-more .arrow { margin-left: 6px; font-family: var(--mono); color: var(--accent); font-size: 12px; }
+  .load-more:hover .arrow { color: #fff; }
+  .timeline-status {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-muted);
+    text-align: center;
+    margin-top: 10px;
+    letter-spacing: 0.04em;
+  }
+
+  .empty {
+    padding: 20px;
+    text-align: center;
+    color: var(--ink-muted);
+    font-style: italic;
+    font-size: 13px;
+  }
+
+  /* Scrum board */
+  .board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .col {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+  }
+  .col h3 {
+    margin: 0 0 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .col h3::before {
+    content: ""; width: 8px; height: 8px; border-radius: 50%;
+  }
+  .col.today h3::before { background: var(--accent); }
+  .col.sprint h3::before { background: var(--blue); }
+  .col.future h3::before { background: var(--gold); }
+  .col li {
+    list-style: none;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    background: var(--surface-2);
+    border-radius: 6px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+  .col li b { color: var(--ink); }
+  .col ul { padding: 0; margin: 0; }
+
+  footer.foot {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-muted);
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  footer.foot a { color: var(--accent); text-decoration: none; }
+  footer.foot a:hover { text-decoration: underline; }
+
+  .compare-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .compare-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: var(--shadow);
+  }
+  .compare-card h3 {
+    font-family: var(--serif);
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .compare-card .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+  .compare-card.cc .dot { background: var(--accent); }
+  .compare-card.ca .dot { background: #10a37f; }
+  .compare-card.ci .dot { background: #4f4b87; }
+  .compare-card p { margin: 0 0 10px; font-size: 13px; color: var(--ink-soft); }
+  .compare-card .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .compare-card .tag {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    background: var(--surface-2);
+    color: var(--ink);
+    padding: 3px 7px;
+    border-radius: 6px;
+    letter-spacing: 0.02em;
+  }
+
+  /* Insp card click affordance */
+  .insp { cursor: pointer; }
+  .insp::after {
+    content: "點擊看細節 →";
+    position: absolute;
+    bottom: 14px;
+    right: 18px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--ink-muted);
+    letter-spacing: 0.04em;
+    opacity: 0;
+    transition: opacity .18s ease, transform .18s ease;
+    transform: translateX(-4px);
+    pointer-events: none;
+  }
+  .insp { position: relative; padding-bottom: 36px; }
+  .insp:hover::after { opacity: 1; transform: translateX(0); color: var(--accent); }
+
+  /* Modal */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(20,18,14,0.5);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 60px 24px 24px;
+    overflow-y: auto;
+    animation: fadeIn .18s ease;
+  }
+  .modal-backdrop.open { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    width: 100%;
+    max-width: 720px;
+    box-shadow: 0 30px 80px -20px rgba(60,40,20,0.35);
+    position: relative;
+    overflow: hidden;
+    animation: slideUp .22s cubic-bezier(.16,.84,.44,1);
+  }
+  @keyframes slideUp { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .modal-head {
+    padding: 22px 26px 18px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: linear-gradient(180deg, #fffdf8 0%, #ffffff 100%);
+  }
+  .modal-head .icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .modal-head .feat {
+    font-family: var(--serif);
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .modal-head .ver {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-muted);
+    margin-top: 4px;
+    letter-spacing: 0.04em;
+  }
+  .modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-size: 16px;
+    display: grid;
+    place-items: center;
+    transition: all .15s ease;
+    z-index: 2;
+  }
+  .modal-close:hover {
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+  }
+  .modal-body {
+    padding: 22px 26px 28px;
+    max-height: calc(90vh - 100px);
+    overflow-y: auto;
+  }
+  .modal-body .lead {
+    color: var(--ink-soft);
+    font-size: 14px;
+    margin: 0 0 18px;
+    padding: 12px 14px;
+    background: var(--accent-soft);
+    border-radius: 8px;
+    border-left: 3px solid var(--accent);
+  }
+  .modal-section { margin-bottom: 22px; }
+  .modal-section:last-child { margin-bottom: 0; }
+  .modal-section h4 {
+    font-family: var(--serif);
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .modal-section h4::before {
+    content: "";
+    width: 4px; height: 14px;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+  .modal-section p {
+    margin: 0 0 8px;
+    color: var(--ink-soft);
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .modal-section p code {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--surface-2);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: var(--ink);
+  }
+  .modal-section p b { color: var(--ink); font-weight: 600; }
+  .modal-section ul {
+    margin: 6px 0 0;
+    padding-left: 0;
+    list-style: none;
+  }
+  .modal-section ul li {
+    color: var(--ink-soft);
+    font-size: 13px;
+    padding: 6px 0 6px 22px;
+    position: relative;
+    line-height: 1.55;
+  }
+  .modal-section ul li::before {
+    content: "▸";
+    position: absolute;
+    left: 4px;
+    top: 6px;
+    color: var(--accent);
+    font-size: 11px;
+  }
+  .modal-section ul li code {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--surface-2);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: var(--ink);
+  }
+  .modal-section ul li b { color: var(--ink); font-weight: 600; }
+  .code-block {
+    background: #1f1d18;
+    color: #f0e9d8;
+    border-radius: 8px;
+    padding: 0;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.55;
+    overflow: hidden;
+    margin: 6px 0 0;
+  }
+  .code-block .lang-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 12px;
+    background: #2a2620;
+    color: #c9bda0;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .code-block .lang-bar .copy-btn {
+    background: transparent;
+    border: 1px solid #4a4234;
+    color: #c9bda0;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    letter-spacing: 0.04em;
+  }
+  .code-block .lang-bar .copy-btn:hover { background: #4a4234; color: #fff; }
+  .code-block pre {
+    margin: 0;
+    padding: 14px 16px;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .code-block .kw { color: #d49b6c; }
+  .code-block .str { color: #a3c08a; }
+  .code-block .com { color: #8a8170; font-style: italic; }
+
+  @media (max-width: 720px) {
+    .wrap { padding: 20px 16px 60px; }
+    h1 { font-size: 24px; }
+    .entry { grid-template-columns: 1fr; gap: 6px; }
+    .board, .compare-grid { grid-template-columns: 1fr; }
+    .search { width: 100%; margin-left: 0; }
+    .filter-bar { flex-direction: column; align-items: stretch; }
+    .tab { min-width: 0; padding: 10px 12px; }
+    .modal-backdrop { padding: 24px 12px; }
+    .modal-head { padding: 18px 18px 14px; }
+    .modal-body { padding: 16px 18px 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="refresh-badge">
+      <span class="pulse"></span>
+      <span>最後更新 <b id="lastRefreshed">2026-06-02 15:11 (Taipei)</b></span>
+      <span class="method-tag" id="refreshMethod" title="此次更新由排程任務自動觸發">排程觸發</span>
+      <span class="schedule">每 2 天自動</span>
+      <button class="refresh-btn" id="manualRefreshBtn" type="button" title="立即觸發更新（背景執行）">
+        <span class="icn">↻</span><span class="lbl">立即更新</span>
+      </button>
+    </div>
+    <div class="eyebrow">Live Brief · 國泰世華 AI Scrum RD</div>
+    <h1>AI Coding Tools 更新摘要</h1>
+    <div class="subtitle">
+      Charlie 你好 — 這是針對 <b>iOS app 工程師 / AI Scrum RD</b> 視角整理的三大 AI 編碼工具變更日誌。
+      上方點 Tab 切換產品，每個產品都有 <b>應用靈感卡片 → 類別分布 → 完整時間軸</b>。
+    </div>
+    <div class="stat-row">
+      <div class="stat"><span class="num" id="totalVersions">61</span><span class="lbl">Total Versions</span></div>
+      <div class="stat"><span class="num">3</span><span class="lbl">Products Tracked</span></div>
+      <div class="stat"><span class="num" id="dateSpan">—</span><span class="lbl">Date Span</span></div>
+      <div class="stat"><span class="num">繁體中文</span><span class="lbl">Lang</span></div>
+    </div>
+  </header>
+
+  <!-- Role picker -->
+  <div class="role-picker">
+    <div class="label"><span class="ic">👤</span>我的角色</div>
+    <div class="chips" id="roleChips"></div>
+    <span class="hint">會自動篩選下方靈感卡，timeline 內容不變</span>
+  </div>
+
+  <!-- Tab bar -->
+  <div class="tab-bar" id="tabBar">
+    <button class="tab active" data-tab="claude-code" type="button">
+      <span class="tab-title"><span class="tab-dot"></span>Claude Code</span>
+      <span class="tab-meta" data-meta-for="claude-code">Anthropic · —</span>
+    </button>
+    <button class="tab" data-tab="codex-app" type="button">
+      <span class="tab-title"><span class="tab-dot"></span>Codex App</span>
+      <span class="tab-meta" data-meta-for="codex-app">OpenAI · —</span>
+    </button>
+    <button class="tab" data-tab="codex-cli" type="button">
+      <span class="tab-title"><span class="tab-dot"></span>Codex CLI</span>
+      <span class="tab-meta" data-meta-for="codex-cli">OpenAI · —</span>
+    </button>
+  </div>
+
+  <!-- ============ CLAUDE CODE PANEL ============ -->
+  <div class="panel active" data-panel="claude-code">
+
+    <section>
+      <h2>
+        <span class="num-tag">01</span>
+        Claude Code · <span class="insp-heading-text" data-product="claude-code">iOS RD 應用靈感</span>
+        <span class="desc" data-desc-for="claude-code">— 把這些新功能變成銀行 APP 團隊的生產力</span>
+      </h2>
+      <div class="insp-grid" id="insp-cc"></div>
+    </section>
+
+    <section>
+      <h2>
+        <span class="num-tag">02</span>
+        類別分布
+        <span class="desc">— 看出 Claude Code 團隊正在重押哪些方向</span>
+      </h2>
+      <div class="chart-card">
+        <h3>變更類別頻次（最近 36 個版本）</h3>
+        <div class="desc">數值代表「該類別被列為重點變更的版本數」</div>
+        <div class="chart-wrap"><canvas id="chart-cc"></canvas></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>
+        <span class="num-tag">03</span>
+        完整版本時間軸
+        <span class="desc">— 點 chip 篩選類別、用搜尋找關鍵字</span>
+      </h2>
+      <div class="filter-bar">
+        <div class="chips-wrap" id="chips-cc"></div>
+        <input class="search" data-product="claude-code" type="search" placeholder="搜尋功能、指令、env var…" />
+      </div>
+      <div class="timeline" id="timeline-cc"></div>
+      <div class="empty" id="empty-cc" style="display:none;">沒有符合條件的版本，試著清空篩選或關鍵字。</div>
+      <div class="timeline-status" id="status-cc"></div>
+      <div class="load-more-row" id="more-cc" style="display:none;">
+        <button class="load-more" data-product="claude-code" type="button">顯示更多版本 <span class="arrow">↓</span></button>
+      </div>
+    </section>
+
+    <section>
+      <h2>
+        <span class="num-tag">04</span>
+        團隊合作 AI 工作流建議
+        <span class="desc">— iOS / Android / Backend / Designer / QA / PM 之間怎麼用 AI 協作</span>
+      </h2>
+      <div class="board">
+        <div class="col today">
+          <h3>馬上能落地的合作模式</h3>
+          <ul>
+            <li><b>共用 <code>/recap</code> 格式做 daily standup</b>：所有人用同一個 prompt 產進度摘要貼進 Slack #ios-daily — PM/RD/QA 看到結構化資訊一致。</li>
+            <li><b>PR 自動跑 <code>/code-review</code></b>：每支 PR 推上去後 webhook 觸發，AI 先給 review，reviewer 從「找問題」變「審判 AI 找的問題」，瓶頸不在人。</li>
+            <li><b>team-skills repo 共建</b>：你已經把 cathay-ai-changelog 上架了，鼓勵每位同事把自己常用 prompt / skill 也推上去，每週看誰新增了什麼。</li>
+          </ul>
+        </div>
+        <div class="col sprint">
+          <h3>建立團隊規範與共用資源</h3>
+          <ul>
+            <li><b>定義 AI 介入邊界</b>：用 hooks 列出禁止 AI 改的檔案（<code>Secrets.swift</code>、DB Migration、prod config），寫成 plugin 內 hook 全團隊套用。</li>
+            <li><b>跨角色 skill 互相產出</b>：QA 寫 <code>test-case</code> skill 給 RD 用、Designer 寫 <code>design-token</code> skill 同步三平台、PM 寫 <code>stakeholder-recap</code> skill — 每個 skill 標清楚適用角色。</li>
+            <li><b>PR review 三層分工</b>：AI（<code>/code-review</code>）→ Peer（同 function）→ Senior（架構決策）。每層各專注，不重複工。</li>
+          </ul>
+        </div>
+        <div class="col future">
+          <h3>長期演進：把 AI 變團隊基建</h3>
+          <ul>
+            <li><b>內網 exec-server / plugin marketplace</b>：codex exec-server 或 Claude plugin 部署在內網 build agent，CI 不用 spawn 新 process，全團隊共享同一份規則。</li>
+            <li><b>AI 工作流 retro</b>：每 Sprint retro 花 10 分鐘看「哪些 prompt 真有產出、哪些只是噪音」，淘汰 / 改寫 skill 與 hook。把 AI 使用當成有壽命的資產。</li>
+            <li><b>量化團隊 AI 使用</b>：用 OTEL + status line 收集 effort 使用、plugin 命中率、subagent 完工率 — 資料驅動規範，不是憑感覺。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ CODEX APP PANEL ============ -->
+  <div class="panel" data-panel="codex-app">
+
+    <section>
+      <h2>
+        <span class="num-tag">01</span>
+        Codex App · <span class="insp-heading-text" data-product="codex-app">iOS RD 應用靈感</span>
+        <span class="desc" data-desc-for="codex-app">— OpenAI 的桌面 / IDE 體驗對工作流的價值</span>
+      </h2>
+      <div class="insp-grid" id="insp-ca"></div>
+    </section>
+
+    <section>
+      <h2>
+        <span class="num-tag">02</span>
+        類別分布
+        <span class="desc">— 看出 Codex App 近期重點</span>
+      </h2>
+      <div class="chart-card">
+        <h3>變更類別頻次</h3>
+        <div class="desc">基於可擷取到的最新更新</div>
+        <div class="chart-wrap"><canvas id="chart-ca"></canvas></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>
+        <span class="num-tag">03</span>
+        完整版本時間軸
+        <span class="desc">— 點 chip 篩選類別、用搜尋找關鍵字</span>
+      </h2>
+      <div class="filter-bar">
+        <div class="chips-wrap" id="chips-ca"></div>
+        <input class="search" data-product="codex-app" type="search" placeholder="搜尋 model、feature…" />
+      </div>
+      <div class="timeline" id="timeline-ca"></div>
+      <div class="empty" id="empty-ca" style="display:none;">沒有符合條件的版本，試著清空篩選或關鍵字。</div>
+      <div class="timeline-status" id="status-ca"></div>
+      <div class="load-more-row" id="more-ca" style="display:none;">
+        <button class="load-more" data-product="codex-app" type="button">顯示更多版本 <span class="arrow">↓</span></button>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ CODEX CLI PANEL ============ -->
+  <div class="panel" data-panel="codex-cli">
+
+    <section>
+      <h2>
+        <span class="num-tag">01</span>
+        Codex CLI · <span class="insp-heading-text" data-product="codex-cli">iOS RD 應用靈感</span>
+        <span class="desc" data-desc-for="codex-cli">— 終端機驅動的 agentic coding，可融入 CI / 銀行內網開發</span>
+      </h2>
+      <div class="insp-grid" id="insp-ci"></div>
+    </section>
+
+    <section>
+      <h2>
+        <span class="num-tag">02</span>
+        類別分布
+        <span class="desc">— Codex CLI 近期重押哪些主題</span>
+      </h2>
+      <div class="chart-card">
+        <h3>變更類別頻次</h3>
+        <div class="desc">基於可擷取到的最新更新</div>
+        <div class="chart-wrap"><canvas id="chart-ci"></canvas></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>
+        <span class="num-tag">03</span>
+        完整版本時間軸
+        <span class="desc">— 點 chip 篩選類別、用搜尋找關鍵字</span>
+      </h2>
+      <div class="filter-bar">
+        <div class="chips-wrap" id="chips-ci"></div>
+        <input class="search" data-product="codex-cli" type="search" placeholder="搜尋 sandbox、MCP、TUI…" />
+      </div>
+      <div class="timeline" id="timeline-ci"></div>
+      <div class="empty" id="empty-ci" style="display:none;">沒有符合條件的版本，試著清空篩選或關鍵字。</div>
+      <div class="timeline-status" id="status-ci"></div>
+      <div class="load-more-row" id="more-ci" style="display:none;">
+        <button class="load-more" data-product="codex-cli" type="button">顯示更多版本 <span class="arrow">↓</span></button>
+      </div>
+    </section>
+
+    <section>
+      <h2>
+        <span class="num-tag">04</span>
+        Claude Code vs Codex App vs Codex CLI
+        <span class="desc">— 三者怎麼互補在你的 iOS / Scrum 工作流</span>
+      </h2>
+      <div class="compare-grid">
+        <div class="compare-card cc">
+          <h3><span class="dot"></span>Claude Code</h3>
+          <p>定位：<b>長期專案與團隊工具鏈</b>。Plugins、Hooks、Subagents、Skills 讓你建立可重用的銀行 APP 內部工具與流程把關。</p>
+          <div class="tags">
+            <span class="tag">Plugins</span><span class="tag">Hooks</span><span class="tag">Subagents</span><span class="tag">/ultrareview</span>
+          </div>
+        </div>
+        <div class="compare-card ca">
+          <h3><span class="dot"></span>Codex App</h3>
+          <p>定位：<b>桌面 + IDE 內的對話體驗</b>。Mid-turn steering、forking、跨 IDE 開檔、PDF 預覽，適合做 spec 討論與探索式 prototyping。</p>
+          <div class="tags">
+            <span class="tag">Forking</span><span class="tag">Mid-turn steer</span><span class="tag">VS Code/Cursor</span><span class="tag">GPT-5.3-Codex</span>
+          </div>
+        </div>
+        <div class="compare-card ci">
+          <h3><span class="dot"></span>Codex CLI</h3>
+          <p>定位：<b>非互動式 + CI / 內網嵌入</b>。Realtime 串流、proxy-only sandbox（Windows）、exec-server、JS REPL — 適合做 nightly 檢查與企業合規要求。</p>
+          <div class="tags">
+            <span class="tag">exec-server</span><span class="tag">Realtime V2</span><span class="tag">Proxy sandbox</span><span class="tag">js_repl</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="foot">
+    <span>
+      資料來源：
+      <a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener">Claude Code</a> ·
+      <a href="https://developers.openai.com/codex/changelog?type=codex-app" target="_blank" rel="noopener">Codex App</a> ·
+      <a href="https://developers.openai.com/codex/changelog?type=codex-cli" target="_blank" rel="noopener">Codex CLI</a>
+    </span>
+    <span id="footerSpan">覆蓋 —</span>
+  </footer>
+</div>
+
+<div class="refresh-toast" id="refreshToast"></div>
+
+<!-- Modal for inspiration details -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" id="modalCard" role="dialog" aria-modal="true">
+    <button class="modal-close" id="modalClose" type="button" aria-label="關閉">×</button>
+    <div class="modal-head">
+      <div class="icon" id="modalIcon"></div>
+      <div>
+        <div class="feat" id="modalFeat"></div>
+        <div class="ver" id="modalVer"></div>
+      </div>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<script>
+  /* ===========================
+     DATA
+     =========================== */
+
+  const DATA_CC = [
+    {v:"2.1.160", date:"2026-06-02", cat:"Permissions/Security", body:"寫 shell 啟動檔（<code>.zshenv</code>、<code>.zlogin</code>、<code>.bash_login</code>）或 <code>~/.config/git/</code> 前先 prompt；<code>acceptEdits</code> 模式寫 <code>.npmrc</code>、<code>.yarnrc*</code>、<code>.bazelrc</code>、<code>.devcontainer/</code> 等可執行的 build 設定也先問。<b>動態工作流的觸發關鍵字從 <code>workflow</code> 改為 <code>ultracode</code></b>（紫色高亮）。Edit 工具現在認 grep 為 read-before-edit 條件。修 Windows WSL 剪貼簿用 PowerShell interop。"},
+    {v:"2.1.159", date:"2026-05-31", cat:"Performance/Bug Fix", body:"內部基礎設施改善（無使用者面向變更）。"},
+    {v:"2.1.158", date:"2026-05-30", cat:"Settings/Config", body:"<b>Auto mode 開放到 Bedrock / Vertex / Foundry</b>（限 Opus 4.7、4.8）；以 <code>CLAUDE_CODE_ENABLE_AUTO_MODE=1</code> 啟用。"},
+    {v:"2.1.157", date:"2026-05-29", cat:"Plugins/MCP", body:"<b><code>.claude/skills</code> 目錄下的 plugins 自動載入</b>，免 marketplace；新 <code>claude plugin init &lt;name&gt;</code> 腳手架；<code>/plugin</code> 參數自動補全（子命令、已裝 plugin、marketplace）；<code>claude agents</code> 尊重 settings.json 的 <code>agent</code> 欄位（<code>--agent</code> 可覆寫）；<b><code>EnterWorktree</code> 可中途切換 Claude-managed worktree</b>；<code>OTEL_LOG_TOOL_DETAILS=1</code> 時 <code>tool_decision</code> 事件含 <code>tool_parameters</code>；WSL 圖片貼上 / 拖曳支援強化；多項 <code>--resume</code> 與 <code>/model</code> picker 修復。"},
+    {v:"2.1.156", date:"2026-05-29", cat:"Performance/Bug Fix", body:"修復使用 <b>Opus 4.8</b> 時 thinking blocks 被修改導致 API 錯誤的問題。"},
+    {v:"2.1.154", date:"2026-05-28", cat:"Performance/Bug Fix", body:"<b>Opus 4.8 發布</b>，預設 high effort、<code>/effort xhigh</code> 應戰最難任務；<b>動態工作流</b>：請 Claude 建 workflow 即可在背景同時編排數十到上百個 agent，<code>/workflows</code> 檢視。Opus 4.8 fast mode 半價提速 2.5×；Lean system prompt 成為 Haiku/Sonnet/Opus 4.7 以外的預設。"},
+    {v:"2.1.153", date:"2026-05-28", cat:"Plugins/MCP", body:"新增 <code>skipLfs</code> marketplace 來源選項略過 Git LFS；status line 指令收到 <code>COLUMNS</code>/<code>LINES</code>；<code>claude agents</code> dispatch 自動補全本機 slash 指令與 skills；<code>/model</code> 預設儲存改為新 sessions 預設（按 <code>s</code> 僅當前 session）；多項 subagent MCP 修復。"},
+    {v:"2.1.152", date:"2026-05-27", cat:"Hooks", body:"<code>/code-review --fix</code> 套用 review 改動到工作樹；<b>skills 與 slash 指令 frontmatter 可設 <code>disallowed-tools</code></b>；新 <code>/reload-skills</code> 不需重啟即重掃 skills 目錄；新 <code>MessageDisplay</code> hook 可改寫或隱藏 assistant 文字；<code>SessionStart</code> hook 可回傳 <code>reloadSkills</code> 或設 <code>sessionTitle</code>。"},
+    {v:"2.1.149", date:"2026-05-22", cat:"UI/UX", body:"<code>/usage</code> 顯示 skills、subagents、plugins、每個 MCP 伺服器 cost 的逐類拆解；<code>/diff</code> 詳細頁可鍵盤捲動；markdown 渲染 GFM 任務清單核取方塊；修補 PowerShell 內建 <code>cd</code> 函式 (<code>cd..</code>/<code>cd\\</code>) 繞過權限檢查的安全問題。"},
+    {v:"2.1.147", date:"2026-05-21", cat:"Slash Commands", body:"<code>Ctrl+T</code> 釘選背景 session 永不閒置回收，可就地重啟套用更新；<b><code>/simplify</code> 改名為 <code>/code-review</code></b>，依 effort 回報 bug，可 <code>--comment</code> 貼進 PR；auto-updater 更聰明（網路重試、錯誤分類）；提示歷史去重連續重複。"},
+    {v:"2.1.145", date:"2026-05-19", cat:"IDE/Editor", body:"<code>claude agents --json</code> 以 JSON 列出活躍 sessions（tmux-resurrect/status bar）；OTEL 新增 <code>agent_id</code>/<code>parent_agent_id</code>；status line JSON 含 GitHub repo/PR；<code>/plugin</code> Discover/Browse 安裝前先看 commands、agents、skills、hooks、MCP/LSP；Read tool 超大檔回 PARTIAL view 而非硬錯。"},
+    {v:"2.1.144", date:"2026-05-19", cat:"UI/UX", body:"<b>背景 session 支援 <code>/resume</code></b>，標記 <code>bg</code>；背景 subagent 完工通知含 elapsed；<code>/plugin</code> 顯示最後更新時間；<code>/model</code> 改為僅變當前 session（按 <code>d</code> 設預設）；<code>/extra-usage</code> 改名 <code>/usage-credits</code>；修復 <code>api.anthropic.com</code> 不可達時啟動最久 75s 卡住。"},
+    {v:"2.1.143", date:"2026-05-15", cat:"Plugins/MCP", body:"<b>Plugin 依賴強制</b>：<code>claude plugin disable</code> 拒絕被依賴 plugin、<code>enable</code> 自動連帶；<code>/plugin</code> marketplace 顯示預估 context 成本；新 <code>worktree.bgIsolation: \"none\"</code> 讓背景 session 直接編輯工作樹；PowerShell tool 預設加 <code>-ExecutionPolicy Bypass</code>。"},
+    {v:"2.1.142", date:"2026-05-14", cat:"Settings/Config", body:"<code>claude agents</code> 新增 <code>--add-dir</code>、<code>--settings</code>、<code>--mcp-config</code>、<code>--plugin-dir</code>、<code>--permission-mode</code>、<code>--model</code>、<code>--effort</code>、<code>--dangerously-skip-permissions</code>；<b>Fast mode 預設改用 Opus 4.7</b>（要 4.6 設 <code>CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE=1</code>）；plugin 根 <code>SKILL.md</code> 視為 skill。"},
+    {v:"2.1.141", date:"2026-05-13", cat:"Hooks", body:"hook JSON 輸出新增 <code>terminalSequence</code> 可發桌面通知、視窗標題、鈴聲；<code>CLAUDE_CODE_PLUGIN_PREFER_HTTPS</code> 走 HTTPS 拉 GitHub plugin；<code>ANTHROPIC_WORKSPACE_ID</code> workload identity；<code>claude agents --cwd</code>；rewind 選單加 <b>Summarize up to here</b>。"},
+    {v:"2.1.139", date:"2026-05-11", cat:"IDE/Editor", body:"<b>Agent View（Research Preview）：<code>claude agents</code> 一個畫面看所有 Claude session</b>（執行中、待回應、完工）；新 <code>/goal</code> 指令跨 turn 持續工作直到達成；新 <code>/scroll-speed</code>；<code>claude plugin details</code> 顯示元件清單與預估 token 成本；transcript view 支援 <code>{</code>/<code>}</code> 跳到使用者提示。"},
+    {v:"2.1.136", date:"2026-05-08", cat:"Settings/Config", body:"新增 <code>CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL</code>；<code>settings.autoMode.hard_deny</code> 無條件阻擋規則；修復 VS Code/JetBrains/SDK 中 <code>/clear</code> 後 MCP 伺服器消失、OAuth refresh token 並發遺失（多 MCP 伺服器不再每天重登）、plan mode 不阻擋有 <code>Edit</code> allow 規則之檔案寫入。"},
+    {v:"2.1.133", date:"2026-05-07", cat:"Settings/Config", body:"新增 <code>worktree.baseRef</code> 設定（<code>fresh</code>/<code>head</code>）；<code>sandbox.bwrapPath</code>/<code>sandbox.socatPath</code> managed settings；hooks 可讀 <code>effort.level</code> 與 <code>$CLAUDE_EFFORT</code>；修復多 session 因 token refresh race 一起 401；修復 subagents 無法用 Skill tool 找到 project/user/plugin skills。"},
+    {v:"2.1.132", date:"2026-05-06", cat:"Settings/Config", body:"新增 <code>CLAUDE_CODE_SESSION_ID</code> 環境變數可在 Bash 子程序使用、新增 <code>CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN</code> opt-out；多項 TUI 修復（貼上、全螢幕白屏、vim NFD 字元、slash autocomplete、status line context counts）。"},
+    {v:"2.1.131", date:"2026-05-06", cat:"IDE/Editor", body:"修復 Windows 上 VS Code extension 啟動問題；Mantle endpoint 認證標頭修正。"},
+    {v:"2.1.129", date:"2026-05-06", cat:"Plugins/MCP", body:"新增 <code>--plugin-url &lt;url&gt;</code> 旗標可從 URL 拉取 plugin .zip；plugin manifest 中 <code>themes</code>/<code>monitors</code> 移到 <code>experimental</code>；gateway <code>/v1/models</code> 探索改為 opt-in。"},
+    {v:"2.1.128", date:"2026-05-04", cat:"Plugins/MCP", body:"<code>/mcp</code> 顯示 tool 數量並標出 0-tool servers；<code>--plugin-dir</code> 支援 .zip；<b>workspace</b> 變保留的 MCP 伺服器名；subagent prompt-cache 修復（cache_creation 約降至 1/3）；MCP 重連訊息抑制。"},
+    {v:"2.1.126", date:"2026-05-01", cat:"Permissions/Security", body:"<code>/model</code> picker 列出 gateway 模型；新增 <code>claude project purge</code>；<code>--dangerously-skip-permissions</code> 不再可繞過 .claude/.git；OAuth code 支援 WSL2/SSH 貼上 fallback；<b>allowManagedDomainsOnly 安全修復</b>。"},
+    {v:"2.1.123", date:"2026-04-29", cat:"Performance/Bug Fix", body:"修復當 <code>CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1</code> 時 OAuth 401 重試迴圈。"},
+    {v:"2.1.122", date:"2026-04-28", cat:"Settings/Config", body:"新增 <code>ANTHROPIC_BEDROCK_SERVICE_TIER</code> 環境變數；<b>把 PR URL 貼進 <code>/resume</code> 會自動找對應 session</b>（GitHub/GitLab/Bitbucket）；OTel 新增 <code>at_mention</code> 事件；多項 <code>/branch</code>、<code>/model</code> Bedrock 修復。"},
+    {v:"2.1.121", date:"2026-04-28", cat:"Plugins/MCP", body:"MCP 新增 <code>alwaysLoad</code> 選項（跳過 tool-search 延遲載入）；<code>claude plugin prune</code> 清理孤兒依賴；<code>/skills</code> 加搜尋框；<b>PostToolUse hooks 可用 <code>updatedToolOutput</code> 替換任意工具輸出</b>；iTerm2 在 tmux 下也能 <code>/copy</code>。"},
+    {v:"2.1.120", date:"2026-04-28", cat:"IDE/Editor", body:"Windows: 不再強制需要 Git for Windows（PowerShell fallback）；新增非互動式 <code>claude ultrareview [target]</code>；skills 可使用 <code>${CLAUDE_EFFORT}</code>；多 connector 啟動加速。"},
+    {v:"2.1.119", date:"2026-04-23", cat:"Settings/Config", body:"<code>/config</code> 設定持久化到 <code>~/.claude/settings.json</code> 並有正確 override 順序；新 <code>prUrlTemplate</code> 設定；<code>--from-pr</code> 支援 GitLab/Bitbucket/GH Enterprise；<code>--print</code> 尊重 agent frontmatter；PowerShell auto-approve。"},
+    {v:"2.1.118", date:"2026-04-23", cat:"UI/UX", body:"<b>vim 新增 visual (v) 與 visual-line (V) 模式</b>；<code>/cost</code>+<code>/stats</code> 合併為 <code>/usage</code>；<code>/theme</code> 可命名自訂主題；hooks 可呼叫 MCP 工具；<code>DISABLE_UPDATES</code> 環境變數；<code>claude plugin tag</code>。"},
+    {v:"2.1.117", date:"2026-04-22", cat:"Subagents/Skills", body:"<code>CLAUDE_CODE_FORK_SUBAGENT=1</code> 在外部建置啟用 forked subagents；<code>--agent</code> 載入 agent frontmatter 中的 <code>mcpServers</code>；<code>/model</code> 選擇跨重啟保留；原生 macOS/Linux Glob/Grep 改用內建 bfs/ugrep；預設 effort 升至 <b>high</b>。"},
+    {v:"2.1.116", date:"2026-04-20", cat:"Performance/Bug Fix", body:"<code>/resume</code> 在 40MB+ session 約快 67%；MCP 啟動延後 <code>resources/templates/list</code>；VS Code/Cursor/Windsurf 全螢幕滾動更平順；thinking spinner 顯示 inline 進度；sandbox dangerous-path 安全修復。"},
+    {v:"2.1.114", date:"2026-04-18", cat:"Performance/Bug Fix", body:"修復 agent teammate 請求權限時 permission dialog 崩潰問題。"},
+    {v:"2.1.113", date:"2026-04-17", cat:"Performance/Bug Fix", body:"CLI 改為 spawn 原生 Claude Code binary（取代 bundled JS）；新增 <code>sandbox.network.deniedDomains</code>；長 URL 換行後仍可點擊；<code>/loop</code> 可中斷喚醒；<code>/extra-usage</code> 從 Remote Control 可用；多項 Bash 安全強化。"},
+    {v:"2.1.112", date:"2026-04-16", cat:"Performance/Bug Fix", body:"修復 auto mode 下 \"claude-opus-4-7 is temporarily unavailable\" 問題。"},
+    {v:"2.1.111", date:"2026-04-16", cat:"Subagents/Skills", body:"<b>Claude Opus 4.7 xhigh 釋出</b>；Max 訂閱者可在 Opus 4.7 用 auto mode；新 <code>xhigh</code> effort level；<code>/effort</code> 互動 slider；\"Auto (match terminal)\" 主題；<b>新 <code>/less-permission-prompts</code> skill</b>；<b>新 <code>/ultrareview</code> 雲端平行多 agent code review</b>；PowerShell tool 漸進釋出。"},
+    {v:"2.1.110", date:"2026-04-15", cat:"UI/UX", body:"新 <code>/tui</code> 指令與 <code>tui</code> 設定（<code>/tui fullscreen</code> 無閃爍）；Remote Control 啟用時提供 push notification 工具；<code>Ctrl+O</code> 改為只切 verbose；新 <code>/focus</code>；<code>--resume</code>/<code>--continue</code> 可復活排程任務。"},
+    {v:"2.1.109", date:"2026-04-15", cat:"UI/UX", body:"改善 extended-thinking indicator，加入輪播進度提示。"},
+    {v:"2.1.108", date:"2026-04-14", cat:"Slash Commands", body:"新 <code>ENABLE_PROMPT_CACHING_1H</code>（API key/Bedrock/Vertex/Foundry 1 小時 prompt cache TTL）；<b>新 recap 功能與 <code>/recap</code> 指令</b>；<b>模型可透過 Skill 工具呼叫 <code>/init</code>、<code>/review</code>、<code>/security-review</code></b>；<code>/undo</code> 為 <code>/rewind</code> 別名。"},
+    {v:"2.1.107", date:"2026-04-14", cat:"UI/UX", body:"在長時間操作時更早顯示思考提示。"},
+    {v:"2.1.105", date:"2026-04-13", cat:"Hooks", body:"<code>EnterWorktree</code> 新增 <code>path</code> 參數；<b>PreCompact hook 可阻擋 compaction</b>；plugin manifest <code>monitors</code> 鍵支援背景程序；<code>/proactive</code> 為 <code>/loop</code> 別名；卡住的 stream 5 分鐘後 abort+非串流重試；<code>/doctor</code> 按 <code>f</code> 一鍵修復。"},
+    {v:"2.1.101", date:"2026-04-10", cat:"Slash Commands", body:"<b>新 <code>/team-onboarding</code> 指令</b>；預設信任 OS CA 憑證庫；<code>/ultraplan</code> 自動建立預設 cloud 環境；更好的 tool-not-available 錯誤；多項 <code>/resume</code> 修復。"},
+    {v:"2.1.98", date:"2026-04-09", cat:"Permissions/Security", body:"登入流程新增互動式 Google Vertex AI setup wizard；新 <code>CLAUDE_CODE_PERFORCE_MODE</code>；新 Monitor 工具（背景腳本事件流）；<b>Linux 子程序加 PID namespace</b>；<code>--exclude-dynamic-system-prompt-sections</code> 跨用戶 cache；<code>/agents</code> 改為 Running/Library 分頁。"},
+    {v:"2.1.97", date:"2026-04-08", cat:"UI/UX", body:"<code>NO_FLICKER</code> 模式下 <code>Ctrl+O</code> 切 focus view；status line 新 <code>refreshInterval</code>；<code>workspace.git_worktree</code> 進入 status line JSON；<code>/agents</code> 顯示 <code>● N running</code>；Cedar policy syntax highlighting。"},
+    {v:"2.1.96", date:"2026-04-08", cat:"Performance/Bug Fix", body:"修復 Bedrock 在 <code>AWS_BEARER_TOKEN_BEDROCK</code> / <code>CLAUDE_CODE_SKIP_BEDROCK_AUTH</code> 下 403 問題。"},
+    {v:"2.1.94", date:"2026-04-07", cat:"Settings/Config", body:"Amazon Bedrock 透過 Mantle 支援；API/Bedrock/Vertex/Foundry/Team/Enterprise 預設 effort 從 medium → high；MCP send-message 支援可點擊 Slack channel header；plugin output styles 加 <code>keep-coding-instructions</code> frontmatter；<code>UserPromptSubmit</code> hook 加 <code>sessionTitle</code>。"},
+    {v:"2.1.92", date:"2026-04-04", cat:"Settings/Config", body:"新 <code>forceRemoteSettingsRefresh</code> policy（fail-closed 啟動）；互動式 Bedrock setup wizard；<code>/cost</code> 加 per-model + cache-hit 細分；<code>/release-notes</code> 互動 picker；<b>移除 <code>/tag</code> 與 <code>/vim</code></b>。"},
+    {v:"2.1.91", date:"2026-04-02", cat:"Plugins/MCP", body:"MCP 工具結果 size 可透過 <code>_meta[\"anthropic/maxResultSizeChars\"]</code> 覆寫（最高 500K）；<code>disableSkillShellExecution</code> 設定；<code>claude-cli://</code> deep link 支援多行 prompt；<b>plugins 可在 <code>bin/</code> 內附執行檔</b>；Edit 工具用更短 anchor。"},
+    {v:"2.1.90", date:"2026-04-01", cat:"Slash Commands", body:"新 <code>/powerup</code> 互動課程（含動畫）；<code>CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE</code>；rate-limit 對話框無限迴圈修復；auto mode 尊重使用者明確邊界；SSE transport 大 frame 改為線性時間。"},
+    {v:"2.1.89", date:"2026-04-01", cat:"Hooks", body:"PreToolUse hooks 新增 <code>\"defer\"</code> 權限決策（headless 暫停/恢復）；<code>CLAUDE_CODE_NO_FLICKER=1</code>（無閃爍 alt-screen）；<b>新 <code>PermissionDenied</code> hook</b>；@-mention 自動完成支援命名 subagent；<code>MCP_CONNECTION_NONBLOCKING=true</code>；thinking summaries 預設關閉。"},
+    {v:"2.1.87", date:"2026-03-29", cat:"Performance/Bug Fix", body:"修復 Cowork Dispatch 訊息派發問題。"},
+    {v:"2.1.86", date:"2026-03-27", cat:"Subagents/Skills", body:"新增 <code>X-Claude-Code-Session-Id</code> 標頭以利 proxy 聚合；<code>.jj</code>/<code>.sl</code> 排除於 Grep/autocomplete；Bedrock/Vertex/Foundry prompt-cache 命中率提升；<code>/skills</code> 描述上限 250 字；<code>/skills</code> 字母排序。"},
+    {v:"2.1.85", date:"2026-03-26", cat:"Hooks", body:"新 <code>CLAUDE_CODE_MCP_SERVER_NAME</code>/<code>_URL</code> env vars 提供給 <code>headersHelper</code>；<b>hooks 新增條件式 <code>if</code> 欄位（permission-rule 語法）</b>；MCP OAuth 遵循 RFC 9728 PRM；PreToolUse hook 可透過 <code>updatedInput</code> 滿足 <code>AskUserQuestion</code>；transcript 為排程任務加 timestamp marker。"},
+    {v:"2.1.84", date:"2026-03-26", cat:"IDE/Editor", body:"<b>Windows PowerShell tool（opt-in preview）</b>；新 <code>CLAUDE_STREAM_IDLE_TIMEOUT_MS</code>；新 <code>TaskCreated</code> hook；<code>WorktreeCreate</code> hook 支援 HTTP；<code>allowedChannelPlugins</code> managed 設定；75 分鐘閒置會建議 <code>/clear</code>；裸 <code>#123</code> 不再被自動連結。"},
+    {v:"2.1.83", date:"2026-03-25", cat:"Hooks", body:"<code>managed-settings.d/</code> drop-in 目錄；<b>新 <code>CwdChanged</code> + <code>FileChanged</code> hooks</b>；<code>sandbox.failIfUnavailable</code> 設定；<code>disableDeepLinkRegistration</code>；<code>CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1</code> 清除子程序憑證；<b>transcript 搜尋（在 Ctrl+O 中按 /）</b>；<code>Ctrl+X Ctrl+E</code> 外部編輯器；<code>[Image #N]</code> chip。"}
+  ];
+
+  const DATA_CA = [
+    {v:"2026-05-28", date:"2026-05-28", cat:"UI/UX", title:"Windows 支援 Computer Use 與行動端遠端控制", body:"<b>Computer Use 登陸 Windows</b>：Codex 可在 Windows 桌面前景看見、點擊、輸入操作原生 App。<b>Remote control</b> 也支援 Windows 主機，可從 ChatGPT iOS/Android 或 Mac 上的 Codex 啟動並追蹤 Windows 上的工作。Profile 區新增使用量與 token 活動，past thread 搜尋擴及對話內容與 Git branch 名稱。"},
+    {v:"2026-05-13", date:"2026-05-13", cat:"Remote/Mobile", title:"從 ChatGPT 手機 App 遠端使用 Codex", body:"新增 <b>Remote connections</b>：ChatGPT iOS/Android 可連線到執行 Codex App 的 Mac 主機，沿用該機器的專案、檔案、認證、plugin、skill 與設定（亦支援 SSH host）。同時 <b>Hooks GA</b>、<b>Codex access tokens</b>（信任自動化用）與企業 admin setup 文件上線。"},
+    {v:"2026-05-08", date:"2026-05-08", cat:"UI/UX", title:"Hooks 信任審查流程", body:"新增 <b>in-app trust review</b> 流程給 hooks，未完成設定前 Hooks 設定頁仍可進入。修復 Windows 終端機 <code>Ctrl+V</code>、外部連結改在系統瀏覽器開啟、feedback slash command 綁定原 thread 等多項桌面 regression。"},
+    {v:"2026-05-05", date:"2026-05-05", cat:"UI/UX", title:"語音聽寫字典與圖片 lightbox 強化", body:"新增 <b>dictation cleanup</b> 與可設定的聽寫字典（含人名、檔案路徑、程式符號）。圖片 lightbox 加入縮放與下載；in-app 瀏覽器留言錨點在捲動與縮放下保持對齊；PR 建立與重連流程更穩定。"},
+    {v:"2026-04-24", date:"2026-04-24", cat:"UI/UX", title:"Realtime 委派提示與多項桌面修復", body:"在 realtime 委派訊息加上 tooltip 說明會以周圍語音對話為 context。修復長 review 檔案的搜尋跳轉、embedded MCP 面板於全螢幕切換時不再重啟、舊版 macOS 全域聽寫熱鍵與 tray crash 等問題。"},
+    {v:"2026-04-20", date:"2026-04-20", cat:"UI/UX", title:"Composer 支援本地 branch 搜尋與可摺疊側欄", body:"新增 composer 內 <b>local branch search</b> 與非圖片檔案貼上、<b>可摺疊側欄區段</b>、tray 顯示 usage limit、命令面板主題切換。Review diff 批次與狀態保留更穩定。"},
+    {v:"2026-04-16", date:"2026-04-16", cat:"UI/UX", title:"🎉 Codex 擴展為通用工作空間（重大更新）", body:"重大更新：新增 <b>in-app browser</b>（可對渲染頁面留言）、<b>Computer Use</b>（操作 macOS App）、無需先選資料夾的 <b>Chats</b>、<b>thread automations</b>、<b>task sidebar</b>、context-aware suggestions、GitHub PR 流程嵌入、<b>artifact viewer</b>（預覽 PDF/試算表/簡報）、<b>Memories</b>。另含 SSH remote connections alpha、多終端機、Windows 系統匣、多視窗、Intel Mac 支援。"},
+    {v:"2026-04-12", date:"2026-04-12", cat:"UI/UX", title:"命令選單檔案搜尋與側欄豐富預覽", body:"新增 command-menu 檔案搜尋（<code>Cmd+P</code> 進入 workspace 檔案搜尋）、側欄 file viewer 支援圖片/PDF/Markdown 預覽、每個 thread 獨立 terminal tabs、選取文字 <b>Ask Codex</b> overlay、Help 選單回饋入口。"},
+    {v:"2026-04-10", date:"2026-04-10", cat:"Cloud/Web", title:"Windows Store 更新器與 PR 流程擴充", body:"新增 <b>Windows Store updater</b>。PR 流程加上活動 timeline、PR 頁面留言、push modal 推送選項。Thread 側欄新增 workspace 檔案 tabs、tab 拖曳排序、run action 編輯與登出確認。"},
+    {v:"2026-04-01", date:"2026-04-01", cat:"UI/UX", title:"原生 Windows 更新器與 workspace 設定", body:"新增 workspace 設定、MCP 核准面板的 <b>Don't ask again</b>、<b>原生 Windows updater</b>（含 MSIX）與 Windows 系統匣常駐選單、automation composer 內 <code>@</code> mention App/檔案、subagent diff 統計、artifact cards。"},
+    {v:"2026-03-24", date:"2026-03-24", cat:"UI/UX", title:"Thread 搜尋與 VS Code 設定同步", body:"新增 <b>past thread 搜尋</b>（含側欄捷徑與跳到最近 thread 的快捷鍵）、一鍵封存專案所有本地 thread。Codex App 與 <b>VS Code extension 設定雙向同步</b>，extension 新增設定入口。"},
+    {v:"2026-03-18", date:"2026-03-18", cat:"UI/UX", title:"從任意訊息分叉、Slash 切換模型", body:"<b>對話分叉</b>不再只能從最新一則訊息開始。新增切換模型與 reasoning level 的 slash command，且可在草稿句中插入。Plan mode 問題加上通知提示。"},
+    {v:"2026-03-12", date:"2026-03-12", cat:"UI/UX", title:"主題自訂與 Automations 改版", body:"設定中可選擇 <b>base theme</b> 並調整 accent/background/foreground 色與 UI/code 字型，可分享自訂主題。<b>Automations 改版</b>：可選本地或 worktree 執行、自訂 reasoning level 與模型，並提供範本。"},
+    {v:"2026-03-11", date:"2026-03-11", cat:"IDE/Editor", title:"Codex 可讀取整合終端機輸出", body:"Codex 能 <b>讀取目前 thread 的 integrated terminal</b>，可確認 dev server 狀態或回查失敗的 build 輸出。"},
+    {v:"2026-03-04", date:"2026-03-04", cat:"IDE/Editor", title:"Codex App for Windows 正式推出", body:"<b>Codex App 正式登陸 Windows</b>，使用 PowerShell 與原生 Windows sandbox 提供受限權限，無需 WSL/VM 即可使用。完整支援 Skills、Automations、Worktrees；偏好 WSL 者可切換 agent 與終端機進 WSL。可由 Microsoft Store 下載並以 ChatGPT 帳號或 API key 登入。"},
+    {v:"2026-02-27", date:"2026-02-27", cat:"UI/UX", title:"任務列 PR 狀態徽章與 worktree 上限設定", body:"任務列與 PR 按鈕新增 <b>PR 狀態徽章</b>（draft/open/merged/closed）。Worktrees 設定可指定保留幾個 Codex 管理的 worktree。長對話與 code review 捲動更穩定。"},
+    {v:"2026-02-26", date:"2026-02-26", cat:"MCP/Tools", title:"Composer 內 MCP 捷徑與 @ 提及進 review", body:"Composer 新增 <b>MCP 捷徑</b>（含安裝關鍵字建議與 Add context 內的 MCP server 子選單）。Inline review 留言支援 <code>@mentions</code> 與 skill 提及。"},
+    {v:"2026-05-11", date:"2026-05-11", cat:"Cloud/Web", title:"Auto-review 文件擴充", body:"新增專屬 <code>Auto-review</code> 頁面，涵蓋 reviewer lifecycle、觸發條件、failure behavior、本機 / managed 設定。同步更新 <b>Agent approvals & security</b> 與 <b>Sandbox</b> 文件，更清楚說明 Auto-review 與 sandbox boundary 的關係。"},
+    {v:"2026-05-14", date:"2026-05-14", cat:"Cloud/Web", title:"Codex 從任何地方使用：手機 + Mac host", body:"<b>ChatGPT 手機 app 可連到執行 Codex 的 Mac</b>，共用相同專案、檔案、認證、plugins、skills、設定；同步推出 <b>Hooks GA</b>、Codex access tokens（可信自動化）、Enterprise admin setup 指引。"},
+    {v:"2026-05-07", date:"2026-05-07", cat:"Cloud/Web", title:"Codex for Chrome 擴充功能", body:"新 Chrome 擴充：Codex 可在瀏覽器中平行處理多個分頁、背景執行而不接管視窗；使用者控管 Codex 可存取哪些網站。"},
+    {v:"v260212", date:"2026-02-12", cat:"UI/UX", title:"Codex App v260212：Spark + 對話分支", body:"加入 <b>GPT-5.3-Codex-Spark</b> 支援、<b>對話 forking（分支）</b>、浮動 pop-out 視窗。多項效能與 bug 修復；同時 Windows alpha 開始測試。"},
+    {v:"2026-02-12", date:"2026-02-12", cat:"Models/Inference", title:"GPT-5.3-Codex-Spark 預覽", body:"GPT-5.3-Codex 的精簡版本，串流速度超過 <b>1000 tokens/sec</b>。ChatGPT Pro 在 Codex App、CLI、IDE extension 都可用；128k context、文字-only。"},
+    {v:"2026-02-09", date:"2026-02-09", cat:"IDE/Editor", title:"GPT-5.3-Codex 進駐 Cursor 與 VS Code", body:"GPT-5.3-Codex 在 Cursor 與 VS Code 原生可用；API 採分批釋出。在 Preparedness Framework 下視為高安全能力模型。"},
+    {v:"v260205", date:"2026-02-05", cat:"UI/UX", title:"Codex App v260205：Mid-turn steering", body:"加入 GPT-5.3-Codex 支援、<b>mid-turn steering（執行中可送訊息調整方向）</b>、可附加 / 拖曳任意檔案類型。修復 App 閃爍。"},
+    {v:"2026-02-05", date:"2026-02-05", cat:"Models/Inference", title:"GPT-5.3-Codex 發表", body:"目前最強 agentic coding 模型：推理更強、執行 <b>快 25%</b>、即時 steering 改善。Codex App / CLI / IDE / Cloud 都可用，API 即將支援。"},
+    {v:"v260204", date:"2026-02-04", cat:"UI/UX", title:"Codex App v260204：開檔器擴充 + PDF 預覽", body:"新增 Zed 與 Textmate 作為開檔工具選項；review 面板加入 <b>PDF 預覽</b>；整體效能改善。"},
+    {v:"2026-04-07", date:"2026-04-07", cat:"Models/Inference", title:"Codex 模型清單異動", body:"從 model picker 移除 <code>gpt-5.2-codex</code>、<code>gpt-5.1-codex</code>、<code>gpt-5.1</code>、<code>gpt-5</code>。保留 <code>gpt-5.4</code>、<code>gpt-5.4-mini</code>、<code>gpt-5.3-codex</code>、<code>gpt-5.2</code>，Pro 用戶另有 <code>gpt-5.3-codex-spark</code>。"}
+  ];
+
+  const DATA_CI = [
+    {v:"0.136.0", date:"2026-06-01", cat:"UI/UX", title:"CLI 0.136.0：Session 封存 + Markdown 連結", body:"TUI Markdown 加入 <b>OSC 8 可點擊連結</b>、表格擠不下時自動切換為易讀的鍵值對形式；新 <code>/archive</code> 與 <code>codex archive</code>/<code>codex unarchive</code> 封存 session（保護不被 resume/fork）；app-server 新 <code>--stdio</code> mode；remote-control websocket 改用短期 server token；Windows alpha <code>codex sandbox setup --elevated</code>；Bedrock catalog 更新含 <b>GPT-5.5</b>。"},
+    {v:"0.135.0", date:"2026-05-28", cat:"Slash Commands", title:"CLI 0.135.0：/permissions + Vim 強化", body:"<code>codex doctor</code> 報告更豐富的環境/Git/terminal/thread 診斷；<code>/status</code> 在 remote 模式下顯示連線細節；<b>Vim mode 加入 text-object 編輯</b>、可設定中斷 turn binding；<code>/permissions</code> 認得命名 permission profile；macOS/Linux packaged build 自帶 patched zsh helper；<code>CODEX_NON_INTERACTIVE=1</code> 支援非互動安裝。"},
+    {v:"0.134.0", date:"2026-05-26", cat:"MCP/Tools", title:"CLI 0.134.0：對話搜尋 + MCP 並發", body:"新增<b>本地對話歷史搜尋</b>（不分大小寫、附 preview）；<code>--profile</code> 升為主 profile 選擇器，legacy profile 強制遷移；MCP 設定支援 per-server 環境、streamable HTTP server OAuth；connector tool schema 保留 <code>$ref</code>/<code>$defs</code>；<b>read-only MCP 工具可並發執行</b>（advertise <code>readOnlyHint</code> 即可）；hook 收到 conversation history 與 subagent identity。"},
+    {v:"0.133.0", date:"2026-05-21", cat:"Plugins/MCP", title:"CLI 0.133.0：Goals 預設開 + Plugin marketplace", body:"<b>Goals 功能預設開啟</b>，跨 turn 追蹤進度；<code>codex remote-control</code> 改為 foreground 指令並等待 ready；permission profile 支援列出、繼承、<code>requirements.toml</code> 管理、runtime refresh；plugin 列表 marketplace-aware、顯示已裝版本、支援 remote collection；extension 可觀察 subagent start/stop、tool execution、approval/turn 處理。"},
+    {v:"0.132.0", date:"2026-05-20", cat:"MCP/Tools", title:"CLI 0.132.0：Python SDK 強化 + 圖片解析度", body:"Python SDK 加入 first-class 認證（API key login、ChatGPT browser/device-code flow、帳戶查詢、logout）；Python turn API 接受純字串、回傳更豐富的 <code>TurnResult</code>；<code>codex exec resume</code> 支援 <code>--output-schema</code> 維持 session context；TUI 啟動更快（批次 probe 終端能力）；<b>app-server turn 保留圖片原始解析度</b>。"},
+    {v:"0.131.0", date:"2026-05-18", cat:"UI/UX", title:"CLI 0.131.0：TUI 大更新 + codex doctor", body:"TUI 加入 service-tier 指令、混合 token 用量、permissions/approval mode、有效 workspace roots、響應式 Markdown 表格；<code>@</code> mention 一鍵搜尋檔案/目錄/plugin/skill；plugin marketplace CLI 指令、版本化分享、shared-workspace bucket；<b>新 <code>codex doctor</code> 全面診斷</b>（runtime/auth/terminal/network/config/state）；Python SDK 遷移到 <code>openai-codex</code>；Windows sandbox 多項加固。"},
+    {v:"0.130.0", date:"2026-05-08", cat:"Plugins/MCP", title:"CLI 0.130.0：plugin 分享 + remote-control", body:"plugin 詳情顯示 bundled hooks，分享暴露連結 metadata 與可發現性設定；新 <b><code>codex remote-control</code></b> 一鍵啟動 headless 可遠端控制的 app-server；app-server client 可分頁載入大型 threads（unloaded/summary/full）；Bedrock 認證支援 <code>aws login</code> profile；<code>view_image</code> 可透過所選 environment 解析檔案。"},
+    {v:"0.129.0", date:"2026-05-07", cat:"UI/UX", title:"CLI 0.129.0：Vim composer + /hooks 瀏覽", body:"<b>TUI composer 支援 modal Vim 編輯</b>（<code>/vim</code>、預設模式設定、Vim-only keymap）；resume/fork picker 重新設計、raw scrollback、<code>/ide</code> context 注入、workspace-aware <code>/diff</code>；status line 支援主題色與 PR/branch 摘要；plugin 支援 workspace 分享與權限；新 <code>/hooks</code> 瀏覽與切換 lifecycle hooks，hooks 可在 compaction 前後執行；Linux 沙箱多項可靠性修復。"},
+    {v:"0.120.0", date:"2026-04-11", cat:"MCP/Tools", title:"CLI 0.120.0：Realtime V2 串流 + hooks", body:"Realtime V2 在背景 agent 執行中即時串流進度，支援 queue 後續 response。TUI hook 活動更易掃讀；MCP outputSchema 型別改善；<code>SessionStart</code> hooks 可區分 <code>/clear</code> 與全新啟動。修復 Windows elevated sandbox 與 remote websocket TLS。"},
+    {v:"0.119.0", date:"2026-04-10", cat:"MCP/Tools", title:"CLI 0.119.0：Voice、MCP Apps、exec-server", body:"<b>Realtime 語音 session 預設 v2 WebRTC</b>。MCP Apps 支援更豐富（resource 讀取、tool-call metadata、custom-server 工具搜尋、檔案上傳）。新 <code>Ctrl+O</code> 在 TUI 複製、<code>/resume</code> by ID、可設定通知、實驗性 <code>codex exec-server</code>。多項 TUI / resume / sandbox / MCP 修復。"},
+    {v:"0.118.0", date:"2026-03-31", cat:"Local Sandbox", title:"CLI 0.118.0：Windows proxy sandbox + 裝置登入", body:"Windows sandbox 在 OS 層強制 <b>proxy-only egress</b>；app-server client 可用 device code flow 登入；<code>codex exec</code> 支援 prompt+stdin；自訂 provider 可 refresh 短期 bearer token；專案內 <code>.codex</code> 第一次建立時受保護。"},
+    {v:"0.101.0", date:"2026-02-12", cat:"Performance/Bug Fix", title:"CLI 0.101.0：模型解析與 memory 修復", body:"用 prefix 選模型時保留 requested slug；developer 訊息排除於 phase-1 memory input；memory phase concurrency 降低以提升穩定性。多項 code path 清理與 CI 衛生更新。"},
+    {v:"0.100.0", date:"2026-02-12", cat:"MCP/Tools", title:"CLI 0.100.0：JS REPL + memory 指令", body:"加入實驗性 <code>js_repl</code> 持久 runtime、多 rate-limit 支援、<b>websocket transport（split inbound/outbound）</b>、<code>/m_update</code>+<code>/m_drop</code> memory slash 指令、Apps SDK 支援、<code>ReadOnlyAccess</code> sandbox policy。修復 websocket dedup、Windows multi-line paste、stale rate-limit。"},
+    {v:"0.99.0", date:"2026-02-11", cat:"UI/UX", title:"CLI 0.99.0：Statusline + 並行 shell", body:"<b>直接 shell 指令可與 active turn 並行</b>。新 <code>/statusline</code> TUI footer 設定、可排序 resume picker、app-server APIs（turn steering、experimental features、resume_agent）；企業 web-search 與 network 限制透過 <code>requirements.toml</code>；GIF/WebP 圖片支援；shell 環境快照。"},
+    {v:"0.98.0", date:"2026-02-05", cat:"Models/Inference", title:"CLI 0.98.0：GPT-5.3-Codex + steer 穩定", body:"加入 GPT-5.3-Codex 支援。<b>Steer mode 改為 stable 並預設開啟</b>：Enter 立即送出、Tab 排隊。修復 resumeThread image 參數順序、切換模型時的 model-instruction、remote compaction estimator、cloud requirements 重載。"},
+    {v:"0.97.0", date:"2026-02-05", cat:"Slash Commands", title:"CLI 0.97.0：Approve-remember + /debug-config", body:"加入 session-scoped Allow + remember（MCP / App tool 批准）、live skill 更新偵測、<b>混合 text+image 動態 tool 輸出</b>、<code>/debug-config</code>、初始 memory plumbing、可設定 <code>log_dir</code>。穩定 apps/connectors picker 與 TUI 工作指示。"},
+    {v:"0.96.0", date:"2026-02-04", cat:"MCP/Tools", title:"CLI 0.96.0：thread/compact 與 websocket signal", body:"加入 <code>thread/compact</code> async RPC（v2 app-server API）、websocket 端 rate limit signal（<code>codex.rate_limits</code> 事件）、<code>unified_exec</code> 支援所有非 Windows 平台、constrained requirements 來源 provenance。修復 <code>request_user_input</code> notes mode 的 Esc 處理與 thread state DB 問題。"}
+  ];
+
+  const INSP_CC = [
+    {ico:"⚡", color:"purple", feat:"/ultrareview — 平行多 Agent Code Review", ver:"v2.1.111 · 2026-04-16",
+     desc:"非互動式雲端平行多 agent review，可一次跑安全、效能、可讀性、Style 多視角。",
+     scen:"<b>iOS 場景：</b>每次 PR 進 develop 前自動跑 <code>claude ultrareview</code>，產出 Swift Concurrency、SwiftUI 效能、銀行交易資安、團隊 Style 四份報告。RD 不再瓶頸於 Senior Reviewer。",
+     d:[
+       {h:"為什麼對 iOS RD 有用", p:"傳統 PR review 一個人要兼顧資安、效能、Style、可讀性，常顧此失彼。<code>/ultrareview</code> 把 review 拆成多個 agent 平行跑，每個專注一個視角，最後合併摘要。"},
+       {h:"基本指令", c:"bash", b:"# 對 develop 跑 review\nclaude ultrareview origin/develop\n\n# 從 PR URL 啟動\nclaude ultrareview --from-pr https://github.com/cathay/ios-app/pull/1234"},
+       {h:"四種 iOS 視角分工建議", l:["<b>Concurrency</b>：actor 隔離、Sendable、@MainActor 違規","<b>Security</b>：Keychain、APIClient、TLS pinning、log 是否漏個資","<b>UI Perf</b>：SwiftUI body 重繪、Combine 訂閱洩漏","<b>Cathay Style</b>：內部命名規範、SwiftLint warnings"]},
+       {h:"包成團隊 Slash Command", c:"bash", b:"# .claude/commands/cathay-review.md\nclaude ultrareview $1 \\\n  --agent concurrency-swift \\\n  --agent security-banking \\\n  --agent ui-perf \\\n  --agent cathay-style"}
+     ]},
+    {ico:"🔒", color:"orange", feat:"Hooks 條件式 if + permission 語法", ver:"v2.1.85 · 2026-03-26",
+     desc:"Hooks 可加 <code>if</code> 條件，使用 <code>Bash(git push *)</code> 這類 permission 規則精準觸發。",
+     scen:"<b>銀行 APP 場景：</b>偵測 <code>Bash(git push origin main)</code> 自動 block；<code>Edit(*Secrets.swift)</code> 強制二次確認。",
+     d:[
+       {h:"為什麼有用", p:"PreToolUse hooks 加 <code>if</code> 後可以「只在符合條件時觸發」。配合 permission-rule 語法，可以攔截高風險操作而不影響日常工具呼叫。"},
+       {h:"擋直接 push 到 main", c:"json", b:"// .claude/hooks/block-main-push.json\n{\n  \"event\": \"PreToolUse\",\n  \"if\": \"Bash(git push origin main) || Bash(git push origin master)\",\n  \"action\": {\n    \"decision\": \"block\",\n    \"message\": \"國泰 iOS 團隊規範：請開 PR，不要直接推 main\"\n  }\n}"},
+       {h:"Secrets.swift 編輯需二次確認", c:"json", b:"{\n  \"event\": \"PreToolUse\",\n  \"if\": \"Edit(**/Secrets.swift) || Edit(**/*ApiKey*.swift)\",\n  \"action\": { \"decision\": \"ask\" }\n}"},
+       {h:"延伸玩法", l:["改 <code>.pbxproj</code> 自動寄通知到 Slack","或自動標記 PR 需資安 sign-off","可疊加多個 hook 互不干擾"]}
+     ]},
+    {ico:"📋", color:"green", feat:"/recap + 模型自動 /init /review", ver:"v2.1.108 · 2026-04-14",
+     desc:"新 <code>/recap</code> 重點摘要；模型可透過 Skill 工具呼叫 <code>/init</code>、<code>/review</code>、<code>/security-review</code>。",
+     scen:"<b>Scrum 場景：</b>站立會議前用 <code>/recap</code> 整理昨日對話與 commit；Sprint 中段排程跑 <code>/security-review</code>，提早發現金融合規風險。",
+     d:[
+       {h:"為什麼有用", p:"<code>/recap</code> 把對話與 commit 整理成可直接貼 Confluence/JIRA 的條列式摘要；模型還可自動透過 Skill 工具呼叫 <code>/security-review</code>，不必每次手動下指令。"},
+       {h:"站立會議前 5 分鐘", c:"bash", b:"claude --resume yesterday-session\n> /recap\n# → 輸出昨日做了什麼、阻塞點、今日 TODO（繁中）\n# 直接貼進 Slack #ios-daily 頻道"},
+       {h:"自動週五安全 review", c:"yaml", b:"# .claude/skills/auto-security.md\n---\nname: auto-security\ntrigger: every-friday\n---\n當 sprint 進入週五時自動跑 /security-review，\n把結果寫到 .claude/reports/security-{date}.md"},
+       {h:"和 Sprint 流程整合", l:["<b>Daily standup</b>：用 /recap 跨 session 串聯昨日進度","<b>Sprint review</b>：批次跑 /recap 拼成 sprint summary","<b>Retro</b>：對 retrospective session 跑 /recap 摘錄共識"]}
+     ]},
+    {ico:"🧩", color:"blue", feat:"Plugin 可內附 bin/ 執行檔", ver:"v2.1.91 · 2026-04-02",
+     desc:"Plugins 可打包 <code>bin/</code> 執行檔，配合 marketplace 內部分發。",
+     scen:"<b>iOS 場景：</b>把 xcodegen wrapper、SwiftLint custom rules、API mock server 打成 plugin，新人 <code>claude plugin install cathay-ios-toolkit</code> 一行入手。",
+     d:[
+       {h:"為什麼有用", p:"原本內部工具要每個 RD 自己安裝、版本各異。打包成 plugin 後集中分發，工具升級走 plugin update。"},
+       {h:"plugin 結構範例", c:"bash", b:"cathay-ios-toolkit/\n├── plugin.json\n├── bin/\n│   ├── cathay-mock         # API mock server\n│   ├── cathay-xcgen        # xcodegen + 預設配置\n│   └── cathay-secrets-scan # 偵測 hard-coded API keys\n├── skills/\n│   ├── cathay-style.md\n│   └── cathay-api-spec.md\n└── hooks/\n    └── block-main-push.json"},
+       {h:"plugin.json 範例", c:"json", b:"{\n  \"name\": \"cathay-ios-toolkit\",\n  \"version\": \"1.0.0\",\n  \"bin\": {\n    \"cathay-mock\": \"./bin/cathay-mock\",\n    \"cathay-xcgen\": \"./bin/cathay-xcgen\"\n  }\n}"},
+       {h:"安裝與分發", l:["內網架 plugin marketplace（HTTP 即可）","新人執行 <code>claude plugin install cathay-ios-toolkit</code>","版本控管走 semver，破壞性變更升 major"]}
+     ]},
+    {ico:"🛡️", color:"red", feat:"Sandbox + 子程序 PID namespace", ver:"v2.1.98 · 2026-04-09",
+     desc:"Linux 子程序加 PID namespace、<code>CLAUDE_CODE_SUBPROCESS_ENV_SCRUB</code> 自動清除憑證 env var。",
+     scen:"<b>金融資安場景：</b>避免 Claude 把生產 token 漏給外部 MCP server。資安團隊會非常開心。",
+     d:[
+       {h:"為什麼對銀行 RD 重要", p:"金融開發機常存 token、AWS key、Bedrock 憑證。Claude 子程序若不慎漏給外部 server 是合規風險。<code>SUBPROCESS_ENV_SCRUB</code> 會自動清掉敏感變數；Linux 額外加 PID namespace 隔離程序樹。"},
+       {h:"開啟方式", c:"bash", b:"# ~/.zshrc\nexport CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1"},
+       {h:"配合 deniedDomains 雙重保險", c:"json", b:"// .claude/settings.json\n{\n  \"sandbox\": {\n    \"network\": {\n      \"deniedDomains\": [\"*.production.cathaybk.com\"],\n      \"failIfUnavailable\": true\n    }\n  }\n}"},
+       {h:"哪些變數會被 scrub", l:["<code>AWS_*</code>、<code>ANTHROPIC_API_KEY</code>、<code>OPENAI_API_KEY</code>","結尾為 <code>_TOKEN</code>、<code>_SECRET</code>、<code>_PASSWORD</code> 的變數","自訂前綴可透過設定加入"]}
+     ]},
+    {ico:"📐", color:"gold", feat:"/team-onboarding 指令", ver:"v2.1.101 · 2026-04-10",
+     desc:"幫助新人快速進入專案。",
+     scen:"<b>AI Scrum 場景：</b>新進 iOS RD 第一天執行，自動帶過 repo 結構、CI flow、銀行 API gateway、code review checklist。學習曲線從 1-2 週壓到半天。",
+     d:[
+       {h:"為什麼有用", p:"新人第一天最痛是「不知道從哪開始讀 code」。<code>/team-onboarding</code> 自動帶過 repo 結構、CI flow、團隊內部慣例、code review checklist。"},
+       {h:"建立團隊 onboarding 模板", c:"yaml", b:"# .claude/commands/onboarding.md\n---\nname: cathay-ios-onboarding\ndescription: 國泰 iOS 新進 RD 入門導覽\n---\n你是新人。請依序帶我認識：\n1. 專案結構（先讀 README.md、Package.swift）\n2. CI flow（.github/workflows、fastlane）\n3. 銀行 API gateway 的呼叫慣例（讀 NetworkLayer/）\n4. Code review checklist（從 .claude/skills/cathay-style.md）\n5. 第一個練習 task：實作假交易明細頁"},
+       {h:"執行流程", l:["新人第一天 <code>claude /team-onboarding</code>","Claude 邊讀 code 邊解釋，每步問「有問題嗎」","結束後產出個人版 onboarding.md 摘要","Mentor 看摘要快速確認新人理解程度"]}
+     ]},
+    {ico:"🪝", color:"orange", feat:"CwdChanged / FileChanged Hooks", ver:"v2.1.83 · 2026-03-25",
+     desc:"新增檔案變動與切換工作目錄的 hook。",
+     scen:"<b>iOS 場景：</b><code>.xcodeproj</code>/<code>Package.swift</code> 變動自動跑 <code>xcodegen</code>；切到 feature 分支自動 <code>pod install</code>。",
+     d:[
+       {h:"為什麼有用", p:"原本要靠 fswatch / entr 監視檔案，現在 Claude 內建。<code>FileChanged</code> 在儲存後觸發；<code>CwdChanged</code> 在切換工作目錄（含 git checkout 切分支）後觸發。"},
+       {h:"自動跑 xcodegen", c:"json", b:"// .claude/hooks/auto-xcgen.json\n{\n  \"event\": \"FileChanged\",\n  \"if\": \"FilePattern(project.yml) || FilePattern(Package.swift)\",\n  \"action\": {\n    \"run\": \"cd $CWD && xcodegen generate\"\n  }\n}"},
+       {h:"切分支自動 pod install", c:"json", b:"{\n  \"event\": \"CwdChanged\",\n  \"action\": {\n    \"run\": \"if [ -f Podfile.lock ]; then pod install --silent; fi\"\n  }\n}"},
+       {h:"還可以做的事", l:["改 <code>Localizable.strings</code> → 跑 <code>swiftgen</code>","切到 <code>main</code> → 跑 <code>git pull --ff-only</code>","Sprint 開始日 → 自動清 <code>DerivedData</code>"]}
+     ]},
+    {ico:"🤖", color:"purple", feat:"Forked Subagents + Agent mcpServers", ver:"v2.1.117 · 2026-04-22",
+     desc:"開 forked subagent；agent frontmatter 支援 <code>mcpServers</code> 限縮工具集。",
+     scen:"<b>Scrum 場景：</b>定義 Sprint Planner（只連 Jira）、UI Reviewer（只連 Figma）、Compliance Bot（只連 Confluence + 資安規則）。互不干擾、可平行。",
+     d:[
+       {h:"為什麼有用", p:"以前所有 agent 共用一份 MCP 工具 — Sprint Planner 也能存取 Figma、Compliance Bot 也能戳 Slack。Forked subagent + agent frontmatter 的 <code>mcpServers</code> 可分開，達到最小權限原則。"},
+       {h:"Sprint Planner agent", c:"yaml", b:"# .claude/agents/sprint-planner.md\n---\nname: sprint-planner\nmcpServers:\n  - jira\n  - confluence\n---\n你是 Cathay iOS 的 Sprint Planner。\n專注於：故事點估算、依賴拆解、風險識別。\n禁止：直接改 code（沒有 file tool）。"},
+       {h:"Compliance Bot agent", c:"yaml", b:"# .claude/agents/compliance-bot.md\n---\nname: compliance-bot\nmcpServers:\n  - confluence\n  - cathay-policy-api\n---\n你是金融合規檢查員。\n對任何 PR 比對 .claude/policies/ 規則。\n如違反則建議補丁，不直接改 code。"},
+       {h:"啟用 forked 平行跑", c:"bash", b:"export CLAUDE_CODE_FORK_SUBAGENT=1\nclaude --agent sprint-planner /plan-next-sprint &\nclaude --agent compliance-bot /review HEAD &\nwait"}
+     ]},
+    {ico:"📡", color:"blue", feat:"Status Line worktree / 模型 / effort", ver:"v2.1.97 · 2026-04-08",
+     desc:"Status line 支援 <code>refreshInterval</code>、<code>workspace.git_worktree</code>、<code>effort.level</code>。",
+     scen:"<b>iOS RD 場景：</b>Status Line 顯示「Sprint · 分支 · Xcode scheme · 跑了幾分鐘」，搭配 <code>Ctrl+O</code> 切 verbose。",
+     d:[
+       {h:"為什麼有用", p:"Status Line 一直在視野底部，是放「上下文」最好的位置。把 Sprint、分支、Xcode scheme、effort 集中顯示，不再切視窗看狀態。"},
+       {h:"設定範例", c:"json", b:"// .claude/settings.json\n{\n  \"statusLine\": {\n    \"refreshInterval\": 5000,\n    \"format\": \"{sprint} · {branch} · {scheme} · {effort.level} · {duration}\",\n    \"command\": \"./scripts/cathay-statusline.sh\"\n  }\n}"},
+       {h:"自製腳本範例", c:"bash", b:"#!/bin/bash\n# scripts/cathay-statusline.sh\nSPRINT=$(jq -r '.sprint' .claude/sprint.json)\nBRANCH=$(git branch --show-current)\nSCHEME=$(xcodebuild -list -json | jq -r '.workspace.schemes[0]')\necho \"{\\\"sprint\\\":\\\"$SPRINT\\\",\\\"branch\\\":\\\"$BRANCH\\\",\\\"scheme\\\":\\\"$SCHEME\\\"}\""},
+       {h:"小技巧", l:["<b>Ctrl+O</b> 切 verbose 看詳細上下文","<code>workspace.git_worktree</code> 顯示目前 worktree 名","<code>effort.level</code> 顯示目前思考強度（避免不小心開 xhigh 燒額度）"]}
+     ]},
+    {ico:"⏰", color:"green", feat:"排程任務 + Monitor 工具", ver:"v2.1.98, 2.1.110 · 2026-04",
+     desc:"支援排程任務、背景腳本事件流，<code>--resume</code> 可復活排程。",
+     scen:"<b>銀行專案場景：</b>排程「每週五跑 SwiftLint + 依賴檢查 + 資安掃描」自動產 PR，週一站會直接看報告。",
+     d:[
+       {h:"為什麼對銀行專案有用", p:"資安掃描、依賴更新通常被當「事件驅動」（出事才跑）。改成「排程驅動」可以提早發現問題、降低 incident 機率。"},
+       {h:"每週五自動掃描", c:"yaml", b:"# .claude/scheduled/weekly-scan.md\n---\ncron: 0 17 * * 5    # 週五 17:00\n---\n步驟：\n1. swift package outdated\n2. swiftlint --strict\n3. /security-review HEAD~7..HEAD\n4. 把報告寫到 .claude/reports/scan-{date}.md\n5. 若有 high severity，開 PR 自動修可修的"},
+       {h:"Monitor 工具用法", c:"bash", b:"# 跑長時間任務時看背景進度\nclaude monitor ./scripts/full-build.sh \\\n  --pattern 'warning|error' \\\n  --notify-on-match"},
+       {h:"小技巧", l:["排程跑出來的失敗會自動 <code>--resume</code> 復活","可以串接 Slack webhook 通知 Scrum Master","跨 sprint 累積掃描資料能畫趨勢圖"]}
+     ]},
+    {ico:"🪪", color:"gold", feat:"Skills 用 ${CLAUDE_EFFORT}", ver:"v2.1.120 · 2026-04-28",
+     desc:"Skills 可依 effort 動態調整內容；描述上限 250 字讓觸發更精準。",
+     scen:"<b>AI Scrum 場景：</b>建立 <i>cathay-ios-style</i>、<i>cathay-api-mock</i>、<i>compliance-checklist</i> skills。Effort 高時詳列規則，平常給摘要。",
+     d:[
+       {h:"為什麼有用", p:"Skills 可根據當前 effort 動態調整內容 — high effort 時詳列規則、平常只給摘要，節省 token 又保持精確度。"},
+       {h:"cathay-ios-style skill 範例", c:"yaml", b:"# .claude/skills/cathay-ios-style.md\n---\nname: cathay-ios-style\ndescription: 國泰 iOS 命名與架構規範（250 字內）\n---\n# 摘要規則（永遠載入）\n- ViewModel 後綴：xxxViewModel\n- 網路層放 NetworkLayer/，protocol-driven\n- 不可在 View 裡呼叫 URLSession\n\n${CLAUDE_EFFORT == 'high' ? `\n# 完整規則（high effort 才載入）\n... [50+ 條詳列]\n` : ''}"},
+       {h:"建議的 skill 清單", l:["<b>cathay-ios-style</b>：命名 / 架構規範","<b>cathay-api-mock</b>：產生符合內部 API 規格的 mock","<b>compliance-checklist</b>：金管會 / 個資法 checklist","<b>swift-perf-tips</b>：SwiftUI / Combine 效能陷阱"]},
+       {h:"觸發精準度", p:"description 上限 250 字後 skill 觸發更穩 — 把 description 寫成「什麼情境會用到」，而不是 skill 內容本身的摘要。"}
+     ]},
+    {ico:"🔍", color:"red", feat:"/resume 用 PR URL 搜尋", ver:"v2.1.122 · 2026-04-28",
+     desc:"PR URL 貼進 <code>/resume</code> 自動找對應 session。",
+     scen:"<b>iOS 工作流：</b>同事丟 PR 連結，貼到 <code>/resume</code> 立刻接回上下文，不用重讀 diff。",
+     d:[
+       {h:"為什麼有用", p:"以前同事丟 PR 連結要重新 git fetch、checkout、claude --continue 翻歷史 session。現在貼一條 URL 進 <code>/resume</code> 就回到當時的 Claude 上下文（含 review 思路、待辦）。"},
+       {h:"實際操作", c:"bash", b:"claude\n> /resume\n> https://github.com/cathay/ios-app/pull/1234\n# Claude 自動：\n#  1. 找出對應 session（依 commit hash + branch）\n#  2. 載入當時的對話、TODO、思考紀錄\n#  3. 提示「上次討論到 XX，要繼續嗎？」"},
+       {h:"支援的 git host", l:["GitHub / GitHub Enterprise","GitLab / GitLab Self-managed","Bitbucket Cloud + Data Center","可自訂 <code>prUrlTemplate</code> 對應內網 git server"]},
+       {h:"進階：自動帶上 review checklist", p:"配合 <code>--print</code> 非互動式跑：<code>claude /resume &lt;PR&gt; --print '依 cathay-style skill 給 review 意見'</code>，產出當下分析給 ChatOps bot。"}
+     ]}
+  ];
+
+  const INSP_CA = [
+    {ico:"🌿", color:"teal", feat:"對話 Forking（分支）", ver:"v260212 · 2026-02-12",
+     desc:"在同一個 thread 開分支試不同方向，不必重起一個 session。",
+     scen:"<b>iOS UI 探索場景：</b>同一個 SwiftUI navigation 設計，先 fork 一支試 NavigationStack、另一支試 NavigationSplitView。比完再選，不會搞混上下文。",
+     d:[
+       {h:"為什麼有用", p:"在同一個 thread 開分支試不同方向。原本要重起一個對話，現在直接從某一輪 fork 出一條新 thread，A/B 比完留贏家。"},
+       {h:"iOS UI 探索場景", l:["<b>父 thread</b>：「我要做交易明細頁的 navigation」","<b>分支 A</b>：用 NavigationStack（iOS 16+）","<b>分支 B</b>：用 NavigationSplitView（適配 iPad）","比較完選 A，分支 B 留檔備查"]},
+       {h:"操作", c:"bash", b:"# Codex App UI:\n# 1. 在某輪 AI 回應上右鍵 → Fork from here\n# 2. 新 thread 用相同上下文開始\n# 3. 父 thread 與分支可同時開，不互相影響"},
+       {h:"小技巧", p:"取個有意義的 thread 名字（例如「nav-stack」「nav-split」）。Cmd+K 切 thread 時一目瞭然。"}
+     ]},
+    {ico:"🎯", color:"purple", feat:"Mid-turn Steering", ver:"v260205 · 2026-02-05",
+     desc:"Codex 跑到一半時可以送訊息調整方向。",
+     scen:"<b>銀行交易流程場景：</b>Codex 在改 transfer flow 寫到一半，發現方向偏了，立刻送一句「請改用 Result type 而不是 throw」，省下整輪 retry。",
+     d:[
+       {h:"為什麼有用", p:"Codex 寫到一半發現方向偏了，過去只能等它跑完再修正。現在可以直接送訊息打斷與調整 — 像跟真人 pair programming。"},
+       {h:"iOS 場景：改交易流程", l:["你：「重構 transferMoney() 處理錯誤」","Codex 開始改用 throws…","你（mid-turn）：「等等，請改用 Result&lt;Success, TransferError&gt;」","Codex 立刻轉向，前面的 throws 改回來"]},
+       {h:"什麼時候用", l:["發現 Codex 誤解需求","想加額外限制（不要動某檔案）","看到一半想插一句測試案例","品味方向偏離想拉回"]},
+       {h:"配合 Steer Mode（CLI）", p:"CLI 0.98+ 已穩定 Steer Mode：Tab 排隊訊息、Enter 立即送。把 mid-turn steering 從 GUI 帶到 terminal 工作流。"}
+     ]},
+    {ico:"⚡", color:"green", feat:"GPT-5.3-Codex-Spark（>1000 tok/s）", ver:"2026-02-12",
+     desc:"小型快模型，串流速度極快，適合互動式編輯。",
+     scen:"<b>iOS 開發場景：</b>SwiftUI 預覽迭代、Repeat-style refactor、寫 unit test boilerplate — 用 Spark 比 5.3-Codex 快上不少，迭代節奏直接上一階。",
+     d:[
+       {h:"為什麼對 iOS 有用", p:"Spark 串流速度 &gt;1000 tokens/sec — 對「短而頻繁」的編輯特別有感（boilerplate、unit test、refactor）。重型推理還是用 5.3-Codex；Spark 適合 IDE 內 inline 互動。"},
+       {h:"切換 model", c:"bash", b:"# Codex CLI\ncodex --model gpt-5.3-codex-spark\n\n# Codex App\n# 設定 → Model → GPT-5.3-Codex-Spark"},
+       {h:"iOS 適合的工作流", l:["<b>SwiftUI 預覽迭代</b>：改一個顏色看效果，Spark 速度跟得上","<b>Test boilerplate</b>：產 XCTestCase 樣板","<b>Doc comment</b>：產生 ///- Parameters / Returns","<b>Snippet 翻譯</b>：把 Obj-C 轉 Swift"]},
+       {h:"什麼不適合 Spark", p:"複雜 architecture decision、跨檔案 refactor、debug 邏輯錯誤這類需要深度推理的，還是切回 5.3-Codex 比較穩。"}
+     ]},
+    {ico:"🧩", color:"blue", feat:"VS Code / Cursor 原生整合", ver:"2026-02-09",
+     desc:"GPT-5.3-Codex 在兩大編輯器原生可用。",
+     scen:"<b>iOS 工作流：</b>銀行 APP 部分後端 / Web 用 VS Code 開發，跨團隊 review 時不必切工具。Cursor 主力是 Swift Server，可同時用同一個模型。",
+     d:[
+       {h:"為什麼有用", p:"銀行 APP 開發常跨工具 — iOS 用 Xcode，Backend / Web 用 VS Code 或 Cursor。GPT-5.3-Codex 在三邊都能用，跨團隊 review 時不必切模型。"},
+       {h:"安裝與啟用", l:["VS Code：搜尋 Codex extension、登入 ChatGPT","Cursor：設定 → Models → 選 GPT-5.3-Codex","桌面 Codex App：自動帶過 ChatGPT 帳號"]},
+       {h:"iOS 的隱性好處", p:"雖然 Xcode 沒有 native extension，但 Cursor / VS Code 可以開啟 .swift 檔做小型編輯後再回 Xcode build。對 SwiftPM 為主的 iOS 專案很順手。"},
+       {h:"Cathay 內部協作建議", l:["前端 / 後端 / iOS 共用同一個 Codex thread 討論 API spec","SwiftLint / ESLint 都用 Codex 一鍵修","跨團隊 PR 都用 Codex 摘要"]}
+     ]},
+    {ico:"📎", color:"gold", feat:"附加任意檔案類型 + PDF 預覽", ver:"v260205, v260204",
+     desc:"可拖曳任何格式的檔案；review 面板可預覽 PDF。",
+     scen:"<b>銀行金管會 / 規範場景：</b>把法規 PDF（個資法、金管會規定）直接拖進 Codex App，討論 APP 功能設計時對著條文寫 code。",
+     d:[
+       {h:"為什麼對銀行 RD 有用", p:"金管會法規、產品 spec、UX wireframe 多半是 PDF / 圖片。直接拖進 Codex App 就能對著討論，不必先複製貼上文字。"},
+       {h:"場景：對著金管會條文寫 code", l:["把「電子支付管理條例」PDF 拖進 Codex","問：「這條 6.2 對 APP 端意味什麼？」","Codex 引用條文 + 給 Swift 實作建議","review 面板可同時看 PDF 對照"]},
+       {h:"場景：UX 原稿轉 SwiftUI", l:["把 Figma 截圖拖進","「實作這個交易明細卡片，用 SwiftUI」","Codex 產 code + 註解像素位置"]},
+       {h:"支援格式", l:["PDF（含預覽）","PNG / JPG / WebP / GIF","CSV / JSON / XML","Swift / Obj-C / 任何文字檔"]}
+     ]},
+    {ico:"🎈", color:"orange", feat:"Floating Pop-out Window", ver:"v260212 · 2026-02-12",
+     desc:"Codex App 可獨立浮動視窗。",
+     scen:"<b>iOS pair programming 場景：</b>Xcode 全螢幕同時讓 Codex 浮在角落；不用 Cmd+Tab 來回切，spec / 程式 / AI 三件可同步看。",
+     d:[
+       {h:"為什麼有用", p:"Xcode 全螢幕時 Cmd+Tab 切視窗很煩。Pop-out 把 Codex App 變成 always-on-top 浮動小窗，不擋程式碼也能即時對話。"},
+       {h:"操作", c:"bash", b:"# Codex App 視窗右上角 →「⊞ Pop out」\n# 浮動視窗可拖到任何角落\n# 再按一次回到主視窗"},
+       {h:"iOS pair programming 場景", l:["Xcode 主畫面 + Codex 浮在右下","Spec 在 Notion / Confluence 開另一邊","三面同步看，不用 Cmd+Tab"]},
+       {h:"小技巧", p:"搭配 mid-turn steering 特別好用 — 看 Xcode 預覽發現問題立刻在浮動 Codex 打字修正。"}
+     ]}
+  ];
+
+  const INSP_CI = [
+    {ico:"🔌", color:"blue", feat:"codex exec-server（實驗）", ver:"0.119.0 · 2026-04-10",
+     desc:"把 Codex 變成可被外部呼叫的長駐 server，IPC / WebSocket 都行。",
+     scen:"<b>銀行內網 CI 場景：</b>把 codex exec-server 跑在內網 build agent，CI pipeline 透過 IPC 呼叫做 PR 審查 / 測試生成；不用每次都 spin up CLI。",
+     d:[
+       {h:"為什麼有用", p:"原本要呼叫 Codex 都要 spawn 一個新 process（慢、要重新 auth）。<code>codex exec-server</code> 變成長駐 server，外部以 IPC / WebSocket 呼叫，秒回。"},
+       {h:"啟動 server", c:"bash", b:"# 在內網 build agent 上\ncodex exec-server \\\n  --bind 0.0.0.0:7878 \\\n  --auth-token $CATHAY_CODEX_TOKEN \\\n  --sandbox read-only-access"},
+       {h:"CI pipeline 呼叫範例", c:"yaml", b:"# .github/workflows/pr-review.yml\n- name: Codex PR review\n  run: |\n    curl -X POST http://build-agent.cathay/codex \\\n      -H \"Authorization: Bearer $TOKEN\" \\\n      -d '{\"prompt\":\"review PR #${{ github.event.number }}\"}'"},
+       {h:"和 Claude /ultrareview 的差別", l:["<b>Claude /ultrareview</b>：適合「在我桌機上跑 4 個視角」","<b>codex exec-server</b>：適合「CI / 內網長駐共用」","可以兩個都用 — 桌機跑 Claude、CI 跑 Codex"]}
+     ]},
+    {ico:"🛡️", color:"red", feat:"Windows Proxy-only Sandbox", ver:"0.118.0 · 2026-03-31",
+     desc:"Windows 在 OS 層強制只能透過 proxy 出網。",
+     scen:"<b>銀行合規場景：</b>RD 工作機常被要求所有出網都要走 proxy 並記錄。Codex CLI 在這環境直接合規，不用額外封裝。",
+     d:[
+       {h:"為什麼對銀行 RD 重要", p:"國泰內部規定所有出網要走 proxy 並記錄。Codex CLI 在 Windows OS 層強制 proxy-only egress — 不需要再用第三方軟體封裝，直接合規。"},
+       {h:"設定方式", c:"bash", b:"# PowerShell\n$env:CODEX_PROXY = \"http://proxy.cathay.local:8080\"\n$env:CODEX_SANDBOX_NETWORK = \"proxy-only\"\n\ncodex"},
+       {h:"和 Mac 比較", l:["Mac 沒有 OS 層強制 — 但可靠 <code>requirements.toml</code> 限制 domain","Windows 是 OS 層 — 連 Codex spawn 的子程序都受限","建議：Windows 工作機開 proxy-only，Mac 用 deniedDomains 補強"]},
+       {h:"資安團隊 sign-off 要點", l:["所有對外 request 經 proxy 留 log","違規連線在 OS 層被拒，Codex 自身無法繞過","可搭配 <code>requirements.toml</code> 白名單 domain"]}
+     ]},
+    {ico:"📡", color:"teal", feat:"Realtime V2 串流", ver:"0.120.0 · 2026-04-11",
+     desc:"背景 agent 進度即時串流，可 queue 後續 response。",
+     scen:"<b>iOS / 後端整合場景：</b>讓 Codex 跑長任務（重構整個 networking layer），在 terminal 看著它推進度，需要插話直接 queue 下一個指示。",
+     d:[
+       {h:"為什麼有用", p:"原本長任務只能盯著 spinner 等。V2 把背景 agent 的「下一步在做什麼」即時串流出來，且支援 queue：你看到他要做 A 但你想他做 B 時，直接打字排到下一個 turn。"},
+       {h:"iOS 場景：重構 networking", c:"bash", b:"$ codex \"重構整個 NetworkLayer 改用 async/await\"\n\n[bg-agent] 讀 NetworkLayer/Endpoint.swift...\n[bg-agent] 偵測到 12 個 callback-based call site\n> 把單元測試也一起改\n[queued] OK 等當前 turn 完再處理"},
+       {h:"觀察 hook 活動", c:"bash", b:"# 在 TUI 中按 h 切到 hook 活動視圖\n# 看到所有 hook 觸發的時間軸\n# 對 debug 自製 hook 超有用"},
+       {h:"和 Codex App 的差別", p:"App 偏向互動式對話、CLI Realtime V2 偏向「啟動 → 看著它工作」。長任務優先選 CLI。"}
+     ]},
+    {ico:"🎙️", color:"purple", feat:"Realtime Voice v2 WebRTC", ver:"0.119.0 · 2026-04-10",
+     desc:"預設 v2 WebRTC 的語音 session。",
+     scen:"<b>Pair programming 場景：</b>iPad 或耳機接 codex CLI，邊喝咖啡邊跟它對話：「跑 unit test」「把這支函式加 logging」。手不離鍵盤但能 multitask。",
+     d:[
+       {h:"為什麼有趣", p:"v2 WebRTC 延遲低、音質穩。對 iOS RD 來說：通勤、走路、洗碗時都可以「跟 Codex 對話寫 code」。"},
+       {h:"啟動語音 session", c:"bash", b:"codex --voice\n# 預設用 v2 WebRTC\n\n# 指定耳機輸入裝置\ncodex --voice --audio-in 'AirPods Pro'"},
+       {h:"iOS 場景", l:["<b>通勤路上</b>：「幫我跑一下 unit test」「最後 commit 是什麼」","<b>洗碗時</b>：「把這支函式加 debug log」（事先講出函式名）","<b>會議空檔</b>：用 AirPods 跟 Codex 確認某段邏輯是否正確"]},
+       {h:"安全提醒", p:"在公司 / 公共場所講 code 要小心 — 客戶資料、API key 不要念出來。建議只在 home 環境用語音。"}
+     ]},
+    {ico:"🧪", color:"gold", feat:"js_repl 持久 Runtime", ver:"0.100.0 · 2026-02-12",
+     desc:"Codex 內建 JS REPL，跨 turn 保留狀態。",
+     scen:"<b>原型驗證場景：</b>iOS RD 偶爾要驗 backend JSON / API 行為，直接在 Codex 內 js_repl 跑 fetch 測試，不用切 Postman。",
+     d:[
+       {h:"為什麼有用", p:"iOS RD 偶爾要驗 backend / Web 端的 JSON、API 行為。原本要切 Postman 或寫 .js 檔。js_repl 直接在 Codex 內，跨 turn 保留變數狀態。"},
+       {h:"iOS 開發場景", c:"bash", b:"$ codex\n> /js_repl\nrepl> const r = await fetch('https://api.cathay/test/transfer', { ... })\nrepl> const data = await r.json()\nrepl> console.log(data.amount)\n# 驗 API 回傳格式對不對"},
+       {h:"進階：模擬 Combine pipeline 邏輯", p:"用 RxJS 模擬 Combine 行為，先在 JS 跑通邏輯再翻成 Swift — 比起直接寫 Swift 更快迭代。"},
+       {h:"小提醒", l:["js_repl 是實驗性功能，可能 break","狀態跨 turn 保留，但 session 結束就清空","不要拿來跑生產資料"]}
+     ]},
+    {ico:"🎛️", color:"orange", feat:"Steer Mode 預設開啟", ver:"0.98.0 · 2026-02-05",
+     desc:"Tab queue 訊息、Enter 立即送，不再實驗性。",
+     scen:"<b>長任務場景：</b>請 Codex CLI 分析整個 repo，邊跑邊 Tab 預先送下一步「跑完幫我寫 changelog」「再幫我列 TODO」。Pipeline 思維。",
+     d:[
+       {h:"為什麼有用", p:"Tab 鍵把訊息排隊、Enter 立即送。長任務跑著時，你可以預先把下一步、下下一步排好，pipeline 思維。"},
+       {h:"操作差異", l:["<b>Enter</b>：立刻打斷當前 turn 並送","<b>Tab</b>：排隊到 queue 尾","<b>Ctrl+G</b>：清空 queue","<b>Ctrl+E</b>：編輯 queue"]},
+       {h:"iOS 場景", c:"bash", b:"$ codex \"分析整個 repo 的 SwiftConcurrency 使用\"\n\n[正在分析...]\n[Tab] 跑完幫我列 5 個改善建議\n[Tab] 再幫我把第一個改善開 PR\n[Tab] PR 標題用 [iOS][refactor] 格式\n# 三個指令排好，agent 跑完一個自動接下一個"},
+       {h:"什麼時候別用", p:"探索性對話（不確定下一步問什麼）就別預排 — 用普通互動模式比較自然。"}
+     ]},
+    {ico:"🔐", color:"red", feat:"ReadOnlyAccess Sandbox Policy", ver:"0.100.0 · 2026-02-12",
+     desc:"新 sandbox policy，僅讀取不寫入。",
+     scen:"<b>銀行 read-only 探索：</b>叫 Codex 分析線上 incident log、DB dump、舊版 codebase 時用此模式，避免任何 mutation 風險。",
+     d:[
+       {h:"為什麼對銀行有用", p:"分析線上 incident log、prod DB dump、舊版 codebase 時，最怕 Codex 不小心 write / mutate。ReadOnlyAccess 從 sandbox 層保證「絕對不會寫」。"},
+       {h:"啟用方式", c:"bash", b:"codex --sandbox read-only-access\n\n# 或寫進 ~/.codex/config.toml\n[sandbox]\npolicy = \"read-only-access\""},
+       {h:"哪些操作會被擋", l:["所有檔案寫入（Edit、Write、touch、>）","git commit / push / reset","mv / cp 到非 /tmp 路徑","Bash 中的 rm、unlink"]},
+       {h:"和 deniedDomains 搭配", p:"分析 prod log 時通常也不該出網。<code>read-only-access</code> + <code>requirements.toml</code> 白名單 domain 一起用，雙重保險。"}
+     ]},
+    {ico:"📊", color:"green", feat:"/statusline + 排序 resume picker", ver:"0.99.0 · 2026-02-11",
+     desc:"TUI 底部 statusline、resume picker 可排序。",
+     scen:"<b>多專案 iOS 工作流：</b>同時跑 main app、watch app、widget，statusline 顯示哪個 session、哪個 branch；resume 按時間 / 大小排序找回上下文超快。",
+     d:[
+       {h:"為什麼對多專案 RD 有用", p:"iOS RD 常同時跑 main app、watch app、widget extension、internal tools。Statusline 顯示當前 session 的關鍵 context；resume picker 可以按時間 / 大小排序快速找回。"},
+       {h:"設定 statusline", c:"toml", b:"# ~/.codex/config.toml\n[statusline]\nformat = \"{project} · {branch} · {model} · {tokens_used}/{tokens_limit}\"\nrefresh_ms = 3000"},
+       {h:"resume picker 操作", l:["<code>/resume</code> 不帶參數 → 開 picker","按 <code>s</code> 切排序：時間 / 大小 / 專案","按 <code>/</code> 模糊搜尋","Enter 載入 session"]},
+       {h:"小技巧", p:"把 session title 設成 <code>[ios-app/feature/transfer-flow] sprint 42</code> 這種結構化字串，picker 篩起來很快。"}
+     ]},
+    {ico:"🔁", color:"blue", feat:"並行 Shell + Active Turn", ver:"0.99.0 · 2026-02-11",
+     desc:"直接 shell 指令可與 active agent turn 並行執行。",
+     scen:"<b>iOS 開發效率：</b>Codex 在重構時，你同時 <code>xcodebuild test</code>、<code>swift test</code>、<code>git status</code>。雙線推進不必等。",
+     d:[
+       {h:"為什麼有用", p:"以前 Codex 跑時 TUI 卡住等不能下其他指令。現在背景 turn 在跑，你可以直接 <code>git status</code>、<code>xcodebuild</code>、<code>swift test</code>。雙線推進。"},
+       {h:"iOS 場景", c:"bash", b:"$ codex \"重構 PaymentManager 加入 retry 邏輯\"\n\n[turn running...]\n# 在同一個 TUI 視窗按 ! 切到 shell mode\n!$ xcodebuild test -scheme Main\n!$ git diff --stat\n!$ swift package outdated\n# 全部能跑，turn 也持續推進"},
+       {h:"並發限制", l:["<b>Shell 指令</b>：可任意並行","<b>Codex turn</b>：仍然一次一個","<b>git</b>：避免同時改 working tree（會衝突）"]},
+       {h:"小技巧", p:"配合 Steer Mode：shell 看到問題 → Tab 排個指令給 Codex 修。把 Codex 變成「會自動接 PR」的隊友。"}
+     ]}
+  ];
+
+  /* ===========================
+     ROLE TAGGING (post-hoc)
+     =========================== */
+  // Tag existing cards by `feat` substring → roles array.
+  const ROLE_TAGS_CC = {
+    "/ultrareview": ["ios","android","backend","qa"],
+    "Hooks 條件式": ["ios","android","backend"],
+    "/recap": ["ios","android","backend","qa","pm","designer"],
+    "Plugin 可內附": ["ios","android","backend"],
+    "Sandbox + 子程序": ["ios","android","backend","qa"],
+    "/team-onboarding": ["ios","android","backend","qa","pm","designer"],
+    "CwdChanged": ["ios","android","backend"],
+    "Forked Subagents": ["ios","android","backend","qa","pm"],
+    "Status Line": ["ios","android","backend","qa"],
+    "排程任務": ["ios","android","backend","qa","pm"],
+    "Skills 用": ["ios","android","backend"],
+    "/resume 用 PR URL": ["ios","android","backend"]
+  };
+  const ROLE_TAGS_CA = {
+    "對話 Forking": ["ios","android","backend","designer"],
+    "Mid-turn Steering": ["ios","android","backend","designer"],
+    "GPT-5.3-Codex-Spark": ["ios","android","backend"],
+    "VS Code / Cursor": ["ios","android","backend"],
+    "附加任意檔案類型": ["ios","android","backend","qa","pm","designer"],
+    "Floating Pop-out": ["ios","android","backend","qa","pm","designer"]
+  };
+  const ROLE_TAGS_CI = {
+    "codex exec-server": ["backend","qa"],
+    "Windows Proxy-only": ["ios","android","backend","qa"],
+    "Realtime V2 串流": ["ios","android","backend","qa"],
+    "Realtime Voice": ["ios","android","backend"],
+    "js_repl": ["backend"],
+    "Steer Mode": ["ios","android","backend","qa"],
+    "ReadOnlyAccess": ["backend","qa"],
+    "/statusline": ["ios","android","backend","qa"],
+    "並行 Shell": ["ios","android","backend"]
+  };
+  function tagRoles(arr, table){
+    arr.forEach(c => {
+      if (c.roles) return;
+      for (const key of Object.keys(table)) {
+        if (c.feat.includes(key)) { c.roles = table[key]; return; }
+      }
+      c.roles = ["ios","android","backend","qa","pm","designer"]; // default all
+    });
+  }
+  tagRoles(INSP_CC, ROLE_TAGS_CC);
+  tagRoles(INSP_CA, ROLE_TAGS_CA);
+  tagRoles(INSP_CI, ROLE_TAGS_CI);
+
+  /* ===========================
+     NEW ROLE-SPECIFIC CARDS
+     =========================== */
+  // Android RD
+  INSP_CC.push({
+    ico:"📦", color:"green", feat:"FileChanged hook 自動跑 Gradle sync", ver:"v2.1.83 · 2026-03-25",
+    desc:"Android 改 build.gradle 後常忘記 Sync，跑出來才發現 dependency 不對。Hook 解決。",
+    scen:"<b>Android 場景：</b>儲存 <code>build.gradle.kts</code> 自動跑 <code>./gradlew --refresh-dependencies</code>，不再有「我 code 對啊為什麼跑不起來」。",
+    roles:["android"],
+    d:[
+      {h:"為什麼有用", p:"Android Studio 的 Gradle Sync 觸發時機常常不一致，build 完才發現 dependency 沒同步。用 FileChanged hook 把同步自動化。"},
+      {h:"設定", c:"json", b:"// .claude/hooks/auto-gradle-sync.json\n{\n  \"event\": \"FileChanged\",\n  \"if\": \"FilePattern(**/build.gradle.kts) || FilePattern(libs.versions.toml)\",\n  \"action\": {\n    \"run\": \"./gradlew --refresh-dependencies dependencies\"\n  }\n}"},
+      {h:"延伸應用", l:["改 <code>AndroidManifest.xml</code> → 跑 lint","切到 release branch → 自動跑 <code>./gradlew bundleRelease</code> dry-run","新增 string 資源 → 跑 <code>./gradlew generateLocaleConfig</code>"]}
+    ]
+  });
+  INSP_CC.push({
+    ico:"🎨", color:"purple", feat:"Compose Preview 用 Spark 迭代", ver:"GPT-5.3-Codex-Spark · 2026-02-12",
+    desc:"Jetpack Compose 預覽 + Codex Spark 的快速 streaming 是黃金組合。",
+    scen:"<b>Android UI 場景：</b>Spark 速度 >1000 tok/s，配合 Compose Preview 改一個 modifier 立刻看效果。比起 5.3-Codex 在 UI 微調上快很多。",
+    roles:["android","designer"],
+    d:[
+      {h:"為什麼有用", p:"Compose Preview 的迭代節奏跟 SwiftUI 預覽類似，需要快速 try-and-see。Spark 的高速 streaming 對「短改動」特別有感。"},
+      {h:"設定", c:"bash", b:"# Cursor / VS Code\ncodex --model gpt-5.3-codex-spark\n\n# 然後在 Composable 上方加註解：\n# @Preview(name = \"Cathay 主題\", showBackground = true)\n# @Composable\n# fun TransferCardPreview() { ... }"},
+      {h:"什麼時候切回 5.3-Codex", p:"複雜的 State / ViewModel 重構、跨檔案的 Compose 架構改動還是要深度推理，切回 5.3-Codex。"}
+    ]
+  });
+
+  // Designer (UI/UX)
+  INSP_CA.push({
+    ico:"🖼️", color:"teal", feat:"Figma 截圖 → SwiftUI / Compose code", ver:"v260205 · 2026-02-05",
+    desc:"設計師最常做的事：把 design spec 變成 code 給 RD 參考。",
+    scen:"<b>Designer 場景：</b>把 Figma 截圖拖進 Codex App，「實作這個交易明細卡片」→ Codex 產 SwiftUI/Compose code + 像素位置註解。直接貼進 RD spec 文件當參考實作。",
+    roles:["designer"],
+    d:[
+      {h:"為什麼對 Designer 有用", p:"以前設計師交付 spec 只能寫文字描述。現在可以「順便」產一份參考實作給 RD，溝通效率提升、減少實作偏差。"},
+      {h:"操作流程", l:["Figma 中選中要轉換的 frame，<code>Cmd+Shift+C</code> 截圖","拖進 Codex App","Prompt：「請用 SwiftUI（iOS）和 Jetpack Compose（Android）兩種版本實作，並標註關鍵尺寸」","複製貼進 spec 文件"]},
+      {h:"進階技巧", l:["指定設計系統：「使用 Cathay Design Token」","指定 accessibility：「VoiceOver / TalkBack 標籤要齊全」","要求多狀態：「請含 default / pressed / disabled」"]}
+    ]
+  });
+  INSP_CC.push({
+    ico:"🎨", color:"gold", feat:"Skills 產生 Design Token 程式碼", ver:"v2.1.120 · 2026-04-28",
+    desc:"設計師更新色票後，由 Skill 自動產 Swift / Kotlin / Web 多平台 Token 檔。",
+    scen:"<b>Designer 場景：</b>更新 Figma colors 後，跑 <code>/cathay-design-tokens</code>，Skill 讀 Figma export → 產三個平台的 Token 檔給 RD。",
+    roles:["designer","ios","android"],
+    d:[
+      {h:"為什麼有用", p:"設計系統最痛的是「色票改了，三個平台沒同步」。把 Token 轉檔做成 Skill，設計師自己就能驅動。"},
+      {h:"Skill 範例", c:"yaml", b:"# .claude/skills/cathay-design-tokens.md\n---\nname: cathay-design-tokens\ndescription: 從 Figma export JSON 產出 iOS/Android/Web 三平台 Design Token\n---\n讀取 design-tokens.json（從 Figma Tokens plugin export）\n產出：\n  - iOS/CathayColors.swift（Color extension）\n  - android/CathayColors.kt（Compose Color object）\n  - web/_tokens.scss\n命名遵循 Cathay 規則：cathayBrand500、cathayNeutral100 等"},
+      {h:"設計師工作流", l:["Figma → Tokens plugin → Export JSON","Drop JSON 進 Claude → <code>/cathay-design-tokens</code>","Skill 產三個檔 → 提交 PR","RD 收到 PR → review → merge"]}
+    ]
+  });
+
+  // QA / Tester
+  INSP_CC.push({
+    ico:"🧪", color:"green", feat:"Skills 自動產 Test Case", ver:"v2.1.120 · 2026-04-28",
+    desc:"PRD 變動後最痛苦的就是補 test case。Skill 把這變成半自動。",
+    scen:"<b>QA 場景：</b>把 PRD 段落貼進 Claude，跑 <code>/cathay-test-cases</code>，Skill 用 Given-When-Then 格式產出 happy path / edge case / negative case 三組。",
+    roles:["qa"],
+    d:[
+      {h:"為什麼對 QA 有用", p:"傳統流程要靠 QA 一條條手寫 test case。Skill 自動產出後 QA 改成審核者角色，效率大幅提升。"},
+      {h:"Skill 範例", c:"yaml", b:"# .claude/skills/cathay-test-cases.md\n---\nname: cathay-test-cases\ndescription: 從 PRD 段落產出 Given-When-Then 格式 test case\n---\n步驟：\n1. 讀 user input PRD 段落\n2. 識別 actor、action、expected outcome\n3. 產出三組 case：\n   - Happy path（正常流程）\n   - Edge cases（邊界值、空值、極端輸入）\n   - Negative cases（錯誤輸入、權限不足、網路失敗）\n4. 每個 case 用 Given-When-Then 格式\n5. 標註對應的 acceptance criteria"},
+      {h:"進階：跨平台同步", p:"產出時可指定平台（iOS/Android/Web），Skill 會用對應 UI 操作詞彙（tap / click / long-press）。"}
+    ]
+  });
+  INSP_CC.push({
+    ico:"🌙", color:"red", feat:"排程：每晚 smoke test + 結果報告", ver:"v2.1.98 · 2026-04-09",
+    desc:"用 Claude 排程跑 smoke test，早上 QA 上工就看報告。",
+    scen:"<b>QA 場景：</b>每晚 23:00 對 staging 跑 critical path test，把失敗報告 + 截圖整理成 Slack 訊息，早上開電腦就看到。不再需要手動跑 baseline。",
+    roles:["qa"],
+    d:[
+      {h:"為什麼有用", p:"Nightly smoke test 過去靠 CI cron job，但寫報告整理常常是隔天才有人看。Claude 排程任務可以順手把結果包成可讀的摘要。"},
+      {h:"排程設定", c:"yaml", b:"# .claude/scheduled/nightly-smoke.md\n---\ncron: 0 23 * * *    # 每晚 23:00\n---\n步驟：\n1. cd ios && fastlane scan --testplan SmokeTests\n2. cd android && ./gradlew smokeTest\n3. 整理失敗 case：失敗測試名、stack trace、相關 commit\n4. 用 /recap 產出每日報告\n5. 發到 Slack #qa-nightly 頻道（用 MCP slack）"},
+      {h:"小技巧", l:["失敗閾值：>3 個 critical fail 就 @通知 RD on-call","趨勢追蹤：把每晚結果寫 JSON，週末產週報","截圖：失敗時自動截圖存 S3 給 RD 看"]}
+    ]
+  });
+  INSP_CI.push({
+    ico:"🔬", color:"red", feat:"ReadOnlyAccess 分析 Incident Log", ver:"0.100.0 · 2026-02-12",
+    desc:"處理線上 incident 時最怕 AI 不小心改到 prod data。",
+    scen:"<b>QA 場景：</b>把 incident log dump 給 Codex，用 <code>--sandbox read-only-access</code>，叫它分析 root cause、找相似歷史 incident — 完全沒寫入風險。",
+    roles:["qa","backend"],
+    d:[
+      {h:"為什麼對 QA 有用", p:"分析 incident 時通常要看大量 log、historical data、code path。ReadOnlyAccess 保證 AI 絕對只讀，連 git status 都不會動，可放心餵 production data。"},
+      {h:"操作", c:"bash", b:"# 1. 拉 incident 期間的 log\nkubectl logs deployment/api --since=2h > /tmp/incident.log\n\n# 2. 啟動 read-only Codex\ncodex --sandbox read-only-access \\\n  \"分析 /tmp/incident.log，找出 root cause 與相似的歷史 incident\"\n\n# 3. Codex 不能寫檔、不能 commit、不能 push\n# 但可以 grep、cat、檢視 git history"},
+      {h:"配合 deniedDomains", p:"如果 incident 涉及客戶資料，再加 <code>deniedDomains: [\"*\"]</code> 切斷網路 — 雙重保險。"}
+    ]
+  });
+
+  // Backend RD
+  INSP_CI.push({
+    ico:"🚀", color:"blue", feat:"exec-server 嵌入 CI/CD Pipeline", ver:"0.119.0 · 2026-04-10",
+    desc:"把 Codex 變成 CI 上的長駐 service，PR 自動 review 不用 spin-up。",
+    scen:"<b>Backend 場景：</b>內網 build agent 跑 <code>codex exec-server</code>，GitLab CI 收到 PR 時 curl 一下，三十秒回 review。比啟動新 process 快 10 倍。",
+    roles:["backend"],
+    d:[
+      {h:"為什麼對 Backend 有用", p:"後端 CI 跑 review 的瓶頸是「每次都要重新 spawn Codex process + auth」。exec-server 預先 warm-up，CI job 來就秒回。"},
+      {h:"GitLab CI 範例", c:"yaml", b:"# .gitlab-ci.yml\nreview:\n  stage: review\n  script:\n    - |\n      curl -X POST http://codex-server.internal:7878/api/v1/exec \\\n        -H \"Authorization: Bearer $CODEX_TOKEN\" \\\n        -d '{\n          \"prompt\": \"請 review 這個 PR：$CI_MERGE_REQUEST_PROJECT_URL/-/merge_requests/$CI_MERGE_REQUEST_IID\",\n          \"sandbox\": \"read-only-access\"\n        }'\n  rules:\n    - if: $CI_PIPELINE_SOURCE == \"merge_request_event\""},
+      {h:"和 Claude /ultrareview 的搭配", l:["桌機端用 Claude /ultrareview 跑深度多視角","CI 端用 codex exec-server 跑快速 gate review","兩者 review 對齊（用同一份 review checklist skill）"]}
+    ]
+  });
+  INSP_CC.push({
+    ico:"🗄️", color:"blue", feat:"MCP 接公司內部 DB / API", ver:"v2.1.121 · 2026-04-28",
+    desc:"用 MCP 把內網 DB、API gateway 接進 Claude，agent 可以查資料解 bug。",
+    scen:"<b>Backend 場景：</b>寫一個 cathay-internal MCP server，包 Postgres read-only 連線、API gateway 查詢。Claude 解 ticket 時直接 query 確認資料、找 root cause。",
+    roles:["backend"],
+    d:[
+      {h:"為什麼有用", p:"Backend 解 bug 常常要切 terminal 跑 psql 或 curl。把這些變成 MCP tool，Claude 可以自己查、自己驗證假設。"},
+      {h:"MCP server 結構", c:"json", b:"// .claude/mcp/cathay-internal.json\n{\n  \"command\": \"node\",\n  \"args\": [\"./scripts/cathay-mcp-server.js\"],\n  \"alwaysLoad\": true,\n  \"env\": {\n    \"DB_READ_ONLY_URL\": \"$DB_READ_ONLY_URL\"\n  }\n}"},
+      {h:"工具範例", l:["<code>db_query</code>：read-only SQL 查詢","<code>api_inspect</code>：對內部 API 發 GET 看 response","<code>trace_lookup</code>：用 trace_id 查 distributed tracing","<code>config_get</code>：查 LaunchDarkly feature flag 狀態"]},
+      {h:"安全提醒", l:["DB 一定要 read-only role","API 限制 staging / dev 環境","所有查詢進 audit log","plug ENV scrub 防止 token 漏出"]}
+    ]
+  });
+
+  // PM
+  INSP_CC.push({
+    ico:"📅", color:"gold", feat:"Subagent + Jira MCP 做 Sprint Planning", ver:"v2.1.117 · 2026-04-22",
+    desc:"Sprint Planner agent 只連 Jira / Confluence，專注故事點估算與依賴分析。",
+    scen:"<b>PM 場景：</b>定義專屬 agent <code>sprint-planner</code>，連 Jira MCP 自動拉 backlog、分析依賴、產出可投票的 sprint plan，省下 1-2 小時會議準備時間。",
+    roles:["pm"],
+    d:[
+      {h:"為什麼對 PM 有用", p:"Sprint Planning 最花時間的是「整理 backlog 狀態、找依賴」。讓 agent 先做這部分，會議上直接審核就好。"},
+      {h:"Agent 定義", c:"yaml", b:"# .claude/agents/sprint-planner.md\n---\nname: sprint-planner\nmcpServers:\n  - jira\n  - confluence\n---\n你是 Cathay iOS Scrum Team 的 Sprint Planner。\n\n任務：\n1. 從 Jira 拉 backlog 前 30 個 ticket\n2. 識別跨 ticket 依賴（label \"depends-on\"）\n3. 估算故事點（基於歷史相似 ticket）\n4. 分組成可投票的 sprint candidates\n5. 標註風險：規格不清、跨團隊依賴、技術未知\n\n禁止：直接修改 Jira 狀態（你是建議者，不是執行者）"},
+      {h:"PM 工作流", l:["週一早上 <code>claude --agent sprint-planner /plan-next-sprint</code>","Review 產出的 sprint candidates","跟 RD lead 確認故事點","會議上直接投票，不再「現場才開始想」"]}
+    ]
+  });
+  INSP_CC.push({
+    ico:"📝", color:"green", feat:"/recap 產 Stakeholder Update", ver:"v2.1.108 · 2026-04-14",
+    desc:"PM 每週要對 stakeholder 報告進度，最痛是「整理進度」這件事本身。",
+    scen:"<b>PM 場景：</b>每週五跑 <code>/recap --target=stakeholder</code>，自動把這週 commit + Jira 狀態變動 + Slack 討論摘要，產出可貼進 email 的高階摘要。",
+    roles:["pm"],
+    d:[
+      {h:"為什麼有用", p:"<code>/recap</code> 原本是技術導向摘要。配合 audience flag 可以產出不同層次的摘要 — stakeholder 看 outcome、RD 看 technical detail。"},
+      {h:"設定", c:"bash", b:"# 每週五 17:00 自動跑\nclaude --schedule \"0 17 * * 5\" \\\n  /recap --target=stakeholder \\\n  --output=docs/weekly/$(date +%Y-W%V).md"},
+      {h:"產出內容範例", l:["<b>本週交付</b>：完成 3 個 feature、修 5 個 bug","<b>進度</b>：Sprint 進度 80%、blocker 1 個","<b>風險</b>：依賴 X 團隊 API，預計延後 3 天","<b>下週重點</b>：UAT 啟動、效能測試"]},
+      {h:"小技巧", p:"產出的 markdown 可直接貼進 Confluence 或 email。配合 Confluence MCP 還能自動同步到內部 wiki。"}
+    ]
+  });
+  // === Auto-generated cards (from scheduled refresh) ===
+  INSP_CC.push({
+    ico:"👁️", color:"purple", feat:"Agent View — 一個畫面看所有 sessions", ver:"v2.1.139 · 2026-05-11",
+    desc:"<code>claude agents</code> 開啟 Research Preview 視圖，看所有執行中、待回應、完工的 Claude session。",
+    scen:"<b>Cathay 場景：</b>同時跑 main app、watch app、widget、internal tools 重構時，不再要切多個 tmux 視窗。一畫面看哪個 session 在等你回話、哪個跑完可以 review、哪個還在跑。",
+    roles:["ios","android","backend"],
+    d:[
+      {h:"為什麼有用", p:"多 session 工作流的痛點是「我現在有幾個 Claude 在跑」「哪個需要我關心」。Agent View 把這個盲點解決。"},
+      {h:"操作", c:"bash", b:"# 開啟 Agent View（Research Preview）\nclaude agents\n\n# JSON 輸出供 tmux / status bar 整合\nclaude agents --json\n\n# 從 view 內 dispatch 新 session：按 d → 補全 slash 指令 / skills"},
+      {h:"iOS 場景搭配", l:["跑 <code>/code-review</code> 在 PR 上，切到別的 session 開新 feature","Agent View 通知 review 跑完可回去看","跨 worktree 一目了然，避免改錯分支"]}
+    ],
+    auto:true
+  });
+  INSP_CA.push({
+    ico:"🖥️", color:"orange", feat:"Codex 變通用工作空間：In-app Browser + Computer Use", ver:"2026-04-16",
+    desc:"Codex App 大改版：內建瀏覽器（可對渲染頁面留言）、操作 macOS 原生 App、artifact viewer 預覽 PDF/試算表/簡報、Memories、多視窗、多終端機。",
+    scen:"<b>Cathay 場景：</b>用 in-app browser 開內部 admin 系統，邊操作邊讓 Codex 觀察並建議改進；artifact viewer 可直接預覽從 backend 撈出來的 Excel report，不用切到 Numbers 或瀏覽器。讓 Codex App 從「對話介面」變成「整個工作環境」。",
+    roles:["ios","android","backend","designer","qa","pm"],
+    d:[
+      {h:"為什麼是重大更新", p:"這次不只是加功能 — Codex App 從「聊天框」升級為「通用工作空間」。In-app browser、Computer Use、artifact viewer、Memories 加在一起，讓你不必離開 Codex 就能完成大部分桌面工作。"},
+      {h:"關鍵新功能", l:["<b>In-app browser</b>：在 Codex 內開網頁，可對渲染後的頁面留言、追蹤改動","<b>Computer Use（macOS）</b>：Codex 看得到、點得了、輸入到任何 macOS App","<b>Chats</b>：不必先選資料夾即可開新對話","<b>Thread automations</b>：把對話流程變成可重複執行的 automation","<b>Artifact viewer</b>：預覽 PDF、試算表、簡報，不用切外部工具","<b>Memories</b>：跨 thread 記住偏好與 context"]},
+      {h:"iOS RD 場景", l:["<b>Spec 對照寫 code</b>：In-app browser 開 Confluence spec，旁邊讓 Codex 寫 SwiftUI 實作","<b>Bug 重現</b>：用 Computer Use 操作模擬器示範 bug，Codex 看著找 root cause","<b>QA report 速覽</b>：QA 上傳的 Excel test result 直接用 artifact viewer 預覽"]},
+      {h:"EEA/UK/瑞士例外", p:"Computer Use 在歐盟/英國/瑞士暫不提供。台灣可用。"}
+    ],
+    auto:true
+  });
+
+  INSP_CA.push({
+    ico:"📱", color:"teal", feat:"ChatGPT 手機 app 連到你的 Mac Codex", ver:"2026-05-14",
+    desc:"<b>手機 app 連你執行中的 Mac Codex</b>，共用同一份專案、檔案、認證、plugins、skills、設定。Hooks 同步 GA。",
+    scen:"<b>Cathay 場景：</b>會議空檔在手機接手 sprint 任務 — 「Codex，看一下 #PR-1234 並寫 review summary」「跑一下 SwiftLint 看 warning」。Mac 上的 Cowork 環境一致，不需切上下文。",
+    roles:["ios","android","backend","pm"],
+    d:[
+      {h:"為什麼有趣", p:"桌面開發者最大的痛是「離開電腦就斷線」。手機 app 連 Mac host 讓你可在通勤、會議空檔接手任務，且環境完全一致（同 skills、同 plugins、同認證）。"},
+      {h:"設定", c:"bash", b:"# 1. Mac 上開 Codex host mode（會給一條配對 QR）\n# 2. iPhone 開 ChatGPT app → 設定 → 連結 Codex Mac\n# 3. 掃 QR 即配對成功\n# 之後任何 ChatGPT 對話都能引用 Mac 上的 codex 環境"},
+      {h:"搭配 Hooks GA", l:["Hooks 從 beta 升 GA — 可放心在生產環境用","Codex access tokens：寫 CI 整合不用每次重 auth","Enterprise admin setup 指引：方便 IT 部署到全行"]}
+    ],
+    auto:true
+  });
+
+  INSP_CC.push({
+    ico:"📊", color:"blue", feat:"排程 + MCP：自動產 Roadmap 進度", ver:"v2.1.98 · 2026-04-09",
+    desc:"自動拉 Jira / GitHub / Confluence 資料拼成可視化 roadmap。",
+    scen:"<b>PM 場景：</b>每週一早上自動跑「拉 Jira epics、抓 GitHub milestone、合成 roadmap」並更新 Confluence 頁面，PM 上工就看到最新狀態。",
+    roles:["pm"],
+    d:[
+      {h:"為什麼有用", p:"Roadmap 維護的痛點是「資料散在多處」。把資料收集自動化，PM 專注在策略而非搬運。"},
+      {h:"排程設定", c:"yaml", b:"# .claude/scheduled/roadmap-refresh.md\n---\ncron: 0 9 * * 1   # 每週一 09:00\nmcpServers: [jira, github, confluence]\n---\n1. 從 Jira 拉所有 Epic 狀態（fixVersion = current quarter）\n2. 從 GitHub 拉 milestone 進度\n3. 合併為 roadmap：epic / 進度 / 風險 / ETA\n4. Push 到 Confluence: /Cathay/iOS-Roadmap-Q2\n5. 變動超過 20% 進度的 epic → 標紅 + Slack 通知"},
+      {h:"配合 Plan Mode", p:"PM 開週會前先跑一次 plan mode 對話：「下個季度該如何排優先順序」，Claude 結合 roadmap + 歷史 velocity 給建議。"}
+    ]
+  });
+
+  // ====== 2026-05/06 新增的手刻 + auto 卡片 ======
+
+  // === Claude Code 手刻 ===
+  INSP_CC.push({
+    ico:"⚡", color:"gold", feat:"Opus 4.8 + 動態工作流 /workflows", ver:"v2.1.154 · 2026-05-28",
+    desc:"<b>Opus 4.8 釋出</b>，預設 high effort、可開 <code>/effort xhigh</code> 應戰最難任務；<b>動態工作流</b>讓 Claude 在背景同時編排數十到上百個 agent，<code>/workflows</code> 檢視進度。",
+    scen:"<b>Cathay 場景：</b>銀行 APP 的「跨 module migration」「全 repo 安全掃描」「大型 refactor」這類任務，過去要手動拆給多個 RD 跑。現在 <code>/workflows</code> 一句話讓 Claude 編排 50+ subagent 平行處理，Opus 4.8 xhigh 確保品質。",
+    roles:["ios","android","backend","qa","pm"],
+    d:[
+      {h:"為什麼是重大更新", p:"Opus 4.8 是目前最強模型；動態工作流則是新工作模式 — 你描述目標，Claude 自己拆解、編排、執行數十個 subagent。對大規模任務（migration、scan、refactor）效率提升一個數量級。"},
+      {h:"基本用法", c:"bash", b:"# 開動態工作流\nclaude\n> 請對整個 iOS repo 跑 SwiftConcurrency 安全掃描，每個 module 一個 agent\n# Claude 自動編排 → /workflows 看進度\n\n# 強化推理：手動切 xhigh\n> /effort xhigh"},
+      {h:"iOS 場景", l:["<b>跨 module 重構</b>：交給 Claude 拆 module、每個並行","<b>API spec 大改</b>：每個受影響檔案開一個 subagent","<b>季度資安掃描</b>：每個 feature folder 跑 /security-review"]}
+    ]
+  });
+  INSP_CC.push({
+    ico:"🔍", color:"green", feat:"/code-review（+ --fix 直接套用）", ver:"v2.1.147, 2.1.152 · 2026-05",
+    desc:"<b>/simplify 改名為 /code-review</b>，依 effort 等級回報問題；新 <code>--fix</code> 直接套用修改到工作樹；<code>--comment</code> 把意見貼進 PR。",
+    scen:"<b>Cathay 場景：</b>每支 PR 推上去自動跑 <code>/code-review --comment</code>，意見直接貼到 GitLab PR；reviewer 不再做「找小問題」。<code>--fix</code> 可選擇性套用安全的修補。",
+    roles:["ios","android","backend"],
+    d:[
+      {h:"為什麼有用", p:"原本的 /simplify 比較窄；/code-review 是完整 review 工具，配 --fix 與 --comment 兩個 flag 就能整套自動化進 CI。"},
+      {h:"PR webhook 整合", c:"bash", b:"# GitLab CI / GitHub Actions\nclaude /code-review HEAD~1..HEAD \\\n  --effort high \\\n  --comment $PR_URL\n\n# Review + 自動修補（謹慎用）\nclaude /code-review HEAD --fix --effort medium"},
+      {h:"和 /ultrareview 的分工", l:["<b>/code-review</b>：單 agent 跑完整 review，速度快","<b>/ultrareview</b>：多 agent 平行多視角（安全/效能/Style），最深","建議：PR 自動跑 /code-review；merge 前重要 PR 跑 /ultrareview"]}
+    ]
+  });
+
+  // === Codex App 手刻 ===
+  INSP_CA.push({
+    ico:"🖱️", color:"purple", feat:"Windows Computer Use + Mobile Remote Control", ver:"2026-05-28",
+    desc:"<b>Computer Use 登陸 Windows</b>：Codex 看得到、點得了、能輸入到 Windows 原生 App。<b>Mobile remote control</b> 也支援 Windows 主機 — 從 ChatGPT iOS/Android 啟動並追蹤 Windows 工作。",
+    scen:"<b>Cathay 場景：</b>銀行內部很多 Windows-only 系統（Outlook、Office、內部 CRM）。讓 Codex 自動填表、跨 App 搬資料；QA 跨平台測試；通勤時用手機看 Windows 主機在跑什麼。",
+    roles:["ios","android","backend","qa"],
+    d:[
+      {h:"為什麼對銀行有用", p:"國泰內部系統多是 Windows-only — Outlook、ServiceNow、行內 CRM。Computer Use 讓 Codex 可自動化這些原本「不能 API 化」的流程。"},
+      {h:"設定", c:"bash", b:"# 1. Windows 上開 Codex App、啟用 Computer Use（設定 → 進階）\n# 2. ChatGPT 手機 app 配對：QR scan\n# 3. 手機隨時送指令：「打開 Outlook，寄這個 review summary」\n# 4. Codex 在 Windows 替你操作"},
+      {h:"iOS RD 場景", l:["銀行 Windows-only 工具：用 Codex 搬資料","QA：跨平台測試（同一支 Codex 跑 Mac + Windows）","通勤：手機監看 Windows 上的 batch script"]},
+      {h:"歐盟例外", p:"Computer Use 在 EEA/UK/瑞士暫不提供。台灣可用。"}
+    ]
+  });
+  INSP_CA.push({
+    ico:"🪟", color:"blue", feat:"Codex App for Windows 正式版", ver:"2026-03-04",
+    desc:"Codex App 原生 Windows 版本，用 <b>PowerShell + 原生 Windows sandbox</b> 提供受限權限，無需 WSL/VM。支援 Skills、Automations、Worktrees。",
+    scen:"<b>Cathay 場景：</b>銀行 RD 多數用 Windows 開發機。Codex App 原生版讓你不必架 WSL 環境也能用，sandbox 又符合資安要求。一份 ChatGPT 帳號跨 Mac + Windows 共用。",
+    roles:["android","backend","qa","pm"],
+    d:[
+      {h:"為什麼重要", p:"以前 Windows 上要跑 Codex 得透過 WSL 或 VM，效能、相容性都打折。原生 Windows 版用 PowerShell 與 OS 層 sandbox，全部原生，安裝走 Microsoft Store。"},
+      {h:"安裝步驟", l:["從 Microsoft Store 搜尋「Codex」","以 ChatGPT 帳號（或 API key）登入","設定 → 偏好的 agent 與 terminal（PowerShell / WSL）","Skills、Automations、Worktrees 全部支援"]},
+      {h:"和 Mac 版差異", p:"功能對等。Windows 版多了：原生 MSIX updater、Windows Store 自動更新、Windows 系統匣常駐。WSL 支援者可切換 agent 進 WSL。"}
+    ]
+  });
+
+  // === Codex CLI 手刻 ===
+  INSP_CI.push({
+    ico:"🩺", color:"red", feat:"codex doctor — 全面環境診斷", ver:"0.131.0 · 2026-05-18",
+    desc:"<code>codex doctor</code> 一鍵跑全套診斷：runtime、auth、terminal、network、config、local state。新人 onboarding 或環境出問題第一個跑的指令。",
+    scen:"<b>Cathay 場景：</b>新進 RD 第一天裝 Codex，跑 <code>codex doctor</code> 自動檢查所有相依、認證、proxy、sandbox 狀態，產出 report 給 mentor 看哪邊還沒設好。debug 環境問題從幾小時降到幾分鐘。",
+    roles:["ios","android","backend","qa"],
+    d:[
+      {h:"為什麼有用", p:"以前環境出問題要手動逐項檢查：proxy 通嗎？auth 過期了嗎？sandbox 設對了嗎？<code>codex doctor</code> 把這些自動化成一張 health report。"},
+      {h:"基本用法", c:"bash", b:"# 跑全套診斷\ncodex doctor\n\n# 輸出範例：\n# ✓ Runtime: codex 0.135.0\n# ✓ Auth: ChatGPT Pro account\n# ✗ Network: proxy.cathay.local:8080 unreachable\n# ✓ Sandbox: bwrap 0.10.0 installed\n# ✓ Config: ~/.codex/config.toml valid\n# ✓ Threads: 47 local, 12 paged"},
+      {h:"團隊化用法", l:["新人入職 day 1 跑一次，產 report 給 mentor","CI workflow 用 <code>codex doctor --json</code> 驗證 build agent","每月 IT 健檢全團隊跑一次，看誰環境壞了"]}
+    ]
+  });
+  INSP_CI.push({
+    ico:"🎯", color:"green", feat:"Goals 預設開啟 — 跨 turn 持續工作", ver:"0.133.0 · 2026-05-21",
+    desc:"Goals 從實驗性升為預設開啟。設一個目標後，Codex 跨 turn 自動推進直到完成（或 usage limit / blocker）。",
+    scen:"<b>Cathay 場景：</b>「把 NetworkLayer 整個改用 async/await」這種大任務設成 goal，Codex 自動拆 PR、跑 test、改 callsite，跨數十個 turn 推進。你只需要 review、回 question、不必每次重述目標。",
+    roles:["ios","android","backend"],
+    d:[
+      {h:"為什麼有用", p:"以前每個 turn 結束你要重提醒「下一步做 X」「記得別忘 Y」。Goals 把目標當持久狀態存著，Codex 自動推進、自動回報進度。"},
+      {h:"設目標", c:"bash", b:"$ codex\n> /goal 把 NetworkLayer 整個改用 async/await，所有 call site 一起改，加上 unit test\n\n# Codex 把目標存起來，開始工作\n# 跨 turn 後仍記得目標、追蹤進度\n# /goal status 查進度\n# /goal done 結束"},
+      {h:"和 Steer Mode 搭配", p:"Goals 管總方向，Steer Mode（Tab 排隊）管細部指令。組合起來：Goal 設長期目標，Tab 排短期修正，pipeline 思維最大化。"}
+    ]
+  });
+
+  // === Auto cards（自動生成、可被手改） ===
+
+  INSP_CC.push({
+    ico:"🎯", color:"green", feat:"/goal — 跨 turn 持續推進至完成", ver:"v2.1.139 · 2026-05-11",
+    desc:"Claude Code 新 <code>/goal</code> 指令：設一個目標後，Claude 跨 turn 持續工作直到達成。",
+    scen:"<b>Cathay 場景：</b>大型 refactor 或 bug hunt，告訴 Claude「目標：把所有 callback API 改 async/await，含 tests」，Claude 自己一輪一輪做下去，你只在 blocker 時介入。",
+    roles:["ios","android","backend"],
+    d:[
+      {h:"為什麼有用", p:"和 Codex 的 Goals 對應 — Claude 也能跨 turn 自動推進。把「我要 Claude 做什麼」變成持久狀態，不必每次重述。"},
+      {h:"用法", c:"bash", b:"claude\n> /goal 全 repo 把 SwiftConcurrency 警告清零\n# Claude 開始：找警告、分類、逐一修\n# 你看 review、補 input、Claude 接著做\n# /goal status 查進度"},
+      {h:"小技巧", l:["目標寫得越具體越好（含 acceptance criteria）","可搭配 Agent View 同時跑多個 goal","失敗時自動 /resume 不丟進度"]}
+    ],
+    auto:true
+  });
+  INSP_CC.push({
+    ico:"🚫", color:"red", feat:"Skills/slash frontmatter 加 disallowed-tools", ver:"v2.1.152 · 2026-05-27",
+    desc:"Skills 與 slash command frontmatter 可加 <code>disallowed-tools</code> 限制能用的工具，最小權限原則。",
+    scen:"<b>Cathay 場景：</b>合規 skill 禁止用 Bash（不能跑 shell）；review skill 禁止用 Edit/Write（只能讀）。確保不同 skill 各自有適當權限邊界，避免越權操作。",
+    roles:["ios","android","backend","qa","pm"],
+    d:[
+      {h:"為什麼有用", p:"以前所有 skill 共用同一份工具權限。現在每個 skill 可宣告自己不能用什麼，從架構上避免越權。"},
+      {h:"範例", c:"yaml", b:"# .claude/skills/compliance-checklist.md\n---\nname: compliance-checklist\ndisallowed-tools: [Bash, Edit, Write]\n---\n你是金融合規檢查員。\n只能讀檔、給建議，禁止執行任何指令或修改檔案。"},
+      {h:"和 mcpServers 搭配", l:["<code>mcpServers</code>：限制能連哪些 MCP server","<code>disallowed-tools</code>：限制能用哪些內建工具","兩者結合 → 最小權限原則"]}
+    ],
+    auto:true
+  });
+  INSP_CA.push({
+    ico:"📟", color:"blue", feat:"Codex 可讀取整合終端機輸出", ver:"2026-03-11",
+    desc:"Codex 能讀取目前 thread 的 <b>integrated terminal</b> 輸出 — 確認 dev server 狀態、回查失敗的 build。",
+    scen:"<b>Cathay 場景：</b>iOS build 失敗時不用複製貼上 error log；Codex 直接看 Xcode build output 找 root cause。Backend 跑 server 時 Codex 即時看 stderr 確認服務狀態。",
+    roles:["ios","android","backend"],
+    d:[
+      {h:"為什麼有用", p:"以前你要把 terminal output 複製貼到 Codex 對話框。現在 Codex 直接看 — 對話更自然「為什麼 build 失敗」一句話 Codex 自己去看。"},
+      {h:"用法", c:"bash", b:"# 在 Codex App integrated terminal 跑\n$ xcodebuild build -scheme MainApp\n# (build 失敗)\n\n# 直接問 Codex（不用複製）\n> 為什麼剛剛 build 失敗\n# Codex 讀整合終端輸出，給診斷"},
+      {h:"延伸應用", l:["跑 unit test 失敗 → Codex 直接分析 failure","SwiftLint warning → Codex 一條條修","跑 server 看 log → Codex 找 anomaly"]}
+    ],
+    auto:true
+  });
+  INSP_CI.push({
+    ico:"🗄️", color:"gold", feat:"/archive 封存 session（防誤刪）", ver:"0.136.0 · 2026-06-01",
+    desc:"新 <code>/archive</code> slash 指令 + <code>codex archive</code>/<code>codex unarchive</code> CLI，封存的 session 不會被 resume/fork 誤動。",
+    scen:"<b>Cathay 場景：</b>重要 incident review session、跨團隊討論 session 封存起來不會誤刪；之後審計/重看時 unarchive 即可。當 session 是 audit trail 時特別實用。",
+    roles:["ios","android","backend","qa","pm"],
+    d:[
+      {h:"為什麼有用", p:"resume picker 列表太長後容易誤點。重要 session 封存後從 picker 隱藏，但仍可從 archived list 找回。"},
+      {h:"用法", c:"bash", b:"# 在 session 內封存\n> /archive\n\n# CLI 操作\ncodex archive <session-id>\ncodex unarchive <session-id>\ncodex list --archived"},
+      {h:"場景", l:["Incident review session：封存當 audit trail","完成的大型 refactor：封存 + tag","客戶 demo 對話：封存避免被 resume 改動"]}
+    ],
+    auto:true
+  });
+  INSP_CI.push({
+    ico:"🎨", color:"teal", feat:"CLI 0.131.0 TUI 大更新（@ mention + plugin marketplace）", ver:"0.131.0 · 2026-05-18",
+    desc:"TUI 多項升級：service-tier、token 用量、permissions/approval mode、響應式 Markdown 表格；<code>@</code> mention 一鍵搜尋檔案/目錄/plugin/skill；plugin marketplace CLI 指令。",
+    scen:"<b>Cathay 場景：</b>@ mention 一秒帶入內部 skill；plugin marketplace 找團隊共用工具；TUI 顯示當下 effort / approval mode 上下文。日常用 codex CLI 整體體驗大幅升級。",
+    roles:["ios","android","backend"],
+    d:[
+      {h:"為什麼有用", p:"0.131.0 是 TUI 大改版，把過去散落的 UX 痛點集中解決。新人學 CLI 的曲線變平。"},
+      {h:"亮點功能", l:["<b>@ mention</b>：選檔案、目錄、plugin、skill 一鍵帶入","<b>Plugin marketplace 指令</b>：<code>codex plugin install/list/upgrade</code>","<b>響應式 Markdown 表格</b>：終端窄時自動切緊湊版","<b>Permissions/approval mode</b> 顯示當下權限狀態"]},
+      {h:"小技巧", p:"配合 0.135.0+ 的 codex doctor 一起，新人 day 1 跑兩個指令就能掌握環境。"}
+    ],
+    auto:true
+  });
+
+  const PRODUCTS = {
+    "claude-code": {
+      data: DATA_CC, insp: INSP_CC,
+      cats: ["All","Subagents/Skills","Plugins/MCP","Hooks","Slash Commands","IDE/Editor","Settings/Config","Permissions/Security","UI/UX","Performance/Bug Fix"],
+      ids: { insp:"insp-cc", chips:"chips-cc", timeline:"timeline-cc", empty:"empty-cc", status:"status-cc", more:"more-cc", chart:"chart-cc" }
+    },
+    "codex-app": {
+      data: DATA_CA, insp: INSP_CA,
+      cats: ["All","Models/Inference","IDE/Editor","UI/UX","Performance/Bug Fix"],
+      ids: { insp:"insp-ca", chips:"chips-ca", timeline:"timeline-ca", empty:"empty-ca", status:"status-ca", more:"more-ca", chart:"chart-ca" }
+    },
+    "codex-cli": {
+      data: DATA_CI, insp: INSP_CI,
+      cats: ["All","Models/Inference","MCP/Tools","Local Sandbox","Slash Commands","UI/UX","Performance/Bug Fix"],
+      ids: { insp:"insp-ci", chips:"chips-ci", timeline:"timeline-ci", empty:"empty-ci", status:"status-ci", more:"more-ci", chart:"chart-ci" }
+    }
+  };
+  const PAGE_SIZE = 10;
+  const state = {}; // per-product { activeCat, search, visibleCount }
+  Object.keys(PRODUCTS).forEach(p => {
+    state[p] = {
+      activeCat: localStorage.getItem("ctx_filt_" + p) || "All",
+      search: localStorage.getItem("ctx_srch_" + p) || "",
+      visibleCount: PAGE_SIZE
+    };
+  });
+
+  function catClass(c){ return "cat-" + c.replace(/[\/\s]/g,"-"); }
+  function monthLabel(date){ const [y,m] = date.split("-"); return `${y} 年 ${parseInt(m,10)} 月`; }
+
+  /* ===========================
+     ROLE PICKER
+     =========================== */
+  const ROLES = [
+    { id:"all",      label:"全部",        ico:"✦" },
+    { id:"ios",      label:"iOS RD",      ico:"📱" },
+    { id:"android",  label:"Android RD",  ico:"🤖" },
+    { id:"backend",  label:"Backend RD",  ico:"⚙️" },
+    { id:"designer", label:"Designer",    ico:"🎨" },
+    { id:"qa",       label:"QA / Tester", ico:"🧪" },
+    { id:"pm",       label:"PM",          ico:"📋" }
+  ];
+  const ROLE_LABEL_MAP = Object.fromEntries(ROLES.map(r => [r.id, r.label]));
+  const ROLE_KEY = "ctx_active_role_v1";
+  let activeRole = localStorage.getItem(ROLE_KEY) || "ios";
+
+  // Build role chips
+  const roleChipsRoot = document.getElementById("roleChips");
+  ROLES.forEach(r => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "role-chip" + (r.id === activeRole ? " active" : "");
+    chip.dataset.role = r.id;
+    chip.innerHTML = `<span class="role-icn">${r.ico}</span><span>${r.label}</span>`;
+    chip.addEventListener("click", () => {
+      activeRole = r.id;
+      localStorage.setItem(ROLE_KEY, r.id);
+      roleChipsRoot.querySelectorAll(".role-chip").forEach(x => x.classList.remove("active"));
+      chip.classList.add("active");
+      renderInspirationCards();
+    });
+    roleChipsRoot.appendChild(chip);
+  });
+
+  // Update section headings to reflect selected role
+  function updateInspirationHeadings(){
+    const roleLabel = activeRole === "all" ? "全角色" : (ROLE_LABEL_MAP[activeRole] || activeRole);
+    const suffix = activeRole === "all" ? "應用靈感" : "應用靈感";
+    document.querySelectorAll(".insp-heading-text").forEach(el => {
+      el.textContent = roleLabel + " " + suffix;
+    });
+  }
+
+  // Extract latest date from `ver` string (e.g. "v2.1.139 · 2026-05-11" → "2026-05-11";
+  // "v2.1.120, 2.1.86 · 2026-04" → "2026-04-15"; "GPT-5.3-Codex-Spark · 2026-02-12" → "2026-02-12")
+  function inspDateKey(card){
+    if (!card || !card.ver) return "";
+    const matches = String(card.ver).match(/\d{4}-\d{2}(?:-\d{2})?/g) || [];
+    if (!matches.length) return "";
+    // pick the latest if multiple dates listed
+    const dates = matches.map(d => d.length === 7 ? d + "-15" : d);
+    return dates.sort().pop();
+  }
+
+  // Build inspiration cards (with role filtering + click → modal)
+  function renderInspirationCards(){
+    updateInspirationHeadings();
+    Object.keys(PRODUCTS).forEach(p => {
+      const root = document.getElementById(PRODUCTS[p].ids.insp);
+      if (!root) return;
+      root.innerHTML = "";
+      root.classList.remove("empty-state");
+
+      const filtered = PRODUCTS[p].insp.filter(c => {
+        if (activeRole === "all") return true;
+        return (c.roles || []).includes(activeRole);
+      });
+
+      // Sort by date (newest first); cards without parseable date sink to bottom
+      filtered.sort((a, b) => {
+        const da = inspDateKey(a);
+        const db = inspDateKey(b);
+        if (!da && !db) return 0;
+        if (!da) return 1;
+        if (!db) return -1;
+        return db.localeCompare(da); // descending
+      });
+
+      if (!filtered.length) {
+        root.classList.add("empty-state");
+        const label = ROLE_LABEL_MAP[activeRole] || activeRole;
+        root.innerHTML = `<div>這個 Tab 目前沒有針對 <b>${label}</b> 的靈感卡。<br>切到其他 Tab 看看，或選「全部」瀏覽所有卡片。</div>`;
+        return;
+      }
+
+      filtered.forEach((c) => {
+        const el = document.createElement("div");
+        el.className = "insp" + (c.auto ? " auto" : "");
+        el.tabIndex = 0;
+        el.setAttribute("role", "button");
+        el.setAttribute("aria-label", c.feat + " — 點擊看詳細說明");
+
+        const tagsHtml = (c.roles || []).map(r => {
+          const isMatch = activeRole !== "all" && r === activeRole;
+          return `<span class="insp-role-tag${isMatch ? " match" : ""}">${ROLE_LABEL_MAP[r] || r}</span>`;
+        }).join("");
+
+        const autoBadgeHtml = c.auto ? `<span class="auto-badge" title="自動生成的卡片 — Charlie 還沒手動 review 過">auto</span>` : "";
+
+        el.innerHTML = `
+          ${autoBadgeHtml}
+          <div class="insp-head">
+            <div class="icon ${c.color}">${c.ico}</div>
+            <div style="flex:1;min-width:0;">
+              <div class="feat">${c.feat}</div>
+              <div class="ver">${c.ver}</div>
+              <div class="insp-role-tags">${tagsHtml}</div>
+            </div>
+          </div>
+          <p>${c.desc}</p>
+          <div class="scenario">${c.scen}</div>
+        `;
+        el.addEventListener("click", () => openModal(c));
+        el.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openModal(c); }
+        });
+        root.appendChild(el);
+      });
+    });
+  }
+  renderInspirationCards();
+
+  // Modal logic
+  const modalBackdrop = document.getElementById("modalBackdrop");
+  const modalIcon = document.getElementById("modalIcon");
+  const modalFeat = document.getElementById("modalFeat");
+  const modalVer = document.getElementById("modalVer");
+  const modalBody = document.getElementById("modalBody");
+  const modalCloseBtn = document.getElementById("modalClose");
+
+  function escapeHtml(s){ return String(s); } // sections already contain trusted HTML from our data
+
+  function renderSection(sec){
+    const head = `<h4>${sec.h}</h4>`;
+    if (sec.p) return `<div class="modal-section">${head}<p>${sec.p}</p></div>`;
+    if (sec.l) {
+      const items = sec.l.map(li => `<li>${li}</li>`).join("");
+      return `<div class="modal-section">${head}<ul>${items}</ul></div>`;
+    }
+    if (sec.c && sec.b) {
+      const lang = sec.c.toUpperCase();
+      const safe = sec.b.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+      return `<div class="modal-section">${head}<div class="code-block"><div class="lang-bar"><span>${lang}</span><button class="copy-btn" type="button" data-copy="${encodeURIComponent(sec.b)}">複製</button></div><pre>${safe}</pre></div></div>`;
+    }
+    return "";
+  }
+
+  function openModal(card){
+    modalIcon.className = "icon " + (card.color || "");
+    modalIcon.textContent = card.ico || "";
+    modalFeat.textContent = card.feat;
+    modalVer.textContent = card.ver;
+    const autoNotice = card.auto ? `<div class="modal-auto-notice"><div>這張卡是 <b>自動生成</b> 的（由排程任務從 changelog 衍生）— 內容尚未經 Charlie 手動 review，把它當作起點，細節以官方 changelog 為準。看到怪怪的請回報。</div></div>` : "";
+    const lead = `<div class="lead">${card.scen}</div>`;
+    const sections = (card.d || []).map(renderSection).join("");
+    const fallback = card.d ? "" : `<div class="modal-section"><p>更多說明補充中…</p></div>`;
+    modalBody.innerHTML = autoNotice + lead + sections + fallback;
+    modalBackdrop.classList.add("open");
+    document.body.style.overflow = "hidden";
+    modalCloseBtn.focus();
+
+    // Wire up copy buttons
+    modalBody.querySelectorAll(".copy-btn").forEach(btn => {
+      btn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        const text = decodeURIComponent(btn.dataset.copy);
+        try {
+          await navigator.clipboard.writeText(text);
+          const orig = btn.textContent;
+          btn.textContent = "已複製 ✓";
+          setTimeout(() => btn.textContent = orig, 1400);
+        } catch (err) {
+          btn.textContent = "複製失敗";
+        }
+      });
+    });
+  }
+
+  function closeModal(){
+    modalBackdrop.classList.remove("open");
+    document.body.style.overflow = "";
+  }
+  modalCloseBtn.addEventListener("click", closeModal);
+  modalBackdrop.addEventListener("click", (e) => {
+    if (e.target === modalBackdrop) closeModal();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modalBackdrop.classList.contains("open")) closeModal();
+  });
+
+  // Build chip bars
+  Object.keys(PRODUCTS).forEach(p => {
+    const cfg = PRODUCTS[p];
+    const root = document.getElementById(cfg.ids.chips);
+    cfg.cats.forEach(c => {
+      const ch = document.createElement("span");
+      ch.className = "chip" + (c === state[p].activeCat ? " active" : "");
+      ch.dataset.cat = c;
+      const cnt = c === "All" ? "" : "  · " + cfg.data.filter(d => d.cat === c).length;
+      ch.textContent = c + cnt;
+      ch.addEventListener("click", () => {
+        state[p].activeCat = c;
+        state[p].visibleCount = PAGE_SIZE;
+        localStorage.setItem("ctx_filt_" + p, c);
+        root.querySelectorAll(".chip").forEach(x => x.classList.remove("active"));
+        ch.classList.add("active");
+        renderTimeline(p);
+      });
+      root.appendChild(ch);
+    });
+  });
+
+  // Wire up search boxes
+  document.querySelectorAll(".search").forEach(box => {
+    const p = box.dataset.product;
+    box.value = state[p].search;
+    box.addEventListener("input", () => {
+      state[p].search = box.value;
+      state[p].visibleCount = PAGE_SIZE;
+      localStorage.setItem("ctx_srch_" + p, box.value);
+      renderTimeline(p);
+    });
+  });
+
+  // Wire up load-more
+  document.querySelectorAll(".load-more").forEach(btn => {
+    const p = btn.dataset.product;
+    btn.addEventListener("click", () => {
+      state[p].visibleCount += PAGE_SIZE;
+      renderTimeline(p);
+    });
+  });
+
+  function renderTimeline(p){
+    const cfg = PRODUCTS[p];
+    const s = state[p];
+    const filtered = cfg.data.filter(d => {
+      if (s.activeCat !== "All" && d.cat !== s.activeCat) return false;
+      if (!s.search) return true;
+      const hay = (d.v + " " + (d.title||"") + " " + d.body + " " + d.cat).toLowerCase();
+      return hay.includes(s.search.trim().toLowerCase());
+    });
+    filtered.sort((a,b) => b.date.localeCompare(a.date) || (b.v||"").localeCompare(a.v||""));
+
+    const root = document.getElementById(cfg.ids.timeline);
+    const empty = document.getElementById(cfg.ids.empty);
+    const status = document.getElementById(cfg.ids.status);
+    const moreRow = document.getElementById(cfg.ids.more);
+    root.innerHTML = "";
+
+    if (!filtered.length){
+      empty.style.display = "block";
+      status.textContent = "";
+      moreRow.style.display = "none";
+      return;
+    }
+    empty.style.display = "none";
+
+    const total = filtered.length;
+    const showCount = Math.min(s.visibleCount, total);
+    const sliced = filtered.slice(0, showCount);
+
+    const groups = {};
+    sliced.forEach(d => {
+      const k = d.date.slice(0,7);
+      (groups[k] = groups[k] || []).push(d);
+    });
+    Object.keys(groups).sort().reverse().forEach(k => {
+      const wrap = document.createElement("div");
+      wrap.className = "month-group";
+      const head = document.createElement("div");
+      head.className = "month-label";
+      head.innerHTML = `<span>${monthLabel(k+"-01")}</span><span class="count">${groups[k].length} 筆</span>`;
+      wrap.appendChild(head);
+      groups[k].forEach(d => {
+        const e = document.createElement("div");
+        e.className = "entry";
+        const titleHtml = d.title ? `<div class="title-line">${d.title}</div>` : "";
+        e.innerHTML = `
+          <span class="ver-badge" title="${d.v}">${d.v}</span>
+          <span class="cat-badge ${catClass(d.cat)}">${d.cat}</span>
+          <div class="body">${titleHtml}${d.body}<div style="margin-top:4px;font-family:var(--mono);font-size:11px;color:var(--ink-muted);">${d.date}</div></div>
+        `;
+        wrap.appendChild(e);
+      });
+      root.appendChild(wrap);
+    });
+
+    status.textContent = `已顯示 ${showCount} / ${total} 筆`;
+    if (showCount < total){
+      moreRow.style.display = "flex";
+      const btn = moreRow.querySelector(".load-more");
+      const remain = total - showCount;
+      const next = Math.min(PAGE_SIZE, remain);
+      btn.innerHTML = `顯示更多版本（再 ${next} 筆，共剩 ${remain}）<span class="arrow">↓</span>`;
+    } else {
+      moreRow.style.display = "none";
+    }
+  }
+
+  // Initial render
+  Object.keys(PRODUCTS).forEach(renderTimeline);
+
+  // Total versions stat
+  const totalVer = DATA_CC.length + DATA_CA.length + DATA_CI.length;
+  document.getElementById("totalVersions").textContent = totalVer;
+
+  /* ===========================
+     DYNAMIC DATE SPAN + TAB META
+     =========================== */
+  function minMaxDate(arr){
+    const dates = arr.map(d => d.date).filter(Boolean).sort();
+    return { min: dates[0], max: dates[dates.length - 1] };
+  }
+  function fmtSpan(min, max){
+    if (!min || !max) return "—";
+    const minS = min;
+    const maxS = max;
+    return minS === maxS ? minS : `${minS} ~ ${maxS}`;
+  }
+  // Compare versions naturally; fallback to date if v missing
+  function versionRange(arr){
+    if (!arr.length) return null;
+    // sort by date first (proxy for release order)
+    const sorted = [...arr].sort((a,b) => a.date.localeCompare(b.date) || (a.v||"").localeCompare(b.v||""));
+    const oldest = sorted[0];
+    const newest = sorted[sorted.length - 1];
+    return { oldest: oldest.v, newest: newest.v };
+  }
+
+  // Hero "Date Span" — overall min/max across all three products
+  const allDates = [...DATA_CC, ...DATA_CA, ...DATA_CI].map(d => d.date).sort();
+  const overallMin = allDates[0];
+  const overallMax = allDates[allDates.length - 1];
+  document.getElementById("dateSpan").textContent = fmtSpan(overallMin, overallMax);
+
+  // Footer span
+  document.getElementById("footerSpan").textContent = "覆蓋 " + fmtSpan(overallMin, overallMax);
+
+  // Tab meta (count + version range)
+  const tabMeta = {
+    "claude-code": { vendor: "Anthropic", arr: DATA_CC, unit: "versions" },
+    "codex-app":   { vendor: "OpenAI",    arr: DATA_CA, unit: "entries"  },
+    "codex-cli":   { vendor: "OpenAI",    arr: DATA_CI, unit: "versions" }
+  };
+  Object.keys(tabMeta).forEach(k => {
+    const m = tabMeta[k];
+    const span = minMaxDate(m.arr);
+    const rng = versionRange(m.arr);
+    const el = document.querySelector(`[data-meta-for="${k}"]`);
+    if (!el) return;
+    const parts = [m.vendor, `${m.arr.length} ${m.unit}`];
+    if (rng && rng.oldest && rng.newest && rng.oldest !== rng.newest) {
+      parts.push(`${rng.oldest} → ${rng.newest}`);
+    } else if (rng && rng.newest) {
+      parts.push(rng.newest);
+    }
+    if (span.min) parts.push(span.min === span.max ? span.min : `${span.min.slice(5)} ~ ${span.max.slice(5)}`);
+    el.textContent = parts.join(" · ");
+  });
+
+  /* ===========================
+     CHARTS
+     =========================== */
+
+  const palette = {
+    "Performance/Bug Fix": "#a89e87",
+    "Settings/Config": "#b48a3c",
+    "UI/UX": "#3c7a65",
+    "Plugins/MCP": "#3b6c8c",
+    "Hooks": "#b06530",
+    "Slash Commands": "#4d7a3a",
+    "Subagents/Skills": "#6e4d8b",
+    "IDE/Editor": "#4f4b87",
+    "Permissions/Security": "#b14233",
+    "Models/Inference": "#2b6f6a",
+    "MCP/Tools": "#3b6c8c",
+    "Local Sandbox": "#b06530",
+    "Cloud/Web": "#3b6c8c",
+    "Other": "#6c6657"
+  };
+
+  const charts = {};
+  function buildChart(p){
+    const cfg = PRODUCTS[p];
+    const counts = {};
+    cfg.data.forEach(d => counts[d.cat] = (counts[d.cat] || 0) + 1);
+    const labels = Object.keys(counts).sort((a,b) => counts[b] - counts[a]);
+    const values = labels.map(l => counts[l]);
+    const wrapEl = document.getElementById(cfg.ids.chart).parentElement;
+    wrapEl.style.height = Math.max(220, labels.length * 40 + 60) + "px";
+
+    if (charts[p]) charts[p].destroy();
+    charts[p] = new Chart(document.getElementById(cfg.ids.chart), {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [{
+          label: "版本數",
+          data: values,
+          backgroundColor: labels.map(l => palette[l] || "#888"),
+          borderRadius: 6,
+          barThickness: 22
+        }]
+      },
+      options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: "#1a1a1a",
+            padding: 10,
+            callbacks: { label: ctx => `${ctx.parsed.x} 個版本提到` }
+          }
+        },
+        scales: {
+          x: { beginAtZero: true, ticks: { color: "#8b8578", font: { size: 11 } }, grid: { color: "#e6e1d6" } },
+          y: { ticks: { color: "#1a1a1a", font: { size: 12 } }, grid: { display: false } }
+        }
+      }
+    });
+  }
+  Object.keys(PRODUCTS).forEach(buildChart);
+
+  /* ===========================
+     TAB SWITCHING
+     =========================== */
+  const TAB_KEY = "ctx_active_tab_v1";
+  const initialTab = localStorage.getItem(TAB_KEY) || "claude-code";
+  function switchTab(name){
+    document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === name));
+    document.querySelectorAll(".panel").forEach(pa => pa.classList.toggle("active", pa.dataset.panel === name));
+    localStorage.setItem(TAB_KEY, name);
+    // Re-trigger Chart resize because hidden -> visible transitions need it
+    if (charts[name]) {
+      // Wait one frame for layout to settle
+      requestAnimationFrame(() => charts[name].resize());
+    }
+  }
+  document.querySelectorAll(".tab").forEach(t => {
+    t.addEventListener("click", () => switchTab(t.dataset.tab));
+  });
+  switchTab(initialTab);
+
+  /* ===========================
+     MANUAL REFRESH BUTTON
+     =========================== */
+  const refreshBtn = document.getElementById("manualRefreshBtn");
+  const refreshToast = document.getElementById("refreshToast");
+  const SCHEDULED_TASK_ID = "refresh-ai-changelog-artifact";
+
+  function showToast(msg, kind){
+    refreshToast.className = "refresh-toast show " + (kind || "");
+    refreshToast.textContent = msg;
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => {
+      refreshToast.className = "refresh-toast";
+    }, kind === "error" ? 5000 : 4000);
+  }
+
+  // Render method tag based on localStorage manual-click history vs current HTML timestamp
+  const METHOD_KEY_TIME = "ctx_manualClickTime";
+  const METHOD_KEY_TS_AT_CLICK = "ctx_htmlTsAtClick";
+  function renderRefreshMethod(){
+    const tag = document.getElementById("refreshMethod");
+    if (!tag) return;
+    const currentHtmlTs = document.getElementById("lastRefreshed")?.textContent.trim() || "";
+    const clickAt = parseInt(localStorage.getItem(METHOD_KEY_TIME) || "0", 10);
+    const tsAtClick = localStorage.getItem(METHOD_KEY_TS_AT_CLICK) || "";
+    const now = Date.now();
+    const WINDOW_MS = 30 * 60 * 1000; // 30 min window from click
+
+    if (clickAt && (now - clickAt) < WINDOW_MS) {
+      if (currentHtmlTs && currentHtmlTs !== tsAtClick) {
+        // HTML updated after our click → manual completed
+        tag.textContent = "手動觸發";
+        tag.className = "method-tag manual";
+        tag.title = "此次更新由你按「立即更新」觸發";
+      } else {
+        // Within window but HTML hasn't changed yet → pending
+        tag.textContent = "手動更新中";
+        tag.className = "method-tag pending";
+        tag.title = "你剛剛按了立即更新，任務還在背景跑";
+      }
+    } else {
+      tag.textContent = "排程觸發";
+      tag.className = "method-tag";
+      tag.title = "此次更新由排程任務自動觸發";
+    }
+  }
+  renderRefreshMethod();
+
+  refreshBtn.addEventListener("click", async () => {
+    if (refreshBtn.disabled) return;
+
+    // Record manual trigger time + current HTML timestamp for method-tag detection
+    const currentHtmlTs = document.getElementById("lastRefreshed")?.textContent.trim() || "";
+    localStorage.setItem(METHOD_KEY_TIME, Date.now().toString());
+    localStorage.setItem(METHOD_KEY_TS_AT_CLICK, currentHtmlTs);
+    renderRefreshMethod(); // immediately show "手動更新中"
+
+    refreshBtn.disabled = true;
+    refreshBtn.classList.add("spinning");
+    const lblEl = refreshBtn.querySelector(".lbl");
+    const origLbl = lblEl.textContent;
+    lblEl.textContent = "觸發中…";
+
+    try {
+      if (!window.cowork || typeof window.cowork.runScheduledTask !== "function") {
+        throw new Error("此環境不支援 runScheduledTask（請從 Cowork 應用內開啟）");
+      }
+      await window.cowork.runScheduledTask(SCHEDULED_TASK_ID);
+      lblEl.textContent = "已啟動";
+      showToast("✓ 更新任務已在背景啟動。完成後（約 1–2 分鐘）按右上角 Reload 即可看到新內容。", "success");
+      setTimeout(() => {
+        lblEl.textContent = origLbl;
+        refreshBtn.classList.remove("spinning");
+        refreshBtn.disabled = false;
+      }, 3500);
+    } catch (err) {
+      console.error("runScheduledTask failed:", err);
+      lblEl.textContent = origLbl;
+      refreshBtn.classList.remove("spinning");
+      refreshBtn.disabled = false;
+      const msg = err && err.message ? err.message : String(err);
+      showToast("✗ 觸發失敗：" + msg, "error");
+    }
+  });
+</script>
+</body>
+</html>
