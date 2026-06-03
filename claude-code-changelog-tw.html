@@ -855,7 +855,7 @@
 
   <header class="hero">
     <div class="refresh-badge">
-      <span>最後更新 <b id="lastRefreshed">2026-06-02 15:11 (Taipei)</b></span>
+      <span>最後更新 <b id="lastRefreshed">2026-06-03 20:09 (Taipei)</b></span>
     </div>
     <h1>AI Coding Tools 更新摘要</h1>
     <div class="stat-row">
@@ -1118,6 +1118,7 @@
      =========================== */
 
   const DATA_CC = [
+    {v:"2.1.161", date:"2026-06-02", cat:"Performance/Bug Fix", body:"<code>OTEL_RESOURCE_ATTRIBUTES</code> 值自動附加為 metrics 標籤，可依團隊/repo 切分用量；<code>claude agents</code> 列顯示 <b>done/total</b> 工作扇出進度；<code>/mcp</code> 預設折疊未用的 claude.ai connectors；<b>平行工具呼叫修復</b>：Bash 指令失敗不再取消同批其他呼叫；全螢幕模式剪貼簿改用 <code>wl-copy</code>/<code>xclip</code>/<code>xsel</code>（同時寫 clipboard 與 PRIMARY）；JIT 穩定化提升大檔寫入渲染效能。另修復 <code>/effort</code> dialog 動畫、managed-settings 封鎖第三方 provider session、背景 subagent 污染 <code>claude -p</code> stdout、<code>claude mcp list</code> 洩漏 secrets，以及多項 Windows/worktree/VSCode 問題。"},
     {v:"2.1.160", date:"2026-06-02", cat:"Permissions/Security", body:"寫 shell 啟動檔（<code>.zshenv</code>、<code>.zlogin</code>、<code>.bash_login</code>）或 <code>~/.config/git/</code> 前先 prompt；<code>acceptEdits</code> 模式寫 <code>.npmrc</code>、<code>.yarnrc*</code>、<code>.bazelrc</code>、<code>.devcontainer/</code> 等可執行的 build 設定也先問。<b>動態工作流的觸發關鍵字從 <code>workflow</code> 改為 <code>ultracode</code></b>（紫色高亮）。Edit 工具現在認 grep 為 read-before-edit 條件。修 Windows WSL 剪貼簿用 PowerShell interop。"},
     {v:"2.1.159", date:"2026-05-31", cat:"Performance/Bug Fix", body:"內部基礎設施改善（無使用者面向變更）。"},
     {v:"2.1.158", date:"2026-05-30", cat:"Settings/Config", body:"<b>Auto mode 開放到 Bedrock / Vertex / Foundry</b>（限 Opus 4.7、4.8）；以 <code>CLAUDE_CODE_ENABLE_AUTO_MODE=1</code> 啟用。"},
@@ -1126,14 +1127,19 @@
     {v:"2.1.154", date:"2026-05-28", cat:"Performance/Bug Fix", body:"<b>Opus 4.8 發布</b>，預設 high effort、<code>/effort xhigh</code> 應戰最難任務；<b>動態工作流</b>：請 Claude 建 workflow 即可在背景同時編排數十到上百個 agent，<code>/workflows</code> 檢視。Opus 4.8 fast mode 半價提速 2.5×；Lean system prompt 成為 Haiku/Sonnet/Opus 4.7 以外的預設。"},
     {v:"2.1.153", date:"2026-05-28", cat:"Plugins/MCP", body:"新增 <code>skipLfs</code> marketplace 來源選項略過 Git LFS；status line 指令收到 <code>COLUMNS</code>/<code>LINES</code>；<code>claude agents</code> dispatch 自動補全本機 slash 指令與 skills；<code>/model</code> 預設儲存改為新 sessions 預設（按 <code>s</code> 僅當前 session）；多項 subagent MCP 修復。"},
     {v:"2.1.152", date:"2026-05-27", cat:"Hooks", body:"<code>/code-review --fix</code> 套用 review 改動到工作樹；<b>skills 與 slash 指令 frontmatter 可設 <code>disallowed-tools</code></b>；新 <code>/reload-skills</code> 不需重啟即重掃 skills 目錄；新 <code>MessageDisplay</code> hook 可改寫或隱藏 assistant 文字；<code>SessionStart</code> hook 可回傳 <code>reloadSkills</code> 或設 <code>sessionTitle</code>。"},
+    {v:"2.1.150", date:"2026-05-23", cat:"Performance/Bug Fix", body:"內部基礎設施改善（無使用者面向變更）。"},
     {v:"2.1.149", date:"2026-05-22", cat:"UI/UX", body:"<code>/usage</code> 顯示 skills、subagents、plugins、每個 MCP 伺服器 cost 的逐類拆解；<code>/diff</code> 詳細頁可鍵盤捲動；markdown 渲染 GFM 任務清單核取方塊；修補 PowerShell 內建 <code>cd</code> 函式 (<code>cd..</code>/<code>cd\\</code>) 繞過權限檢查的安全問題。"},
+    {v:"2.1.148", date:"2026-05-22", cat:"Performance/Bug Fix", body:"<b>重要修復</b>：修正 Bash 工具對所有指令回傳 exit code 127 的 regression（由 2.1.147 引入）。"},
     {v:"2.1.147", date:"2026-05-21", cat:"Slash Commands", body:"<code>Ctrl+T</code> 釘選背景 session 永不閒置回收，可就地重啟套用更新；<b><code>/simplify</code> 改名為 <code>/code-review</code></b>，依 effort 回報 bug，可 <code>--comment</code> 貼進 PR；auto-updater 更聰明（網路重試、錯誤分類）；提示歷史去重連續重複。"},
     {v:"2.1.145", date:"2026-05-19", cat:"IDE/Editor", body:"<code>claude agents --json</code> 以 JSON 列出活躍 sessions（tmux-resurrect/status bar）；OTEL 新增 <code>agent_id</code>/<code>parent_agent_id</code>；status line JSON 含 GitHub repo/PR；<code>/plugin</code> Discover/Browse 安裝前先看 commands、agents、skills、hooks、MCP/LSP；Read tool 超大檔回 PARTIAL view 而非硬錯。"},
     {v:"2.1.144", date:"2026-05-19", cat:"UI/UX", body:"<b>背景 session 支援 <code>/resume</code></b>，標記 <code>bg</code>；背景 subagent 完工通知含 elapsed；<code>/plugin</code> 顯示最後更新時間；<code>/model</code> 改為僅變當前 session（按 <code>d</code> 設預設）；<code>/extra-usage</code> 改名 <code>/usage-credits</code>；修復 <code>api.anthropic.com</code> 不可達時啟動最久 75s 卡住。"},
     {v:"2.1.143", date:"2026-05-15", cat:"Plugins/MCP", body:"<b>Plugin 依賴強制</b>：<code>claude plugin disable</code> 拒絕被依賴 plugin、<code>enable</code> 自動連帶；<code>/plugin</code> marketplace 顯示預估 context 成本；新 <code>worktree.bgIsolation: \"none\"</code> 讓背景 session 直接編輯工作樹；PowerShell tool 預設加 <code>-ExecutionPolicy Bypass</code>。"},
     {v:"2.1.142", date:"2026-05-14", cat:"Settings/Config", body:"<code>claude agents</code> 新增 <code>--add-dir</code>、<code>--settings</code>、<code>--mcp-config</code>、<code>--plugin-dir</code>、<code>--permission-mode</code>、<code>--model</code>、<code>--effort</code>、<code>--dangerously-skip-permissions</code>；<b>Fast mode 預設改用 Opus 4.7</b>（要 4.6 設 <code>CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE=1</code>）；plugin 根 <code>SKILL.md</code> 視為 skill。"},
     {v:"2.1.141", date:"2026-05-13", cat:"Hooks", body:"hook JSON 輸出新增 <code>terminalSequence</code> 可發桌面通知、視窗標題、鈴聲；<code>CLAUDE_CODE_PLUGIN_PREFER_HTTPS</code> 走 HTTPS 拉 GitHub plugin；<code>ANTHROPIC_WORKSPACE_ID</code> workload identity；<code>claude agents --cwd</code>；rewind 選單加 <b>Summarize up to here</b>。"},
+    {v:"2.1.140", date:"2026-05-12", cat:"Performance/Bug Fix", body:"Agent tool <code>subagent_type</code> 比對改為大小寫與分隔符不敏感（如 <code>\"Code Reviewer\"</code> → <code>code-reviewer</code>）；agent 色彩調色盤更新。修復：<code>/goal</code> 在 <code>disableAllHooks</code> 設定下無聲掛起、symlink settings hot-reload regression 導致誤報 <code>ConfigChange</code> hook、<code>claude --bg</code> 在服務即將 idle 關閉時失敗、企業 endpoint security 封鎖背景服務啟動，以及多項 Windows/loop/讀取工具修復。"},
     {v:"2.1.139", date:"2026-05-11", cat:"IDE/Editor", body:"<b>Agent View（Research Preview）：<code>claude agents</code> 一個畫面看所有 Claude session</b>（執行中、待回應、完工）；新 <code>/goal</code> 指令跨 turn 持續工作直到達成；新 <code>/scroll-speed</code>；<code>claude plugin details</code> 顯示元件清單與預估 token 成本；transcript view 支援 <code>{</code>/<code>}</code> 跳到使用者提示。"},
+    {v:"2.1.138", date:"2026-05-09", cat:"Performance/Bug Fix", body:"內部修復（無使用者面向變更）。"},
+    {v:"2.1.137", date:"2026-05-09", cat:"IDE/Editor", body:"<b>[VSCode]</b> 修復 VS Code extension 在 Windows 無法啟動的問題。"},
     {v:"2.1.136", date:"2026-05-08", cat:"Settings/Config", body:"新增 <code>CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL</code>；<code>settings.autoMode.hard_deny</code> 無條件阻擋規則；修復 VS Code/JetBrains/SDK 中 <code>/clear</code> 後 MCP 伺服器消失、OAuth refresh token 並發遺失（多 MCP 伺服器不再每天重登）、plan mode 不阻擋有 <code>Edit</code> allow 規則之檔案寫入。"},
     {v:"2.1.133", date:"2026-05-07", cat:"Settings/Config", body:"新增 <code>worktree.baseRef</code> 設定（<code>fresh</code>/<code>head</code>）；<code>sandbox.bwrapPath</code>/<code>sandbox.socatPath</code> managed settings；hooks 可讀 <code>effort.level</code> 與 <code>$CLAUDE_EFFORT</code>；修復多 session 因 token refresh race 一起 401；修復 subagents 無法用 Skill tool 找到 project/user/plugin skills。"},
     {v:"2.1.132", date:"2026-05-06", cat:"Settings/Config", body:"新增 <code>CLAUDE_CODE_SESSION_ID</code> 環境變數可在 Bash 子程序使用、新增 <code>CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN</code> opt-out；多項 TUI 修復（貼上、全螢幕白屏、vim NFD 字元、slash autocomplete、status line context counts）。"},
