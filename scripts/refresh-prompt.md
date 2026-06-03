@@ -3,12 +3,12 @@
 > 這份 prompt 給 **Claude Code 排程 (schedule / cron)** 使用。每次觸發時，agent 會抓三個官方 changelog、更新 repo 內的 HTML、然後 push 回 GitHub 讓 Pages 重建。
 >
 > **Repo：** `https://github.com/KuoAnn/ai-changelog`（遠端排程會自動 clone 一份）
-> **要編輯的檔案：** repo 根目錄的 `claude-code-changelog-tw.html`
-> **路徑慣例：** 一律用 **repo-relative** 路徑（例 `claude-code-changelog-tw.html`、`scripts/push-changelog.sh`），不要用任何本機絕對路徑——遠端環境是 Linux、工作目錄已是 repo 根。
+> **要編輯的檔案：** repo 根目錄的 `index.html`
+> **路徑慣例：** 一律用 **repo-relative** 路徑（例 `index.html`、`scripts/push-changelog.sh`），不要用任何本機絕對路徑——遠端環境是 Linux、工作目錄已是 repo 根。
 
 ---
 
-你的目標：刷新 repo 根目錄的 `claude-code-changelog-tw.html`，把三個 AI 編碼工具 changelog 的最新內容合併進去、產生少量「自動靈感卡」、更新「最後更新」時間戳，最後 **commit 並 push** 讓 GitHub Page（<https://kuoann.github.io/ai-changelog/>）自動重建。所有新加入的內容都必須使用繁體中文，與既有條目風格一致。
+你的目標：刷新 repo 根目錄的 `index.html`，把三個 AI 編碼工具 changelog 的最新內容合併進去、產生少量「自動靈感卡」、更新「最後更新」時間戳，最後 **commit 並 push** 讓 GitHub Page（<https://kuoann.github.io/ai-changelog/>）自動重建。所有新加入的內容都必須使用繁體中文，與既有條目風格一致。
 
 == 背景 ==
 HTML 內三個 Tab：Claude Code（DATA_CC、INSP_CC）、Codex App（DATA_CA、INSP_CA）、Codex CLI（DATA_CI、INSP_CI）。
@@ -17,7 +17,7 @@ Hero 的 Date Span、Total Versions、Tab meta 都由 JS 動態計算 — 不要
 == 步驟 ==
 
 1) **先同步 git**，避免 push 衝突：`git pull --rebase --autostash origin main`
-   然後用 Read 工具讀 `claude-code-changelog-tw.html`（160KB+，可用 offset/limit 分塊讀需要的陣列區段）。
+   然後用 Read 工具讀 `index.html`（160KB+，可用 offset/limit 分塊讀需要的陣列區段）。
 
 2) 三個來源各自抓 — 不同來源用不同策略（這些是經驗證最可靠的）：
 

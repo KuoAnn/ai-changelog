@@ -3,7 +3,7 @@
 #
 # Linux/macOS counterpart of push-changelog.ps1 — used by the REMOTE
 # scheduled agent (which runs on Linux). Called AFTER the agent has edited
-# claude-code-changelog-tw.html.
+# index.html.
 #
 # Pulls latest, stages changed files, commits with a Taipei timestamp, and
 # pushes to origin/main. No-op safe: if nothing changed, exits 0 without a commit.
@@ -32,7 +32,7 @@ git config user.email >/dev/null 2>&1 || git config user.email "bot@users.norepl
 git fetch origin main || true
 git pull --rebase --autostash origin main || true
 
-git add claude-code-changelog-tw.html index.html
+git add index.html
 
 if git diff --cached --quiet; then
   echo "[push-changelog] no changes staged — skipping commit."

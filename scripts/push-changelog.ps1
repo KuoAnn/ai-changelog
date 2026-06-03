@@ -4,7 +4,7 @@
 
 .DESCRIPTION
   Called by the scheduled refresh agent AFTER it has edited
-  claude-code-changelog-tw.html. Pulls latest, stages changed files,
+  index.html. Pulls latest, stages changed files,
   commits with a Taipei timestamp, and pushes to origin/main.
 
   Safe to run when nothing changed: it detects an empty diff and exits 0
@@ -40,7 +40,7 @@ Write-Host "[push-changelog] Taipei time: $taipei"
 git pull --rebase --autostash origin main 2>&1 | Write-Host
 
 # Stage the dashboard + any sibling content that changed
-git add claude-code-changelog-tw.html index.html 2>&1 | Write-Host
+git add index.html 2>&1 | Write-Host
 
 # Nothing to commit? bail cleanly.
 $staged = git diff --cached --name-only

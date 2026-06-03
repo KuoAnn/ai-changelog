@@ -19,14 +19,12 @@
 直接用瀏覽器開啟：
 
 ```text
-claude-code-changelog-tw.html
+index.html
 ```
-
-`index.html` 只負責跳轉到主頁面。
 
 ## 自動更新
 
-內容由 Claude Code 遠端排程維護。排程會抓三個官方來源，更新 `claude-code-changelog-tw.html`，再 commit 並 push 到 `main`，觸發 GitHub Pages 重建。
+內容由 Claude Code 遠端排程維護。排程會抓三個官方來源，更新 `index.html`，再 commit 並 push 到 `main`，觸發 GitHub Pages 重建。
 
 ```text
 排程觸發 -> 抓官方 changelog -> 更新 HTML -> commit/push -> Pages 重建
@@ -62,15 +60,14 @@ bash scripts/push-changelog.sh "手動更新"
 
 | 檔案 | 說明 |
 | --- | --- |
-| [`claude-code-changelog-tw.html`](claude-code-changelog-tw.html) | 主頁面，包含資料、樣式與互動邏輯 |
-| [`index.html`](index.html) | GitHub Pages 入口，跳轉到主頁面 |
+| [`index.html`](index.html) | 主頁面（兼 GitHub Pages 入口），包含資料、樣式與互動邏輯 |
 | [`scripts/refresh-prompt.md`](scripts/refresh-prompt.md) | 排程 agent 的完整刷新指示 |
 | [`scripts/push-changelog.ps1`](scripts/push-changelog.ps1) | Windows 手動 commit/push 腳本 |
 | [`scripts/push-changelog.sh`](scripts/push-changelog.sh) | Linux/遠端排程 commit/push 腳本 |
 
 ## 編輯提示
 
-主資料都在 `claude-code-changelog-tw.html`：
+主資料都在 `index.html`：
 
 | 內容 | HTML 內位置 |
 | --- | --- |
