@@ -983,7 +983,7 @@
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
-      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-04 05:12 (Taipei)</b></span></span>
+      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-05 05:13 (Taipei)</b></span></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
         <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
       </button>
@@ -1252,6 +1252,7 @@
      =========================== */
 
   const DATA_CC = [
+    {v:"2.1.162", date:"2026-06-03", cat:"UI/UX", body:"<code>claude agents --json</code> 新增 <code>waitingFor</code> 欄位顯示受阻 session；原生 build 的 Grep/Glob 工具改用內建搜尋引擎；<b><code>/effort</code> 預設改為持久化</b>（確認提示）；Slash 指令在自動補全選取後填入 prompt 而非立即執行；<b>Remote Control 改為常駐底部 pill</b>；選單中 Windsurf 改名為 Devin Desktop。修復：唯讀 config 目錄導致啟動卡死、WebFetch 預先核准 domain 的權限規則失效、Windows 反斜線與大小寫路徑規則失效、turn 開頭中斷被靜默丟棄、emoji classifier 的 API 400、低於 1000ms 的 MCP timeout 設定、LSP <code>workspaceSymbol</code> 無結果、<code>claude agents</code> 附加時偶爾彈回 session 列表、背景服務重啟後 session 對話遺失、失敗回覆未排隊重送、深層目錄跨 session 訊息失敗，以及多項啟動訊息整潔化。"},
     {v:"2.1.161", date:"2026-06-02", cat:"Performance/Bug Fix", body:"<code>OTEL_RESOURCE_ATTRIBUTES</code> 值自動附加為 metrics 標籤，可依團隊/repo 切分用量；<code>claude agents</code> 列顯示 <b>done/total</b> 工作扇出進度；<code>/mcp</code> 預設折疊未用的 claude.ai connectors；<b>平行工具呼叫修復</b>：Bash 指令失敗不再取消同批其他呼叫；全螢幕模式剪貼簿改用 <code>wl-copy</code>/<code>xclip</code>/<code>xsel</code>（同時寫 clipboard 與 PRIMARY）；JIT 穩定化提升大檔寫入渲染效能。另修復 <code>/effort</code> dialog 動畫、managed-settings 封鎖第三方 provider session、背景 subagent 污染 <code>claude -p</code> stdout、<code>claude mcp list</code> 洩漏 secrets，以及多項 Windows/worktree/VSCode 問題。"},
     {v:"2.1.160", date:"2026-06-02", cat:"Permissions/Security", body:"寫 shell 啟動檔（<code>.zshenv</code>、<code>.zlogin</code>、<code>.bash_login</code>）或 <code>~/.config/git/</code> 前先 prompt；<code>acceptEdits</code> 模式寫 <code>.npmrc</code>、<code>.yarnrc*</code>、<code>.bazelrc</code>、<code>.devcontainer/</code> 等可執行的 build 設定也先問。<b>動態工作流的觸發關鍵字從 <code>workflow</code> 改為 <code>ultracode</code></b>（紫色高亮）。Edit 工具現在認 grep 為 read-before-edit 條件。修 Windows WSL 剪貼簿用 PowerShell interop。"},
     {v:"2.1.159", date:"2026-05-31", cat:"Performance/Bug Fix", body:"內部基礎設施改善（無使用者面向變更）。"},
