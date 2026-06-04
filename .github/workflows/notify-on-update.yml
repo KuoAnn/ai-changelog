@@ -1,0 +1,167 @@
+name: Notify on real update
+
+# 當 index.html 有「實際內容更新」（新增 DATA_* 版本條目或 INSP_* 靈感卡）時寄 Email。
+# 只更新 <b id="lastRefreshed"> 同步時間戳的 commit 不會觸發通知。
+# 偵測完全靠 git diff，與排程 agent / push 腳本解耦。
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - index.html
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (full history for diff)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect real content change
+        id: detect
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # ── 手動觸發：直接視為要寄一封測試信 ──
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            {
+              echo "should_send=true"
+              echo "is_test=true"
+              echo "new_entries=0"
+              echo "new_cards=0"
+            } >> "$GITHUB_OUTPUT"
+            {
+              echo "summary<<EOF"
+              echo "（手動觸發的測試信）"
+              echo "EOF"
+              echo "versions<<EOF"
+              echo "EOF"
+              echo "cards<<EOF"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # ── 決定 diff 範圍 ──
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.event.after }}"
+          ZERO="0000000000000000000000000000000000000000"
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "$ZERO" ] || ! git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            echo "before SHA 不可用，退回 HEAD~1..HEAD"
+            BEFORE="$(git rev-parse HEAD~1)"
+            AFTER="$(git rev-parse HEAD)"
+          fi
+          echo "diff 範圍：$BEFORE..$AFTER"
+
+          # ── 取新增行（排除 +++ 檔頭）──
+          ADDED="$(git diff "$BEFORE" "$AFTER" -- index.html | grep -E '^\+' | grep -vE '^\+\+\+' || true)"
+
+          # 新版本條目：DATA_* 物件的 v: "..." 欄位（排除時間戳那行）
+          NEW_ENTRIES="$(printf '%s\n' "$ADDED" | grep -E '[^A-Za-z]v:[[:space:]]*"' | grep -v 'lastRefreshed' || true)"
+          # 新靈感卡：含 auto: true 的行
+          NEW_CARDS="$(printf '%s\n' "$ADDED" | grep -E 'auto:[[:space:]]*true' || true)"
+
+          n_entries=$(printf '%s\n' "$NEW_ENTRIES" | grep -cE '.' || true)
+          n_cards=$(printf '%s\n' "$NEW_CARDS" | grep -cE '.' || true)
+          echo "new_entries=$n_entries  new_cards=$n_cards"
+
+          should_send=false
+          if [ "$n_entries" -gt 0 ] || [ "$n_cards" -gt 0 ]; then
+            should_send=true
+          fi
+
+          # 抽人類可讀內容：版本號、靈感卡標題、commit summary
+          versions="$(printf '%s\n' "$NEW_ENTRIES" | grep -oE 'v:[[:space:]]*"[^"]+"' | sed -E 's/v:[[:space:]]*"([^"]+)"/\1/' | sort -u || true)"
+          cards="$(printf '%s\n' "$ADDED" | grep -oE 'feat:[[:space:]]*"[^"]+"' | sed -E 's/feat:[[:space:]]*"([^"]+)"/\1/' | sort -u || true)"
+          summary="$(git log -1 --format=%b "$AFTER" || true)"
+
+          {
+            echo "should_send=$should_send"
+            echo "is_test=false"
+            echo "new_entries=$n_entries"
+            echo "new_cards=$n_cards"
+          } >> "$GITHUB_OUTPUT"
+          {
+            echo "versions<<EOF"; printf '%s\n' "$versions"; echo "EOF"
+            echo "cards<<EOF";    printf '%s\n' "$cards";    echo "EOF"
+            echo "summary<<EOF";  printf '%s\n' "$summary";  echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Build email body
+        if: steps.detect.outputs.should_send == 'true'
+        id: body
+        shell: bash
+        # 透過 env 傳入動態值，避免把 ${{ }} 直接插進 shell（防 injection / 引號破壞）
+        env:
+          IS_TEST: ${{ steps.detect.outputs.is_test }}
+          NEW_ENTRIES: ${{ steps.detect.outputs.new_entries }}
+          NEW_CARDS: ${{ steps.detect.outputs.new_cards }}
+          VERSIONS: ${{ steps.detect.outputs.versions }}
+          CARDS: ${{ steps.detect.outputs.cards }}
+          SUMMARY: ${{ steps.detect.outputs.summary }}
+          COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
+        run: |
+          set -euo pipefail
+          PAGE="https://kuoann.github.io/ai-changelog/"
+
+          # HTML escape，避免內容裡的 < > & 破壞版面
+          esc() { sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g'; }
+
+          # 版本與卡片清單轉成 HTML <li>
+          li() { while IFS= read -r line; do [ -n "$line" ] && printf '<li>%s</li>' "$(printf '%s' "$line" | esc)"; done; }
+          VERSIONS_HTML="$(printf '%s\n' "$VERSIONS" | li || true)"
+          CARDS_HTML="$(printf '%s\n' "$CARDS" | li || true)"
+          [ -z "$VERSIONS_HTML" ] && VERSIONS_HTML="<li>（無新版本條目）</li>"
+          [ -z "$CARDS_HTML" ] && CARDS_HTML="<li>（本次無新靈感卡）</li>"
+          SUMMARY_HTML="$(printf '%s' "$SUMMARY" | esc)"
+
+          if [ "$IS_TEST" = "true" ]; then
+            SUBJECT="🧪 AI Changelog 通知測試"
+            INTRO="這是一封手動觸發的測試信，用來確認 SMTP 設定正確。"
+          else
+            SUBJECT="🆕 AI Changelog 有新更新（新增 ${NEW_ENTRIES} 筆版本、${NEW_CARDS} 張靈感卡）"
+            INTRO="AI 編碼工具有新的 release，已同步到 changelog 頁面。"
+          fi
+
+          echo "subject=$SUBJECT" >> "$GITHUB_OUTPUT"
+          {
+            echo "html<<HTMLEOF"
+            cat <<HTML
+          <div style="font-family:-apple-system,Segoe UI,Roboto,'Noto Sans TC',sans-serif;line-height:1.6;color:#1f2937;">
+            <h2 style="margin:0 0 8px;">🆕 AI Changelog 更新通知</h2>
+            <p>$INTRO</p>
+            <h3 style="margin:16px 0 4px;">新版本條目</h3>
+            <ul>$VERSIONS_HTML</ul>
+            <h3 style="margin:16px 0 4px;">新靈感卡</h3>
+            <ul>$CARDS_HTML</ul>
+            <h3 style="margin:16px 0 4px;">更新摘要</h3>
+            <pre style="background:#f3f4f6;padding:12px;border-radius:8px;white-space:pre-wrap;">$SUMMARY_HTML</pre>
+            <p>
+              👉 <a href="$PAGE">開啟 changelog 頁面</a><br/>
+              🔗 <a href="$COMMIT_URL">查看本次 commit</a>
+            </p>
+          </div>
+          HTML
+            echo "HTMLEOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Send mail
+        if: steps.detect.outputs.should_send == 'true'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.MAIL_SERVER }}
+          server_port: ${{ secrets.MAIL_PORT }}
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          from: AI Changelog Bot <${{ secrets.MAIL_FROM || secrets.MAIL_USERNAME }}>
+          to: ${{ vars.MAIL_TO }}
+          subject: ${{ steps.body.outputs.subject }}
+          html_body: ${{ steps.body.outputs.html }}
