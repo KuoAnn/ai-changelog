@@ -983,7 +983,7 @@
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
-      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-06 05:10 (Taipei)</b></span></span>
+      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-07 05:06 (Taipei)</b></span></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
         <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
       </button>
@@ -1252,6 +1252,8 @@
      =========================== */
 
   const DATA_CC = [
+    {v:"2.1.167", date:"2026-06-06", cat:"Performance/Bug Fix", body:"Bug 修復與可靠性改進（無使用者面向新功能）。"},
+    {v:"2.1.166", date:"2026-06-06", cat:"Settings/Config", body:"新增 <code>fallbackModel</code> 設定（最多三個後備模型，主模型過載或不可用時依序嘗試）；<code>--fallback-model</code> 適用互動工作階段；<b>全球規則工具名稱位置支援 glob 樣式</b>（<code>\"*\"</code> 拒絕所有工具）；<b>跨工作階段訊息強化</b>：透過 <code>SendMessage</code> 中繼的訊息不再攜帶使用者授權。修復：圖像無法處理反覆錯誤與額外 Token 用量、遠端工作階段背景擾亂卡住、JetBrains 終端閃爍、Kitty 協議 Shift+非ASCII 字元遺失、PowerShell 命令驗證偶爾超時。"},
     {v:"2.1.165", date:"2026-06-05", cat:"Performance/Bug Fix", body:"Bug 修復與可靠性改進（無使用者面向新功能）。"},
     {v:"2.1.163", date:"2026-06-04", cat:"Plugins/MCP", body:"<b>受管設定版本控制</b>：新增 <code>requiredMinimumVersion</code>/<code>requiredMaximumVersion</code> managed settings，管理員可強制版本範圍，啟動時超出即拒絕並引導更新。<b>新增 <code>/plugin list</code> 指令</b>（<code>--enabled</code>/<code>--disabled</code> 篩選已裝 plugin）；<code>/btw</code> 加入 <b>c 鍵複製</b>原始 Markdown；<b>Stop/SubagentStop hooks</b> 可回傳 <code>hookSpecificOutput.additionalContext</code> 繼續 turn 而不觸發 hook 錯誤；Skills 加入 <code>\\$</code> 逸出語法（避免數字前 <code>$</code> 被意外展開）；<b>stdio MCP 伺服器現接收 <code>CLAUDE_CODE_SESSION_ID</code></b> 等 session 環境變數（與 hooks/Bash 相同）。修復：<code>claude -p</code> 永久掛起、bazel/EDR 工作流 <code>$TMPDIR</code> 覆蓋 regression（2.1.154 引入）、Windows EEXIST 錯誤、org-managed 權限規則未正確套用、重連後台 session 任務遺失、貼上後鍵盤無響應等多項問題。"},
     {v:"2.1.162", date:"2026-06-03", cat:"UI/UX", body:"<code>claude agents --json</code> 新增 <code>waitingFor</code> 欄位顯示受阻 session；原生 build 的 Grep/Glob 工具改用內建搜尋引擎；<b><code>/effort</code> 預設改為持久化</b>（確認提示）；Slash 指令在自動補全選取後填入 prompt 而非立即執行；<b>Remote Control 改為常駐底部 pill</b>；選單中 Windsurf 改名為 Devin Desktop。修復：唯讀 config 目錄導致啟動卡死、WebFetch 預先核准 domain 的權限規則失效、Windows 反斜線與大小寫路徑規則失效、turn 開頭中斷被靜默丟棄、emoji classifier 的 API 400、低於 1000ms 的 MCP timeout 設定、LSP <code>workspaceSymbol</code> 無結果、<code>claude agents</code> 附加時偶爾彈回 session 列表、背景服務重啟後 session 對話遺失、失敗回覆未排隊重送、深層目錄跨 session 訊息失敗，以及多項啟動訊息整潔化。"},
