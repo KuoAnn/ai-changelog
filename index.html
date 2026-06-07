@@ -983,7 +983,7 @@
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
-      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-07 05:06 (Taipei)</b></span></span>
+      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-08 05:06 (Taipei)</b></span></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
         <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
       </button>
@@ -1252,6 +1252,7 @@
      =========================== */
 
   const DATA_CC = [
+    {v:"2.1.168", date:"2026-06-06", cat:"Performance/Bug Fix", body:"Bug 修復與可靠性改進（無使用者面向新功能）。"},
     {v:"2.1.167", date:"2026-06-06", cat:"Performance/Bug Fix", body:"Bug 修復與可靠性改進（無使用者面向新功能）。"},
     {v:"2.1.166", date:"2026-06-06", cat:"Settings/Config", body:"新增 <code>fallbackModel</code> 設定（最多三個後備模型，主模型過載或不可用時依序嘗試）；<code>--fallback-model</code> 適用互動工作階段；<b>全球規則工具名稱位置支援 glob 樣式</b>（<code>\"*\"</code> 拒絕所有工具）；<b>跨工作階段訊息強化</b>：透過 <code>SendMessage</code> 中繼的訊息不再攜帶使用者授權。修復：圖像無法處理反覆錯誤與額外 Token 用量、遠端工作階段背景擾亂卡住、JetBrains 終端閃爍、Kitty 協議 Shift+非ASCII 字元遺失、PowerShell 命令驗證偶爾超時。"},
     {v:"2.1.165", date:"2026-06-05", cat:"Performance/Bug Fix", body:"Bug 修復與可靠性改進（無使用者面向新功能）。"},
@@ -1350,6 +1351,7 @@
   ];
 
   const DATA_CI = [
+    {v:"0.137.0", date:"2026-06-04", cat:"UI/UX", title:"CLI 0.137.0：F13-F24 功能鍵 + Multi-Agent v2 改進", body:"TUI 支援 <b>F13–F24 按鍵綁定</b>、可搜尋選單中貼上、精簡版僅顯示 reasoning 的狀態欄；企業流程顯示每月額度上限並支援雲端管理 config bundle（含 EDU workspace）；<b>Remote-control 客戶端可透過 app-server v2 RPC 發起配對、列出或撤銷授權</b>；<code>codex plugin list --json</code> 輸出機器可讀格式並快取遠端目錄建議；hosted web/image 工具整合進更多 code-mode 流程、standalone 網路搜尋可平行執行；<b>Multi-agent v2</b> 每個 thread 獨立保留執行時模型選擇，衍生 agent 的後續追問與 metadata 預設更整潔。修復：取消已送出 prompt 可還原草稿與附件、本地 session 歷史壓縮穩定性、macOS deep link 啟動改善、Windows SQLite 啟動與 thread resume、沙箱 setup refresh、plugin 載入順序保留等多項問題。"},
     {v:"0.136.0", date:"2026-06-01", cat:"UI/UX", title:"CLI 0.136.0：Session 封存 + Markdown 連結", body:"TUI Markdown 加入 <b>OSC 8 可點擊連結</b>、表格擠不下時自動切換為易讀的鍵值對形式；新 <code>/archive</code> 與 <code>codex archive</code>/<code>codex unarchive</code> 封存 session（保護不被 resume/fork）；app-server 新 <code>--stdio</code> mode；remote-control websocket 改用短期 server token；Windows alpha <code>codex sandbox setup --elevated</code>；Bedrock catalog 更新含 <b>GPT-5.5</b>。"},
     {v:"0.135.0", date:"2026-05-28", cat:"Slash Commands", title:"CLI 0.135.0：/permissions + Vim 強化", body:"<code>codex doctor</code> 報告更豐富的環境/Git/terminal/thread 診斷；<code>/status</code> 在 remote 模式下顯示連線細節；<b>Vim mode 加入 text-object 編輯</b>、可設定中斷 turn binding；<code>/permissions</code> 認得命名 permission profile；macOS/Linux packaged build 自帶 patched zsh helper；<code>CODEX_NON_INTERACTIVE=1</code> 支援非互動安裝。"},
     {v:"0.134.0", date:"2026-05-26", cat:"MCP/Tools", title:"CLI 0.134.0：對話搜尋 + MCP 並發", body:"新增<b>本地對話歷史搜尋</b>（不分大小寫、附 preview）；<code>--profile</code> 升為主 profile 選擇器，legacy profile 強制遷移；MCP 設定支援 per-server 環境、streamable HTTP server OAuth；connector tool schema 保留 <code>$ref</code>/<code>$defs</code>；<b>read-only MCP 工具可並發執行</b>（advertise <code>readOnlyHint</code> 即可）；hook 收到 conversation history 與 subagent identity。"},
