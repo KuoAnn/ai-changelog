@@ -983,7 +983,7 @@
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
-      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-09 05:06 (Taipei)</b></span></span>
+      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-10 05:07 (Taipei)</b></span></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
         <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
       </button>
@@ -1252,6 +1252,8 @@
      =========================== */
 
   const DATA_CC = [
+    {v:"2.1.170", date:"2026-06-09", cat:"Performance/Bug Fix", body:"<b>Claude Fable 5 發布</b>（Mythos 級旗艦模型，效能超越先前所有公開版本，需更新至 2.1.170 才能存取）；修復從 VS Code 整合終端或繼承 Claude Code 環境變數的 shell 啟動時，session 不儲存 transcript 且不出現於 <code>--resume</code> 清單的問題。"},
+    {v:"2.1.169", date:"2026-06-08", cat:"Slash Commands", body:"新增 <code>--safe-mode</code>（<code>CLAUDE_CODE_SAFE_MODE</code>）：停用 CLAUDE.md、plugins、skills、hooks、MCP 伺服器，供故障排查；新增 <code>/cd</code> 可在 session 中切換工作目錄而不中斷 prompt cache；新增 <code>disableBundledSkills</code> / <code>CLAUDE_CODE_DISABLE_BUNDLED_SKILLS</code> 可隱藏內建 skills、workflows 與 slash command。修復：企業 MCP 政策在重連前未套用、macOS 每輪開頭 30–50ms UI 卡頓、Windows <code>claude -p</code> 指令掃描掛起（2.1.161 引入）、Remote Control 重新連線後卡在「reconnecting」等多項問題。"},
     {v:"2.1.168", date:"2026-06-06", cat:"Performance/Bug Fix", body:"Bug 修復與可靠性改進（無使用者面向新功能）。"},
     {v:"2.1.167", date:"2026-06-06", cat:"Performance/Bug Fix", body:"Bug 修復與可靠性改進（無使用者面向新功能）。"},
     {v:"2.1.166", date:"2026-06-06", cat:"Settings/Config", body:"新增 <code>fallbackModel</code> 設定（最多三個後備模型，主模型過載或不可用時依序嘗試）；<code>--fallback-model</code> 適用互動工作階段；<b>全球規則工具名稱位置支援 glob 樣式</b>（<code>\"*\"</code> 拒絕所有工具）；<b>跨工作階段訊息強化</b>：透過 <code>SendMessage</code> 中繼的訊息不再攜帶使用者授權。修復：圖像無法處理反覆錯誤與額外 Token 用量、遠端工作階段背景擾亂卡住、JetBrains 終端閃爍、Kitty 協議 Shift+非ASCII 字元遺失、PowerShell 命令驗證偶爾超時。"},
@@ -1351,6 +1353,8 @@
   ];
 
   const DATA_CI = [
+    {v:"0.139.0", date:"2026-06-09", cat:"MCP/Tools", title:"CLI 0.139.0：Code mode 直呼 Web Search + MCP schema 強化", body:"<b>Code mode 現可直接呼叫 standalone web search</b>，以純文字回傳結果；MCP 工具 schema 改善對 <code>oneOf</code>/<code>allOf</code> 結構的保留相容性；<code>codex doctor</code> 新增 editor 與 pager 環境診斷資訊；plugin marketplace automation 支援 JSON 輸出。修復：圖片編輯、URL linkification、thread 設定保留等多項問題。"},
+    {v:"0.138.0", date:"2026-06-08", cat:"Slash Commands", title:"CLI 0.138.0：/app 交棒 Codex Desktop + 本地圖片路徑", body:"新增 <b><code>/app</code> 指令可將目前 CLI thread 交棒到 Codex Desktop</b>（macOS 及原生 Windows），無縫延續對話；本地圖片附件現在向模型揭露檔案路徑以提升編輯品質；reasoning effort 選擇更彈性，加入後備鍵盤快捷鍵；帳戶 token 用量可查看，支援 v2 personal access token；plugin automation 強化 JSON 輸出。"},
     {v:"0.137.0", date:"2026-06-04", cat:"UI/UX", title:"CLI 0.137.0：F13-F24 功能鍵 + Multi-Agent v2 改進", body:"TUI 支援 <b>F13–F24 按鍵綁定</b>、可搜尋選單中貼上、精簡版僅顯示 reasoning 的狀態欄；企業流程顯示每月額度上限並支援雲端管理 config bundle（含 EDU workspace）；<b>Remote-control 客戶端可透過 app-server v2 RPC 發起配對、列出或撤銷授權</b>；<code>codex plugin list --json</code> 輸出機器可讀格式並快取遠端目錄建議；hosted web/image 工具整合進更多 code-mode 流程、standalone 網路搜尋可平行執行；<b>Multi-agent v2</b> 每個 thread 獨立保留執行時模型選擇，衍生 agent 的後續追問與 metadata 預設更整潔。修復：取消已送出 prompt 可還原草稿與附件、本地 session 歷史壓縮穩定性、macOS deep link 啟動改善、Windows SQLite 啟動與 thread resume、沙箱 setup refresh、plugin 載入順序保留等多項問題。"},
     {v:"0.136.0", date:"2026-06-01", cat:"UI/UX", title:"CLI 0.136.0：Session 封存 + Markdown 連結", body:"TUI Markdown 加入 <b>OSC 8 可點擊連結</b>、表格擠不下時自動切換為易讀的鍵值對形式；新 <code>/archive</code> 與 <code>codex archive</code>/<code>codex unarchive</code> 封存 session（保護不被 resume/fork）；app-server 新 <code>--stdio</code> mode；remote-control websocket 改用短期 server token；Windows alpha <code>codex sandbox setup --elevated</code>；Bedrock catalog 更新含 <b>GPT-5.5</b>。"},
     {v:"0.135.0", date:"2026-05-28", cat:"Slash Commands", title:"CLI 0.135.0：/permissions + Vim 強化", body:"<code>codex doctor</code> 報告更豐富的環境/Git/terminal/thread 診斷；<code>/status</code> 在 remote 模式下顯示連線細節；<b>Vim mode 加入 text-object 編輯</b>、可設定中斷 turn binding；<code>/permissions</code> 認得命名 permission profile；macOS/Linux packaged build 自帶 patched zsh helper；<code>CODEX_NON_INTERACTIVE=1</code> 支援非互動安裝。"},
@@ -1960,6 +1964,18 @@
     ],
     auto:true
   });
+  INSP_CC.push({
+    ico:"✨", color:"purple", feat:"Claude Fable 5 — Mythos 級旗艦模型", ver:"v2.1.170 · 2026-06-09",
+    desc:"Fable 5 效能超越先前所有公開模型，適用最複雜任務（大型 refactor、深度推理、跨 repo migration）。",
+    scen:"<b>場景：</b>銀行 iOS App 年度大重構（Combine → Swift Concurrency），以往用較弱模型易推理失誤。Fable 5 搭配 <code>/effort xhigh</code> 準確率大幅提升。",
+    roles:["frontend","backend","qa","pm"],
+    d:[
+      {h:"為什麼有用", p:"Fable 5 是目前最強公開模型。對需要長程推理的任務（大型 refactor、跨 module 依賴分析、安全稽核）準確率和推理深度皆優於 Opus 4.8。"},
+      {h:"切換方式", c:"bash", b:"# 互動式切換到 Fable 5\nclaude\n> /model claude-fable-5\n\n# 搭配 xhigh effort\n> /effort xhigh\n\n# 設為預設（~/.claude/settings.json）\n# { \"model\": \"claude-fable-5\" }"},
+      {h:"適用場景", l:["<b>年度大重構</b>：架構替換、全 repo callsite 改寫","<b>複雜 bug hunt</b>：需要長程推理跨多個 module","<b>安全稽核</b>：深度分析資安弱點、跨 module 追蹤"]}
+    ],
+    auto:true
+  });
   INSP_CA.push({
     ico:"📟", color:"blue", feat:"Codex 可讀取整合終端機輸出", ver:"2026-03-11",
     desc:"Codex 能讀取目前 thread 的 <b>integrated terminal</b> 輸出 — 確認 dev server 狀態、回查失敗的 build。",
@@ -1993,6 +2009,18 @@
       {h:"為什麼有用", p:"0.131.0 是 TUI 大改版，把過去散落的 UX 痛點集中解決。新人學 CLI 的曲線變平。"},
       {h:"亮點功能", l:["<b>@ mention</b>：選檔案、目錄、plugin、skill 一鍵帶入","<b>Plugin marketplace 指令</b>：<code>codex plugin install/list/upgrade</code>","<b>響應式 Markdown 表格</b>：終端窄時自動切緊湊版","<b>Permissions/approval mode</b> 顯示當下權限狀態"]},
       {h:"小技巧", p:"配合 0.135.0+ 的 codex doctor 一起，新人 day 1 跑兩個指令就能掌握環境。"}
+    ],
+    auto:true
+  });
+  INSP_CI.push({
+    ico:"🔀", color:"blue", feat:"/app — CLI thread 無縫交棒 Codex Desktop", ver:"0.138.0 · 2026-06-08",
+    desc:"CLI 工作到一半可用 <code>/app</code> 把整個 thread 交棒到 Codex Desktop（macOS/Windows），不丟失任何 context。",
+    scen:"<b>場景：</b>用 CLI 跑了一半的 refactor，想切到桌面環境用 In-app browser 對照 spec 繼續工作。<code>/app</code> 一下，CLI 的 context 完整帶進 Desktop，不用重頭說明背景。",
+    roles:["frontend","backend"],
+    d:[
+      {h:"為什麼有用", p:"CLI 和 Desktop 各有優勢：CLI 快、可腳本化；Desktop 有 in-app browser、Computer Use、artifact viewer。/app 讓你視情況切換，不再是二選一。"},
+      {h:"用法", c:"bash", b:"# CLI 工作到一半\n$ codex\n> /app\n# Codex Desktop 自動開啟，載入同一 thread\n# context、附件、對話歷史全部保留"},
+      {h:"小技巧", l:["macOS 和原生 Windows 皆支援","Desktop 做完後可用同 session ID 在 CLI <code>--resume</code>","和 <code>/archive</code> 搭配：交棒前先封存一份快照"]}
     ],
     auto:true
   });
