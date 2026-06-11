@@ -983,7 +983,7 @@
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
-      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-11 05:06 (Taipei)</b></span></span>
+      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-12 05:04 (Taipei)</b></span></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
         <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
       </button>
@@ -1252,6 +1252,8 @@
      =========================== */
 
   const DATA_CC = [
+    {v:"2.1.173", date:"2026-06-11", cat:"Performance/Bug Fix", body:"修復 Fable 5 模型名稱含 <code>[1m]</code> 後綴未正規化的問題（1M context 版 Fable 5 現自動去除後綴）；修復 Windows 啟動時誤報「sandbox dependencies missing」警告。"},
+    {v:"2.1.172", date:"2026-06-10", cat:"Subagents/Skills", body:"<b>子 Agent 可遞迴派生</b>（最深 5 層）；Amazon Bedrock 現從 <code>~/.aws</code> 設定檔讀取 AWS region（<code>/status</code> 顯示來源）；<code>/plugin</code> 市集新增搜尋列；OTEL <code>claude_code.lines_of_code.count</code> 加入 <code>model</code> 屬性。修復：1M context session 無使用額度時永久卡住、重複圖片處理錯誤、Agent view spinner 誤延遲 30 秒、背景 agent 讀錯目錄的 <code>.mcp.json</code> 信任設定、<code>availableModels</code> 未套用至子 agent 模型覆寫與 dispatch picker、WebFetch 萬用字元域名規則不匹配，以及多項 <code>/model</code> picker 顯示與效能問題。"},
     {v:"2.1.170", date:"2026-06-09", cat:"Performance/Bug Fix", body:"<b>Claude Fable 5 發布</b>（Mythos 級旗艦模型，效能超越先前所有公開版本，需更新至 2.1.170 才能存取）；修復從 VS Code 整合終端或繼承 Claude Code 環境變數的 shell 啟動時，session 不儲存 transcript 且不出現於 <code>--resume</code> 清單的問題。"},
     {v:"2.1.169", date:"2026-06-08", cat:"Slash Commands", body:"新增 <code>--safe-mode</code>（<code>CLAUDE_CODE_SAFE_MODE</code>）：停用 CLAUDE.md、plugins、skills、hooks、MCP 伺服器，供故障排查；新增 <code>/cd</code> 可在 session 中切換工作目錄而不中斷 prompt cache；新增 <code>disableBundledSkills</code> / <code>CLAUDE_CODE_DISABLE_BUNDLED_SKILLS</code> 可隱藏內建 skills、workflows 與 slash command。修復：企業 MCP 政策在重連前未套用、macOS 每輪開頭 30–50ms UI 卡頓、Windows <code>claude -p</code> 指令掃描掛起（2.1.161 引入）、Remote Control 重新連線後卡在「reconnecting」等多項問題。"},
     {v:"2.1.168", date:"2026-06-06", cat:"Performance/Bug Fix", body:"Bug 修復與可靠性改進（無使用者面向新功能）。"},
@@ -2021,6 +2023,19 @@
       {h:"為什麼有用", p:"CLI 和 Desktop 各有優勢：CLI 快、可腳本化；Desktop 有 in-app browser、Computer Use、artifact viewer。/app 讓你視情況切換，不再是二選一。"},
       {h:"用法", c:"bash", b:"# CLI 工作到一半\n$ codex\n> /app\n# Codex Desktop 自動開啟，載入同一 thread\n# context、附件、對話歷史全部保留"},
       {h:"小技巧", l:["macOS 和原生 Windows 皆支援","Desktop 做完後可用同 session ID 在 CLI <code>--resume</code>","和 <code>/archive</code> 搭配：交棒前先封存一份快照"]}
+    ],
+    auto:true
+  });
+
+  INSP_CC.push({
+    ico:"🕸️", color:"orange", feat:"子 Agent 可遞迴派生（最深 5 層）", ver:"v2.1.172 · 2026-06-10",
+    desc:"Sub-agent 可以繼續派生自己的 sub-agent，最深 5 層巢狀，構成真正的多層 agent 樹狀結構。",
+    scen:"<b>場景：</b>大型 monorepo migration：頂層 agent 拆分成 module agent，各 module agent 再拆出檔案 agent，平行處理數百個檔案；每層負責自己範圍內的推理。",
+    roles:["backend","frontend","qa","pm"],
+    d:[
+      {h:"為什麼有用", p:"過去子 agent 只有一層，頂層 orchestrator 需要手動拆分所有工作。巢狀 5 層後，agent 可自行遞迴分解問題 — 大型任務自組織、不需人工介入分片。"},
+      {h:"基本用法", c:"bash", b:"# 頂層 agent 會自動派生子 agent\nclaude\n> 對整個 monorepo 執行安全稽核，每個 package 獨立 agent\n# 內部：pkg-agent 再按檔案派發 file-agent\n# /goal 或 claude agents 追蹤各層進度"},
+      {h:"小技巧", l:["深層 agent 消耗 token 較多，建議搭配 <code>/effort high</code> 而非 xhigh","<code>claude agents --json</code> 可用 waitingFor 欄位找出哪層卡住","5 層上限足夠處理 monorepo → package → file 三層結構"]}
     ],
     auto:true
   });
