@@ -983,7 +983,7 @@
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
-      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-12 05:04 (Taipei)</b></span></span>
+      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-13 05:04 (Taipei)</b></span></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
         <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
       </button>
@@ -1252,6 +1252,8 @@
      =========================== */
 
   const DATA_CC = [
+    {v:"2.1.175", date:"2026-06-12", cat:"Settings/Config", body:"新增 <code>enforceAvailableModels</code> managed 設定：啟用後，<code>availableModels</code> 允許清單同時限制預設模型；若預設模型解析到不允許的模型，自動降級為清單第一個允許的模型；使用者或專案設定無法擴展受管的 <code>availableModels</code> 清單。"},
+    {v:"2.1.174", date:"2026-06-12", cat:"UI/UX", body:"新增 <code>wheelScrollAccelerationEnabled</code> 設定可停用全螢幕模式滑鼠滾輪加速；<b><code>/model</code> 選擇器</b>正確顯示預設模型所屬的模型家族（Max/Team Premium/Enterprise 顯示 Opus 獨立行；Pro/Team 顯示 Sonnet 獨立行）；<b><code>/usage</code> 對話框</b>新增用量歸因：依快取未命中、長 context、subagent 及 skill/agent/plugin/MCP 各項細分，支援過去 24 小時或 7 天時間範圍。修復：Bedrock GovCloud 區域推論設定檔前綴錯誤（400）、背景 session 繼承其他 session 的 provider 環境變數、退出後 shell 指令中斷暫停 1-2 秒、git 共同作者歸因顯示錯誤模型名稱、<code>/advisor</code> 模型被 <code>availableModels</code> 允許清單阻擋、skill 熱重載重送整份清單等多項修復。"},
     {v:"2.1.173", date:"2026-06-11", cat:"Performance/Bug Fix", body:"修復 Fable 5 模型名稱含 <code>[1m]</code> 後綴未正規化的問題（1M context 版 Fable 5 現自動去除後綴）；修復 Windows 啟動時誤報「sandbox dependencies missing」警告。"},
     {v:"2.1.172", date:"2026-06-10", cat:"Subagents/Skills", body:"<b>子 Agent 可遞迴派生</b>（最深 5 層）；Amazon Bedrock 現從 <code>~/.aws</code> 設定檔讀取 AWS region（<code>/status</code> 顯示來源）；<code>/plugin</code> 市集新增搜尋列；OTEL <code>claude_code.lines_of_code.count</code> 加入 <code>model</code> 屬性。修復：1M context session 無使用額度時永久卡住、重複圖片處理錯誤、Agent view spinner 誤延遲 30 秒、背景 agent 讀錯目錄的 <code>.mcp.json</code> 信任設定、<code>availableModels</code> 未套用至子 agent 模型覆寫與 dispatch picker、WebFetch 萬用字元域名規則不匹配，以及多項 <code>/model</code> picker 顯示與效能問題。"},
     {v:"2.1.170", date:"2026-06-09", cat:"Performance/Bug Fix", body:"<b>Claude Fable 5 發布</b>（Mythos 級旗艦模型，效能超越先前所有公開版本，需更新至 2.1.170 才能存取）；修復從 VS Code 整合終端或繼承 Claude Code 環境變數的 shell 啟動時，session 不儲存 transcript 且不出現於 <code>--resume</code> 清單的問題。"},
