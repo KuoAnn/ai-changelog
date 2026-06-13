@@ -983,7 +983,7 @@
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
-      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-13 05:04 (Taipei)</b></span></span>
+      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-14 05:03 (Taipei)</b></span></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
         <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
       </button>
@@ -1252,6 +1252,7 @@
      =========================== */
 
   const DATA_CC = [
+    {v:"2.1.176", date:"2026-06-12", cat:"UI/UX", body:"<b>Session 標題自動適配對話語言</b>（標題以對話所用語言命名）；頁腳連結支援 regex 樣式徽章；改善 Bedrock 憑證快取穩定性。修復：Fable 5 上 <code>enforceAvailableModels</code> 與 auto mode 模型強制問題、hook 條件判斷與 symlink settings 熱重載、tmux/SSH 環境剪貼簿操作、Remote Control 重連與背景 session 啟動等多項問題。"},
     {v:"2.1.175", date:"2026-06-12", cat:"Settings/Config", body:"新增 <code>enforceAvailableModels</code> managed 設定：啟用後，<code>availableModels</code> 允許清單同時限制預設模型；若預設模型解析到不允許的模型，自動降級為清單第一個允許的模型；使用者或專案設定無法擴展受管的 <code>availableModels</code> 清單。"},
     {v:"2.1.174", date:"2026-06-12", cat:"UI/UX", body:"新增 <code>wheelScrollAccelerationEnabled</code> 設定可停用全螢幕模式滑鼠滾輪加速；<b><code>/model</code> 選擇器</b>正確顯示預設模型所屬的模型家族（Max/Team Premium/Enterprise 顯示 Opus 獨立行；Pro/Team 顯示 Sonnet 獨立行）；<b><code>/usage</code> 對話框</b>新增用量歸因：依快取未命中、長 context、subagent 及 skill/agent/plugin/MCP 各項細分，支援過去 24 小時或 7 天時間範圍。修復：Bedrock GovCloud 區域推論設定檔前綴錯誤（400）、背景 session 繼承其他 session 的 provider 環境變數、退出後 shell 指令中斷暫停 1-2 秒、git 共同作者歸因顯示錯誤模型名稱、<code>/advisor</code> 模型被 <code>availableModels</code> 允許清單阻擋、skill 熱重載重送整份清單等多項修復。"},
     {v:"2.1.173", date:"2026-06-11", cat:"Performance/Bug Fix", body:"修復 Fable 5 模型名稱含 <code>[1m]</code> 後綴未正規化的問題（1M context 版 Fable 5 現自動去除後綴）；修復 Windows 啟動時誤報「sandbox dependencies missing」警告。"},
