@@ -983,7 +983,7 @@
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
-      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-16 05:04 (Taipei)</b></span></span>
+      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-17 05:03 (Taipei)</b></span></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
         <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
       </button>
@@ -1252,6 +1252,7 @@
      =========================== */
 
   const DATA_CC = [
+    {v:"2.1.178", date:"2026-06-15", cat:"Permissions/Security", body:"<b>權限規則新增 <code>Tool(param:value)</code> 語法</b>，可依參數值精確允許或拒絕工具呼叫（例 <code>Agent(model:opus)</code> 封鎖特定模型 subagent、<code>WebFetch(domain:*.example.com)</code> 限制存取網域，支援 <code>*</code> 萬用字元）；<b>巢狀 <code>.claude/skills</code> 目錄</b>自動按工作目錄載入，名稱衝突時顯示為 <code>&lt;dir&gt;:&lt;name&gt;</code>；Auto mode 改為在 subagent 啟動前先由分類器評估（補上安全缺口）；<code>/doctor</code> 版面扁平化且區段狀態圖示更清晰；workflow 關鍵字高亮改為紫色光暈且只對明確短語觸發（減少誤判）；Remote Control 連線失敗顯示紅色 <code>/rc failed</code> 提示並說明失敗原因；<code>/bug</code> 指令須先輸入描述才可送出。修復：繼承過期 websocket/OAuth 環境變數導致 OOM 崩潰、Chrome OAuth 帳號不符無聲連線失敗、subagent transcript 現正確顯示工具結果與即時進度、<code>--fallback-model</code> 在 compaction 時未生效、MCP server 層級 <code>disallowedTools</code> 被靜默忽略、vim undo 合併多步命令等多項問題。"},
     {v:"2.1.176", date:"2026-06-12", cat:"UI/UX", body:"<b>Session 標題自動適配對話語言</b>（標題以對話所用語言命名）；頁腳連結支援 regex 樣式徽章；改善 Bedrock 憑證快取穩定性。修復：Fable 5 上 <code>enforceAvailableModels</code> 與 auto mode 模型強制問題、hook 條件判斷與 symlink settings 熱重載、tmux/SSH 環境剪貼簿操作、Remote Control 重連與背景 session 啟動等多項問題。"},
     {v:"2.1.175", date:"2026-06-12", cat:"Settings/Config", body:"新增 <code>enforceAvailableModels</code> managed 設定：啟用後，<code>availableModels</code> 允許清單同時限制預設模型；若預設模型解析到不允許的模型，自動降級為清單第一個允許的模型；使用者或專案設定無法擴展受管的 <code>availableModels</code> 清單。"},
     {v:"2.1.174", date:"2026-06-12", cat:"UI/UX", body:"新增 <code>wheelScrollAccelerationEnabled</code> 設定可停用全螢幕模式滑鼠滾輪加速；<b><code>/model</code> 選擇器</b>正確顯示預設模型所屬的模型家族（Max/Team Premium/Enterprise 顯示 Opus 獨立行；Pro/Team 顯示 Sonnet 獨立行）；<b><code>/usage</code> 對話框</b>新增用量歸因：依快取未命中、長 context、subagent 及 skill/agent/plugin/MCP 各項細分，支援過去 24 小時或 7 天時間範圍。修復：Bedrock GovCloud 區域推論設定檔前綴錯誤（400）、背景 session 繼承其他 session 的 provider 環境變數、退出後 shell 指令中斷暫停 1-2 秒、git 共同作者歸因顯示錯誤模型名稱、<code>/advisor</code> 模型被 <code>availableModels</code> 允許清單阻擋、skill 熱重載重送整份清單等多項修復。"},
@@ -2039,6 +2040,19 @@
       {h:"為什麼有用", p:"過去子 agent 只有一層，頂層 orchestrator 需要手動拆分所有工作。巢狀 5 層後，agent 可自行遞迴分解問題 — 大型任務自組織、不需人工介入分片。"},
       {h:"基本用法", c:"bash", b:"# 頂層 agent 會自動派生子 agent\nclaude\n> 對整個 monorepo 執行安全稽核，每個 package 獨立 agent\n# 內部：pkg-agent 再按檔案派發 file-agent\n# /goal 或 claude agents 追蹤各層進度"},
       {h:"小技巧", l:["深層 agent 消耗 token 較多，建議搭配 <code>/effort high</code> 而非 xhigh","<code>claude agents --json</code> 可用 waitingFor 欄位找出哪層卡住","5 層上限足夠處理 monorepo → package → file 三層結構"]}
+    ],
+    auto:true
+  });
+
+  INSP_CC.push({
+    ico:"🛡️", color:"purple", feat:"Tool Parameter Permission Rules（Tool(param:value) 語法）", ver:"v2.1.178 · 2026-06-15",
+    desc:"權限規則新增參數比對語法，可精確限制工具的使用方式——不只控制「能不能用」，更管制「怎麼用」。",
+    scen:"<b>場景：</b>企業 Backend Sprint 中，Security Team 在 <code>settings.json</code> 設定 <code>WebFetch(domain:*.external.com)</code> 為拒絕規則，確保 Claude agent 只能存取公司內部 API，有效防止敏感資料透過 WebFetch 外洩。",
+    roles:["backend","qa","pm"],
+    d:[
+      {h:"為什麼有用", p:"過去權限規則只能控制「允許或拒絕某工具」，現在可依參數值做細粒度管制。企業可在不完全停用工具的前提下實施最小權限原則，大幅降低 AI agent 誤用或資料外洩風險。"},
+      {h:"設定 / 操作", c:"json", b:"// .claude/settings.json\n{\n  \"permissions\": {\n    \"deny\": [\n      \"Agent(model:claude-opus*)\",\n      \"WebFetch(domain:*.external-site.com)\"\n    ]\n  }\n}"},
+      {h:"小技巧", l:["<code>*</code> 萬用字元可比對部分參數值，如 <code>Agent(model:opus*)</code>","搭配 <code>allow</code> 與 <code>deny</code> 可實現白名單式精細控管","MCP server 層級 <code>disallowedTools</code> 已同步修復，現正確套用"]}
     ],
     auto:true
   });
