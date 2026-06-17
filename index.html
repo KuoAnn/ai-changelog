@@ -983,7 +983,7 @@
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
-      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-17 05:03 (Taipei)</b></span></span>
+      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-18 05:04 (Taipei)</b></span></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
         <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
       </button>
@@ -1252,6 +1252,7 @@
      =========================== */
 
   const DATA_CC = [
+    {v:"2.1.179", date:"2026-06-16", cat:"Performance/Bug Fix", body:"修復串流中途斷線後對話卡死的問題；修復 WSL2 環境下滑鼠滾輪無法捲動的問題；修復 sandbox glob 樣式比對異常；新增意見回饋問卷提示與歡迎畫面橫幅；<code>Ctrl+O</code> 現可查看 subagent transcript；改善遠端 session 背景任務的穩定性。"},
     {v:"2.1.178", date:"2026-06-15", cat:"Permissions/Security", body:"<b>權限規則新增 <code>Tool(param:value)</code> 語法</b>，可依參數值精確允許或拒絕工具呼叫（例 <code>Agent(model:opus)</code> 封鎖特定模型 subagent、<code>WebFetch(domain:*.example.com)</code> 限制存取網域，支援 <code>*</code> 萬用字元）；<b>巢狀 <code>.claude/skills</code> 目錄</b>自動按工作目錄載入，名稱衝突時顯示為 <code>&lt;dir&gt;:&lt;name&gt;</code>；Auto mode 改為在 subagent 啟動前先由分類器評估（補上安全缺口）；<code>/doctor</code> 版面扁平化且區段狀態圖示更清晰；workflow 關鍵字高亮改為紫色光暈且只對明確短語觸發（減少誤判）；Remote Control 連線失敗顯示紅色 <code>/rc failed</code> 提示並說明失敗原因；<code>/bug</code> 指令須先輸入描述才可送出。修復：繼承過期 websocket/OAuth 環境變數導致 OOM 崩潰、Chrome OAuth 帳號不符無聲連線失敗、subagent transcript 現正確顯示工具結果與即時進度、<code>--fallback-model</code> 在 compaction 時未生效、MCP server 層級 <code>disallowedTools</code> 被靜默忽略、vim undo 合併多步命令等多項問題。"},
     {v:"2.1.176", date:"2026-06-12", cat:"UI/UX", body:"<b>Session 標題自動適配對話語言</b>（標題以對話所用語言命名）；頁腳連結支援 regex 樣式徽章；改善 Bedrock 憑證快取穩定性。修復：Fable 5 上 <code>enforceAvailableModels</code> 與 auto mode 模型強制問題、hook 條件判斷與 symlink settings 熱重載、tmux/SSH 環境剪貼簿操作、Remote Control 重連與背景 session 啟動等多項問題。"},
     {v:"2.1.175", date:"2026-06-12", cat:"Settings/Config", body:"新增 <code>enforceAvailableModels</code> managed 設定：啟用後，<code>availableModels</code> 允許清單同時限制預設模型；若預設模型解析到不允許的模型，自動降級為清單第一個允許的模型；使用者或專案設定無法擴展受管的 <code>availableModels</code> 清單。"},
@@ -1359,6 +1360,7 @@
   ];
 
   const DATA_CI = [
+    {v:"0.140.0", date:"2026-06-15", cat:"UI/UX", title:"CLI 0.140.0：/usage 用量追蹤 + /import 設定匯入", body:"新增 <b><code>/usage</code> 每日、每週與累計 token 用量檢視</b>；<b><code>/import</code> 可從 Claude Code 匯入設定</b>；<code>codex delete</code>/<code>/delete</code> 永久刪除 session；<code>/goal</code> 保留超大文字、貼上內容與遠端 session 圖片附件；<code>@</code> 提及開啟統一選單（檔案、plugin、skill）；支援受管 Amazon Bedrock API-key 認證（本地加密儲存）；損毀 SQLite 資料庫自動備份並從可用資料重建；大型 repo 與長 session 效能提升（Git 檔案系統監控與 turn-diff 快取）；移除實驗性 <code>/realtime</code> 語音控制與相關音訊依賴。"},
     {v:"0.139.0", date:"2026-06-09", cat:"MCP/Tools", title:"CLI 0.139.0：Code mode 直呼 Web Search + MCP schema 強化", body:"<b>Code mode 現可直接呼叫 standalone web search</b>，以純文字回傳結果；MCP 工具 schema 改善對 <code>oneOf</code>/<code>allOf</code> 結構的保留相容性；<code>codex doctor</code> 新增 editor 與 pager 環境診斷資訊；plugin marketplace automation 支援 JSON 輸出。修復：圖片編輯、URL linkification、thread 設定保留等多項問題。"},
     {v:"0.138.0", date:"2026-06-08", cat:"Slash Commands", title:"CLI 0.138.0：/app 交棒 Codex Desktop + 本地圖片路徑", body:"新增 <b><code>/app</code> 指令可將目前 CLI thread 交棒到 Codex Desktop</b>（macOS 及原生 Windows），無縫延續對話；本地圖片附件現在向模型揭露檔案路徑以提升編輯品質；reasoning effort 選擇更彈性，加入後備鍵盤快捷鍵；帳戶 token 用量可查看，支援 v2 personal access token；plugin automation 強化 JSON 輸出。"},
     {v:"0.137.0", date:"2026-06-04", cat:"UI/UX", title:"CLI 0.137.0：F13-F24 功能鍵 + Multi-Agent v2 改進", body:"TUI 支援 <b>F13–F24 按鍵綁定</b>、可搜尋選單中貼上、精簡版僅顯示 reasoning 的狀態欄；企業流程顯示每月額度上限並支援雲端管理 config bundle（含 EDU workspace）；<b>Remote-control 客戶端可透過 app-server v2 RPC 發起配對、列出或撤銷授權</b>；<code>codex plugin list --json</code> 輸出機器可讀格式並快取遠端目錄建議；hosted web/image 工具整合進更多 code-mode 流程、standalone 網路搜尋可平行執行；<b>Multi-agent v2</b> 每個 thread 獨立保留執行時模型選擇，衍生 agent 的後續追問與 metadata 預設更整潔。修復：取消已送出 prompt 可還原草稿與附件、本地 session 歷史壓縮穩定性、macOS deep link 啟動改善、Windows SQLite 啟動與 thread resume、沙箱 setup refresh、plugin 載入順序保留等多項問題。"},
