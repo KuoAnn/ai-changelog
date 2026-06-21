@@ -983,7 +983,7 @@
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
-      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-21 05:02 (Taipei)</b></span></span>
+      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-22 05:02 (Taipei)</b></span></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
         <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
       </button>
@@ -1252,6 +1252,7 @@
      =========================== */
 
   const DATA_CC = [
+    {v:"2.1.185", date:"2026-06-20", cat:"Performance/Bug Fix", body:"<b>串流停滯提示訊息改版</b>：等待 API 回應時的提示文字改為「Waiting for API response · will retry in …」，觸發時機從 10 秒延長至 <b>20 秒</b>，減少網路稍慢時的誤報，使用者能更清楚知道 Claude Code 正在等待 API 回應。"},
     {v:"2.1.183", date:"2026-06-19", cat:"Permissions/Security", body:"<b>Auto mode 安全強化：自動阻擋破壞性 git 指令</b>（如 <code>git push --force</code>、<code>reset --hard</code> 等），防止自動化流程誤毀版控歷史；<b>新增模型棄用警告</b>：當前 session 使用的模型即將停用時主動顯示提示；新增 <code>attribution.sessionUrl</code> 設定可記錄 session 來源 URL 方便追蹤。修復：thinking block 顯示錯誤、subagent 中 WebSearch 失效、終端游標位置異常、全螢幕 TUI 畫面損毀等多項問題。"},
     {v:"2.1.181", date:"2026-06-17", cat:"Settings/Config", body:"<b><code>/config</code> 新增直接指定值的語法</b>（例 <code>/config theme dark</code>）；Apple Events sandbox 支援選加入（<code>sandbox.macAppleEventsEnabled</code>）；新增 <code>CLAUDE_CLIENT_PRESENCE_FILE</code> 環境變數，可讓外部程式偵測 Claude Code 是否執行中；Bun 升至 1.4；改善串流中斷後的自動重試機制與 subagent 面板顯示。修復：prompt cache 計費異常、Write/Edit 大檔處理邏輯、多項啟動 regression。"},
     {v:"2.1.179", date:"2026-06-16", cat:"Performance/Bug Fix", body:"修復串流中途斷線後對話卡死的問題；修復 WSL2 環境下滑鼠滾輪無法捲動的問題；修復 sandbox glob 樣式比對異常；新增意見回饋問卷提示與歡迎畫面橫幅；<code>Ctrl+O</code> 現可查看 subagent transcript；改善遠端 session 背景任務的穩定性。"},
