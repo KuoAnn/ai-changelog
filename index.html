@@ -983,7 +983,7 @@
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
-      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-23 05:03 (Taipei)</b></span></span>
+      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-24 05:04 (Taipei)</b></span></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
         <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
       </button>
@@ -1364,6 +1364,8 @@
   ];
 
   const DATA_CI = [
+    {v:"0.142.0", date:"2026-06-22", cat:"Plugins/MCP", title:"CLI 0.142.0：用量點數兌換 + Plugins 分區整理", body:"<b><code>/usage</code> 新增用量重置點數顯示與兌換</b>（含確認與刷新）；<b><code>/plugins</code> 整理為 OpenAI 精選、Workspace 與 Shared 三個區段</b>並提供推薦；可設定 rollout token 預算跨 agent threads 追蹤用量並提醒剩餘額度；App-server 客戶端可在 thread / turn 層級設定 <b>Multi-agent 委派控制</b>；<b>索引網路搜尋模式</b>：允許即時搜尋，但直接存取頁面限制於伺服器核准 URL；Codex 可接收排程 UTC 時間提醒並直接查詢當前時間。修復：Linux TUI 暫停/恢復後渲染異常；exec-server 與 MCP sessions 在短暫斷線後可存活（signed-URL refresh）；遠端環境跨 OS 保留原生路徑、shell 與 sandbox 行為；parent agent 現正確接收子 agent 錯誤（而非空白成功）；以目標為首的 threads 正確持久化並可由 thread/list 與 thread/search 查詢。"},
+    {v:"0.141.0", date:"2026-06-18", cat:"Permissions/Security", title:"CLI 0.141.0：端對端加密 Noise Relay + 跨平台遠端執行", body:"<b>遠端 executors 改用認證的端對端加密 Noise relay 通道</b>，跨平台遠端執行保留原生工作目錄、shell 與檔案系統權限；Executor plugins 可為每個 thread 啟動 stdio MCP servers（含 marketplace 與認證專屬目錄探索改善）；App-server 客戶端新增列出子 threads、關聯外部 agent 匯入結果、存取 rate-limit 重置點數等能力；Realtime 客戶端可附加語音、控制回應進入對話、省略啟動 context；TUI 輸入 prompt 支援閒置後自動解決（含互動倒數計時）。修復：hook 信任繞過持久性；plugin 能力路由一致性；Windows sandbox 憑證；relay 連線能力；SQLite WAL-reset 損毀；P-521 憑證簽章支援企業 proxy。"},
     {v:"0.140.0", date:"2026-06-15", cat:"UI/UX", title:"CLI 0.140.0：/usage 用量追蹤 + /import 設定匯入", body:"新增 <b><code>/usage</code> 每日、每週與累計 token 用量檢視</b>；<b><code>/import</code> 可從 Claude Code 匯入設定</b>；<code>codex delete</code>/<code>/delete</code> 永久刪除 session；<code>/goal</code> 保留超大文字、貼上內容與遠端 session 圖片附件；<code>@</code> 提及開啟統一選單（檔案、plugin、skill）；支援受管 Amazon Bedrock API-key 認證（本地加密儲存）；損毀 SQLite 資料庫自動備份並從可用資料重建；大型 repo 與長 session 效能提升（Git 檔案系統監控與 turn-diff 快取）；移除實驗性 <code>/realtime</code> 語音控制與相關音訊依賴。"},
     {v:"0.139.0", date:"2026-06-09", cat:"MCP/Tools", title:"CLI 0.139.0：Code mode 直呼 Web Search + MCP schema 強化", body:"<b>Code mode 現可直接呼叫 standalone web search</b>，以純文字回傳結果；MCP 工具 schema 改善對 <code>oneOf</code>/<code>allOf</code> 結構的保留相容性；<code>codex doctor</code> 新增 editor 與 pager 環境診斷資訊；plugin marketplace automation 支援 JSON 輸出。修復：圖片編輯、URL linkification、thread 設定保留等多項問題。"},
     {v:"0.138.0", date:"2026-06-08", cat:"Slash Commands", title:"CLI 0.138.0：/app 交棒 Codex Desktop + 本地圖片路徑", body:"新增 <b><code>/app</code> 指令可將目前 CLI thread 交棒到 Codex Desktop</b>（macOS 及原生 Windows），無縫延續對話；本地圖片附件現在向模型揭露檔案路徑以提升編輯品質；reasoning effort 選擇更彈性，加入後備鍵盤快捷鍵；帳戶 token 用量可查看，支援 v2 personal access token；plugin automation 強化 JSON 輸出。"},
