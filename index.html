@@ -983,7 +983,7 @@
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
-      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-27 05:03 (Taipei)</b></span></span>
+      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-28 05:04 (Taipei)</b></span></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
         <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
       </button>
@@ -1252,6 +1252,7 @@
      =========================== */
 
   const DATA_CC = [
+    {v:"2.1.195", date:"2026-06-26", cat:"Performance/Bug Fix", body:"<b>新增 <code>CLAUDE_CODE_DISABLE_MOUSE_CLICKS</code> 環境變數</b>：停用全螢幕模式的滑鼠點擊／拖曳／懸停（保留滾輪捲動）；修復帶連字號識別字的 hook matcher 意外走子字串比對（<code>code-reviewer</code>、<code>mcp__brave-search</code> 等改為精確匹配，如需比對所有同名 MCP 工具請用 <code>mcp__brave-search__.*</code>）；修復 macOS 長 session 預設輸入裝置異動導致語音擷取靜音；修復日文／中文／泰文等無空格語言語音聽寫自動送出失效；修復僅由專案 <code>.claude/settings.json</code> 啟用的外部 plugin 每次重複要求安裝同意；修復 <code>/plugin</code> Enable/Disable 在 plugin.json name 與 marketplace 名稱不符時失效；修復背景作業由新版 Claude Code 寫入後從 <code>claude agents</code> 消失或資料遺失；修復崩潰背景任務重啟顯示空白畫面最長 5 秒（現為即時重啟）；修復控制 socket 啟動失敗時 daemon 不可達；Linux 語音模式現區分「無麥克風」與「未安裝 SoX」；<code>claude agents</code> 完成清單填滿可用垂直空間，短終端自動縮小標題；遠端 session 啟動加入設定清單。"},
     {v:"2.1.193", date:"2026-06-25", cat:"Settings/Config", body:"<b>新增 <code>autoMode.classifyAllShell</code> 設定</b>：所有 Bash/PowerShell 指令均走 auto-mode 分類器（原僅分類任意程式碼執行樣式）；<b>auto-mode 拒絕原因</b>同步顯示於 transcript、拒絕提示與 <code>/permissions</code> 最近拒絕清單；<b>新增 <code>claude_code.assistant_response</code> OpenTelemetry 記錄事件</b>（含模型回應文字，預設遮蔽；設 <code>OTEL_LOG_ASSISTANT_RESPONSES=1</code> 解鎖；若已啟用 <code>OTEL_LOG_USER_PROMPTS</code> 升級後亦自動記錄回應，可設 <code>=0</code> 僅記錄 prompt）；<b>bash 模式（<code>!</code>）加入即時檔案路徑自動補全</b>；<b>MCP 伺服器需認證時啟動顯示通知</b>並引導至 <code>/mcp</code>；<b>閒置背景 shell 自動回收記憶體壓力</b>（可用 <code>CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1</code> 停用）。修復：<code>/login</code> 後 <code>/model</code> 等 UI 顯示舊／空白狀態；背景切換（←←）在所有任務均已移轉時誤報「N 背景任務將被放棄」；釘選背景 agent 每次自動更新後重複要求「繼續未完成工作」；切換主 turn 至背景時產生幽靈「general-purpose (resumed)」子 agent 重跑對話；查看子 agent 時面板隱藏兄弟 agent；MCP <code>headersHelper</code> 在工具呼叫回傳 401/403 時自動重跑並重新連線；plugin 自動套用 marketplace <code>renames</code> 對應表更新本地設定名稱；<code>/add-dir</code> 目錄已是工作目錄時提供更清晰提示。"},
     {v:"2.1.191", date:"2026-06-24", cat:"Performance/Bug Fix", body:"<b>CPU 使用率降低 37%</b>：將文字更新合併為 100ms 批次間隔，大幅降低串流回應期間的 CPU 用量；<b>恢復 <code>/rewind</code> 支援</b>：<code>/clear</code> 後可從先前對話點復原；<b>MCP 伺服器可靠性改進</b>：<code>tools/list</code>/<code>prompts/list</code>/<code>resources/list</code> 遇暫時網路錯誤自動重試（含短退避），MCP OAuth 重試強化，無頭環境直接顯示 URL 貼上提示；沙箱網路允許主機在整個 session 內記住（不再每次連線重新詢問）；Vim NORMAL <code>/</code> 搜尋現提示如何存取 slash 指令。修復：串流期間捲動位置跳至底部；停止的背景 agent 在停止後復活；<code>/voice</code> 被組織政策停用時顯示明確說明；Windows Terminal 中 <code>/login</code> URL 換行截斷；<code>/permissions</code>「Recently-denied」標籤批准拒絕後靜默丟棄；hook matcher 逗號分隔樣式永不觸發；<code>forceRemoteSettingsRefresh</code> 透過 MDM 設定時未生效；Ghostty over ssh/tmux 的 Cmd+click 連結異常；長 session 終端輸出快取導致記憶持續增長。"},
     {v:"2.1.190", date:"2026-06-24", cat:"Performance/Bug Fix", body:"Bug 修復與可靠性改進（無使用者面向新功能）。"},
@@ -1368,6 +1369,7 @@
   ];
 
   const DATA_CI = [
+    {v:"0.142.3", date:"2026-06-26", cat:"Performance/Bug Fix", title:"CLI 0.142.3：維護更新（無使用者面向變更）", body:"純維護性 patch 版本，自 0.142.2 起無任何使用者面向變更。"},
     {v:"0.142.2", date:"2026-06-25", cat:"MCP/Tools", title:"CLI 0.142.2：MCP 工具搜尋預設開啟 + macOS 系統代理", body:"<b>MCP 工具預設採用工具搜尋模式</b>（支援時），強化工具發現能力；<b>macOS 系統代理支援</b>：認證客戶端可遵守系統 proxy、PAC 與 WPAD 設定；<b>Plugin 深色模式圖示</b>：可透過本地 manifest 提供專屬深色模式 logo；<b>安全緩衝 UI 強化</b>：可顯示伺服器提供的豐富 metadata。修復：遠端插件目錄精選推薦排名；Amazon Bedrock 過期憑證可行指引；遠端 stdio MCP 伺服器接受絕對工作目錄；遠端 HTTP(S) 圖片輸入驗證錯誤清晰化；PowerShell 指令安全分類改進；Code Mode 模型缺少必要 metadata 時顯示警告；更新 OpenSSL 至 3.6.3、esbuild 至 0.28.1。"},
     {v:"0.142.1", date:"2026-06-25", cat:"Local Sandbox", title:"CLI 0.142.1：Windows 系統代理認證支援", body:"<b>新增 opt-in Windows 系統代理支援</b>：認證流程可遵守 Windows 系統 proxy 設定，涵蓋 PAC、WPAD、靜態 proxy 與 bypass 規則，無需手動設定即可透過企業代理進行認證。"},
     {v:"0.142.0", date:"2026-06-22", cat:"Plugins/MCP", title:"CLI 0.142.0：用量點數兌換 + Plugins 分區整理", body:"<b><code>/usage</code> 新增用量重置點數顯示與兌換</b>（含確認與刷新）；<b><code>/plugins</code> 整理為 OpenAI 精選、Workspace 與 Shared 三個區段</b>並提供推薦；可設定 rollout token 預算跨 agent threads 追蹤用量並提醒剩餘額度；App-server 客戶端可在 thread / turn 層級設定 <b>Multi-agent 委派控制</b>；<b>索引網路搜尋模式</b>：允許即時搜尋，但直接存取頁面限制於伺服器核准 URL；Codex 可接收排程 UTC 時間提醒並直接查詢當前時間。修復：Linux TUI 暫停/恢復後渲染異常；exec-server 與 MCP sessions 在短暫斷線後可存活（signed-URL refresh）；遠端環境跨 OS 保留原生路徑、shell 與 sandbox 行為；parent agent 現正確接收子 agent 錯誤（而非空白成功）；以目標為首的 threads 正確持久化並可由 thread/list 與 thread/search 查詢。"},
