@@ -983,7 +983,7 @@
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
-      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-29 05:03 (Taipei)</b></span></span>
+      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-06-30 05:03 (Taipei)</b></span></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
         <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
       </button>
@@ -1369,6 +1369,7 @@
   ];
 
   const DATA_CI = [
+    {v:"0.142.4", date:"2026-06-29", cat:"Performance/Bug Fix", title:"CLI 0.142.4：維護更新（無使用者面向變更）", body:"純維護性 patch 版本，自 0.142.3 起無任何使用者面向變更。"},
     {v:"0.142.3", date:"2026-06-26", cat:"Performance/Bug Fix", title:"CLI 0.142.3：維護更新（無使用者面向變更）", body:"純維護性 patch 版本，自 0.142.2 起無任何使用者面向變更。"},
     {v:"0.142.2", date:"2026-06-25", cat:"MCP/Tools", title:"CLI 0.142.2：MCP 工具搜尋預設開啟 + macOS 系統代理", body:"<b>MCP 工具預設採用工具搜尋模式</b>（支援時），強化工具發現能力；<b>macOS 系統代理支援</b>：認證客戶端可遵守系統 proxy、PAC 與 WPAD 設定；<b>Plugin 深色模式圖示</b>：可透過本地 manifest 提供專屬深色模式 logo；<b>安全緩衝 UI 強化</b>：可顯示伺服器提供的豐富 metadata。修復：遠端插件目錄精選推薦排名；Amazon Bedrock 過期憑證可行指引；遠端 stdio MCP 伺服器接受絕對工作目錄；遠端 HTTP(S) 圖片輸入驗證錯誤清晰化；PowerShell 指令安全分類改進；Code Mode 模型缺少必要 metadata 時顯示警告；更新 OpenSSL 至 3.6.3、esbuild 至 0.28.1。"},
     {v:"0.142.1", date:"2026-06-25", cat:"Local Sandbox", title:"CLI 0.142.1：Windows 系統代理認證支援", body:"<b>新增 opt-in Windows 系統代理支援</b>：認證流程可遵守 Windows 系統 proxy 設定，涵蓋 PAC、WPAD、靜態 proxy 與 bypass 規則，無需手動設定即可透過企業代理進行認證。"},
