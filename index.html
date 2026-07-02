@@ -983,7 +983,7 @@
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
-      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-07-02 05:10 (Taipei)</b></span></span>
+      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-07-03 05:10 (Taipei)</b></span></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
         <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
       </button>
@@ -1252,6 +1252,7 @@
      =========================== */
 
   const DATA_CC = [
+    {v:"2.1.198", date:"2026-07-01", cat:"UI/UX", body:"<b>Claude in Chrome 正式發布（GA）</b>：Chrome 瀏覽器延伸功能正式上線，可在任意頁面呼叫 Claude Code；<b>背景 agent 完成推播通知</b>：背景 agent 任務結束時推送桌面通知；新增 <code>/dataviz</code> 資料視覺化 skill；<b>AWS 平台支援強化</b>；背景 session 完成後<b>自動建立 PR</b>；多項可靠性改進。"},
     {v:"2.1.197", date:"2026-06-30", cat:"Settings/Config", body:"<b>Claude Sonnet 5 成為 Claude Code 預設模型</b>：具備原生 <b>1M token context window</b>，促銷定價 $2/$10 per Mtok（至 2026-08-31）；需更新至 2.1.197 才能存取 Sonnet 5。"},
     {v:"2.1.196", date:"2026-06-29", cat:"Performance/Bug Fix", body:"<b>新增組織預設模型</b>：管理員可在 org console 設定，<code>/model</code> 顯示為「Org default」或「Role default」；<b>Session 啟動自動產生易讀預設名稱</b>；<b>聊天文件附件可點擊</b>（Cmd/Ctrl-click 在 Finder/Explorer 顯示）；<b>安全修復</b>：<code>claude mcp list/get</code> 不再啟動工作區自行核准的 <code>.mcp.json</code> MCP 伺服器（未信任 workspace 顯示「⏸ Pending approval」）；<b>串流閒置看門狗</b>預設對所有 provider 開啟（5 分鐘無事件即中止並重試，設 <code>CLAUDE_ENABLE_STREAM_WATCHDOG=0</code> 停用）；<code>claude agents</code> 改為單次 ← 進入 agent 視圖；<code>/code-review</code> 合併清理 finder 減少約 25% token 用量；修復背景 session 對話遺失、速率限制閃爍、PowerShell git 指令回傳碼誤判、語音聽寫吞字等多項問題。"},
     {v:"2.1.195", date:"2026-06-26", cat:"Performance/Bug Fix", body:"<b>新增 <code>CLAUDE_CODE_DISABLE_MOUSE_CLICKS</code> 環境變數</b>：停用全螢幕模式的滑鼠點擊／拖曳／懸停（保留滾輪捲動）；修復帶連字號識別字的 hook matcher 意外走子字串比對（<code>code-reviewer</code>、<code>mcp__brave-search</code> 等改為精確匹配，如需比對所有同名 MCP 工具請用 <code>mcp__brave-search__.*</code>）；修復 macOS 長 session 預設輸入裝置異動導致語音擷取靜音；修復日文／中文／泰文等無空格語言語音聽寫自動送出失效；修復僅由專案 <code>.claude/settings.json</code> 啟用的外部 plugin 每次重複要求安裝同意；修復 <code>/plugin</code> Enable/Disable 在 plugin.json name 與 marketplace 名稱不符時失效；修復背景作業由新版 Claude Code 寫入後從 <code>claude agents</code> 消失或資料遺失；修復崩潰背景任務重啟顯示空白畫面最長 5 秒（現為即時重啟）；修復控制 socket 啟動失敗時 daemon 不可達；Linux 語音模式現區分「無麥克風」與「未安裝 SoX」；<code>claude agents</code> 完成清單填滿可用垂直空間，短終端自動縮小標題；遠端 session 啟動加入設定清單。"},
@@ -1371,6 +1372,7 @@
   ];
 
   const DATA_CI = [
+    {v:"0.142.5", date:"2026-07-01", cat:"Permissions/Security", title:"CLI 0.142.5：安全修復（WebSocket trace log 防護）", body:"<b>安全修復</b>：防止完整的 Responses WebSocket 請求 payload 被寫入 trace log，避免敏感資訊外洩至日誌檔案。純 patch 修正版本。"},
     {v:"0.142.4", date:"2026-06-29", cat:"Performance/Bug Fix", title:"CLI 0.142.4：維護更新（無使用者面向變更）", body:"純維護性 patch 版本，自 0.142.3 起無任何使用者面向變更。"},
     {v:"0.142.3", date:"2026-06-26", cat:"Performance/Bug Fix", title:"CLI 0.142.3：維護更新（無使用者面向變更）", body:"純維護性 patch 版本，自 0.142.2 起無任何使用者面向變更。"},
     {v:"0.142.2", date:"2026-06-25", cat:"MCP/Tools", title:"CLI 0.142.2：MCP 工具搜尋預設開啟 + macOS 系統代理", body:"<b>MCP 工具預設採用工具搜尋模式</b>（支援時），強化工具發現能力；<b>macOS 系統代理支援</b>：認證客戶端可遵守系統 proxy、PAC 與 WPAD 設定；<b>Plugin 深色模式圖示</b>：可透過本地 manifest 提供專屬深色模式 logo；<b>安全緩衝 UI 強化</b>：可顯示伺服器提供的豐富 metadata。修復：遠端插件目錄精選推薦排名；Amazon Bedrock 過期憑證可行指引；遠端 stdio MCP 伺服器接受絕對工作目錄；遠端 HTTP(S) 圖片輸入驗證錯誤清晰化；PowerShell 指令安全分類改進；Code Mode 模型缺少必要 metadata 時顯示警告；更新 OpenSSL 至 3.6.3、esbuild 至 0.28.1。"},
