@@ -983,7 +983,7 @@
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
-      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-07-03 05:10 (Taipei)</b></span></span>
+      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-07-04 05:12 (Taipei)</b></span></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
         <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
       </button>
@@ -1252,6 +1252,8 @@
      =========================== */
 
   const DATA_CC = [
+    {v:"2.1.200", date:"2026-07-03", cat:"Performance/Bug Fix", body:"<b><code>AskUserQuestion</code> 對話框不再預設自動繼續</b>；修復背景 session 在 turn 中途停止、daemon 切換、roster 問題、subagent 速率限制、終端控制字元、plugin 載入、<code>/mcp</code> 螢幕閱讀器追蹤、語音聽寫訊息等多項問題；改善螢幕閱讀器輸出品質。"},
+    {v:"2.1.199", date:"2026-07-02", cat:"Subagents/Skills", body:"<b>疊加 slash-skill 呼叫最多可載入 5 個 skill</b>；修復 SSL 憑證錯誤處理、串流中途錯誤丟棄回應、subagent 部分工作處理、背景 daemon Linux 問題、<code>claude stop</code> 競態條件、背景任務進度、記憶體壓力、遠端 session 抖動、model picker、hooks stderr、SendMessage 路由錯誤、色彩底色、設定檔復原、Chrome 重連與 plan mode 提示等多項問題。"},
     {v:"2.1.198", date:"2026-07-01", cat:"UI/UX", body:"<b>Claude in Chrome 正式發布（GA）</b>：Chrome 瀏覽器延伸功能正式上線，可在任意頁面呼叫 Claude Code；<b>背景 agent 完成推播通知</b>：背景 agent 任務結束時推送桌面通知；新增 <code>/dataviz</code> 資料視覺化 skill；<b>AWS 平台支援強化</b>；背景 session 完成後<b>自動建立 PR</b>；多項可靠性改進。"},
     {v:"2.1.197", date:"2026-06-30", cat:"Settings/Config", body:"<b>Claude Sonnet 5 成為 Claude Code 預設模型</b>：具備原生 <b>1M token context window</b>，促銷定價 $2/$10 per Mtok（至 2026-08-31）；需更新至 2.1.197 才能存取 Sonnet 5。"},
     {v:"2.1.196", date:"2026-06-29", cat:"Performance/Bug Fix", body:"<b>新增組織預設模型</b>：管理員可在 org console 設定，<code>/model</code> 顯示為「Org default」或「Role default」；<b>Session 啟動自動產生易讀預設名稱</b>；<b>聊天文件附件可點擊</b>（Cmd/Ctrl-click 在 Finder/Explorer 顯示）；<b>安全修復</b>：<code>claude mcp list/get</code> 不再啟動工作區自行核准的 <code>.mcp.json</code> MCP 伺服器（未信任 workspace 顯示「⏸ Pending approval」）；<b>串流閒置看門狗</b>預設對所有 provider 開啟（5 分鐘無事件即中止並重試，設 <code>CLAUDE_ENABLE_STREAM_WATCHDOG=0</code> 停用）；<code>claude agents</code> 改為單次 ← 進入 agent 視圖；<code>/code-review</code> 合併清理 finder 減少約 25% token 用量；修復背景 session 對話遺失、速率限制閃爍、PowerShell git 指令回傳碼誤判、語音聽寫吞字等多項問題。"},
