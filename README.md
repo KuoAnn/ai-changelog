@@ -40,37 +40,29 @@ index.html
 
 排程設定與 agent 指示集中在 [`scripts/refresh-prompt.md`](scripts/refresh-prompt.md)。
 
-## 更新通知（Email）
+## 更新通知（Telegram / Slack）
 
-當 `index.html` 有**實際內容更新**（新增 `DATA_*` 版本條目或 `INSP_*` 靈感卡）時，會自動寄 Email 通知；只更新同步時間戳（`<b id="lastRefreshed">`）的 commit **不會**觸發。
+當 `index.html` 有**實際內容更新**（新增 `DATA_*` 版本條目或 `INSP_*` 靈感卡）時，會自動發通知到 Telegram 與 Slack；只更新同步時間戳（`<b id="lastRefreshed">`）的 commit **不會**觸發。
 
 ```text
-push 到 main -> workflow 比對 diff -> 判定是否有新版本/靈感卡 -> SMTP 寄信
+push 到 main -> workflow 比對 diff -> 判定是否有新版本/靈感卡 -> 發 Telegram / Slack
 ```
 
 機制在 [`.github/workflows/notify-on-update.yml`](.github/workflows/notify-on-update.yml)，偵測完全靠 `git diff`，與排程 agent 解耦（agent 與 push 腳本無需改動）。
 
-啟用前需在 GitHub repo → **Settings → Secrets and variables → Actions** 設定：
+兩個管道各自獨立：**沒設定對應 secret 的管道會自動略過、只寫進 workflow log，不會報錯、也不會讓 workflow 失敗** — 可只啟用其中一個，或兩個都開。
 
-**Secrets：**
+啟用前在 GitHub repo → **Settings → Secrets and variables → Actions → Secrets** 設定：
 
-| 名稱 | 說明 |
-| --- | --- |
-| `MAIL_SERVER` | SMTP 主機，例 `smtp.gmail.com` |
-| `MAIL_PORT` | SMTP 連接埠，例 `465`（SSL） |
-| `MAIL_USERNAME` | 寄件帳號 |
-| `MAIL_PASSWORD` | 寄件密碼；**Gmail 需用「應用程式密碼 / App Password」**，非登入密碼 |
-| `MAIL_FROM` | （選用）寄件地址，未設則用 `MAIL_USERNAME` |
+| 名稱 | 管道 | 說明 / 怎麼拿 |
+| --- | --- | --- |
+| `TELEGRAM_BOT_TOKEN` | Telegram | BotFather 給的 token。Telegram 找 `@BotFather` → `/newbot` 建立取得 |
+| `TELEGRAM_CHAT_ID` | Telegram | 收訊對象 id。先對 bot 傳一則訊息，再開 `https://api.telegram.org/bot<TOKEN>/getUpdates` 讀 `chat.id`（群組為負數；或用 `@userinfobot` 查） |
+| `SLACK_WEBHOOK_URL` | Slack | Incoming Webhook URL。<https://api.slack.com/apps> → 你的 App → **Incoming Webhooks** → Add New Webhook → 選 channel → 複製 |
 
-**Variables：**
+> 未設定的管道不發送、不報錯，只在該 step 的 log 記一行「未設定，跳過」。只有「已設定但送出失敗」（HTTP 非 200）才會讓該 step 失敗，方便及早發現真正的問題。
 
-| 名稱 | 說明 |
-| --- | --- |
-| `MAIL_TO` | 收件人，多筆用逗號分隔，例 `nt85965@cathaybk.com.tw,me@gmail.com` |
-
-> 公司信箱只是收件方，不影響寄送；寄送端建議用個人 Gmail + App Password 最易設定。
-
-設定完成後，可到 **Actions → Notify on real update → Run workflow** 手動寄一封測試信，驗證 SMTP 設定正確。
+設定完成後，可到 **Actions → Notify on real update → Run workflow** 手動觸發，會發一則 🧪 測試通知，驗證設定正確。
 
 ## 手動推送
 
@@ -96,7 +88,7 @@ bash scripts/push-changelog.sh "手動更新"
 | [`scripts/refresh-prompt.md`](scripts/refresh-prompt.md) | 排程 agent 的完整刷新指示 |
 | [`scripts/push-changelog.ps1`](scripts/push-changelog.ps1) | Windows 手動 commit/push 腳本 |
 | [`scripts/push-changelog.sh`](scripts/push-changelog.sh) | Linux/遠端排程 commit/push 腳本 |
-| [`.github/workflows/notify-on-update.yml`](.github/workflows/notify-on-update.yml) | 實際更新時寄 Email 通知的 workflow |
+| [`.github/workflows/notify-on-update.yml`](.github/workflows/notify-on-update.yml) | 實際更新時發 Telegram / Slack 通知的 workflow |
 
 ## 編輯提示
 

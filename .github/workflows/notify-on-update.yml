@@ -1,8 +1,13 @@
 name: Notify on real update
 
-# 當 index.html 有「實際內容更新」（新增 DATA_* 版本條目或 INSP_* 靈感卡）時寄 Email。
-# 只更新 <b id="lastRefreshed"> 同步時間戳的 commit 不會觸發通知。
+# 當 index.html 有「實際內容更新」（新增 DATA_* 版本條目或 INSP_* 靈感卡）時，
+# 透過 Telegram 與 Slack 發通知。只更新 <b id="lastRefreshed"> 同步時間戳的 commit 不觸發。
 # 偵測完全靠 git diff，與排程 agent / push 腳本解耦。
+#
+# 需要的 secrets（未設定的管道會自動跳過，不會讓 workflow 失敗）：
+#   TELEGRAM_BOT_TOKEN  BotFather 給的 token
+#   TELEGRAM_CHAT_ID    收訊的 chat / channel id
+#   SLACK_WEBHOOK_URL   Slack Incoming Webhook URL
 
 on:
   push:
@@ -29,7 +34,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          # ── 手動觸發：直接視為要寄一封測試信 ──
+          # ── 手動觸發：直接視為要發一則測試通知 ──
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             {
               echo "should_send=true"
@@ -39,7 +44,7 @@ jobs:
             } >> "$GITHUB_OUTPUT"
             {
               echo "summary<<EOF"
-              echo "（手動觸發的測試信）"
+              echo "（手動觸發的測試通知）"
               echo "EOF"
               echo "versions<<EOF"
               echo "EOF"
@@ -94,9 +99,9 @@ jobs:
             echo "summary<<EOF";  printf '%s\n' "$summary";  echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Build email body
+      - name: Build messages
         if: steps.detect.outputs.should_send == 'true'
-        id: body
+        id: msg
         shell: bash
         # 透過 env 傳入動態值，避免把 ${{ }} 直接插進 shell（防 injection / 引號破壞）
         env:
@@ -111,57 +116,108 @@ jobs:
           set -euo pipefail
           PAGE="https://kuoann.github.io/ai-changelog/"
 
-          # HTML escape，避免內容裡的 < > & 破壞版面
+          # 跳脫 & < >：Telegram HTML 與 Slack mrkdwn 都吃 &amp; &lt; &gt;
           esc() { sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g'; }
+          bullets() { while IFS= read -r line; do [ -n "$line" ] && printf '• %s\n' "$(printf '%s' "$line" | esc)"; done; }
 
-          # 版本與卡片清單轉成 HTML <li>
-          li() { while IFS= read -r line; do [ -n "$line" ] && printf '<li>%s</li>' "$(printf '%s' "$line" | esc)"; done; }
-          VERSIONS_HTML="$(printf '%s\n' "$VERSIONS" | li || true)"
-          CARDS_HTML="$(printf '%s\n' "$CARDS" | li || true)"
-          [ -z "$VERSIONS_HTML" ] && VERSIONS_HTML="<li>（無新版本條目）</li>"
-          [ -z "$CARDS_HTML" ] && CARDS_HTML="<li>（本次無新靈感卡）</li>"
-          SUMMARY_HTML="$(printf '%s' "$SUMMARY" | esc)"
+          V_LIST="$(printf '%s\n' "$VERSIONS" | bullets || true)"
+          C_LIST="$(printf '%s\n' "$CARDS" | bullets || true)"
+          [ -z "$V_LIST" ] && V_LIST="•（無新版本條目）"
+          [ -z "$C_LIST" ] && C_LIST="•（本次無新靈感卡）"
+          SUMMARY_ESC="$(printf '%s' "$SUMMARY" | esc)"
 
           if [ "$IS_TEST" = "true" ]; then
-            SUBJECT="🧪 AI Changelog 通知測試"
-            INTRO="這是一封手動觸發的測試信，用來確認 SMTP 設定正確。"
+            TITLE="🧪 AI Changelog 通知測試"
+            INTRO="這是一則手動觸發的測試通知，用來確認 Telegram / Slack 設定正確。"
           else
-            SUBJECT="🆕 AI Changelog 有新更新（新增 ${NEW_ENTRIES} 筆版本、${NEW_CARDS} 張靈感卡）"
+            TITLE="🆕 AI Changelog 有新更新（新增 ${NEW_ENTRIES} 筆版本、${NEW_CARDS} 張靈感卡）"
             INTRO="AI 編碼工具有新的 release，已同步到 changelog 頁面。"
           fi
 
-          echo "subject=$SUBJECT" >> "$GITHUB_OUTPUT"
+          # ── Telegram（parse_mode=HTML，僅支援 b/i/a/code/pre 等標籤）──
           {
-            echo "html<<HTMLEOF"
-            cat <<HTML
-          <div style="font-family:-apple-system,Segoe UI,Roboto,'Noto Sans TC',sans-serif;line-height:1.6;color:#1f2937;">
-            <h2 style="margin:0 0 8px;">🆕 AI Changelog 更新通知</h2>
-            <p>$INTRO</p>
-            <h3 style="margin:16px 0 4px;">新版本條目</h3>
-            <ul>$VERSIONS_HTML</ul>
-            <h3 style="margin:16px 0 4px;">新靈感卡</h3>
-            <ul>$CARDS_HTML</ul>
-            <h3 style="margin:16px 0 4px;">更新摘要</h3>
-            <pre style="background:#f3f4f6;padding:12px;border-radius:8px;white-space:pre-wrap;">$SUMMARY_HTML</pre>
-            <p>
-              👉 <a href="$PAGE">開啟 changelog 頁面</a><br/>
-              🔗 <a href="$COMMIT_URL">查看本次 commit</a>
-            </p>
-          </div>
-          HTML
-            echo "HTMLEOF"
+            echo "telegram<<TGEOF"
+            cat <<TG
+          <b>${TITLE}</b>
+          ${INTRO}
+
+          <b>新版本條目</b>
+          ${V_LIST}
+
+          <b>新靈感卡</b>
+          ${C_LIST}
+
+          <b>更新摘要</b>
+          <pre>${SUMMARY_ESC}</pre>
+
+          👉 <a href="${PAGE}">開啟 changelog 頁面</a>
+          🔗 <a href="${COMMIT_URL}">查看本次 commit</a>
+          TG
+            echo "TGEOF"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Send mail
+          # ── Slack（mrkdwn）──
+          {
+            echo "slack<<SLEOF"
+            cat <<SL
+          *${TITLE}*
+          ${INTRO}
+
+          *新版本條目*
+          ${V_LIST}
+
+          *新靈感卡*
+          ${C_LIST}
+
+          *更新摘要*
+          \`\`\`
+          ${SUMMARY_ESC}
+          \`\`\`
+
+          👉 <${PAGE}|開啟 changelog 頁面>   🔗 <${COMMIT_URL}|查看本次 commit>
+          SL
+            echo "SLEOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Notify Telegram
         if: steps.detect.outputs.should_send == 'true'
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: ${{ secrets.MAIL_SERVER }}
-          server_port: ${{ secrets.MAIL_PORT }}
-          secure: true
-          username: ${{ secrets.MAIL_USERNAME }}
-          password: ${{ secrets.MAIL_PASSWORD }}
-          from: AI Changelog Bot <${{ secrets.MAIL_FROM || secrets.MAIL_USERNAME }}>
-          to: ${{ vars.MAIL_TO }}
-          subject: ${{ steps.body.outputs.subject }}
-          html_body: ${{ steps.body.outputs.html }}
+        shell: bash
+        env:
+          TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TG_TEXT: ${{ steps.msg.outputs.telegram }}
+        run: |
+          set -euo pipefail
+          if [ -z "${TG_TOKEN}" ] || [ -z "${TG_CHAT}" ]; then
+            echo "TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID 未設定，跳過 Telegram 通知。"
+            exit 0
+          fi
+          code=$(curl -sS -o /tmp/tg.out -w '%{http_code}' \
+            "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TG_CHAT}" \
+            --data-urlencode "text=${TG_TEXT}" \
+            --data-urlencode "parse_mode=HTML" \
+            --data-urlencode "disable_web_page_preview=true")
+          echo "Telegram HTTP ${code}"
+          cat /tmp/tg.out; echo
+          [ "${code}" = "200" ] || { echo "Telegram 發送失敗"; exit 1; }
+
+      - name: Notify Slack
+        if: steps.detect.outputs.should_send == 'true'
+        shell: bash
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_TEXT: ${{ steps.msg.outputs.slack }}
+        run: |
+          set -euo pipefail
+          if [ -z "${SLACK_WEBHOOK_URL}" ]; then
+            echo "SLACK_WEBHOOK_URL 未設定，跳過 Slack 通知。"
+            exit 0
+          fi
+          payload=$(jq -n --arg t "${SLACK_TEXT}" '{text: $t, mrkdwn: true}')
+          code=$(curl -sS -o /tmp/slack.out -w '%{http_code}' \
+            -H 'Content-Type: application/json' \
+            -d "${payload}" "${SLACK_WEBHOOK_URL}")
+          echo "Slack HTTP ${code}"
+          cat /tmp/slack.out; echo
+          [ "${code}" = "200" ] || { echo "Slack 發送失敗"; exit 1; }
