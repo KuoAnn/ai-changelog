@@ -1,8 +1,11 @@
 name: Notify on real update
 
-# 當 index.html 有「實際內容更新」（新增 DATA_* 版本條目或 INSP_* 靈感卡）時，
-# 透過 Telegram 與 Slack 發通知。只更新 <b id="lastRefreshed"> 同步時間戳的 commit 不觸發。
-# 偵測完全靠 git diff，與排程 agent / push 腳本解耦。
+# 當 index.html 有「實際內容更新」或發生「異常」時，透過 Telegram 與 Slack 發通知。
+# 通知分兩類，同一次 push 若兩者都有 → 併成一則；只有其一 → 只發該類：
+#   1. 更新通知：新增 DATA_* 版本條目或 INSP_* 靈感卡（靠 git diff 偵測）。
+#   2. 異常通知：commit summary 出現解析/驗證失敗等關鍵字（靠 %b 內文偵測）。
+# 只更新 <b id="lastRefreshed"> 同步時間戳、且無異常的 commit 不觸發。
+# 偵測與排程 agent / push 腳本解耦。
 #
 # 需要的 secrets（未設定的管道會自動跳過，不會讓 workflow 失敗）：
 #   TELEGRAM_BOT_TOKEN  BotFather 給的 token
@@ -39,16 +42,17 @@ jobs:
             {
               echo "should_send=true"
               echo "is_test=true"
+              echo "has_update=true"
+              echo "has_anomaly=false"
               echo "new_entries=0"
               echo "new_cards=0"
             } >> "$GITHUB_OUTPUT"
             {
-              echo "summary<<EOF"
-              echo "（手動觸發的測試通知）"
-              echo "EOF"
               echo "versions<<EOF"
               echo "EOF"
               echo "cards<<EOF"
+              echo "EOF"
+              echo "anomaly<<EOF"
               echo "EOF"
             } >> "$GITHUB_OUTPUT"
             exit 0
@@ -77,26 +81,49 @@ jobs:
           n_cards=$(printf '%s\n' "$NEW_CARDS" | grep -cE '.' || true)
           echo "new_entries=$n_entries  new_cards=$n_cards"
 
-          should_send=false
+          # ── 更新：有新版本條目或新靈感卡 ──
+          has_update=false
           if [ "$n_entries" -gt 0 ] || [ "$n_cards" -gt 0 ]; then
+            has_update=true
+          fi
+
+          # ── 異常：commit summary 出現失敗類關鍵字 ──
+          # summary = commit body（push 腳本傳入的來源摘要），先去掉 Co-Authored-By trailer 與空行。
+          SUMMARY_RAW="$(git log -1 --format=%b "$AFTER" || true)"
+          SUMMARY="$(printf '%s\n' "$SUMMARY_RAW" | grep -viE '^[[:space:]]*Co-Authored-By:' | sed -E '/^[[:space:]]*$/d' || true)"
+          ANOMALY_RE='失敗|封鎖|錯誤|逾時|blocked|error|timeout|rate.?limit'
+          # 依「、」與換行切段，只留命中失敗關鍵字的片段（去頭尾空白、去重）
+          # 用 sed 而非 tr 切「、」：tr 逐位元組處理會誤傷含 0x81 位元組的中文字（如「封」）。
+          anomaly="$(printf '%s\n' "$SUMMARY" | sed 's/、/\n/g' \
+            | grep -E "$ANOMALY_RE" \
+            | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//' \
+            | grep -vE '^$' | sort -u || true)"
+          n_anomaly=$(printf '%s\n' "$anomaly" | grep -cE '.' || true)
+          has_anomaly=false
+          [ "$n_anomaly" -gt 0 ] && has_anomaly=true
+          echo "has_update=$has_update  has_anomaly=$has_anomaly"
+
+          should_send=false
+          if [ "$has_update" = "true" ] || [ "$has_anomaly" = "true" ]; then
             should_send=true
           fi
 
-          # 抽人類可讀內容：版本號、靈感卡標題、commit summary
+          # 抽人類可讀內容：版本號、靈感卡標題
           versions="$(printf '%s\n' "$NEW_ENTRIES" | grep -oE 'v:[[:space:]]*"[^"]+"' | sed -E 's/v:[[:space:]]*"([^"]+)"/\1/' | sort -u || true)"
           cards="$(printf '%s\n' "$ADDED" | grep -oE 'feat:[[:space:]]*"[^"]+"' | sed -E 's/feat:[[:space:]]*"([^"]+)"/\1/' | sort -u || true)"
-          summary="$(git log -1 --format=%b "$AFTER" || true)"
 
           {
             echo "should_send=$should_send"
             echo "is_test=false"
+            echo "has_update=$has_update"
+            echo "has_anomaly=$has_anomaly"
             echo "new_entries=$n_entries"
             echo "new_cards=$n_cards"
           } >> "$GITHUB_OUTPUT"
           {
             echo "versions<<EOF"; printf '%s\n' "$versions"; echo "EOF"
             echo "cards<<EOF";    printf '%s\n' "$cards";    echo "EOF"
-            echo "summary<<EOF";  printf '%s\n' "$summary";  echo "EOF"
+            echo "anomaly<<EOF";  printf '%s\n' "$anomaly";  echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
       - name: Build messages
@@ -106,15 +133,18 @@ jobs:
         # 透過 env 傳入動態值，避免把 ${{ }} 直接插進 shell（防 injection / 引號破壞）
         env:
           IS_TEST: ${{ steps.detect.outputs.is_test }}
+          HAS_UPDATE: ${{ steps.detect.outputs.has_update }}
+          HAS_ANOMALY: ${{ steps.detect.outputs.has_anomaly }}
           NEW_ENTRIES: ${{ steps.detect.outputs.new_entries }}
           NEW_CARDS: ${{ steps.detect.outputs.new_cards }}
           VERSIONS: ${{ steps.detect.outputs.versions }}
           CARDS: ${{ steps.detect.outputs.cards }}
-          SUMMARY: ${{ steps.detect.outputs.summary }}
+          ANOMALY: ${{ steps.detect.outputs.anomaly }}
           COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
         run: |
           set -euo pipefail
           PAGE="https://kuoann.github.io/ai-changelog/"
+          nl=$'\n'
 
           # 跳脫 & < >：Telegram HTML 與 Slack mrkdwn 都吃 &amp; &lt; &gt;
           esc() { sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g'; }
@@ -122,60 +152,64 @@ jobs:
 
           V_LIST="$(printf '%s\n' "$VERSIONS" | bullets || true)"
           C_LIST="$(printf '%s\n' "$CARDS" | bullets || true)"
+          A_LIST="$(printf '%s\n' "$ANOMALY" | bullets || true)"
           [ -z "$V_LIST" ] && V_LIST="•（無新版本條目）"
           [ -z "$C_LIST" ] && C_LIST="•（本次無新靈感卡）"
-          SUMMARY_ESC="$(printf '%s' "$SUMMARY" | esc)"
+          [ -z "$A_LIST" ] && A_LIST="•（無詳細訊息）"
 
-          if [ "$IS_TEST" = "true" ]; then
-            TITLE="🧪 AI Changelog 通知測試"
-            INTRO="這是一則手動觸發的測試通知，用來確認 Telegram / Slack 設定正確。"
-          else
-            TITLE="🆕 AI Changelog 有新更新（新增 ${NEW_ENTRIES} 筆版本、${NEW_CARDS} 張靈感卡）"
-            INTRO="AI 編碼工具有新的 release，已同步到 changelog 頁面。"
-          fi
+          # 組訊息本體：依 test / 更新+異常 / 只更新 / 只異常 條件拼裝。
+          # $1=fmt：tg 用 <b></b>，slack 用 *...*
+          build_body() {
+            local fmt="$1" bo bc
+            if [ "$fmt" = "tg" ]; then bo="<b>"; bc="</b>"; else bo="*"; bc="*"; fi
+
+            if [ "$IS_TEST" = "true" ]; then
+              printf '%s🧪 AI Changelog 通知測試%s%s' "$bo" "$bc" "$nl"
+              printf '這是一則手動觸發的測試通知，用來確認 Telegram / Slack 設定正確。%s' "$nl"
+              return 0
+            fi
+
+            # 標題
+            if [ "$HAS_UPDATE" = "true" ] && [ "$HAS_ANOMALY" = "true" ]; then
+              printf '%s🆕 AI Changelog 有新更新（新增 %s 筆版本、%s 張靈感卡），另有異常需注意%s%s' \
+                "$bo" "$NEW_ENTRIES" "$NEW_CARDS" "$bc" "$nl"
+            elif [ "$HAS_UPDATE" = "true" ]; then
+              printf '%s🆕 AI Changelog 有新更新（新增 %s 筆版本、%s 張靈感卡）%s%s' \
+                "$bo" "$NEW_ENTRIES" "$NEW_CARDS" "$bc" "$nl"
+            else
+              printf '%s⚠️ AI Changelog 更新異常%s%s' "$bo" "$bc" "$nl"
+            fi
+
+            # 更新區塊
+            if [ "$HAS_UPDATE" = "true" ]; then
+              printf 'AI 編碼工具有新的 release，已同步到 changelog 頁面。%s%s' "$nl" "$nl"
+              printf '%s新版本條目%s%s%s%s%s' "$bo" "$bc" "$nl" "$V_LIST" "$nl" "$nl"
+              printf '%s新靈感卡%s%s%s%s' "$bo" "$bc" "$nl" "$C_LIST" "$nl"
+            fi
+
+            # 異常區塊
+            if [ "$HAS_ANOMALY" = "true" ]; then
+              if [ "$HAS_UPDATE" = "true" ]; then printf '%s' "$nl"; fi
+              printf '本次刷新有來源解析或驗證失敗，未能全部同步。%s' "$nl"
+              printf '%s⚠️ 異常項目%s%s%s%s' "$bo" "$bc" "$nl" "$A_LIST" "$nl"
+            fi
+            return 0
+          }
 
           # ── Telegram（parse_mode=HTML，僅支援 b/i/a/code/pre 等標籤）──
           {
             echo "telegram<<TGEOF"
-            cat <<TG
-          <b>${TITLE}</b>
-          ${INTRO}
-
-          <b>新版本條目</b>
-          ${V_LIST}
-
-          <b>新靈感卡</b>
-          ${C_LIST}
-
-          <b>更新摘要</b>
-          <pre>${SUMMARY_ESC}</pre>
-
-          👉 <a href="${PAGE}">開啟 changelog 頁面</a>
-          🔗 <a href="${COMMIT_URL}">查看本次 commit</a>
-          TG
+            build_body tg
+            printf '%s👉 <a href="%s">開啟 changelog 頁面</a>%s' "$nl" "$PAGE" "$nl"
+            printf '🔗 <a href="%s">查看本次 commit</a>%s' "$COMMIT_URL" "$nl"
             echo "TGEOF"
           } >> "$GITHUB_OUTPUT"
 
           # ── Slack（mrkdwn）──
           {
             echo "slack<<SLEOF"
-            cat <<SL
-          *${TITLE}*
-          ${INTRO}
-
-          *新版本條目*
-          ${V_LIST}
-
-          *新靈感卡*
-          ${C_LIST}
-
-          *更新摘要*
-          \`\`\`
-          ${SUMMARY_ESC}
-          \`\`\`
-
-          👉 <${PAGE}|開啟 changelog 頁面>   🔗 <${COMMIT_URL}|查看本次 commit>
-          SL
+            build_body slack
+            printf '%s👉 <%s|開啟 changelog 頁面>   🔗 <%s|查看本次 commit>%s' "$nl" "$PAGE" "$COMMIT_URL" "$nl"
             echo "SLEOF"
           } >> "$GITHUB_OUTPUT"
 
