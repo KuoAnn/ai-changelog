@@ -983,7 +983,7 @@
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
-      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-07-07 08:14 (Taipei)</b></span></span>
+      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-07-07 13:10 (Taipei)</b></span></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
         <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
       </button>
@@ -1252,6 +1252,7 @@
      =========================== */
 
   const DATA_CC = [
+    {v:"2.1.202", date:"2026-07-06", cat:"Settings/Config", body:"<b>動態工作流程規模設定</b>：<code>/config</code> 新增「Dynamic workflow size」（small/medium/large），作為每次動態工作流程 agent 數量的建議指引（非強制上限）；<b>OpenTelemetry workflow 屬性</b>：工作流程衍生 agent 的 telemetry 加入 <code>workflow.run_id</code> 與 <code>workflow.name</code>，可從 OTel 資料完整重建工作流程活動。修復：Ctrl+R 歷史搜尋接受或取消時崩潰；背景 session <code>/rename</code> 重啟後被還原；mTLS 憑證輪換期間暫時握手失敗；Remote Control 指令傳入互動 session 失敗；Remote Control 傳送無說明的圖片/檔案被靜默丟棄；<code>claude auth login</code> 與 <code>claude mcp login --no-browser</code> 登入 URL 在 SSH 換行後不可點擊（改為單一超連結）；從 <code>claude agents</code> 開啟對話時偶爾崩潰並進入重啟迴圈；workflow 腳本中 unicode 引號被破壞且 parse 錯誤現顯示問題行號；語音聽寫反覆失敗時無限重試（現改為暫停語音輸入）；<code>/remote-control</code> session 顯示錯誤的權限模式；含大量 git worktree 的 repo 中依名稱恢復 session 耗時過長；下載中途被 proxy 中斷時立即失敗（改為自動重試）；重複呼叫已載入 skill 導致指令重複加入 context。改進：<code>/workflows</code> agent 清單排版優化（更寬標題、獨立時間欄）；MCP 設定有 <code>url</code> 無 <code>type</code> 時錯誤提示更清晰；<code>/review &lt;pr&gt;</code> 恢復單輪快速審查，多 agent 審查改用 <code>/code-review &lt;level&gt; &lt;pr#&gt;</code>。"},
     {v:"2.1.201", date:"2026-07-03", cat:"Performance/Bug Fix", body:"<b>Claude Sonnet 5 對話中 system role 修正</b>：Sonnet 5 sessions 不再於對話中途以 system role 傳送 harness reminders，避免干擾對話流程與提示快取行為。"},
     {v:"2.1.200", date:"2026-07-03", cat:"Performance/Bug Fix", body:"<b><code>AskUserQuestion</code> 對話框不再預設自動繼續</b>；修復背景 session 在 turn 中途停止、daemon 切換、roster 問題、subagent 速率限制、終端控制字元、plugin 載入、<code>/mcp</code> 螢幕閱讀器追蹤、語音聽寫訊息等多項問題；改善螢幕閱讀器輸出品質。"},
     {v:"2.1.199", date:"2026-07-02", cat:"Subagents/Skills", body:"<b>疊加 slash-skill 呼叫最多可載入 5 個 skill</b>；修復 SSL 憑證錯誤處理、串流中途錯誤丟棄回應、subagent 部分工作處理、背景 daemon Linux 問題、<code>claude stop</code> 競態條件、背景任務進度、記憶體壓力、遠端 session 抖動、model picker、hooks stderr、SendMessage 路由錯誤、色彩底色、設定檔復原、Chrome 重連與 plan mode 提示等多項問題。"},
