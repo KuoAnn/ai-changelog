@@ -983,7 +983,7 @@
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
-      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-07-09 04:11 (Taipei)</b></span></span>
+      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-07-09 08:18 (Taipei)</b></span></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
         <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
       </button>
@@ -1252,6 +1252,7 @@
      =========================== */
 
   const DATA_CC = [
+    {v:"2.1.205", date:"2026-07-08", cat:"Performance/Bug Fix", body:"<b>Auto mode 安全規則</b>：新增規則阻擋篡改 session transcript 檔案；執行無法從 context 解析的變數 <code>rm -rf</code> 前先詢問確認。<b>Agent view 改版</b>：PR 編輯/合併/留言/推送的 session 於 <code>claude agents</code> 直接連結 PR；列改顯彩色狀態字詞與 classifier 撰寫標題，blocked session 展開可見完整詢問內容。<b><code>/doctor</code> 升級為全面安裝檢查工具</b>（<code>/checkup</code> 為別名）。<b>Auto-update 串流下載</b>：更新程式改為串流寫磁碟，峰值記憶體降低約 400MB。背景任務通知加入明確聲明防偽造授權。保留 <code>Claude Browser</code> MCP 伺服器名稱（與 <code>Claude Preview</code> 同）。修復：<code>--json-schema</code> 使用 <code>format</code> 關鍵字被拒或格式無效靜默輸出非結構化結果；<code>--max-turns</code> 到限時中途傳入訊息靜默丟棄；Windows worktree 移除時 NTFS junction 導致刪除超出範圍；背景 agent 恢復後仍顯「失敗/完成」或狀態閃爍；<code>claude attach</code> 在升級重啟中報錯；Bash 輸出超 30K 時 session-to-PR 連結遺失；<code>claude mcp add-from-claude-desktop</code> 遇不支援字元卡住；LSP 插件失敗阻擋同副檔名的有效插件；Windows 啟動目錄遭刪除/鎖定/卸載時崩潰；檔案監控在掃描進行中關閉時崩潰；verify skills 每 session 重寫；agent view 標頭裁切；遠端控制面板背景任務顯示過期「執行中」狀態；Cowork VM-mode 本地 agent session 無法啟動。"},
     {v:"2.1.204", date:"2026-07-08", cat:"Hooks", body:"<b>SessionStart hooks 串流修正</b>：修復 headless sessions 中 <code>SessionStart</code> hook 事件無法串流的問題，確保排程與 CI 環境的 hook 執行結果正確傳遞。"},
     {v:"2.1.203", date:"2026-07-07", cat:"UI/UX", body:"<b>登入到期警告</b>：即將到期時提前顯示提示；<b>手動模式灰色暫停徽章</b>：手動權限模式下工具呼叫等待圖示改為灰色暫停符號，視覺更清晰；<b>MCP roots/list 改善</b>：根目錄列表更穩定可靠；多項背景 session 修復，提升長時間運作穩定性。"},
     {v:"2.1.202", date:"2026-07-06", cat:"Settings/Config", body:"<b>動態工作流程規模設定</b>：<code>/config</code> 新增「Dynamic workflow size」（small/medium/large），作為每次動態工作流程 agent 數量的建議指引（非強制上限）；<b>OpenTelemetry workflow 屬性</b>：工作流程衍生 agent 的 telemetry 加入 <code>workflow.run_id</code> 與 <code>workflow.name</code>，可從 OTel 資料完整重建工作流程活動。修復：Ctrl+R 歷史搜尋接受或取消時崩潰；背景 session <code>/rename</code> 重啟後被還原；mTLS 憑證輪換期間暫時握手失敗；Remote Control 指令傳入互動 session 失敗；Remote Control 傳送無說明的圖片/檔案被靜默丟棄；<code>claude auth login</code> 與 <code>claude mcp login --no-browser</code> 登入 URL 在 SSH 換行後不可點擊（改為單一超連結）；從 <code>claude agents</code> 開啟對話時偶爾崩潰並進入重啟迴圈；workflow 腳本中 unicode 引號被破壞且 parse 錯誤現顯示問題行號；語音聽寫反覆失敗時無限重試（現改為暫停語音輸入）；<code>/remote-control</code> session 顯示錯誤的權限模式；含大量 git worktree 的 repo 中依名稱恢復 session 耗時過長；下載中途被 proxy 中斷時立即失敗（改為自動重試）；重複呼叫已載入 skill 導致指令重複加入 context。改進：<code>/workflows</code> agent 清單排版優化（更寬標題、獨立時間欄）；MCP 設定有 <code>url</code> 無 <code>type</code> 時錯誤提示更清晰；<code>/review &lt;pr&gt;</code> 恢復單輪快速審查，多 agent 審查改用 <code>/code-review &lt;level&gt; &lt;pr#&gt;</code>。"},
