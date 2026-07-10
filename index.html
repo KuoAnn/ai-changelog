@@ -983,7 +983,7 @@
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
-      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-07-10 05:16 (Taipei)</b></span></span>
+      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-07-10 08:11 (Taipei)</b></span></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
         <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
       </button>
@@ -1252,6 +1252,7 @@
      =========================== */
 
   const DATA_CC = [
+    {v:"2.1.206", date:"2026-07-09", cat:"Performance/Bug Fix", body:"<b><code>/cd</code> 目錄路徑建議</b>：輸入時提供目錄路徑補全提示；<b><code>/doctor</code> 改進</b>：新增修剪 CLAUDE.md 的建議功能；<b>自動允許 git push 到已設定的遠端</b>；支援 gateway 登入；worktree 建立確認提示；背景 agent 版本升級；過期登入修復；<code>--resume</code>/<code>--continue</code> 鍵盤輸入修復；MCP timeout 修復；<code>CLAUDE_CODE_EXTRA_BODY</code> 修復；MCP OAuth 重新認證修復；MCP 伺服器啟動崩潰修復；<code>/model</code> picker 修復；桌面 session 修復；agents view 鍵盤修復；<code>claude rm</code> 清理修復；<code>/remote-control</code> 離線處理；workflow 詳細導覽修復；<code>/status</code> 重複警告修復；plugin 棄用遙測修復；<code>/doctor</code> Homebrew 通道修復；全螢幕 UI 修復；Bedrock 啟動卡死修復；<code>/code-review</code> 品質改進；agents view 狀態欄寬度改善。"},
     {v:"2.1.205", date:"2026-07-08", cat:"Performance/Bug Fix", body:"<b>Auto mode 安全規則</b>：新增規則阻擋篡改 session transcript 檔案；執行無法從 context 解析的變數 <code>rm -rf</code> 前先詢問確認。<b>Agent view 改版</b>：PR 編輯/合併/留言/推送的 session 於 <code>claude agents</code> 直接連結 PR；列改顯彩色狀態字詞與 classifier 撰寫標題，blocked session 展開可見完整詢問內容。<b><code>/doctor</code> 升級為全面安裝檢查工具</b>（<code>/checkup</code> 為別名）。<b>Auto-update 串流下載</b>：更新程式改為串流寫磁碟，峰值記憶體降低約 400MB。背景任務通知加入明確聲明防偽造授權。保留 <code>Claude Browser</code> MCP 伺服器名稱（與 <code>Claude Preview</code> 同）。修復：<code>--json-schema</code> 使用 <code>format</code> 關鍵字被拒或格式無效靜默輸出非結構化結果；<code>--max-turns</code> 到限時中途傳入訊息靜默丟棄；Windows worktree 移除時 NTFS junction 導致刪除超出範圍；背景 agent 恢復後仍顯「失敗/完成」或狀態閃爍；<code>claude attach</code> 在升級重啟中報錯；Bash 輸出超 30K 時 session-to-PR 連結遺失；<code>claude mcp add-from-claude-desktop</code> 遇不支援字元卡住；LSP 插件失敗阻擋同副檔名的有效插件；Windows 啟動目錄遭刪除/鎖定/卸載時崩潰；檔案監控在掃描進行中關閉時崩潰；verify skills 每 session 重寫；agent view 標頭裁切；遠端控制面板背景任務顯示過期「執行中」狀態；Cowork VM-mode 本地 agent session 無法啟動。"},
     {v:"2.1.204", date:"2026-07-08", cat:"Hooks", body:"<b>SessionStart hooks 串流修正</b>：修復 headless sessions 中 <code>SessionStart</code> hook 事件無法串流的問題，確保排程與 CI 環境的 hook 執行結果正確傳遞。"},
     {v:"2.1.203", date:"2026-07-07", cat:"UI/UX", body:"<b>登入到期警告</b>：即將到期時提前顯示提示；<b>手動模式灰色暫停徽章</b>：手動權限模式下工具呼叫等待圖示改為灰色暫停符號，視覺更清晰；<b>MCP roots/list 改善</b>：根目錄列表更穩定可靠；多項背景 session 修復，提升長時間運作穩定性。"},
@@ -1379,6 +1380,7 @@
   ];
 
   const DATA_CI = [
+    {v:"0.144.1", date:"2026-07-09", cat:"Performance/Bug Fix", title:"CLI 0.144.1：安裝程式可靠性 + Code Mode 後備修復", body:"<b>安裝程式可靠性修復</b>：修正 GitHub 回傳壓縮或重新排序的 release metadata 時獨立安裝失敗的問題；<b>macOS 套件安裝正確公開 code-mode host</b>：確保 macOS 套件安裝同時公開 code-mode host 執行檔與主要執行檔；<b>Code Mode 後備機制</b>：當 companion host binary 不可用時，code mode 自動回退至嵌入式執行環境，確保持續可用。"},
     {v:"0.144.0", date:"2026-07-09", cat:"Permissions/Security", title:"CLI 0.144.0：用量重置點數明細 + writes 核准模式 + MCP 互動認證", body:"<b>用量限制重置點數</b>顯示類型與到期日，並可選擇兌換哪種點數；新增 <b><code>writes</code> 核准模式</b>：允許聲明的唯讀操作，僅針對寫入動作提示確認；<b>MCP 工具可在無需實驗性 opt-in 的情況下互動式請求認證</b>；App-server 主機可在執行期提供 Codex 認證並在登入成功後重導至托管頁面；偵測全域 pnpm 安裝以確保診斷與更新使用正確的套件管理器；選擇 Ultra reasoning 時，若多 agent 高並發可能快速消耗用量，現顯示警告。修復：已壓縮的 ChatGPT threads 若參照已退役模型，恢復時改以當前選定模型重試；修復 Intel macOS 發行版二進位的 Code Mode 崩潰；Windows sandbox 可刪除可寫根目錄中的檔案並存取受管主要執行環境；貼上終端控制序列不再破壞 TUI 渲染或恢復的對話歷史；長時間執行的 app sessions 現可為托管的 <code>codex_apps</code> connector 重新整理過期認證；Responses WebSockets 在遵守系統代理與自訂 CA 的同時，繼續使用低延遲傳輸。文件：裝置碼登入警告加入識別並阻止網路釣魚攻擊的說明；降低遠端 executor 上插件技能載入時間；加快並提高大型 repo 的 <code>/review</code> 分支選擇器可靠性。"},
     {v:"0.143.0", date:"2026-07-08", cat:"Plugins/MCP", title:"CLI 0.143.0：遠端插件預設啟用 + 系統代理 + Bedrock GPT-5.6", body:"<b>遠端 plugins 預設啟用</b>（目錄列表列更豐富）；<b>macOS / Windows 系統代理支援</b>（涵蓋 PAC / WPAD）；新 <b><code>codex remote-control pair</code></b> 指令可產生配對碼；<b>Amazon Bedrock 加入 GPT-5.6 系列模型</b>（含 reasoning effort 支援）；MCP 工具預設採工具搜尋模式；修復 Windows ConPTY 輸入處理與 sandbox 憑證問題；安全性更新：OpenSSL、Hono、fast-uri、quick-xml、crossbeam-epoch。"},
     {v:"0.142.5", date:"2026-07-01", cat:"Permissions/Security", title:"CLI 0.142.5：安全修復（WebSocket trace log 防護）", body:"<b>安全修復</b>：防止完整的 Responses WebSocket 請求 payload 被寫入 trace log，避免敏感資訊外洩至日誌檔案。純 patch 修正版本。"},
