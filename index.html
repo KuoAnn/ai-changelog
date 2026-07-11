@@ -983,7 +983,7 @@
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
-      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-07-11 08:19 (Taipei)</b></span></span>
+      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-07-11 08:26 (Taipei)</b></span></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
         <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
       </button>
@@ -1350,6 +1350,12 @@
   ];
 
   const DATA_CA = [
+    {v:"2026-07-09", date:"2026-07-09", cat:"Cloud/Web", title:"Codex 整合進 ChatGPT 桌面應用程式；GPT-5.6 加速 Computer Use", body:"<b>Codex 正式成為 ChatGPT 桌面應用程式的一部分</b>（macOS 與 Windows）；現有 Codex App 使用者可照常更新，專案、設定與工作流程完整保留，可將 Codex 設為預設視圖，macOS 亦可保留 Codex App 圖示。新增<b>直接在 App 內編輯 Markdown 與程式碼</b>，支援 inline 批注與要求 Codex 修訂選取內容；<b>側邊欄整合 GitHub PR 審查</b>，可在 diff 旁並排查看審查意見而無需離開 App；支援在同一專案內<b>跨多個 repo 工作</b>；<b>Computer Use 改用 GPT-5.6 提速</b>；改善任務活動與進度追蹤可視性；<b>Plugin 管理移至 Settings 頁面</b>；提升行動端連線穩定性並修復 SSH 專案的影片渲染。"},
+    {v:"2026-07-06", date:"2026-07-06", cat:"UI/UX", title:"任務管理、Diff 篩選器、附件預覽與 SSH 快捷鍵", body:"新增從對話中<b>直接建立、搜尋、開啟、分叉與管理 Codex 任務</b>；新增 Diff 檢視<b>篩選器</b>（staged、unstaged、branch、last-turn 變更），支援跨分支比較；支援將選取的 transcript 文字<b>直接加入 composer</b>；圖片與檔案附件可在送出前<b>預覽</b>；附件選單加入 Photos 與 Camera 快速選取器；新增 SSH 主機連線捷徑，支援使用私鑰或免密碼登入；任務選單顯示<b>用量限制與點數明細</b>。"},
+    {v:"2026-06-25", date:"2026-06-25", cat:"Cloud/Web", title:"Codex Remote 正式上線；DigitalOcean Plugin 發布", body:"<b>Codex Remote 正式進入 GA</b>：可透過 ChatGPT 行動 App 從手機啟動或繼續 Mac/Windows 主機上的工作、查看進度並核准操作。<b>Remote Control 改用一對一 QR 配對認證</b>（iOS/Android 裝置與主機各自獨立配對），請同步更新 ChatGPT App 與 Codex App；2026-06-08 後使用的連線維持配對，較舊的閒置連線需重新配對。<b>全新 DigitalOcean Plugin</b>：讓 Codex 自動佈建 DigitalOcean Droplet、設定 SSH 存取，並將其連接為遠端工作空間。"},
+    {v:"2026-06-22", date:"2026-06-22", cat:"UI/UX", title:"iOS 個性設定與 Composer 功能強化", body:"新增<b>每台主機獨立個性設定</b>（Friendly 與 Pragmatic 兩種選項）；支援<b>直接在 Composer 中編輯 Goals</b>；新增從分叉對話返回原始 thread 的連結；改善側邊聊天可視性（在 composer 上方分開顯示對話）；改善 Composer 對指令、skill 與 plugin 的自動補全；改善 subagent、任務與 worktree 建立的進度可視性。"},
+    {v:"2026-06-11", date:"2026-06-11", cat:"UI/UX", title:"用量限制點數銀行、Developer Mode 與企業 Computer Use", body:"<b>用量限制重置點數銀行</b>：Plus/Pro 使用者可保存重置點數，上線即獲一次免費重置，並可透過邀請獲取更多；Business 成員可透過獨立邀請計畫獲得共享工作空間點數。新增<b>Developer mode</b>（Chrome 與 Codex in-app browser）：讓 Codex 透過 Chrome DevTools Protocol（CDP）存取效能分析工具，可除錯網路流量、主控台輸出、執行期錯誤與頁面狀態。新增 <b><code>/init</code> 指令</b>至 App composer（與 CLI 相同的專案初始化流程）；可自訂 macOS Dock 圖示（淺色/深色變體）；<b>企業用戶 Computer Use 擴展上線</b>（歐洲經濟區、英國、瑞士除外），並支援在 Windows 上設定每個 App 的 Computer Use 存取控制。"},
+    {v:"2026-06-02", date:"2026-06-02", cat:"Cloud/Web", title:"Sites Plugin 預覽版上線", body:"新增 <b>Sites Plugin（預覽版）</b>：可在 Codex 內直接建立、儲存、部署與檢視網站、儀表板、內部工具、Web App 與遊戲，由 OpenAI 托管。"},
     {v:"2026-05-28", date:"2026-05-28", cat:"UI/UX", title:"Windows 支援 Computer Use 與行動端遠端控制", body:"<b>Computer Use 登陸 Windows</b>：Codex 可在 Windows 桌面前景看見、點擊、輸入操作原生 App。<b>Remote control</b> 也支援 Windows 主機，可從 ChatGPT iOS/Android 或 Mac 上的 Codex 啟動並追蹤 Windows 上的工作。Profile 區新增使用量與 token 活動，past thread 搜尋擴及對話內容與 Git branch 名稱。"},
     {v:"2026-05-13", date:"2026-05-13", cat:"Remote/Mobile", title:"從 ChatGPT 手機 App 遠端使用 Codex", body:"新增 <b>Remote connections</b>：ChatGPT iOS/Android 可連線到執行 Codex App 的 Mac 主機，沿用該機器的專案、檔案、認證、plugin、skill 與設定（亦支援 SSH host）。同時 <b>Hooks GA</b>、<b>Codex access tokens</b>（信任自動化用）與企業 admin setup 文件上線。"},
     {v:"2026-05-08", date:"2026-05-08", cat:"UI/UX", title:"Hooks 信任審查流程", body:"新增 <b>in-app trust review</b> 流程給 hooks，未完成設定前 Hooks 設定頁仍可進入。修復 Windows 終端機 <code>Ctrl+V</code>、外部連結改在系統瀏覽器開啟、feedback slash command 綁定原 thread 等多項桌面 regression。"},
