@@ -284,11 +284,43 @@
     box-shadow: var(--shadow-pop);
     display: flex; flex-direction: column; gap: 8px;
   }
+  /* 每列一種 filter 類型：Agent（含全站搜尋）／Role */
+  .dock-row {
+    display: flex; align-items: center; gap: 10px; min-width: 0;
+  }
+  .dock-row + .dock-row {
+    border-top: 1px dashed var(--line);
+    padding-top: 8px;
+  }
+  /* Agent／Role 標籤 — 以配色區分兩種 filter */
+  .dock-label {
+    flex-shrink: 0;
+    font-family: var(--mono);
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    white-space: nowrap;
+  }
+  .dock-row--agent .dock-label {
+    color: var(--blue);
+    border-color: rgba(96,165,250,0.4);
+    background: rgba(96,165,250,0.10);
+  }
+  .dock-row--role .dock-label {
+    color: var(--accent);
+    border-color: var(--accent-dim);
+    background: var(--accent-soft);
+  }
   .filter-dock .chips {
     display: flex; gap: 6px; flex-wrap: nowrap;
     overflow-x: auto; min-width: 0;
     padding-bottom: 2px;
+    flex: 1 1 auto;
   }
+  .dock-row .search { flex: 0 0 auto; margin-left: 0; }
   .role-chip, .agent-chip {
     font-family: var(--mono);
     font-size: 14px;
@@ -994,6 +1026,8 @@
     .stat { flex: 1 1 auto; padding: 10px 14px; }
     .board, .compare-grid { grid-template-columns: 1fr; }
     .search { width: 100%; margin-left: 0; }
+    .dock-row { flex-wrap: wrap; }
+    .dock-row .search { flex: 1 1 100%; width: 100%; order: 3; }
     .filter-bar { flex-direction: column; align-items: stretch; }
     .modal-backdrop { padding: 24px 12px; }
     .modal-head { padding: 18px 18px 14px; }
@@ -1034,10 +1068,17 @@
     </div>
   </header>
 
-  <!-- Filter dock：role（影響應用靈感）＋ agent（全站），捲動時懸浮置頂 -->
+  <!-- Filter dock：agent（全站，含全站搜尋）＋ role（影響應用靈感），捲動時懸浮置頂 -->
   <div class="filter-dock" id="filterDock">
-    <div class="chips" id="roleChips"></div>
-    <div class="chips" id="agentChips"></div>
+    <div class="dock-row dock-row--agent">
+      <span class="dock-label" title="Agent 篩選（影響時間軸與靈感卡）">Agent</span>
+      <div class="chips" id="agentChips"></div>
+      <input class="search" id="searchBox" type="search" aria-label="全站搜尋：版本時間軸與應用靈感" placeholder="搜尋版本、靈感卡、指令、model、env var…" />
+    </div>
+    <div class="dock-row dock-row--role">
+      <span class="dock-label" title="角色篩選（影響應用靈感）">Role</span>
+      <div class="chips" id="roleChips"></div>
+    </div>
   </div>
 
   <!-- ============ 01 合併版本時間軸 ============ -->
@@ -1048,8 +1089,7 @@
     </h2>
     <div class="filter-bar">
       <div class="chips-wrap" id="catChips"></div>
-      <label class="perf-toggle" title="開關顯示 Performance/Bug Fix 類別"><input type="checkbox" id="perfToggle" /> Performance/Bug Fix</label>
-      <input class="search" id="searchBox" type="search" aria-label="搜尋版本變更" placeholder="搜尋功能、指令、model、env var…" />
+      <label class="perf-toggle" title="開關顯示 Performance/Bug Fix 類別；仍可點上方分類單獨篩選"><input type="checkbox" id="perfToggle" /> Performance/Bug Fix</label>
     </div>
     <div class="timeline" id="timelineAll"></div>
     <div class="empty" id="emptyAll" style="display:none;">沒有符合條件的版本，試著清空篩選或關鍵字。</div>
@@ -2040,6 +2080,7 @@
   const INSP_ALL = AGENTS.flatMap(a => a.insp.map(c => ({ ...c, agent: a.id })));
 
   const PAGE_SIZE = 10;
+  const INSP_PAGE_SIZE = 12;   // 靈感卡預設顯示近 12 筆
   const store = {
     get(k, fb){ try { const v = localStorage.getItem(k); return v === null ? fb : v; } catch (e) { return fb; } },
     set(k, v){ try { localStorage.setItem(k, v); } catch (e) {} }
@@ -2050,7 +2091,7 @@
     search: store.get("ctx_srch_v1", ""),
     showPerf: store.get("ctx_showperf_v1", "1") === "1",
     visible: PAGE_SIZE,
-    inspVisible: PAGE_SIZE
+    inspVisible: INSP_PAGE_SIZE
   };
   const PERF_CAT = "Performance/Bug Fix";
   if (state.agent !== "all" && !AGENT_MAP[state.agent]) state.agent = "all";
@@ -2113,7 +2154,7 @@
     chip.addEventListener("click", () => {
       activeRole = r.id;
       store.set(ROLE_KEY, r.id);
-      state.inspVisible = PAGE_SIZE;
+      state.inspVisible = INSP_PAGE_SIZE;
       roleChipsRoot.querySelectorAll(".role-chip").forEach(x => x.classList.remove("active"));
       chip.classList.add("active");
       renderInspiration();
@@ -2158,7 +2199,7 @@
       state.agent = def.id;
       store.set("ctx_agent_v1", def.id);
       state.visible = PAGE_SIZE;
-      state.inspVisible = PAGE_SIZE;
+      state.inspVisible = INSP_PAGE_SIZE;
       agentChipsRoot.querySelectorAll(".agent-chip").forEach(x => x.classList.remove("active"));
       chip.classList.add("active");
       buildCatChips();
@@ -2203,11 +2244,13 @@
     state.cat = "All";
     state.search = "";
     state.visible = PAGE_SIZE;
+    state.inspVisible = INSP_PAGE_SIZE;
     store.set("ctx_cat_v1", "All");
     store.set("ctx_srch_v1", "");
     searchBox.value = "";
     catChipsRoot.querySelectorAll(".chip").forEach(x => x.classList.toggle("active", x.dataset.cat === "All"));
     renderTimeline();
+    renderInspiration();
   }
   (function initClearBtn(){
     const bar = catChipsRoot.closest(".filter-bar");
@@ -2230,8 +2273,10 @@
   searchBox.value = state.search;
   const commitSearch = debounce(() => {
     state.visible = PAGE_SIZE;
+    state.inspVisible = INSP_PAGE_SIZE;
     store.set("ctx_srch_v1", state.search);
     renderTimeline();
+    renderInspiration();
   }, 160);
   searchBox.addEventListener("input", () => {
     state.search = searchBox.value;
@@ -2263,7 +2308,8 @@
     const q = state.search.trim().toLowerCase();
 
     const filtered = entriesForAgent().filter(d => {
-      if (!state.showPerf && d.cat === PERF_CAT) return false;
+      // 開關只在「All」總覽時隱藏 Perf；明確點選 Perf 分類時照常顯示（開關不影響篩選）
+      if (!state.showPerf && state.cat === "All" && d.cat === PERF_CAT) return false;
       if (state.cat !== "All" && d.cat !== state.cat) return false;
       if (!q) return true;
       const hay = (d.v + " " + (d.title || "") + " " + d.body + " " + d.cat + " " + AGENT_MAP[d.agent].label).toLowerCase();
@@ -2366,8 +2412,23 @@
     return dates.sort().pop();
   }
 
+  // 靈感卡全站搜尋索引：feat/ver/desc/scen + agent/role 標籤 + 明細段落，去 HTML、小寫、快取
+  function inspHaystack(c){
+    if (c._hay != null) return c._hay;
+    const parts = [c.feat, c.ver, c.desc, c.scen, (AGENT_MAP[c.agent] ? AGENT_MAP[c.agent].label : "")];
+    (c.roles || []).forEach(r => parts.push(ROLE_LABEL_MAP[r] || r, r));
+    (c.d || []).forEach(sec => {
+      if (sec.h) parts.push(sec.h);
+      if (sec.p) parts.push(sec.p);
+      if (sec.b) parts.push(sec.b);
+      if (sec.l) parts.push(sec.l.join(" "));
+    });
+    c._hay = stripHtml(parts.join(" ")).toLowerCase();
+    return c._hay;
+  }
+
   document.getElementById("inspMoreBtn").addEventListener("click", () => {
-    state.inspVisible += PAGE_SIZE;
+    state.inspVisible += INSP_PAGE_SIZE;
     renderInspiration();
   });
 
@@ -2378,10 +2439,12 @@
     root.innerHTML = "";
     root.classList.remove("empty-state");
 
+    const q = state.search.trim().toLowerCase();
     const filtered = INSP_ALL.filter(c => {
       if (state.agent !== "all" && c.agent !== state.agent) return false;
-      if (activeRole === "all") return true;
-      return (c.roles || []).includes(activeRole);
+      if (activeRole !== "all" && !(c.roles || []).includes(activeRole)) return false;
+      if (q && !inspHaystack(c).includes(q)) return false;
+      return true;
     });
 
     filtered.sort((a, b) => {
@@ -2396,7 +2459,9 @@
     if (!filtered.length){
       root.classList.add("empty-state");
       const label = ROLE_LABEL_MAP[activeRole] || activeRole;
-      root.innerHTML = `<div>目前沒有針對 <b>${label}</b> 的靈感卡。<br>換個角色，或把 Agent 篩選切回「全部」。</div>`;
+      root.innerHTML = q
+        ? `<div>找不到符合「<b>${escapeHtml(state.search.trim())}</b>」的靈感卡。<br>換個關鍵字，或清空搜尋。</div>`
+        : `<div>目前沒有針對 <b>${label}</b> 的靈感卡。<br>換個角色，或把 Agent 篩選切回「全部」。</div>`;
       moreRow.style.display = "none";
       return;
     }
@@ -2440,7 +2505,7 @@
     if (showCount < total){
       moreRow.style.display = "flex";
       const remain = total - showCount;
-      const next = Math.min(PAGE_SIZE, remain);
+      const next = Math.min(INSP_PAGE_SIZE, remain);
       document.getElementById("inspMoreBtn").innerHTML = `顯示更多靈感卡（再 ${next} 張，共剩 ${remain}）<span class="arrow">↓</span>`;
     } else {
       moreRow.style.display = "none";
