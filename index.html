@@ -4,14 +4,14 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>AI Coding Tools 更新摘要 · Claude Code / Codex 變更追蹤</title>
-<meta name="description" content="一頁追蹤 Claude Code、Codex App、Codex CLI 的版本變更：解析重點功能、依角色（Frontend/Backend/Designer/QA/PM）篩選靈感卡，並以類別趨勢圖呈現。" />
+<meta name="description" content="一頁追蹤 Claude Code、Codex App、Codex CLI 的版本變更：三工具合併時間軸、依角色（Frontend/Backend/Designer/QA/PM）與 AI Agent 篩選靈感卡，並以類別趨勢圖呈現。" />
 <meta name="color-scheme" content="light dark" />
 <meta name="theme-color" content="#059669" media="(prefers-color-scheme: light)" />
 <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)" />
 <!-- Open Graph -->
 <meta property="og:type" content="website" />
 <meta property="og:title" content="AI Coding Tools 更新摘要" />
-<meta property="og:description" content="追蹤 Claude Code / Codex App / Codex CLI 的版本變更、角色化靈感卡與類別趨勢。" />
+<meta property="og:description" content="追蹤 Claude Code / Codex App / Codex CLI 的版本變更、合併時間軸、角色化靈感卡與類別趨勢。" />
 <meta property="og:locale" content="zh_TW" />
 <meta name="twitter:card" content="summary_large_image" />
 <!-- Emoji favicon (inline SVG, no extra request) -->
@@ -22,6 +22,7 @@
 <style>
   /* ===========================================================
      TERMINAL / CLEAN — light & fresh changelog console
+     Unified single-page layout: merged timeline across agents.
      Class names + --mono/--ink-muted vars preserved for JS.
      =========================================================== */
   :root {
@@ -132,6 +133,31 @@
 
   a { color: var(--accent); }
 
+  /* ===================== AGENT IDENTITY =====================
+     Every agent-scoped element carries .agent-cc / .agent-ca / .agent-ci,
+     which sets --ag / --ag-soft / --ag-line for downstream styling. */
+  .agent-cc { --ag: var(--orange); --ag-soft: rgba(251,146,60,0.13);  --ag-line: rgba(251,146,60,0.38); }
+  .agent-ca { --ag: var(--teal);   --ag-soft: rgba(45,212,191,0.13);  --ag-line: rgba(45,212,191,0.38); }
+  .agent-ci { --ag: var(--indigo); --ag-soft: rgba(129,140,248,0.13); --ag-line: rgba(129,140,248,0.38); }
+
+  .agent-tag {
+    font-family: var(--mono);
+    font-size: 11.5px; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: var(--ag-soft);
+    color: var(--ag);
+    border: 1px solid var(--ag-line);
+    width: max-content; white-space: nowrap;
+    letter-spacing: 0.02em;
+  }
+  .agent-tag::before {
+    content: ""; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--ag); box-shadow: 0 0 6px var(--ag);
+    flex-shrink: 0;
+  }
+
   /* ===================== HERO — terminal window ===================== */
   header.hero {
     border: 1px solid var(--line-strong);
@@ -144,17 +170,6 @@
     position: relative;
     overflow: hidden;
   }
-  /* animated scan line on top edge */
-  header.hero::before {
-    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    background-size: 40% 100%;
-    background-repeat: no-repeat;
-    animation: scan 4.5s linear infinite;
-    opacity: 0.65;
-  }
-  @keyframes scan { 0% { background-position: -40% 0; } 100% { background-position: 140% 0; } }
-
   .term-bar {
     display: flex; align-items: center; gap: 9px;
     padding: 11px 16px;
@@ -209,82 +224,72 @@
   html[data-theme="dark"] .theme-toggle .icon-sun { display: inline; }
   html[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
 
-  .term-body { padding: 22px 26px 24px; }
-  .term-line { font-family: var(--mono); font-size: 15px; color: var(--ink-soft); display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap; }
-  .term-line .prompt { color: var(--accent); font-weight: 600; }
-  .term-line .cmd { color: var(--ink); }
-  .term-line .flag { color: var(--amber); }
-  .term-out { font-family: var(--mono); font-size: 13.5px; color: var(--ink-muted); margin: 6px 0 0 19px; }
-  .term-out .ok { color: var(--accent); }
+  .term-body { padding: 18px 26px 20px; }
 
   h1 {
     font-family: var(--display);
-    font-size: 37px;
-    line-height: 1.05;
-    margin: 14px 0 4px;
+    font-size: 29px;
+    line-height: 1.1;
+    margin: 0 0 6px;
     font-weight: 800;
     letter-spacing: -0.02em;
     color: var(--ink);
   }
   h1 .accent { color: var(--accent); }
 
-  .cursor {
-    display: inline-block; width: 9px; height: 16px;
-    background: var(--accent);
-    box-shadow: 0 0 8px var(--accent-glow);
-    animation: blink 1.05s steps(1) infinite;
-    transform: translateY(2px);
-  }
-  @keyframes blink { 0%,50% { opacity: 1; } 50.01%,100% { opacity: 0; } }
-
-  .stat-row {
-    display: flex; gap: 0; margin-top: 20px;
-    flex-wrap: wrap;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-sm);
-    overflow: hidden;
-    background: var(--bg-2);
-    width: max-content;
-    max-width: 100%;
-  }
-  .stat {
-    display: flex; flex-direction: column; gap: 3px;
-    padding: 11px 22px;
-    border-right: 1px solid var(--line);
-  }
-  .stat:last-child { border-right: none; }
-  .stat .num {
+  .hero-stats {
     font-family: var(--mono);
-    font-size: 23.5px; font-weight: 600; color: var(--ink);
-    line-height: 1;
+    font-size: 13.5px;
+    color: var(--ink-muted);
+    letter-spacing: 0.02em;
   }
-  .stat .lbl {
+  .hero-stats b { color: var(--ink); font-weight: 600; }
+
+  /* compact category distribution inside hero */
+  .cat-dist { margin-top: 16px; }
+  .cat-dist-label {
     font-family: var(--mono);
     font-size: 11px; color: var(--ink-muted);
     text-transform: uppercase; letter-spacing: 0.12em;
+    margin-bottom: 7px;
   }
+  .cat-bar {
+    display: flex;
+    height: 12px;
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+  }
+  .cat-bar .seg { height: 100%; min-width: 3px; }
+  .cat-legend {
+    display: flex; flex-wrap: wrap; gap: 4px 14px;
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--ink-soft);
+  }
+  .cat-legend .lg { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .cat-legend .lg .sw { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+  .cat-legend .lg .n { color: var(--ink-muted); }
 
-  /* ===================== ROLE PICKER ===================== */
-  .role-picker {
+  /* ===================== FILTER DOCK (role + agent, sticky) ===================== */
+  .filter-dock {
+    position: sticky; top: 10px; z-index: 100;
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 12px 16px;
+    padding: 10px 16px;
     margin-bottom: 13px;
-    box-shadow: var(--shadow);
-    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    box-shadow: var(--shadow-pop);
+    display: flex; flex-direction: column; gap: 8px;
   }
-  .rp-label {
-    font-family: var(--mono); font-size: 13px; color: var(--ink-muted);
-    letter-spacing: 0.04em; white-space: nowrap; flex-shrink: 0;
-  }
-  .rp-label .arr { color: var(--accent); }
-  .role-picker .chips {
+  .filter-dock .chips {
     display: flex; gap: 6px; flex-wrap: nowrap;
-    overflow-x: auto; flex: 1 1 auto; min-width: 0;
+    overflow-x: auto; min-width: 0;
     padding-bottom: 2px;
   }
-  .role-chip {
+  .role-chip, .agent-chip {
     font-family: var(--mono);
     font-size: 14px;
     padding: 6px 13px;
@@ -299,15 +304,28 @@
     white-space: nowrap; flex-shrink: 0;
   }
   .role-chip .role-icn { font-size: 15px; }
-  .role-chip:hover { border-color: var(--line-strong); color: var(--ink); background: var(--surface-3); }
+  .role-chip:hover, .agent-chip:hover { border-color: var(--line-strong); color: var(--ink); background: var(--surface-3); }
   .role-chip.active {
     background: var(--accent-soft);
     color: var(--accent);
     border-color: var(--accent-dim);
     box-shadow: 0 0 14px -4px var(--accent-glow);
   }
+  .agent-chip .dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    background: var(--ag, var(--accent));
+    box-shadow: 0 0 6px var(--ag, var(--accent-glow));
+  }
+  .agent-chip .cnt { font-size: 12px; color: var(--ink-muted); }
+  .agent-chip.active {
+    background: var(--ag-soft, var(--accent-soft));
+    color: var(--ag, var(--accent));
+    border-color: var(--ag-line, var(--accent-dim));
+    box-shadow: 0 0 14px -4px var(--ag-soft, var(--accent-glow));
+  }
+  .agent-chip.active .cnt { color: inherit; opacity: 0.8; }
 
-  .insp-role-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
+  .insp-role-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; align-items: center; }
   .insp-role-tag {
     font-family: var(--mono);
     font-size: 10.5px;
@@ -327,7 +345,6 @@
   }
 
   .auto-badge {
-    position: absolute; top: 12px; right: 14px;
     display: inline-flex; align-items: center; gap: 5px;
     background: rgba(251,191,36,0.10);
     border: 1px solid rgba(251,191,36,0.4);
@@ -366,62 +383,7 @@
     font-family: var(--mono);
   }
 
-  /* ===================== TABS ===================== */
-  .tab-bar {
-    display: flex; gap: 4px;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 5px;
-    margin-bottom: 24px;
-    box-shadow: var(--shadow);
-    flex-wrap: nowrap; overflow-x: auto;
-  }
-  .tab {
-    flex: 1 1 auto; min-width: 0;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: var(--radius-sm);
-    padding: 11px 15px;
-    cursor: pointer;
-    font-family: var(--sans);
-    color: var(--ink-soft);
-    transition: background .16s, color .16s, border-color .16s;
-    text-align: left;
-    display: flex; flex-direction: column; gap: 3px;
-    position: relative;
-  }
-  .tab:hover { background: var(--surface-2); color: var(--ink); }
-  .tab.active {
-    background: var(--bg-2);
-    color: var(--ink);
-    border-color: var(--accent-dim);
-    box-shadow: inset 0 0 0 1px rgba(5,150,105,0.18), 0 0 18px -8px var(--accent-glow);
-  }
-  .tab .tab-title {
-    font-weight: 600; font-size: 16px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .tab .tab-meta {
-    font-family: var(--mono);
-    font-size: 11.5px; color: var(--ink-muted);
-    letter-spacing: 0.03em;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .tab.active .tab-meta { color: var(--accent-dim); }
-  .tab .tab-dot {
-    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-    background: var(--accent);
-    box-shadow: 0 0 7px currentColor;
-  }
-  .tab[data-tab="claude-code"] .tab-dot { background: var(--accent); color: var(--accent); }
-  .tab[data-tab="codex-app"] .tab-dot { background: #19c39a; color: #19c39a; }
-  .tab[data-tab="codex-cli"] .tab-dot { background: var(--indigo); color: var(--indigo); }
-
   /* ===================== SECTIONS ===================== */
-  .panel { display: none; }
-  .panel.active { display: block; animation: panelIn .35s ease both; }
-  @keyframes panelIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
   section { margin: 34px 0; }
 
   h2 {
@@ -446,6 +408,16 @@
   h2 .num-tag::after { content: "]"; opacity: 0.5; }
   h2 .desc { font-family: var(--mono); font-size: 14px; color: var(--ink-muted); font-weight: 400; }
 
+  .sub-h {
+    font-family: var(--mono);
+    font-size: 14px; font-weight: 600;
+    color: var(--ink-soft);
+    margin: 24px 0 12px;
+    letter-spacing: 0.03em;
+  }
+  .sub-h::before { content: "▸ "; color: var(--accent); }
+  section .sub-h:first-of-type { margin-top: 0; }
+
   /* ===================== INSPIRATION CARDS ===================== */
   .insp-grid {
     display: grid;
@@ -455,6 +427,7 @@
   .insp {
     background: var(--surface);
     border: 1px solid var(--line);
+    border-left: 3px solid var(--ag, var(--line));
     border-radius: var(--radius);
     padding: 18px 20px 36px;
     box-shadow: var(--shadow);
@@ -467,13 +440,14 @@
   .insp:hover {
     transform: translateY(-2px);
     border-color: var(--accent-dim);
+    border-left-color: var(--ag, var(--accent-dim));
     box-shadow: var(--shadow-pop), 0 0 24px -10px var(--accent-glow);
   }
   /* accent scan line sweeping the top edge on hover — echoes the hero scan */
   .insp::before {
     content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
     border-radius: var(--radius) var(--radius) 0 0;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    background: linear-gradient(90deg, transparent, var(--ag, var(--accent)), transparent);
     background-size: 50% 100%;
     background-repeat: no-repeat;
     background-position: -60% 0;
@@ -506,7 +480,7 @@
   .insp .scenario {
     background: var(--bg-2);
     border: 1px solid var(--line);
-    border-left: 2px solid var(--accent);
+    border-left: 2px solid var(--ag, var(--accent));
     padding: 11px 13px;
     border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
     font-size: 14.5px;
@@ -605,24 +579,37 @@
 
   .entry {
     display: grid;
-    grid-template-columns: 96px 132px 1fr;
-    gap: 14px;
-    padding: 13px 0;
+    grid-template-columns: 100px 196px 1fr 34px;
+    gap: 8px 12px;
+    padding: 12px 0 12px 18px;
     border-bottom: 1px solid var(--line);
+    border-left: 2px solid var(--ag, var(--line));
     align-items: start;
+    position: relative;
+    cursor: pointer;
+    transition: background-color .15s;
   }
+  .entry:hover { background-color: var(--surface-2); }
   .entry:last-child { border-bottom: none; }
-  .entry .ver-badge {
-    font-family: var(--mono);
-    font-size: 13.5px; color: var(--accent); font-weight: 600;
-    background: var(--bg-2);
-    border: 1px solid var(--line);
-    padding: 3px 8px;
-    border-radius: 4px;
-    text-align: center;
-    width: max-content; max-width: 96px;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  /* timeline node marker — one dot per entry, colored by agent */
+  .entry::before {
+    content: "";
+    position: absolute; left: -6px; top: 19px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--ag, var(--ink-muted));
+    box-shadow: 0 0 0 2.5px var(--bg), 0 0 8px var(--ag, transparent);
   }
+  .entry .e-date {
+    font-family: var(--mono);
+    font-size: 13px; color: var(--ink-muted);
+    padding-top: 4px; white-space: nowrap;
+  }
+  /* agent + version + category, stacked in one cell */
+  .entry .e-id {
+    display: flex; flex-direction: column; gap: 5px;
+    align-items: flex-start; min-width: 0;
+  }
+  .entry .e-id .agent-tag { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
   .entry .cat-badge {
     font-family: var(--mono);
     font-size: 11.5px;
@@ -632,19 +619,62 @@
     font-weight: 500;
     letter-spacing: 0.02em;
     border: 1px solid transparent;
+    margin-top: 1px;
   }
-  .entry .body { color: var(--ink-soft); font-size: 15px; line-height: 1.62; }
-  .entry .body code {
+  .entry .e-sum {
+    color: var(--ink-soft); font-size: 15px; line-height: 1.62;
+    padding-top: 2px;
+  }
+  .entry .e-sum .sum-text b { color: var(--ink); font-weight: 600; }
+  .entry .e-sum .sum-text code {
     font-family: var(--mono); font-size: 13.5px;
     background: var(--surface-2); padding: 1px 5px;
     border-radius: 4px; color: var(--accent);
     border: 1px solid var(--line);
   }
-  .entry .body b { color: var(--ink); font-weight: 600; }
-  .entry .body .title-line { color: var(--ink); font-weight: 600; margin-bottom: 4px; font-size: 15.5px; }
-  .entry .entry-date { margin-top: 4px; font-family: var(--mono); font-size: 13px; color: var(--ink-muted); }
+  .expand-btn {
+    width: 27px; height: 27px;
+    display: grid; place-items: center;
+    justify-self: end;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    border-radius: 4px;
+    font-size: 16px; line-height: 1;
+    padding: 0 0 2px;
+    cursor: pointer;
+    transition: color .15s, border-color .15s, background .15s;
+  }
+  .expand-btn:hover {
+    color: var(--ag, var(--accent));
+    border-color: var(--ag-line, var(--accent-dim));
+    background: var(--ag-soft, var(--accent-soft));
+  }
+  .entry-detail {
+    grid-column: 1 / -1;
+    display: none;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--ag, var(--accent));
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 12px 15px;
+    margin-right: 2px;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+  }
+  .entry.expanded .entry-detail { display: block; animation: revealIn .22s ease both; }
+  @keyframes revealIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  .entry-detail b { color: var(--ink); font-weight: 600; }
+  .entry-detail code {
+    font-family: var(--mono); font-size: 13.5px;
+    background: var(--surface-2); padding: 1px 5px;
+    border-radius: 4px; color: var(--accent);
+    border: 1px solid var(--line);
+  }
+  .entry-detail .title-line { color: var(--ink); font-weight: 600; margin-bottom: 4px; font-size: 15px; }
 
-  /* ===================== CATEGORY COLORS (dark) ===================== */
+  /* ===================== CATEGORY COLORS ===================== */
   .cat-Subagents-Skills    { background: rgba(192,132,252,0.12); color: var(--purple); border-color: rgba(192,132,252,0.3); }
   .cat-Plugins-MCP         { background: rgba(96,165,250,0.12);  color: var(--blue);   border-color: rgba(96,165,250,0.3); }
   .cat-Hooks               { background: rgba(251,146,60,0.12);  color: var(--orange); border-color: rgba(251,146,60,0.3); }
@@ -660,18 +690,6 @@
   .cat-Local-Sandbox       { background: rgba(251,146,60,0.12);  color: var(--orange); border-color: rgba(251,146,60,0.3); }
   .cat-MCP-Tools           { background: rgba(96,165,250,0.12);  color: var(--blue);   border-color: rgba(96,165,250,0.3); }
   .cat-Remote-Mobile       { background: rgba(129,140,248,0.12); color: var(--indigo); border-color: rgba(129,140,248,0.3); }
-
-  /* ===================== CHART CARD ===================== */
-  .chart-card {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 18px 20px;
-    box-shadow: var(--shadow);
-  }
-  .chart-card h3 { margin: 0 0 4px; font-size: 15px; font-weight: 600; color: var(--ink); font-family: var(--mono); letter-spacing: 0.02em; }
-  .chart-card .desc { font-family: var(--mono); font-size: 13px; color: var(--ink-muted); margin-bottom: 16px; }
-  .chart-wrap { position: relative; width: 100%; height: 360px; }
 
   /* ===================== LOAD MORE ===================== */
   .load-more-row { display: flex; justify-content: center; margin-top: 18px; }
@@ -771,25 +789,21 @@
   .compare-card {
     background: var(--surface);
     border: 1px solid var(--line);
+    border-top: 3px solid var(--ag, var(--line));
     border-radius: var(--radius);
     padding: 18px;
     box-shadow: var(--shadow);
     transition: border-color .16s, box-shadow .16s;
   }
-  .compare-card:hover { border-color: var(--line-strong); }
+  .compare-card:hover { border-color: var(--line-strong); border-top-color: var(--ag, var(--line-strong)); }
   .compare-card h3 {
     font-family: var(--mono);
     margin: 0 0 9px;
-    font-size: 16px; font-weight: 600; color: var(--ink);
+    font-size: 16px; font-weight: 600;
+    color: var(--ag, var(--ink));
     display: flex; align-items: center; gap: 8px;
   }
-  .compare-card .dot { width: 9px; height: 9px; border-radius: 50%; box-shadow: 0 0 7px currentColor; }
-  .compare-card.cc h3 { color: var(--accent); }
-  .compare-card.cc .dot { background: var(--accent); color: var(--accent); }
-  .compare-card.ca h3 { color: #19c39a; }
-  .compare-card.ca .dot { background: #19c39a; color: #19c39a; }
-  .compare-card.ci h3 { color: var(--indigo); }
-  .compare-card.ci .dot { background: var(--indigo); color: var(--indigo); }
+  .compare-card .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--ag, var(--accent)); box-shadow: 0 0 7px var(--ag, var(--accent)); }
   .compare-card p { margin: 0 0 10px; font-size: 14.5px; color: var(--ink-soft); line-height: 1.6; }
   .compare-card p b { color: var(--ink); }
   .compare-card .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
@@ -949,17 +963,21 @@
   }
 
   /* ===================== RESPONSIVE ===================== */
+  @media (max-width: 920px) {
+    .entry { grid-template-columns: 1fr 34px; gap: 7px 10px; padding-left: 16px; }
+    .entry .e-date { grid-column: 1 / -1; padding-top: 0; }
+    .entry .e-id { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 6px; }
+    .entry .e-sum { grid-column: 1 / -1; }
+  }
   @media (max-width: 720px) {
     .wrap { padding: 20px 14px 60px; }
     h1 { font-size: 26.5px; }
     .term-body { padding: 18px 16px 18px; }
     .stat-row { width: 100%; }
     .stat { flex: 1 1 auto; padding: 10px 14px; }
-    .entry { grid-template-columns: 1fr; gap: 7px; }
     .board, .compare-grid { grid-template-columns: 1fr; }
     .search { width: 100%; margin-left: 0; }
     .filter-bar { flex-direction: column; align-items: stretch; }
-    .tab { min-width: 0; padding: 10px 12px; }
     .modal-backdrop { padding: 24px 12px; }
     .modal-head { padding: 18px 18px 14px; }
     .modal-body { padding: 16px 18px 22px; }
@@ -989,235 +1007,114 @@
       </button>
     </div>
     <div class="term-body">
-      <div class="term-line"><span class="prompt">❯</span> <span class="cmd">changelog</span> <span class="flag">--tools</span> claude-code,codex-app,codex-cli</div>
       <h1>AI Coding Tools <span class="accent">更新摘要</span></h1>
-      <div class="term-out"><span class="ok">✓</span> tracking 3 products — 解析變更、靈感卡與類別趨勢</div>
-      <div class="stat-row">
-        <div class="stat"><span class="num" id="totalVersions">61</span><span class="lbl">Total Versions</span></div>
-        <div class="stat"><span class="num">3</span><span class="lbl">Products</span></div>
-        <div class="stat"><span class="num" id="dateSpan">—</span><span class="lbl">Date Span</span></div>
+      <div class="hero-stats"><b id="totalVersions">—</b> versions · 3 agents · <span id="dateSpan">—</span></div>
+      <div class="cat-dist">
+        <div class="cat-dist-label">類別分布</div>
+        <div class="cat-bar" id="catBar" role="img" aria-label="各變更類別佔比橫條"></div>
+        <div class="cat-legend" id="catLegend"></div>
       </div>
-      <div class="term-line" style="margin-top:16px;"><span class="prompt">❯</span> <span class="cursor"></span></div>
     </div>
   </header>
 
-  <!-- Role picker -->
-  <div class="role-picker">
-    <span class="rp-label"><span class="arr">❯</span> filter --role</span>
+  <!-- Filter dock：role（影響應用靈感）＋ agent（全站），捲動時懸浮置頂 -->
+  <div class="filter-dock" id="filterDock">
     <div class="chips" id="roleChips"></div>
+    <div class="chips" id="agentChips"></div>
   </div>
 
-  <!-- Tab bar -->
-  <div class="tab-bar" id="tabBar">
-    <button class="tab active" data-tab="claude-code" type="button">
-      <span class="tab-title"><span class="tab-dot"></span>Claude Code</span>
-      <span class="tab-meta" data-meta-for="claude-code">—</span>
-    </button>
-    <button class="tab" data-tab="codex-app" type="button">
-      <span class="tab-title"><span class="tab-dot"></span>Codex App</span>
-      <span class="tab-meta" data-meta-for="codex-app">—</span>
-    </button>
-    <button class="tab" data-tab="codex-cli" type="button">
-      <span class="tab-title"><span class="tab-dot"></span>Codex CLI</span>
-      <span class="tab-meta" data-meta-for="codex-cli">—</span>
-    </button>
-  </div>
+  <!-- ============ 01 合併版本時間軸 ============ -->
+  <section>
+    <h2>
+      <span class="num-tag">01</span>
+      版本時間軸
+    </h2>
+    <div class="filter-bar">
+      <div class="chips-wrap" id="catChips"></div>
+      <input class="search" id="searchBox" type="search" aria-label="搜尋版本變更" placeholder="搜尋功能、指令、model、env var…" />
+    </div>
+    <div class="timeline" id="timelineAll"></div>
+    <div class="empty" id="emptyAll" style="display:none;">沒有符合條件的版本，試著清空篩選或關鍵字。</div>
+    <div class="timeline-status" id="statusAll"></div>
+    <div class="load-more-row" id="moreAll" style="display:none;">
+      <button class="load-more" id="loadMoreBtn" type="button">顯示更多版本 <span class="arrow">↓</span></button>
+    </div>
+  </section>
 
-  <!-- ============ CLAUDE CODE PANEL ============ -->
-  <div class="panel active" data-panel="claude-code">
+  <!-- ============ 02 應用靈感（合併） ============ -->
+  <section>
+    <h2>
+      <span class="num-tag">02</span>
+      <span class="insp-heading-text">應用靈感</span>
+      <span class="desc">— 依角色與 Agent 篩選；點卡片看設定與操作</span>
+    </h2>
+    <div class="insp-grid" id="inspAll"></div>
+    <div class="load-more-row" id="inspMore" style="display:none;">
+      <button class="load-more" id="inspMoreBtn" type="button">顯示更多靈感卡 <span class="arrow">↓</span></button>
+    </div>
+  </section>
 
-    <section>
-      <h2>
-        <span class="num-tag">01</span>
-        Claude Code · <span class="insp-heading-text" data-product="claude-code">iOS RD 應用靈感</span>
-      </h2>
-      <div class="insp-grid" id="insp-cc"></div>
-    </section>
+  <!-- ============ 03 團隊合作 AI 工作流建議 ============ -->
+  <section>
+    <h2>
+      <span class="num-tag">03</span>
+      團隊合作 AI 工作流建議
+      <span class="desc">— 三工具互補定位 × Frontend / Backend / Designer / QA / PM 協作</span>
+    </h2>
 
-    <section>
-      <h2>
-        <span class="num-tag">02</span>
-        類別分布
-        <span class="desc">— 看出 Claude Code 團隊正在重押哪些方向</span>
-      </h2>
-      <div class="chart-card">
-        <h3>變更類別頻次（最近 36 個版本）</h3>
-        <div class="desc">數值代表「該類別被列為重點變更的版本數」</div>
-        <div class="chart-wrap"><canvas id="chart-cc" role="img" aria-label="Claude Code 各變更類別的版本數長條圖"></canvas></div>
-      </div>
-    </section>
-
-    <section>
-      <h2>
-        <span class="num-tag">03</span>
-        完整版本時間軸
-        <span class="desc">— 點 chip 篩選類別、用搜尋找關鍵字</span>
-      </h2>
-      <div class="filter-bar">
-        <div class="chips-wrap" id="chips-cc"></div>
-        <input class="search" data-product="claude-code" type="search" aria-label="搜尋 Claude Code 版本變更" placeholder="搜尋功能、指令、env var…" />
-      </div>
-      <div class="timeline" id="timeline-cc"></div>
-      <div class="empty" id="empty-cc" style="display:none;">沒有符合條件的版本，試著清空篩選或關鍵字。</div>
-      <div class="timeline-status" id="status-cc"></div>
-      <div class="load-more-row" id="more-cc" style="display:none;">
-        <button class="load-more" data-product="claude-code" type="button">顯示更多版本 <span class="arrow">↓</span></button>
-      </div>
-    </section>
-
-    <section>
-      <h2>
-        <span class="num-tag">04</span>
-        團隊合作 AI 工作流建議
-        <span class="desc">— Frontend / Backend / Designer / QA / PM 之間怎麼用 AI 協作</span>
-      </h2>
-      <div class="board">
-        <div class="col today">
-          <h3>馬上能落地的合作模式</h3>
-          <ul>
-            <li><b>共用 <code>/recap</code> 格式做 daily standup</b>：所有人用同一個 prompt 產進度摘要貼進 Slack #ios-daily — PM/RD/QA 看到結構化資訊一致。</li>
-            <li><b>PR 自動跑 <code>/code-review</code></b>：每支 PR 推上去後 webhook 觸發，AI 先給 review，reviewer 從「找問題」變「審判 AI 找的問題」，瓶頸不在人。</li>
-            <li><b>team-skills repo 共建</b>：你已經把 ai-changelog 上架了，鼓勵每位同事把自己常用 prompt / skill 也推上去，每週看誰新增了什麼。</li>
-          </ul>
-        </div>
-        <div class="col sprint">
-          <h3>建立團隊規範與共用資源</h3>
-          <ul>
-            <li><b>定義 AI 介入邊界</b>：用 hooks 列出禁止 AI 改的檔案（<code>Secrets.swift</code>、DB Migration、prod config），寫成 plugin 內 hook 全團隊套用。</li>
-            <li><b>跨角色 skill 互相產出</b>：QA 寫 <code>test-case</code> skill 給 RD 用、Designer 寫 <code>design-token</code> skill 同步三平台、PM 寫 <code>stakeholder-recap</code> skill — 每個 skill 標清楚適用角色。</li>
-            <li><b>PR review 三層分工</b>：AI（<code>/code-review</code>）→ Peer（同 function）→ Senior（架構決策）。每層各專注，不重複工。</li>
-          </ul>
-        </div>
-        <div class="col future">
-          <h3>長期演進：把 AI 變團隊基建</h3>
-          <ul>
-            <li><b>內網 exec-server / plugin marketplace</b>：codex exec-server 或 Claude plugin 部署在內網 build agent，CI 不用 spawn 新 process，全團隊共享同一份規則。</li>
-            <li><b>AI 工作流 retro</b>：每 Sprint retro 花 10 分鐘看「哪些 prompt 真有產出、哪些只是噪音」，淘汰 / 改寫 skill 與 hook。把 AI 使用當成有壽命的資產。</li>
-            <li><b>量化團隊 AI 使用</b>：用 OTEL + status line 收集 effort 使用、plugin 命中率、subagent 完工率 — 資料驅動規範，不是憑感覺。</li>
-          </ul>
+    <div class="sub-h">三工具互補定位</div>
+    <div class="compare-grid">
+      <div class="compare-card agent-cc">
+        <h3><span class="dot"></span>Claude Code</h3>
+        <p>定位：<b>長期專案與團隊工具鏈</b>。Plugins、Hooks、Subagents、Skills 讓你建立可重用的銀行 APP 內部工具與流程把關。</p>
+        <div class="tags">
+          <span class="tag">Plugins</span><span class="tag">Hooks</span><span class="tag">Subagents</span><span class="tag">/ultrareview</span>
         </div>
       </div>
-    </section>
-  </div>
-
-  <!-- ============ CODEX APP PANEL ============ -->
-  <div class="panel" data-panel="codex-app">
-
-    <section>
-      <h2>
-        <span class="num-tag">01</span>
-        Codex App · <span class="insp-heading-text" data-product="codex-app">iOS RD 應用靈感</span>
-        <span class="desc" data-desc-for="codex-app">— OpenAI 的桌面 / IDE 體驗對工作流的價值</span>
-      </h2>
-      <div class="insp-grid" id="insp-ca"></div>
-    </section>
-
-    <section>
-      <h2>
-        <span class="num-tag">02</span>
-        類別分布
-        <span class="desc">— 看出 Codex App 近期重點</span>
-      </h2>
-      <div class="chart-card">
-        <h3>變更類別頻次</h3>
-        <div class="desc">基於可擷取到的最新更新</div>
-        <div class="chart-wrap"><canvas id="chart-ca" role="img" aria-label="Codex App 各變更類別的版本數長條圖"></canvas></div>
-      </div>
-    </section>
-
-    <section>
-      <h2>
-        <span class="num-tag">03</span>
-        完整版本時間軸
-        <span class="desc">— 點 chip 篩選類別、用搜尋找關鍵字</span>
-      </h2>
-      <div class="filter-bar">
-        <div class="chips-wrap" id="chips-ca"></div>
-        <input class="search" data-product="codex-app" type="search" aria-label="搜尋 Codex App 版本變更" placeholder="搜尋 model、feature…" />
-      </div>
-      <div class="timeline" id="timeline-ca"></div>
-      <div class="empty" id="empty-ca" style="display:none;">沒有符合條件的版本，試著清空篩選或關鍵字。</div>
-      <div class="timeline-status" id="status-ca"></div>
-      <div class="load-more-row" id="more-ca" style="display:none;">
-        <button class="load-more" data-product="codex-app" type="button">顯示更多版本 <span class="arrow">↓</span></button>
-      </div>
-    </section>
-  </div>
-
-  <!-- ============ CODEX CLI PANEL ============ -->
-  <div class="panel" data-panel="codex-cli">
-
-    <section>
-      <h2>
-        <span class="num-tag">01</span>
-        Codex CLI · <span class="insp-heading-text" data-product="codex-cli">iOS RD 應用靈感</span>
-        <span class="desc" data-desc-for="codex-cli">— 終端機驅動的 agentic coding，可融入 CI / 銀行內網開發</span>
-      </h2>
-      <div class="insp-grid" id="insp-ci"></div>
-    </section>
-
-    <section>
-      <h2>
-        <span class="num-tag">02</span>
-        類別分布
-        <span class="desc">— Codex CLI 近期重押哪些主題</span>
-      </h2>
-      <div class="chart-card">
-        <h3>變更類別頻次</h3>
-        <div class="desc">基於可擷取到的最新更新</div>
-        <div class="chart-wrap"><canvas id="chart-ci" role="img" aria-label="Codex CLI 各變更類別的版本數長條圖"></canvas></div>
-      </div>
-    </section>
-
-    <section>
-      <h2>
-        <span class="num-tag">03</span>
-        完整版本時間軸
-        <span class="desc">— 點 chip 篩選類別、用搜尋找關鍵字</span>
-      </h2>
-      <div class="filter-bar">
-        <div class="chips-wrap" id="chips-ci"></div>
-        <input class="search" data-product="codex-cli" type="search" aria-label="搜尋 Codex CLI 版本變更" placeholder="搜尋 sandbox、MCP、TUI…" />
-      </div>
-      <div class="timeline" id="timeline-ci"></div>
-      <div class="empty" id="empty-ci" style="display:none;">沒有符合條件的版本，試著清空篩選或關鍵字。</div>
-      <div class="timeline-status" id="status-ci"></div>
-      <div class="load-more-row" id="more-ci" style="display:none;">
-        <button class="load-more" data-product="codex-cli" type="button">顯示更多版本 <span class="arrow">↓</span></button>
-      </div>
-    </section>
-
-    <section>
-      <h2>
-        <span class="num-tag">04</span>
-        Claude Code vs Codex App vs Codex CLI
-        <span class="desc">— 三者怎麼互補在你的 iOS / Scrum 工作流</span>
-      </h2>
-      <div class="compare-grid">
-        <div class="compare-card cc">
-          <h3><span class="dot"></span>Claude Code</h3>
-          <p>定位：<b>長期專案與團隊工具鏈</b>。Plugins、Hooks、Subagents、Skills 讓你建立可重用的銀行 APP 內部工具與流程把關。</p>
-          <div class="tags">
-            <span class="tag">Plugins</span><span class="tag">Hooks</span><span class="tag">Subagents</span><span class="tag">/ultrareview</span>
-          </div>
-        </div>
-        <div class="compare-card ca">
-          <h3><span class="dot"></span>Codex App</h3>
-          <p>定位：<b>桌面 + IDE 內的對話體驗</b>。Mid-turn steering、forking、跨 IDE 開檔、PDF 預覽，適合做 spec 討論與探索式 prototyping。</p>
-          <div class="tags">
-            <span class="tag">Forking</span><span class="tag">Mid-turn steer</span><span class="tag">VS Code/Cursor</span><span class="tag">GPT-5.3-Codex</span>
-          </div>
-        </div>
-        <div class="compare-card ci">
-          <h3><span class="dot"></span>Codex CLI</h3>
-          <p>定位：<b>非互動式 + CI / 內網嵌入</b>。Realtime 串流、proxy-only sandbox（Windows）、exec-server、JS REPL — 適合做 nightly 檢查與企業合規要求。</p>
-          <div class="tags">
-            <span class="tag">exec-server</span><span class="tag">Realtime V2</span><span class="tag">Proxy sandbox</span><span class="tag">js_repl</span>
-          </div>
+      <div class="compare-card agent-ca">
+        <h3><span class="dot"></span>Codex App</h3>
+        <p>定位：<b>桌面 + IDE 內的對話體驗</b>。Mid-turn steering、forking、跨 IDE 開檔、PDF 預覽，適合做 spec 討論與探索式 prototyping。</p>
+        <div class="tags">
+          <span class="tag">Forking</span><span class="tag">Mid-turn steer</span><span class="tag">VS Code/Cursor</span><span class="tag">GPT-5.3-Codex</span>
         </div>
       </div>
-    </section>
-  </div>
+      <div class="compare-card agent-ci">
+        <h3><span class="dot"></span>Codex CLI</h3>
+        <p>定位：<b>非互動式 + CI / 內網嵌入</b>。Realtime 串流、proxy-only sandbox（Windows）、exec-server、JS REPL — 適合做 nightly 檢查與企業合規要求。</p>
+        <div class="tags">
+          <span class="tag">exec-server</span><span class="tag">Realtime V2</span><span class="tag">Proxy sandbox</span><span class="tag">js_repl</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-h">落地路線 — 現在 → Sprint 內 → 長期</div>
+    <div class="board">
+      <div class="col today">
+        <h3>馬上能落地的合作模式</h3>
+        <ul>
+          <li><b>共用 <code>/recap</code> 格式做 daily standup</b>：所有人用同一個 prompt 產進度摘要貼進 Slack #ios-daily — PM/RD/QA 看到結構化資訊一致。</li>
+          <li><b>PR 自動跑 <code>/code-review</code></b>：每支 PR 推上去後 webhook 觸發，AI 先給 review，reviewer 從「找問題」變「審判 AI 找的問題」，瓶頸不在人。</li>
+          <li><b>team-skills repo 共建</b>：你已經把 ai-changelog 上架了，鼓勵每位同事把自己常用 prompt / skill 也推上去，每週看誰新增了什麼。</li>
+        </ul>
+      </div>
+      <div class="col sprint">
+        <h3>建立團隊規範與共用資源</h3>
+        <ul>
+          <li><b>定義 AI 介入邊界</b>：用 hooks 列出禁止 AI 改的檔案（<code>Secrets.swift</code>、DB Migration、prod config），寫成 plugin 內 hook 全團隊套用。</li>
+          <li><b>跨角色 skill 互相產出</b>：QA 寫 <code>test-case</code> skill 給 RD 用、Designer 寫 <code>design-token</code> skill 同步三平台、PM 寫 <code>stakeholder-recap</code> skill — 每個 skill 標清楚適用角色。</li>
+          <li><b>PR review 三層分工</b>：AI（<code>/code-review</code>）→ Peer（同 function）→ Senior（架構決策）。每層各專注，不重複工。</li>
+        </ul>
+      </div>
+      <div class="col future">
+        <h3>長期演進：把 AI 變團隊基建</h3>
+        <ul>
+          <li><b>內網 exec-server / plugin marketplace</b>：codex exec-server 或 Claude plugin 部署在內網 build agent，CI 不用 spawn 新 process，全團隊共享同一份規則。</li>
+          <li><b>AI 工作流 retro</b>：每 Sprint retro 花 10 分鐘看「哪些 prompt 真有產出、哪些只是噪音」，淘汰 / 改寫 skill 與 hook。把 AI 使用當成有壽命的資產。</li>
+          <li><b>量化團隊 AI 使用</b>：用 OTEL + status line 收集 effort 使用、plugin 命中率、subagent 完工率 — 資料驅動規範，不是憑感覺。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
 
   <footer class="foot">
     <span>
@@ -1244,7 +1141,6 @@
     <div class="modal-body" id="modalBody"></div>
   </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
 <script>
   /* ===========================
@@ -2109,55 +2005,84 @@
   normalizeRoles(INSP_CA);
   normalizeRoles(INSP_CI);
 
-  const PRODUCTS = {
-    "claude-code": {
-      data: DATA_CC, insp: INSP_CC,
-      cats: ["All","Subagents/Skills","Plugins/MCP","Hooks","Slash Commands","IDE/Editor","Settings/Config","Permissions/Security","UI/UX","Performance/Bug Fix"],
-      ids: { insp:"insp-cc", chips:"chips-cc", timeline:"timeline-cc", empty:"empty-cc", status:"status-cc", more:"more-cc", chart:"chart-cc" }
-    },
-    "codex-app": {
-      data: DATA_CA, insp: INSP_CA,
-      cats: ["All","Models/Inference","IDE/Editor","UI/UX","Performance/Bug Fix"],
-      ids: { insp:"insp-ca", chips:"chips-ca", timeline:"timeline-ca", empty:"empty-ca", status:"status-ca", more:"more-ca", chart:"chart-ca" }
-    },
-    "codex-cli": {
-      data: DATA_CI, insp: INSP_CI,
-      cats: ["All","Models/Inference","MCP/Tools","Local Sandbox","Slash Commands","UI/UX","Performance/Bug Fix"],
-      ids: { insp:"insp-ci", chips:"chips-ci", timeline:"timeline-ci", empty:"empty-ci", status:"status-ci", more:"more-ci", chart:"chart-ci" }
-    }
-  };
-  const PAGE_SIZE = 10;
-  const state = {}; // per-product { activeCat, search, visibleCount }
-  Object.keys(PRODUCTS).forEach(p => {
-    state[p] = {
-      activeCat: localStorage.getItem("ctx_filt_" + p) || "All",
-      search: localStorage.getItem("ctx_srch_" + p) || "",
-      visibleCount: PAGE_SIZE
-    };
-  });
+  /* ===========================
+     AGENTS + MERGED VIEWS
+     (資料合約不變：DATA_CC/CA/CI 與 INSP_CC/CA/CI 由排程更新，
+      這裡只在渲染時合併，不改動原始陣列。)
+     =========================== */
+  const AGENTS = [
+    { id: "cc", label: "Claude Code", vendor: "Anthropic", colorVar: "--orange", data: DATA_CC, insp: INSP_CC, unit: "versions" },
+    { id: "ca", label: "Codex App",   vendor: "OpenAI",    colorVar: "--teal",   data: DATA_CA, insp: INSP_CA, unit: "entries"  },
+    { id: "ci", label: "Codex CLI",   vendor: "OpenAI",    colorVar: "--indigo", data: DATA_CI, insp: INSP_CI, unit: "versions" }
+  ];
+  const AGENT_MAP = Object.fromEntries(AGENTS.map(a => [a.id, a]));
 
-  function catClass(c){ return "cat-" + c.replace(/[\/\s]/g,"-"); }
-  function monthLabel(date){ const [y,m] = date.split("-"); return `${y} 年 ${parseInt(m,10)} 月`; }
+  const ENTRIES = AGENTS.flatMap(a => a.data.map(d => ({ ...d, agent: a.id })));
+  ENTRIES.sort((x, y) => y.date.localeCompare(x.date) || (y.v || "").localeCompare(x.v || ""));
+  const INSP_ALL = AGENTS.flatMap(a => a.insp.map(c => ({ ...c, agent: a.id })));
+
+  const PAGE_SIZE = 10;
+  const store = {
+    get(k, fb){ try { const v = localStorage.getItem(k); return v === null ? fb : v; } catch (e) { return fb; } },
+    set(k, v){ try { localStorage.setItem(k, v); } catch (e) {} }
+  };
+  const state = {
+    agent: store.get("ctx_agent_v1", "all"),
+    cat: store.get("ctx_cat_v1", "All"),
+    search: store.get("ctx_srch_v1", ""),
+    visible: PAGE_SIZE,
+    inspVisible: PAGE_SIZE
+  };
+  if (state.agent !== "all" && !AGENT_MAP[state.agent]) state.agent = "all";
+
+  function catClass(c){ return "cat-" + c.replace(/[\/\s]/g, "-"); }
+  // Codex App 的 v 本身是日期字串，不加 v 前綴
+  function fmtVer(v){ return /^\d{4}-\d{2}/.test(v) ? v : "v" + v; }
+  function monthLabel(date){ const [y, m] = date.split("-"); return `${y} 年 ${parseInt(m, 10)} 月`; }
+  function escapeHtml(s){ return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function stripHtml(s){ const t = document.createElement("div"); t.innerHTML = s; return t.textContent || ""; }
+  function entriesForAgent(){ return state.agent === "all" ? ENTRIES : ENTRIES.filter(e => e.agent === state.agent); }
+
+  // 摘要：title 優先；否則取 body 第一句（括號內的句號／分號不切）
+  function firstSentence(text){
+    let depth = 0;
+    for (let i = 0; i < text.length; i++){
+      const ch = text[i];
+      if (ch === "（" || ch === "(") depth++;
+      else if (ch === "）" || ch === ")") depth = Math.max(0, depth - 1);
+      else if ((ch === "。" || ch === "；" || ch === ";") && depth === 0) return text.slice(0, i);
+    }
+    return text;
+  }
+  function summarize(d){
+    if (d.title){
+      const bodyText = stripHtml(d.body).replace(/\s+/g, " ").trim();
+      return { html: d.title, hasMore: bodyText.length > 0 };
+    }
+    const text = stripHtml(d.body).replace(/\s+/g, " ").trim();
+    let cut = firstSentence(text);
+    let truncated = cut.length < text.length;
+    if (cut.length > 96){ cut = cut.slice(0, 94); truncated = true; }
+    return { html: escapeHtml(cut) + (truncated ? "…" : ""), hasMore: truncated };
+  }
 
   /* ===========================
-     ROLE PICKER
+     ROLE PICKER（影響應用靈感）
      =========================== */
   const ROLES = [
-    { id:"all",      label:"全部",        ico:"✦" },
-    { id:"frontend", label:"Frontend",    ico:"💻" },
-    { id:"backend",  label:"Backend",     ico:"⚙️" },
-    { id:"designer", label:"Designer",    ico:"🎨" },
-    { id:"qa",       label:"QA / Tester", ico:"🧪" },
-    { id:"pm",       label:"PM",          ico:"📋" }
+    { id: "all",      label: "全部",        ico: "✦" },
+    { id: "frontend", label: "Frontend",    ico: "💻" },
+    { id: "backend",  label: "Backend",     ico: "⚙️" },
+    { id: "designer", label: "Designer",    ico: "🎨" },
+    { id: "qa",       label: "QA / Tester", ico: "🧪" },
+    { id: "pm",       label: "PM",          ico: "📋" }
   ];
   const ROLE_LABEL_MAP = Object.fromEntries(ROLES.map(r => [r.id, r.label]));
   const ROLE_KEY = "ctx_active_role_v1";
-  let activeRole = localStorage.getItem(ROLE_KEY) || "frontend";
-  // Legacy role ids (iOS / Android / Web all folded into Frontend)
+  let activeRole = store.get(ROLE_KEY, "frontend");
   if (activeRole === "ios" || activeRole === "android" || activeRole === "web") activeRole = "frontend";
   if (!ROLES.some(r => r.id === activeRole)) activeRole = "frontend";
 
-  // Build role chips
   const roleChipsRoot = document.getElementById("roleChips");
   ROLES.forEach(r => {
     const chip = document.createElement("button");
@@ -2167,102 +2092,334 @@
     chip.innerHTML = `<span class="role-icn" aria-hidden="true">${r.ico}</span><span>${r.label}</span>`;
     chip.addEventListener("click", () => {
       activeRole = r.id;
-      localStorage.setItem(ROLE_KEY, r.id);
+      store.set(ROLE_KEY, r.id);
+      state.inspVisible = PAGE_SIZE;
       roleChipsRoot.querySelectorAll(".role-chip").forEach(x => x.classList.remove("active"));
       chip.classList.add("active");
-      renderInspirationCards();
+      renderInspiration();
     });
     roleChipsRoot.appendChild(chip);
   });
 
-  // Update section headings to reflect selected role
-  function updateInspirationHeadings(){
+  function updateInspirationHeading(){
     const roleLabel = activeRole === "all" ? "全角色" : (ROLE_LABEL_MAP[activeRole] || activeRole);
     document.querySelectorAll(".insp-heading-text").forEach(el => {
       el.textContent = roleLabel + " 應用靈感";
     });
   }
 
-  // Extract latest date from `ver` string (e.g. "v2.1.139 · 2026-05-11" → "2026-05-11";
-  // "v2.1.120, 2.1.86 · 2026-04" → "2026-04-15"; "GPT-5.3-Codex-Spark · 2026-02-12" → "2026-02-12")
+  /* ===========================
+     AGENT PICKER（影響時間軸／靈感／圖表）
+     =========================== */
+  function minMaxDate(arr){
+    const dates = arr.map(d => d.date).filter(Boolean).sort();
+    return { min: dates[0], max: dates[dates.length - 1] };
+  }
+  function fmtSpan(min, max){
+    if (!min || !max) return "—";
+    return min === max ? min : `${min} ~ ${max}`;
+  }
+
+  const agentChipsRoot = document.getElementById("agentChips");
+  const agentChipDefs = [{ id: "all", label: "全部", cls: "" }]
+    .concat(AGENTS.map(a => ({ id: a.id, label: a.label, cls: "agent-" + a.id })));
+  agentChipDefs.forEach(def => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = ("agent-chip " + def.cls).trim() + (state.agent === def.id ? " active" : "");
+    const cnt = def.id === "all" ? ENTRIES.length : AGENT_MAP[def.id].data.length;
+    chip.innerHTML = `<span class="dot" aria-hidden="true"></span><span>${def.label}</span><span class="cnt">· ${cnt}</span>`;
+    if (def.id !== "all"){
+      const a = AGENT_MAP[def.id];
+      const span = minMaxDate(a.data);
+      chip.title = `${a.vendor} · ${a.data.length} ${a.unit} · ${span.min} ~ ${span.max}`;
+    }
+    chip.addEventListener("click", () => {
+      state.agent = def.id;
+      store.set("ctx_agent_v1", def.id);
+      state.visible = PAGE_SIZE;
+      state.inspVisible = PAGE_SIZE;
+      agentChipsRoot.querySelectorAll(".agent-chip").forEach(x => x.classList.remove("active"));
+      chip.classList.add("active");
+      buildCatChips();
+      renderTimeline();
+      renderInspiration();
+      renderCatBar();
+    });
+    agentChipsRoot.appendChild(chip);
+  });
+
+  /* ===========================
+     CATEGORY CHIPS + SEARCH + CLEAR
+     =========================== */
+  const catChipsRoot = document.getElementById("catChips");
+  const searchBox = document.getElementById("searchBox");
+  let clearBtn = null;
+
+  function buildCatChips(){
+    catChipsRoot.innerHTML = "";
+    const counts = {};
+    entriesForAgent().forEach(d => counts[d.cat] = (counts[d.cat] || 0) + 1);
+    const cats = ["All"].concat(Object.keys(counts).sort((a, b) => counts[b] - counts[a]));
+    if (!cats.includes(state.cat)){ state.cat = "All"; store.set("ctx_cat_v1", "All"); }
+    cats.forEach(c => {
+      const ch = document.createElement("span");
+      ch.className = "chip" + (c === state.cat ? " active" : "");
+      ch.dataset.cat = c;
+      ch.textContent = c === "All" ? "All" : `${c} · ${counts[c]}`;
+      ch.addEventListener("click", () => {
+        state.cat = c;
+        state.visible = PAGE_SIZE;
+        store.set("ctx_cat_v1", c);
+        catChipsRoot.querySelectorAll(".chip").forEach(x => x.classList.remove("active"));
+        ch.classList.add("active");
+        renderTimeline();
+      });
+      catChipsRoot.appendChild(ch);
+    });
+  }
+
+  function resetFilters(){
+    state.cat = "All";
+    state.search = "";
+    state.visible = PAGE_SIZE;
+    store.set("ctx_cat_v1", "All");
+    store.set("ctx_srch_v1", "");
+    searchBox.value = "";
+    catChipsRoot.querySelectorAll(".chip").forEach(x => x.classList.toggle("active", x.dataset.cat === "All"));
+    renderTimeline();
+  }
+  (function initClearBtn(){
+    const bar = catChipsRoot.closest(".filter-bar");
+    clearBtn = document.createElement("button");
+    clearBtn.type = "button";
+    clearBtn.className = "clear-filter";
+    clearBtn.textContent = "清除篩選";
+    clearBtn.addEventListener("click", resetFilters);
+    bar.appendChild(clearBtn);
+  })();
+  function updateClearBtn(){
+    const hasFilter = state.cat !== "All" || (state.search && state.search.trim() !== "");
+    clearBtn.classList.toggle("show", !!hasFilter);
+  }
+
+  function debounce(fn, ms){
+    let t;
+    return function (...args){ clearTimeout(t); t = setTimeout(() => fn.apply(this, args), ms); };
+  }
+  searchBox.value = state.search;
+  const commitSearch = debounce(() => {
+    state.visible = PAGE_SIZE;
+    store.set("ctx_srch_v1", state.search);
+    renderTimeline();
+  }, 160);
+  searchBox.addEventListener("input", () => {
+    state.search = searchBox.value;
+    commitSearch();
+  });
+
+  /* ===========================
+     MERGED TIMELINE
+     =========================== */
+  document.getElementById("loadMoreBtn").addEventListener("click", () => {
+    state.visible += PAGE_SIZE;
+    renderTimeline();
+  });
+
+  function renderTimeline(){
+    const root = document.getElementById("timelineAll");
+    const empty = document.getElementById("emptyAll");
+    const status = document.getElementById("statusAll");
+    const moreRow = document.getElementById("moreAll");
+    const q = state.search.trim().toLowerCase();
+
+    const filtered = entriesForAgent().filter(d => {
+      if (state.cat !== "All" && d.cat !== state.cat) return false;
+      if (!q) return true;
+      const hay = (d.v + " " + (d.title || "") + " " + d.body + " " + d.cat + " " + AGENT_MAP[d.agent].label).toLowerCase();
+      return hay.includes(q);
+    });
+
+    root.innerHTML = "";
+    updateClearBtn();
+
+    if (!filtered.length){
+      empty.style.display = "block";
+      status.textContent = "";
+      moreRow.style.display = "none";
+      return;
+    }
+    empty.style.display = "none";
+
+    const total = filtered.length;
+    const showCount = Math.min(state.visible, total);
+    const sliced = filtered.slice(0, showCount);
+
+    const groups = {};
+    sliced.forEach(d => {
+      const k = d.date.slice(0, 7);
+      (groups[k] = groups[k] || []).push(d);
+    });
+    Object.keys(groups).sort().reverse().forEach(k => {
+      const wrap = document.createElement("div");
+      wrap.className = "month-group";
+      const head = document.createElement("div");
+      head.className = "month-label";
+      head.innerHTML = `<span>${monthLabel(k + "-01")}</span><span class="count">${groups[k].length} 筆</span>`;
+      wrap.appendChild(head);
+      groups[k].forEach(d => {
+        const a = AGENT_MAP[d.agent];
+        const sum = summarize(d);
+        const e = document.createElement("div");
+        e.className = "entry agent-" + d.agent;
+        const expandBtn = sum.hasMore
+          ? `<button class="expand-btn" type="button" aria-expanded="false" aria-label="展開明細" title="展開明細">▾</button>` : "";
+        const detail = sum.hasMore
+          ? `<div class="entry-detail">${d.title ? `<div class="title-line">${d.title}</div>` : ""}${d.body}</div>` : "";
+        e.innerHTML = `
+          <span class="e-date">${d.date}</span>
+          <div class="e-id">
+            <span class="agent-tag" title="${a.label} ${d.v}">${a.label} ${fmtVer(d.v)}</span>
+            <span class="cat-badge ${catClass(d.cat)}">${d.cat}</span>
+          </div>
+          <div class="e-sum"><span class="sum-text">${sum.html}</span></div>
+          ${expandBtn}
+          ${detail}
+        `;
+        const btn = e.querySelector(".expand-btn");
+        const toggleExpand = () => {
+          const open = e.classList.toggle("expanded");
+          if (btn) {
+            btn.textContent = open ? "▴" : "▾";
+            btn.setAttribute("aria-label", open ? "收合明細" : "展開明細");
+            btn.title = open ? "收合明細" : "展開明細";
+            btn.setAttribute("aria-expanded", String(open));
+          }
+        };
+        if (btn){
+          btn.addEventListener("click", (ev) => {
+            ev.stopPropagation();
+            toggleExpand();
+          });
+        }
+        if (sum.hasMore) {
+          e.addEventListener("click", (ev) => {
+            if (ev.target === btn || ev.target.closest(".expand-btn")) return;
+            toggleExpand();
+          });
+        }
+        wrap.appendChild(e);
+      });
+      root.appendChild(wrap);
+    });
+
+    status.textContent = `已顯示 ${showCount} / ${total} 筆`;
+    if (showCount < total){
+      moreRow.style.display = "flex";
+      const btn = document.getElementById("loadMoreBtn");
+      const remain = total - showCount;
+      const next = Math.min(PAGE_SIZE, remain);
+      btn.innerHTML = `顯示更多版本（再 ${next} 筆，共剩 ${remain}）<span class="arrow">↓</span>`;
+    } else {
+      moreRow.style.display = "none";
+    }
+  }
+
+  /* ===========================
+     INSPIRATION CARDS（合併 + role/agent 篩選 + 近 10 筆收合）
+     =========================== */
   function inspDateKey(card){
     if (!card || !card.ver) return "";
     const matches = String(card.ver).match(/\d{4}-\d{2}(?:-\d{2})?/g) || [];
     if (!matches.length) return "";
-    // pick the latest if multiple dates listed
     const dates = matches.map(d => d.length === 7 ? d + "-15" : d);
     return dates.sort().pop();
   }
 
-  // Build inspiration cards (with role filtering + click → modal)
-  function renderInspirationCards(){
-    updateInspirationHeadings();
-    Object.keys(PRODUCTS).forEach(p => {
-      const root = document.getElementById(PRODUCTS[p].ids.insp);
-      if (!root) return;
-      root.innerHTML = "";
-      root.classList.remove("empty-state");
+  document.getElementById("inspMoreBtn").addEventListener("click", () => {
+    state.inspVisible += PAGE_SIZE;
+    renderInspiration();
+  });
 
-      const filtered = PRODUCTS[p].insp.filter(c => {
-        if (activeRole === "all") return true;
-        return (c.roles || []).includes(activeRole);
-      });
+  function renderInspiration(){
+    updateInspirationHeading();
+    const root = document.getElementById("inspAll");
+    const moreRow = document.getElementById("inspMore");
+    root.innerHTML = "";
+    root.classList.remove("empty-state");
 
-      // Sort by date (newest first); cards without parseable date sink to bottom
-      filtered.sort((a, b) => {
-        const da = inspDateKey(a);
-        const db = inspDateKey(b);
-        if (!da && !db) return 0;
-        if (!da) return 1;
-        if (!db) return -1;
-        return db.localeCompare(da); // descending
-      });
-
-      if (!filtered.length) {
-        root.classList.add("empty-state");
-        const label = ROLE_LABEL_MAP[activeRole] || activeRole;
-        root.innerHTML = `<div>這個 Tab 目前沒有針對 <b>${label}</b> 的靈感卡。<br>切到其他 Tab 看看，或選「全部」瀏覽所有卡片。</div>`;
-        return;
-      }
-
-      filtered.forEach((c) => {
-        const el = document.createElement("div");
-        el.className = "insp" + (c.auto ? " auto" : "");
-        el.tabIndex = 0;
-        el.setAttribute("role", "button");
-        el.setAttribute("aria-label", c.feat + " — 點擊看詳細說明");
-
-        const tagsHtml = (c.roles || []).map(r => {
-          const isMatch = activeRole !== "all" && r === activeRole;
-          return `<span class="insp-role-tag${isMatch ? " match" : ""}">${ROLE_LABEL_MAP[r] || r}</span>`;
-        }).join("");
-
-        const autoBadgeHtml = c.auto ? `<span class="auto-badge" title="自動生成的卡片 — 尚未手動 review 過">auto</span>` : "";
-
-        el.innerHTML = `
-          ${autoBadgeHtml}
-          <div class="insp-head">
-            <div class="icon ${c.color}" aria-hidden="true">${c.ico}</div>
-            <div style="flex:1;min-width:0;">
-              <div class="feat">${c.feat}</div>
-              <div class="ver">${c.ver}</div>
-              <div class="insp-role-tags">${tagsHtml}</div>
-            </div>
-          </div>
-          <p>${c.desc}</p>
-          <div class="scenario">${c.scen}</div>
-        `;
-        el.addEventListener("click", () => openModal(c));
-        el.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openModal(c); }
-        });
-        root.appendChild(el);
-      });
+    const filtered = INSP_ALL.filter(c => {
+      if (state.agent !== "all" && c.agent !== state.agent) return false;
+      if (activeRole === "all") return true;
+      return (c.roles || []).includes(activeRole);
     });
-  }
-  renderInspirationCards();
 
-  // Modal logic
+    filtered.sort((a, b) => {
+      const da = inspDateKey(a);
+      const db = inspDateKey(b);
+      if (!da && !db) return 0;
+      if (!da) return 1;
+      if (!db) return -1;
+      return db.localeCompare(da);
+    });
+
+    if (!filtered.length){
+      root.classList.add("empty-state");
+      const label = ROLE_LABEL_MAP[activeRole] || activeRole;
+      root.innerHTML = `<div>目前沒有針對 <b>${label}</b> 的靈感卡。<br>換個角色，或把 Agent 篩選切回「全部」。</div>`;
+      moreRow.style.display = "none";
+      return;
+    }
+
+    const total = filtered.length;
+    const showCount = Math.min(state.inspVisible, total);
+    filtered.slice(0, showCount).forEach(c => {
+      const a = AGENT_MAP[c.agent];
+      const el = document.createElement("div");
+      el.className = "insp agent-" + c.agent + (c.auto ? " auto" : "");
+      el.tabIndex = 0;
+      el.setAttribute("role", "button");
+      el.setAttribute("aria-label", c.feat + " — 點擊看詳細說明");
+
+      const tagsHtml = (c.roles || []).map(r => {
+        const isMatch = activeRole !== "all" && r === activeRole;
+        return `<span class="insp-role-tag${isMatch ? " match" : ""}">${ROLE_LABEL_MAP[r] || r}</span>`;
+      }).join("");
+
+      const autoBadgeHtml = c.auto ? `<span class="auto-badge" title="自動生成的卡片 — 尚未手動 review 過">auto</span>` : "";
+
+      el.innerHTML = `
+        <div class="insp-head">
+          <div class="icon ${c.color}" aria-hidden="true">${c.ico}</div>
+          <div style="flex:1;min-width:0;">
+            <div class="feat">${c.feat}</div>
+            <div class="ver">${c.ver}</div>
+            <div class="insp-role-tags"><span class="agent-tag">${a.label}</span>${autoBadgeHtml}${tagsHtml}</div>
+          </div>
+        </div>
+        <p>${c.desc}</p>
+        <div class="scenario">${c.scen}</div>
+      `;
+      el.addEventListener("click", () => openModal(c));
+      el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openModal(c); }
+      });
+      root.appendChild(el);
+    });
+
+    if (showCount < total){
+      moreRow.style.display = "flex";
+      const remain = total - showCount;
+      const next = Math.min(PAGE_SIZE, remain);
+      document.getElementById("inspMoreBtn").innerHTML = `顯示更多靈感卡（再 ${next} 張，共剩 ${remain}）<span class="arrow">↓</span>`;
+    } else {
+      moreRow.style.display = "none";
+    }
+  }
+
+  /* ===========================
+     MODAL
+     =========================== */
   const modalBackdrop = document.getElementById("modalBackdrop");
   const modalIcon = document.getElementById("modalIcon");
   const modalFeat = document.getElementById("modalFeat");
@@ -2279,7 +2436,7 @@
     }
     if (sec.c && sec.b) {
       const lang = sec.c.toUpperCase();
-      const safe = sec.b.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+      const safe = sec.b.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
       return `<div class="modal-section">${head}<div class="code-block"><div class="lang-bar"><span>${lang}</span><button class="copy-btn" type="button" data-copy="${encodeURIComponent(sec.b)}">複製</button></div><pre>${safe}</pre></div></div>`;
     }
     return "";
@@ -2291,7 +2448,8 @@
     modalIcon.className = "icon " + (card.color || "");
     modalIcon.textContent = card.ico || "";
     modalFeat.textContent = card.feat;
-    modalVer.textContent = card.ver;
+    const agentLabel = card.agent && AGENT_MAP[card.agent] ? AGENT_MAP[card.agent].label + " · " : "";
+    modalVer.textContent = agentLabel + card.ver;
     const autoNotice = card.auto ? `<div class="modal-auto-notice"><div>這張卡是 <b>自動生成</b> 的（由排程任務從 changelog 衍生）— 內容尚未經人工手動 review，把它當作起點，細節以官方 changelog 為準。看到怪怪的請回報。</div></div>` : "";
     const lead = `<div class="lead">${card.scen}</div>`;
     const sections = (card.d || []).map(renderSection).join("");
@@ -2301,7 +2459,6 @@
     document.body.style.overflow = "hidden";
     modalCloseBtn.focus();
 
-    // Wire up copy buttons
     modalBody.querySelectorAll(".copy-btn").forEach(btn => {
       btn.addEventListener("click", async (e) => {
         e.stopPropagation();
@@ -2321,7 +2478,6 @@
   function closeModal(){
     modalBackdrop.classList.remove("open");
     document.body.style.overflow = "";
-    // Restore focus to the element that opened the modal
     if (lastFocusedEl && typeof lastFocusedEl.focus === "function") lastFocusedEl.focus();
     lastFocusedEl = null;
   }
@@ -2333,7 +2489,6 @@
   document.addEventListener("keydown", (e) => {
     if (!modalBackdrop.classList.contains("open")) return;
     if (e.key === "Escape") { closeModal(); return; }
-    // Focus trap: keep Tab cycling within the dialog
     if (e.key === "Tab") {
       const focusables = modalCard.querySelectorAll(
         'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
@@ -2346,319 +2501,58 @@
     }
   });
 
-  // Per-product "clear filters" buttons (shown only when a filter is active)
-  const clearBtns = {};
-  function resetFilters(p){
-    const cfg = PRODUCTS[p];
-    state[p].activeCat = "All";
-    state[p].search = "";
-    state[p].visibleCount = PAGE_SIZE;
-    localStorage.setItem("ctx_filt_" + p, "All");
-    localStorage.setItem("ctx_srch_" + p, "");
-    document.getElementById(cfg.ids.chips)
-      .querySelectorAll(".chip").forEach(x => x.classList.toggle("active", x.dataset.cat === "All"));
-    const box = document.querySelector(`.search[data-product="${p}"]`);
-    if (box) box.value = "";
-    renderTimeline(p);
-  }
-
-  // Build chip bars
-  Object.keys(PRODUCTS).forEach(p => {
-    const cfg = PRODUCTS[p];
-    const root = document.getElementById(cfg.ids.chips);
-    cfg.cats.forEach(c => {
-      const ch = document.createElement("span");
-      ch.className = "chip" + (c === state[p].activeCat ? " active" : "");
-      ch.dataset.cat = c;
-      const cnt = c === "All" ? "" : "  · " + cfg.data.filter(d => d.cat === c).length;
-      ch.textContent = c + cnt;
-      ch.addEventListener("click", () => {
-        state[p].activeCat = c;
-        state[p].visibleCount = PAGE_SIZE;
-        localStorage.setItem("ctx_filt_" + p, c);
-        root.querySelectorAll(".chip").forEach(x => x.classList.remove("active"));
-        ch.classList.add("active");
-        renderTimeline(p);
-      });
-      root.appendChild(ch);
-    });
-    // append the clear button to this product's filter bar
-    const bar = root.closest(".filter-bar");
-    if (bar) {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "clear-filter";
-      btn.textContent = "清除篩選";
-      btn.addEventListener("click", () => resetFilters(p));
-      bar.appendChild(btn);
-      clearBtns[p] = btn;
-    }
-  });
-
-  // Wire up search boxes (debounced so we don't re-render / write storage on every keystroke)
-  function debounce(fn, ms){
-    let t;
-    return function(...args){ clearTimeout(t); t = setTimeout(() => fn.apply(this, args), ms); };
-  }
-  document.querySelectorAll(".search").forEach(box => {
-    const p = box.dataset.product;
-    box.value = state[p].search;
-    const commit = debounce(() => {
-      state[p].visibleCount = PAGE_SIZE;
-      localStorage.setItem("ctx_srch_" + p, state[p].search);
-      renderTimeline(p);
-    }, 160);
-    box.addEventListener("input", () => {
-      state[p].search = box.value;   // update immediately so render reads latest
-      commit();
-    });
-  });
-
-  // Wire up load-more
-  document.querySelectorAll(".load-more").forEach(btn => {
-    const p = btn.dataset.product;
-    btn.addEventListener("click", () => {
-      state[p].visibleCount += PAGE_SIZE;
-      renderTimeline(p);
-    });
-  });
-
-  function renderTimeline(p){
-    const cfg = PRODUCTS[p];
-    const s = state[p];
-    const filtered = cfg.data.filter(d => {
-      if (s.activeCat !== "All" && d.cat !== s.activeCat) return false;
-      if (!s.search) return true;
-      const hay = (d.v + " " + (d.title||"") + " " + d.body + " " + d.cat).toLowerCase();
-      return hay.includes(s.search.trim().toLowerCase());
-    });
-    filtered.sort((a,b) => b.date.localeCompare(a.date) || (b.v||"").localeCompare(a.v||""));
-
-    const root = document.getElementById(cfg.ids.timeline);
-    const empty = document.getElementById(cfg.ids.empty);
-    const status = document.getElementById(cfg.ids.status);
-    const moreRow = document.getElementById(cfg.ids.more);
-    root.innerHTML = "";
-
-    // toggle "clear filters" visibility for this product
-    if (clearBtns[p]) {
-      const hasFilter = s.activeCat !== "All" || (s.search && s.search.trim() !== "");
-      clearBtns[p].classList.toggle("show", !!hasFilter);
-    }
-
-    if (!filtered.length){
-      empty.style.display = "block";
-      status.textContent = "";
-      moreRow.style.display = "none";
-      return;
-    }
-    empty.style.display = "none";
-
-    const total = filtered.length;
-    const showCount = Math.min(s.visibleCount, total);
-    const sliced = filtered.slice(0, showCount);
-
-    const groups = {};
-    sliced.forEach(d => {
-      const k = d.date.slice(0,7);
-      (groups[k] = groups[k] || []).push(d);
-    });
-    Object.keys(groups).sort().reverse().forEach(k => {
-      const wrap = document.createElement("div");
-      wrap.className = "month-group";
-      const head = document.createElement("div");
-      head.className = "month-label";
-      head.innerHTML = `<span>${monthLabel(k+"-01")}</span><span class="count">${groups[k].length} 筆</span>`;
-      wrap.appendChild(head);
-      groups[k].forEach(d => {
-        const e = document.createElement("div");
-        e.className = "entry";
-        const titleHtml = d.title ? `<div class="title-line">${d.title}</div>` : "";
-        e.innerHTML = `
-          <span class="ver-badge" title="${d.v}">${d.v}</span>
-          <span class="cat-badge ${catClass(d.cat)}">${d.cat}</span>
-          <div class="body">${titleHtml}${d.body}<div class="entry-date">${d.date}</div></div>
-        `;
-        wrap.appendChild(e);
-      });
-      root.appendChild(wrap);
-    });
-
-    status.textContent = `已顯示 ${showCount} / ${total} 筆`;
-    if (showCount < total){
-      moreRow.style.display = "flex";
-      const btn = moreRow.querySelector(".load-more");
-      const remain = total - showCount;
-      const next = Math.min(PAGE_SIZE, remain);
-      btn.innerHTML = `顯示更多版本（再 ${next} 筆，共剩 ${remain}）<span class="arrow">↓</span>`;
-    } else {
-      moreRow.style.display = "none";
-    }
-  }
-
-  // Initial render
-  Object.keys(PRODUCTS).forEach(renderTimeline);
-
-  // Total versions stat
-  const totalVer = DATA_CC.length + DATA_CA.length + DATA_CI.length;
-  document.getElementById("totalVersions").textContent = totalVer;
-
   /* ===========================
-     DYNAMIC DATE SPAN + TAB META
+     HERO STATS + FOOTER
      =========================== */
-  function minMaxDate(arr){
-    const dates = arr.map(d => d.date).filter(Boolean).sort();
-    return { min: dates[0], max: dates[dates.length - 1] };
-  }
-  function fmtSpan(min, max){
-    if (!min || !max) return "—";
-    const minS = min;
-    const maxS = max;
-    return minS === maxS ? minS : `${minS} ~ ${maxS}`;
-  }
-  // Compare versions naturally; fallback to date if v missing
-  function versionRange(arr){
-    if (!arr.length) return null;
-    // sort by date first (proxy for release order)
-    const sorted = [...arr].sort((a,b) => a.date.localeCompare(b.date) || (a.v||"").localeCompare(b.v||""));
-    const oldest = sorted[0];
-    const newest = sorted[sorted.length - 1];
-    return { oldest: oldest.v, newest: newest.v };
-  }
-
-  // Hero "Date Span" — overall min/max across all three products
-  const allDates = [...DATA_CC, ...DATA_CA, ...DATA_CI].map(d => d.date).sort();
+  document.getElementById("totalVersions").textContent = ENTRIES.length;
+  const allDates = ENTRIES.map(d => d.date).sort();
   const overallMin = allDates[0];
   const overallMax = allDates[allDates.length - 1];
   document.getElementById("dateSpan").textContent = fmtSpan(overallMin, overallMax);
-
-  // Footer span
   document.getElementById("footerSpan").textContent = "覆蓋 " + fmtSpan(overallMin, overallMax);
 
-  // Tab meta (count + version range)
-  const tabMeta = {
-    "claude-code": { vendor: "Anthropic", arr: DATA_CC, unit: "versions" },
-    "codex-app":   { vendor: "OpenAI",    arr: DATA_CA, unit: "entries"  },
-    "codex-cli":   { vendor: "OpenAI",    arr: DATA_CI, unit: "versions" }
-  };
-  Object.keys(tabMeta).forEach(k => {
-    const m = tabMeta[k];
-    const span = minMaxDate(m.arr);
-    const rng = versionRange(m.arr);
-    const el = document.querySelector(`[data-meta-for="${k}"]`);
-    if (!el) return;
-    const parts = [`${m.arr.length} ${m.unit}`];
-    if (rng && rng.oldest && rng.newest && rng.oldest !== rng.newest) {
-      parts.push(`${rng.oldest} → ${rng.newest}`);
-    } else if (rng && rng.newest) {
-      parts.push(rng.newest);
-    }
-    if (span.min) parts.push(span.min === span.max ? span.min : `${span.min.slice(5)} ~ ${span.max.slice(5)}`);
-    el.textContent = parts.join(" · ");
-  });
-
   /* ===========================
-     CHARTS
+     COMPACT CATEGORY BAR（hero 內，看個大概）
      =========================== */
-
-  const palette = {
+  const CAT_COLORS = {
+    "UI/UX": "#0d9488",
     "Performance/Bug Fix": "#64748b",
     "Settings/Config": "#d97706",
-    "UI/UX": "#0d9488",
     "Plugins/MCP": "#2563eb",
-    "Hooks": "#ea580c",
-    "Slash Commands": "#059669",
-    "Subagents/Skills": "#9333ea",
-    "IDE/Editor": "#6366f1",
     "Permissions/Security": "#e11d48",
-    "Models/Inference": "#0d9488",
-    "MCP/Tools": "#2563eb",
-    "Local Sandbox": "#ea580c",
-    "Cloud/Web": "#2563eb",
-    "Other": "#64748b"
+    "MCP/Tools": "#0ea5e9",
+    "IDE/Editor": "#6366f1",
+    "Slash Commands": "#059669",
+    "Cloud/Web": "#8b5cf6",
+    "Hooks": "#ea580c",
+    "Subagents/Skills": "#9333ea",
+    "Models/Inference": "#06b6d4",
+    "Local Sandbox": "#f59e0b",
+    "Remote/Mobile": "#14b8a6",
+    "其他": "#94a3b8"
   };
-
-  const charts = {};
-  // Read live theme colors from CSS variables so charts match light/dark.
-  function chartColors(){
-    const cs = getComputedStyle(document.documentElement);
-    const v = (n, fb) => (cs.getPropertyValue(n).trim() || fb);
-    return {
-      surface: v("--surface", "#ffffff"),
-      line:    v("--line", "#e6ebf1"),
-      ink:     v("--ink", "#1e293b"),
-      inkSoft: v("--ink-soft", "#475569"),
-      inkMuted:v("--ink-muted", "#64748b"),
-      grid:    "rgba(100,116,139,0.12)"
-    };
-  }
-  function buildChart(p){
-    const cfg = PRODUCTS[p];
+  const CAT_BAR_TOP = 8; // 前 8 大類別，其餘併入「其他」
+  function renderCatBar(){
+    const bar = document.getElementById("catBar");
+    const legend = document.getElementById("catLegend");
+    const pool = entriesForAgent();
     const counts = {};
-    cfg.data.forEach(d => counts[d.cat] = (counts[d.cat] || 0) + 1);
-    const labels = Object.keys(counts).sort((a,b) => counts[b] - counts[a]);
-    const values = labels.map(l => counts[l]);
-    const wrapEl = document.getElementById(cfg.ids.chart).parentElement;
-    wrapEl.style.height = Math.max(220, labels.length * 40 + 60) + "px";
-
-    const C = chartColors();
-    if (charts[p]) charts[p].destroy();
-    charts[p] = new Chart(document.getElementById(cfg.ids.chart), {
-      type: "bar",
-      data: {
-        labels,
-        datasets: [{
-          label: "版本數",
-          data: values,
-          backgroundColor: labels.map(l => palette[l] || "#888"),
-          borderRadius: 6,
-          barThickness: 22
-        }]
-      },
-      options: {
-        indexAxis: "y",
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: C.surface,
-            borderColor: C.line,
-            borderWidth: 1,
-            titleColor: C.ink,
-            bodyColor: C.inkSoft,
-            padding: 10,
-            callbacks: { label: ctx => `${ctx.parsed.x} 個版本提到` }
-          }
-        },
-        scales: {
-          x: { beginAtZero: true, ticks: { color: C.inkMuted, font: { size: 13, family: "'JetBrains Mono', monospace" } }, grid: { color: C.grid }, border: { color: C.line } },
-          y: { ticks: { color: C.inkSoft, font: { size: 13.5 } }, grid: { display: false }, border: { color: C.line } }
-        }
-      }
-    });
+    pool.forEach(d => counts[d.cat] = (counts[d.cat] || 0) + 1);
+    const sorted = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+    const items = sorted.slice(0, CAT_BAR_TOP).map(c => ({ name: c, count: counts[c] }));
+    const restCount = sorted.slice(CAT_BAR_TOP).reduce((s, c) => s + counts[c], 0);
+    if (restCount) items.push({ name: "其他", count: restCount });
+    const total = pool.length || 1;
+    bar.innerHTML = items.map(it => {
+      const pct = it.count / total * 100;
+      const color = CAT_COLORS[it.name] || "#94a3b8";
+      return `<span class="seg" style="width:${pct.toFixed(2)}%;background:${color}" title="${it.name} · ${it.count} 筆（${Math.round(pct)}%）"></span>`;
+    }).join("");
+    legend.innerHTML = items.map(it => {
+      const color = CAT_COLORS[it.name] || "#94a3b8";
+      return `<span class="lg"><span class="sw" style="background:${color}"></span>${it.name}<span class="n">·${it.count}</span></span>`;
+    }).join("");
   }
-  Object.keys(PRODUCTS).forEach(buildChart);
-
-  /* ===========================
-     TAB SWITCHING
-     =========================== */
-  const TAB_KEY = "ctx_active_tab_v1";
-  const initialTab = localStorage.getItem(TAB_KEY) || "claude-code";
-  function switchTab(name){
-    document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === name));
-    document.querySelectorAll(".panel").forEach(pa => pa.classList.toggle("active", pa.dataset.panel === name));
-    localStorage.setItem(TAB_KEY, name);
-    // Re-trigger Chart resize because hidden -> visible transitions need it
-    if (charts[name]) {
-      // Wait one frame for layout to settle
-      requestAnimationFrame(() => charts[name].resize());
-    }
-  }
-  document.querySelectorAll(".tab").forEach(t => {
-    t.addEventListener("click", () => switchTab(t.dataset.tab));
-  });
-  switchTab(initialTab);
 
   /* ===========================
      THEME TOGGLE
@@ -2670,12 +2564,16 @@
       const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
       document.documentElement.setAttribute("data-theme", next);
       try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
-      // Rebuild charts so canvas-rendered colors track the new theme
-      Object.keys(PRODUCTS).forEach(buildChart);
-      const active = document.querySelector(".tab.active");
-      if (active && charts[active.dataset.tab]) requestAnimationFrame(() => charts[active.dataset.tab].resize());
     });
   }
+
+  /* ===========================
+     INITIAL RENDER
+     =========================== */
+  buildCatChips();
+  renderTimeline();
+  renderInspiration();
+  renderCatBar();
 </script>
 </body>
 </html>
