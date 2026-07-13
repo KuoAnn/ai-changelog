@@ -1089,7 +1089,7 @@
     </h2>
     <div class="filter-bar">
       <div class="chips-wrap" id="catChips"></div>
-      <label class="perf-toggle" title="開關顯示 Performance/Bug Fix 類別；仍可點上方分類單獨篩選"><input type="checkbox" id="perfToggle" /> Performance/Bug Fix</label>
+      <label class="perf-toggle" title="開關顯示「效能修復 / Performance/Bug Fix」類別；仍可點上方分類單獨篩選"><input type="checkbox" id="perfToggle" /> 效能修復</label>
     </div>
     <div class="timeline" id="timelineAll"></div>
     <div class="empty" id="emptyAll" style="display:none;">沒有符合條件的版本，試著清空篩選或關鍵字。</div>
@@ -2097,6 +2097,25 @@
   if (state.agent !== "all" && !AGENT_MAP[state.agent]) state.agent = "all";
 
   function catClass(c){ return "cat-" + c.replace(/[\/\s]/g, "-"); }
+  // 分類顯示用簡短中文（資料鍵仍為英文，供 CSS class／顏色／比對）
+  const CAT_LABEL = {
+    "UI/UX": "介面體驗",
+    "Performance/Bug Fix": "效能修復",
+    "Settings/Config": "設定組態",
+    "Plugins/MCP": "外掛 MCP",
+    "Permissions/Security": "權限資安",
+    "MCP/Tools": "MCP 工具",
+    "IDE/Editor": "編輯器",
+    "Slash Commands": "斜線指令",
+    "Cloud/Web": "雲端網頁",
+    "Hooks": "掛鉤",
+    "Subagents/Skills": "子代理技能",
+    "Models/Inference": "模型推論",
+    "Local Sandbox": "本地沙箱",
+    "Remote/Mobile": "遠端行動",
+    "其他": "其他"
+  };
+  function catLabel(c){ return c === "All" ? "全部" : (CAT_LABEL[c] || c); }
   // Codex App 的 v 本身是日期字串，不加 v 前綴
   function fmtVer(v){ return /^\d{4}-\d{2}/.test(v) ? v : "v" + v; }
   function monthLabel(date){ const [y, m] = date.split("-"); return `${y} 年 ${parseInt(m, 10)} 月`; }
@@ -2227,7 +2246,7 @@
       const ch = document.createElement("span");
       ch.className = "chip" + (c === state.cat ? " active" : "");
       ch.dataset.cat = c;
-      ch.textContent = c === "All" ? "All" : `${c} · ${counts[c]}`;
+      ch.textContent = c === "All" ? "全部" : `${catLabel(c)} · ${counts[c]}`;
       ch.addEventListener("click", () => {
         state.cat = c;
         state.visible = PAGE_SIZE;
@@ -2312,7 +2331,7 @@
       if (!state.showPerf && state.cat === "All" && d.cat === PERF_CAT) return false;
       if (state.cat !== "All" && d.cat !== state.cat) return false;
       if (!q) return true;
-      const hay = (d.v + " " + (d.title || "") + " " + d.body + " " + d.cat + " " + AGENT_MAP[d.agent].label).toLowerCase();
+      const hay = (d.v + " " + (d.title || "") + " " + d.body + " " + d.cat + " " + catLabel(d.cat) + " " + AGENT_MAP[d.agent].label).toLowerCase();
       return hay.includes(q);
     });
 
@@ -2356,7 +2375,7 @@
           <span class="e-date">${d.date}</span>
           <div class="e-id">
             <span class="agent-tag" title="${a.label} ${d.v}">${a.label} ${fmtVer(d.v)}</span>
-            <span class="cat-badge ${catClass(d.cat)}">${d.cat}</span>
+            <span class="cat-badge ${catClass(d.cat)}" title="${d.cat}">${catLabel(d.cat)}</span>
           </div>
           <div class="e-sum"><span class="sum-text">${sum.html}</span></div>
           ${expandBtn}
@@ -2641,11 +2660,11 @@
     bar.innerHTML = items.map(it => {
       const pct = it.count / total * 100;
       const color = CAT_COLORS[it.name] || "#94a3b8";
-      return `<span class="seg" style="width:${pct.toFixed(2)}%;background:${color}" title="${it.name} · ${it.count} 筆（${Math.round(pct)}%）"></span>`;
+      return `<span class="seg" style="width:${pct.toFixed(2)}%;background:${color}" title="${catLabel(it.name)} · ${it.count} 筆（${Math.round(pct)}%）"></span>`;
     }).join("");
     legend.innerHTML = items.map(it => {
       const color = CAT_COLORS[it.name] || "#94a3b8";
-      return `<span class="lg"><span class="sw" style="background:${color}"></span>${it.name}<span class="n">·${it.count}</span></span>`;
+      return `<span class="lg"><span class="sw" style="background:${color}"></span>${catLabel(it.name)}<span class="n">·${it.count}</span></span>`;
     }).join("");
   }
 
