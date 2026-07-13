@@ -561,6 +561,23 @@
   .search::placeholder { color: var(--ink-muted); }
   .search:focus { border-color: var(--accent-dim); box-shadow: 0 0 0 1px var(--accent-dim), 0 0 14px -6px var(--accent-glow); }
 
+  /* Performance/Bug Fix 顯示開關 */
+  .perf-toggle {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink-soft);
+    padding: 5px 11px;
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    cursor: pointer;
+    user-select: none; letter-spacing: 0.02em;
+    transition: border-color .15s, color .15s;
+  }
+  .perf-toggle:hover { border-color: var(--line-strong); color: var(--ink); }
+  .perf-toggle input { accent-color: var(--accent); cursor: pointer; margin: 0; }
+
   /* ===================== TIMELINE ===================== */
   .timeline { margin-top: 6px; }
   .month-group { margin-bottom: 26px; }
@@ -1031,6 +1048,7 @@
     </h2>
     <div class="filter-bar">
       <div class="chips-wrap" id="catChips"></div>
+      <label class="perf-toggle" title="開關顯示 Performance/Bug Fix 類別"><input type="checkbox" id="perfToggle" /> Performance/Bug Fix</label>
       <input class="search" id="searchBox" type="search" aria-label="搜尋版本變更" placeholder="搜尋功能、指令、model、env var…" />
     </div>
     <div class="timeline" id="timelineAll"></div>
@@ -2030,9 +2048,11 @@
     agent: store.get("ctx_agent_v1", "all"),
     cat: store.get("ctx_cat_v1", "All"),
     search: store.get("ctx_srch_v1", ""),
+    showPerf: store.get("ctx_showperf_v1", "1") === "1",
     visible: PAGE_SIZE,
     inspVisible: PAGE_SIZE
   };
+  const PERF_CAT = "Performance/Bug Fix";
   if (state.agent !== "all" && !AGENT_MAP[state.agent]) state.agent = "all";
 
   function catClass(c){ return "cat-" + c.replace(/[\/\s]/g, "-"); }
@@ -2226,6 +2246,15 @@
     renderTimeline();
   });
 
+  const perfToggle = document.getElementById("perfToggle");
+  perfToggle.checked = state.showPerf;
+  perfToggle.addEventListener("change", () => {
+    state.showPerf = perfToggle.checked;
+    state.visible = PAGE_SIZE;
+    store.set("ctx_showperf_v1", perfToggle.checked ? "1" : "0");
+    renderTimeline();
+  });
+
   function renderTimeline(){
     const root = document.getElementById("timelineAll");
     const empty = document.getElementById("emptyAll");
@@ -2234,6 +2263,7 @@
     const q = state.search.trim().toLowerCase();
 
     const filtered = entriesForAgent().filter(d => {
+      if (!state.showPerf && d.cat === PERF_CAT) return false;
       if (state.cat !== "All" && d.cat !== state.cat) return false;
       if (!q) return true;
       const hay = (d.v + " " + (d.title || "") + " " + d.body + " " + d.cat + " " + AGENT_MAP[d.agent].label).toLowerCase();
