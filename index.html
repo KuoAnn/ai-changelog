@@ -983,7 +983,7 @@
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
-      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-07-13 08:34 (Taipei)</b></span></span>
+      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-07-13 13:09 (Taipei)</b></span></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
         <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
       </button>
@@ -1387,6 +1387,7 @@
   ];
 
   const DATA_CI = [
+    {v:"0.144.2", date:"2026-07-13", cat:"Performance/Bug Fix", title:"CLI 0.144.2：Guardian 自動審查修復", body:"<b>還原 Guardian auto-review 回歸問題</b>：修復上一次更新引入的提示回歸問題，還原 Guardian 自動審查的政策、請求格式與工具行為，恢復其正常運作狀態。純單項修復版本。"},
     {v:"0.144.1", date:"2026-07-09", cat:"Performance/Bug Fix", title:"CLI 0.144.1：安裝程式可靠性 + Code Mode 後備修復", body:"<b>安裝程式可靠性修復</b>：修正 GitHub 回傳壓縮或重新排序的 release metadata 時獨立安裝失敗的問題；<b>macOS 套件安裝正確公開 code-mode host</b>：確保 macOS 套件安裝同時公開 code-mode host 執行檔與主要執行檔；<b>Code Mode 後備機制</b>：當 companion host binary 不可用時，code mode 自動回退至嵌入式執行環境，確保持續可用。"},
     {v:"0.144.0", date:"2026-07-09", cat:"Permissions/Security", title:"CLI 0.144.0：用量重置點數明細 + writes 核准模式 + MCP 互動認證", body:"<b>用量限制重置點數</b>顯示類型與到期日，並可選擇兌換哪種點數；新增 <b><code>writes</code> 核准模式</b>：允許聲明的唯讀操作，僅針對寫入動作提示確認；<b>MCP 工具可在無需實驗性 opt-in 的情況下互動式請求認證</b>；App-server 主機可在執行期提供 Codex 認證並在登入成功後重導至托管頁面；偵測全域 pnpm 安裝以確保診斷與更新使用正確的套件管理器；選擇 Ultra reasoning 時，若多 agent 高並發可能快速消耗用量，現顯示警告。修復：已壓縮的 ChatGPT threads 若參照已退役模型，恢復時改以當前選定模型重試；修復 Intel macOS 發行版二進位的 Code Mode 崩潰；Windows sandbox 可刪除可寫根目錄中的檔案並存取受管主要執行環境；貼上終端控制序列不再破壞 TUI 渲染或恢復的對話歷史；長時間執行的 app sessions 現可為托管的 <code>codex_apps</code> connector 重新整理過期認證；Responses WebSockets 在遵守系統代理與自訂 CA 的同時，繼續使用低延遲傳輸。文件：裝置碼登入警告加入識別並阻止網路釣魚攻擊的說明；降低遠端 executor 上插件技能載入時間；加快並提高大型 repo 的 <code>/review</code> 分支選擇器可靠性。"},
     {v:"0.143.0", date:"2026-07-08", cat:"Plugins/MCP", title:"CLI 0.143.0：遠端插件預設啟用 + 系統代理 + Bedrock GPT-5.6", body:"<b>遠端 plugins 預設啟用</b>（目錄列表列更豐富）；<b>macOS / Windows 系統代理支援</b>（涵蓋 PAC / WPAD）；新 <b><code>codex remote-control pair</code></b> 指令可產生配對碼；<b>Amazon Bedrock 加入 GPT-5.6 系列模型</b>（含 reasoning effort 支援）；MCP 工具預設採工具搜尋模式；修復 Windows ConPTY 輸入處理與 sandbox 憑證問題；安全性更新：OpenSSL、Hono、fast-uri、quick-xml、crossbeam-epoch。"},
