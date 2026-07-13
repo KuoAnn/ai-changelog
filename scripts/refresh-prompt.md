@@ -12,8 +12,8 @@
 
 ## 背景
 
-HTML 內三個 Tab：Claude Code（DATA_CC、INSP_CC）、Codex App（DATA_CA、INSP_CA）、Codex CLI（DATA_CI、INSP_CI）。
-Hero 的 Date Span、Total Versions、Tab meta 都由 JS 動態計算 — 不要去動那些靜態字串。
+HTML 為單頁合併版面（已無 Tab）：資料仍分三組陣列 — Claude Code（DATA_CC、INSP_CC）、Codex App（DATA_CA、INSP_CA）、Codex CLI（DATA_CI、INSP_CI），前端 JS 於渲染時合併成單一時間軸與靈感卡區。**只要維護這六個陣列即可，不需要動任何 HTML 版面。**
+Hero 的 Date Span、Total Versions、Agent 篩選 chip 計數都由 JS 動態計算 — 不要去動那些靜態字串。
 
 ## 步驟
 
