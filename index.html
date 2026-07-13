@@ -1089,7 +1089,7 @@
     </h2>
     <div class="filter-bar">
       <div class="chips-wrap" id="catChips"></div>
-      <label class="perf-toggle" title="開關顯示「效能修復 / Performance/Bug Fix」類別；仍可點上方分類單獨篩選"><input type="checkbox" id="perfToggle" /> 效能修復</label>
+      <label class="perf-toggle" title="開關顯示「效能/修復 · Performance/Bug Fix」類別；仍可點上方分類單獨篩選"><input type="checkbox" id="perfToggle" /> 效能/修復</label>
     </div>
     <div class="timeline" id="timelineAll"></div>
     <div class="empty" id="emptyAll" style="display:none;">沒有符合條件的版本，試著清空篩選或關鍵字。</div>
@@ -2099,20 +2099,20 @@
   function catClass(c){ return "cat-" + c.replace(/[\/\s]/g, "-"); }
   // 分類顯示用簡短中文（資料鍵仍為英文，供 CSS class／顏色／比對）
   const CAT_LABEL = {
-    "UI/UX": "介面體驗",
-    "Performance/Bug Fix": "效能修復",
-    "Settings/Config": "設定組態",
-    "Plugins/MCP": "外掛 MCP",
-    "Permissions/Security": "權限資安",
-    "MCP/Tools": "MCP 工具",
-    "IDE/Editor": "編輯器",
+    "UI/UX": "介面/UX",
+    "Performance/Bug Fix": "效能/修復",
+    "Settings/Config": "設定/組態",
+    "Plugins/MCP": "外掛/MCP",
+    "Permissions/Security": "權限/資安",
+    "MCP/Tools": "MCP/工具",
+    "IDE/Editor": "IDE/編輯器",
     "Slash Commands": "斜線指令",
-    "Cloud/Web": "雲端網頁",
+    "Cloud/Web": "雲端/網頁",
     "Hooks": "掛鉤",
-    "Subagents/Skills": "子代理技能",
-    "Models/Inference": "模型推論",
+    "Subagents/Skills": "子代理/技能",
+    "Models/Inference": "模型/推論",
     "Local Sandbox": "本地沙箱",
-    "Remote/Mobile": "遠端行動",
+    "Remote/Mobile": "遠端/行動",
     "其他": "其他"
   };
   function catLabel(c){ return c === "All" ? "全部" : (CAT_LABEL[c] || c); }
