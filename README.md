@@ -42,7 +42,7 @@ index.html
 
 ## 更新通知（Telegram / Slack）
 
-當 `index.html` 有**實際內容更新**（新增 `DATA_*` 版本條目或 `INSP_*` 靈感卡）時，會自動發通知到 Telegram 與 Slack；只更新同步時間戳（`<b id="lastRefreshed">`）的 commit **不會**觸發。
+當 `index.html` 有**實際內容更新**（新增 `DATA_*` 版本條目或 `INSP_*` 靈感卡）時，會自動發通知到 Telegram 與 Slack。通知會列出每筆新增版本／靈感卡的來源、名稱與短摘要；只更新同步時間戳（`<b id="lastRefreshed">`）的 commit **不會**觸發。
 
 ```text
 push 到 main -> workflow 比對 diff -> 判定是否有新版本/靈感卡 -> 發 Telegram / Slack

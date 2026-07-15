@@ -22,6 +22,14 @@ on:
 permissions:
   contents: read
 
+# 刷新流程每次會對 main 連續推兩次（相隔約 20~70 秒，第一次的 commit 會被第二次改寫成孤兒），
+# 兩次各觸發一個 push event → 兩個 notify run → 兩則重複通知。
+# concurrency 讓同一 ref 的通知同時只保留最新一個：較新的 push 進來時，
+# 取消仍在「等待落定」階段（detect step 的 settle guard）的較早 run。
+concurrency:
+  group: notify-on-update-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   notify:
     runs-on: ubuntu-latest
@@ -46,17 +54,33 @@ jobs:
               echo "has_anomaly=false"
               echo "new_entries=0"
               echo "new_cards=0"
+              echo "anomaly_count=0"
             } >> "$GITHUB_OUTPUT"
             {
-              echo "versions<<EOF"
+              echo "version_details<<EOF"
               echo "EOF"
-              echo "cards<<EOF"
+              echo "card_details<<EOF"
               echo "EOF"
               echo "anomaly<<EOF"
               echo "EOF"
             } >> "$GITHUB_OUTPUT"
             exit 0
           fi
+
+          # ── 去重 settle guard（止血重複通知）──
+          # 刷新流程每次對 main 連續推兩次（實測相隔 20~70 秒，第一次的 commit 會被第二次改寫成孤兒），
+          # 兩次各觸發一個 run；只靠 concurrency 不夠（兩 run 常不重疊、彼此取消不到）。
+          # 對策：等連續 push 落定後，本次 commit 若已非 main 最新（被後一次 push 取代）→ 跳過，
+          # 只讓一連串 push 中的「最後一筆」發通知。sleep 需大於最大 push 間隔（實測 ~71s，取 120s 留裕度）。
+          sleep 120
+          git fetch --quiet origin "${{ github.ref_name }}" || true
+          TIP="$(git rev-parse FETCH_HEAD 2>/dev/null || true)"
+          if [ -n "$TIP" ] && [ "$TIP" != "${{ github.sha }}" ]; then
+            echo "本次 commit ${{ github.sha }} 已被更新的 push（$TIP）取代，跳過通知（避免重複）。"
+            echo "should_send=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "本次 commit 為 main 最新，續行偵測。"
 
           # ── 決定 diff 範圍 ──
           BEFORE="${{ github.event.before }}"
@@ -72,10 +96,10 @@ jobs:
           # ── 取新增行（排除 +++ 檔頭）──
           ADDED="$(git diff "$BEFORE" "$AFTER" -- index.html | grep -E '^\+' | grep -vE '^\+\+\+' || true)"
 
-          # 新版本條目：DATA_* 物件的 v: "..." 欄位（排除時間戳那行）
+          # 新版本條目：DATA_* 物件的 v: "..." 欄位（排除時間戳那行）。
           NEW_ENTRIES="$(printf '%s\n' "$ADDED" | grep -E '[^A-Za-z]v:[[:space:]]*"' | grep -v 'lastRefreshed' || true)"
-          # 新靈感卡：含 auto: true 的行
-          NEW_CARDS="$(printf '%s\n' "$ADDED" | grep -E 'auto:[[:space:]]*true' || true)"
+          # 新靈感卡：新增的 INSP_*.push({ 物件。排程產生的 auto 卡與手動新增卡都涵蓋。
+          NEW_CARDS="$(printf '%s\n' "$ADDED" | grep -E '^\+[[:space:]]*INSP_(CC|CA|CI)\.push\(\{' || true)"
 
           n_entries=$(printf '%s\n' "$NEW_ENTRIES" | grep -cE '.' || true)
           n_cards=$(printf '%s\n' "$NEW_CARDS" | grep -cE '.' || true)
@@ -108,9 +132,127 @@ jobs:
             should_send=true
           fi
 
-          # 抽人類可讀內容：版本號、靈感卡標題
-          versions="$(printf '%s\n' "$NEW_ENTRIES" | grep -oE 'v:[[:space:]]*"[^"]+"' | sed -E 's/v:[[:space:]]*"([^"]+)"/\1/' | sort -u || true)"
-          cards="$(printf '%s\n' "$ADDED" | grep -oE 'feat:[[:space:]]*"[^"]+"' | sed -E 's/feat:[[:space:]]*"([^"]+)"/\1/' | sort -u || true)"
+          # 抽人類可讀內容：來源 + 版本／標題 + 短摘要。
+          # 用 Python 處理 JS 跳脫、HTML 標籤與多行卡片物件，避免 sed 在內容含引號時截斷。
+          version_details="$(printf '%s\n' "$NEW_ENTRIES" | python3 -c '
+          import html
+          import json
+          import re
+          import sys
+
+          SOURCE_NAMES = {"CC": "Claude Code", "CA": "Codex App", "CI": "Codex CLI"}
+
+          def field(text, name):
+              match = re.search(r"(?:^|[,{\s])" + re.escape(name) + r":\s*(\"(?:\\.|[^\"\\])*\")", text)
+              if not match:
+                  return ""
+              try:
+                  return json.loads(match.group(1))
+              except json.JSONDecodeError:
+                  return match.group(1)[1:-1]
+
+          def plain(text):
+              text = re.sub(r"<br\s*/?>", " ", text, flags=re.I)
+              text = re.sub(r"<[^>]+>", "", text)
+              return re.sub(r"\s+", " ", html.unescape(text)).strip()
+
+          def shorten(text, limit=180):
+              if len(text) <= limit:
+                  return text
+              cut = max((text.rfind(mark, 0, limit + 1) + 1 for mark in "。；"), default=0)
+              if cut < 80:
+                  cut = limit
+              return text[:cut].rstrip(" ，；：") + "…"
+
+          # 由 AFTER 版本的 index.html 判斷每個新增物件屬於哪個 DATA_* 陣列。
+          source_by_version = {}
+          current = ""
+          with open("index.html", encoding="utf-8") as page:
+              for raw in page:
+                  start = re.search(r"const DATA_(CC|CA|CI)\s*=\s*\[", raw)
+                  if start:
+                      current = start.group(1)
+                      continue
+                  if current and re.match(r"\s*\];", raw):
+                      current = ""
+                  elif current:
+                      source_by_version[field(raw, "v")] = current
+
+          seen = set()
+          for raw in sys.stdin:
+              obj = raw[1:].strip() if raw.startswith("+") else raw.strip()
+              version = field(obj, "v")
+              if not version:
+                  continue
+              title = plain(field(obj, "title"))
+              body = plain(field(obj, "body"))
+              summary = shorten((title + ("：" + body if body and body != title else "")) if title else body)
+              source = SOURCE_NAMES.get(source_by_version.get(version, ""), "")
+              label = " ".join(part for part in (source, version) if part)
+              detail = label + ("｜" + summary if summary else "")
+              if detail and detail not in seen:
+                  print(detail)
+                  seen.add(detail)
+          ' || true)"
+
+          card_details="$(printf '%s\n' "$ADDED" | python3 -c '
+          import html
+          import json
+          import re
+          import sys
+
+          SOURCE_NAMES = {"CC": "Claude Code", "CA": "Codex App", "CI": "Codex CLI"}
+
+          def field(text, name):
+              match = re.search(r"(?:^|[,{\s])" + re.escape(name) + r":\s*(\"(?:\\.|[^\"\\])*\")", text)
+              if not match:
+                  return ""
+              try:
+                  return json.loads(match.group(1))
+              except json.JSONDecodeError:
+                  return match.group(1)[1:-1]
+
+          def plain(text):
+              text = re.sub(r"<br\s*/?>", " ", text, flags=re.I)
+              text = re.sub(r"<[^>]+>", "", text)
+              return re.sub(r"\s+", " ", html.unescape(text)).strip()
+
+          def shorten(text, limit=180):
+              if len(text) <= limit:
+                  return text
+              cut = max((text.rfind(mark, 0, limit + 1) + 1 for mark in "。；"), default=0)
+              if cut < 80:
+                  cut = limit
+              return text[:cut].rstrip(" ，；：") + "…"
+
+          card = None
+          seen = set()
+
+          def emit(value):
+              if not value:
+                  return
+              feat = plain(field(value["text"], "feat"))
+              desc = shorten(plain(field(value["text"], "desc")))
+              label = "｜".join(part for part in (SOURCE_NAMES[value["source"]], feat) if part)
+              detail = label + ("：" + desc if desc else "")
+              if detail and detail not in seen:
+                  print(detail)
+                  seen.add(detail)
+
+          for raw in sys.stdin:
+              line = raw[1:] if raw.startswith("+") else raw
+              start = re.search(r"INSP_(CC|CA|CI)\.push\(\{", line)
+              if start:
+                  emit(card)
+                  card = {"source": start.group(1), "text": line}
+                  continue
+              if card:
+                  card["text"] += "\n" + line
+                  if re.match(r"\s*\}\);", line):
+                      emit(card)
+                      card = None
+          emit(card)
+          ' || true)"
 
           {
             echo "should_send=$should_send"
@@ -119,11 +261,12 @@ jobs:
             echo "has_anomaly=$has_anomaly"
             echo "new_entries=$n_entries"
             echo "new_cards=$n_cards"
+            echo "anomaly_count=$n_anomaly"
           } >> "$GITHUB_OUTPUT"
           {
-            echo "versions<<EOF"; printf '%s\n' "$versions"; echo "EOF"
-            echo "cards<<EOF";    printf '%s\n' "$cards";    echo "EOF"
-            echo "anomaly<<EOF";  printf '%s\n' "$anomaly";  echo "EOF"
+            echo "version_details<<EOF"; printf '%s\n' "$version_details"; echo "EOF"
+            echo "card_details<<EOF";    printf '%s\n' "$card_details";    echo "EOF"
+            echo "anomaly<<EOF";         printf '%s\n' "$anomaly";         echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
       - name: Build messages
@@ -137,8 +280,9 @@ jobs:
           HAS_ANOMALY: ${{ steps.detect.outputs.has_anomaly }}
           NEW_ENTRIES: ${{ steps.detect.outputs.new_entries }}
           NEW_CARDS: ${{ steps.detect.outputs.new_cards }}
-          VERSIONS: ${{ steps.detect.outputs.versions }}
-          CARDS: ${{ steps.detect.outputs.cards }}
+          ANOMALY_COUNT: ${{ steps.detect.outputs.anomaly_count }}
+          VERSION_DETAILS: ${{ steps.detect.outputs.version_details }}
+          CARD_DETAILS: ${{ steps.detect.outputs.card_details }}
           ANOMALY: ${{ steps.detect.outputs.anomaly }}
           COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
         run: |
@@ -150,11 +294,9 @@ jobs:
           esc() { sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g'; }
           bullets() { while IFS= read -r line; do [ -n "$line" ] && printf '• %s\n' "$(printf '%s' "$line" | esc)"; done; }
 
-          V_LIST="$(printf '%s\n' "$VERSIONS" | bullets || true)"
-          C_LIST="$(printf '%s\n' "$CARDS" | bullets || true)"
+          V_LIST="$(printf '%s\n' "$VERSION_DETAILS" | bullets || true)"
+          C_LIST="$(printf '%s\n' "$CARD_DETAILS" | bullets || true)"
           A_LIST="$(printf '%s\n' "$ANOMALY" | bullets || true)"
-          [ -z "$V_LIST" ] && V_LIST="•（無新版本條目）"
-          [ -z "$C_LIST" ] && C_LIST="•（本次無新靈感卡）"
           [ -z "$A_LIST" ] && A_LIST="•（無詳細訊息）"
 
           # 組訊息本體：依 test / 更新+異常 / 只更新 / 只異常 條件拼裝。
@@ -165,33 +307,30 @@ jobs:
 
             if [ "$IS_TEST" = "true" ]; then
               printf '%s🧪 AI Changelog 通知測試%s%s' "$bo" "$bc" "$nl"
-              printf '這是一則手動觸發的測試通知，用來確認 Telegram / Slack 設定正確。%s' "$nl"
+              printf '若你收到此訊息，代表通知管道設定正常。%s' "$nl"
               return 0
             fi
 
-            # 標題
+            # 標題只說明事件類型；數量統一放在各區塊標題，避免重複。
             if [ "$HAS_UPDATE" = "true" ] && [ "$HAS_ANOMALY" = "true" ]; then
-              printf '%s🆕 AI Changelog 有新更新（新增 %s 筆版本、%s 張靈感卡），另有異常需注意%s%s' \
-                "$bo" "$NEW_ENTRIES" "$NEW_CARDS" "$bc" "$nl"
+              printf '%s🆕 AI Changelog 更新（含異常）%s%s' "$bo" "$bc" "$nl"
             elif [ "$HAS_UPDATE" = "true" ]; then
-              printf '%s🆕 AI Changelog 有新更新（新增 %s 筆版本、%s 張靈感卡）%s%s' \
-                "$bo" "$NEW_ENTRIES" "$NEW_CARDS" "$bc" "$nl"
+              printf '%s🆕 AI Changelog 更新%s%s' "$bo" "$bc" "$nl"
             else
               printf '%s⚠️ AI Changelog 更新異常%s%s' "$bo" "$bc" "$nl"
             fi
 
-            # 更新區塊
-            if [ "$HAS_UPDATE" = "true" ]; then
-              printf 'AI 編碼工具有新的 release，已同步到 changelog 頁面。%s%s' "$nl" "$nl"
-              printf '%s新版本條目%s%s%s%s%s' "$bo" "$bc" "$nl" "$V_LIST" "$nl" "$nl"
-              printf '%s新靈感卡%s%s%s%s' "$bo" "$bc" "$nl" "$C_LIST" "$nl"
+            # 僅輸出有內容的更新區塊，每筆都包含可讀摘要。
+            if [ "$NEW_ENTRIES" -gt 0 ]; then
+              printf '%s%s新版本（%s）%s%s%s%s' "$nl" "$bo" "$NEW_ENTRIES" "$bc" "$nl" "$V_LIST" "$nl"
+            fi
+            if [ "$NEW_CARDS" -gt 0 ]; then
+              printf '%s%s新靈感卡（%s）%s%s%s%s' "$nl" "$bo" "$NEW_CARDS" "$bc" "$nl" "$C_LIST" "$nl"
             fi
 
             # 異常區塊
             if [ "$HAS_ANOMALY" = "true" ]; then
-              if [ "$HAS_UPDATE" = "true" ]; then printf '%s' "$nl"; fi
-              printf '本次刷新有來源解析或驗證失敗，未能全部同步。%s' "$nl"
-              printf '%s⚠️ 異常項目%s%s%s%s' "$bo" "$bc" "$nl" "$A_LIST" "$nl"
+              printf '%s%s⚠️ 異常（%s）%s%s%s%s' "$nl" "$bo" "$ANOMALY_COUNT" "$bc" "$nl" "$A_LIST" "$nl"
             fi
             return 0
           }
