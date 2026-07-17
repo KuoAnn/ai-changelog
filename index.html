@@ -1052,7 +1052,7 @@
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
-      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-07-17 08:09 (Taipei)</b></span></span>
+      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-07-17 13:09 (Taipei)</b></span></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
         <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
       </button>
@@ -1206,6 +1206,7 @@
      =========================== */
 
   const DATA_CC = [
+    {v:"2.1.212", date:"2026-07-17", cat:"Slash Commands", body:"<b>新增 <code>/fork</code> 指令</b>：將當前 session 完整複製為新的背景 session，可在不中斷主線工作的情況下分叉試驗不同實作路徑；<b>新增 <code>/subtask</code> 指令</b>：直接在 session 內啟動子 agent 執行特定任務，無需切換視窗；<b>Session 級別 WebSearch 用量限制</b>：新增整個 session 的 WebSearch 呼叫上限，防止意外大量搜尋耗盡配額；<b>Subagent 衍生上限強制執行</b>：限制單次工作流中可衍生的 subagent 數量，提升可預測性；<b>MCP 工具自動移至背景</b>：MCP 工具執行超過 2 分鐘後自動轉為背景執行，不再阻塞主 session；<code>/resume</code> 改為顯示過去 sessions 的選擇器介面，更易操作。修復：plan mode 意外自動執行；worktree symlink 處理異常；hook 基礎設施相關問題。"},
     {v:"2.1.211", date:"2026-07-15", cat:"Performance/Bug Fix", body:"<b><code>--forward-subagent-text</code> 旗標</b>：新增 <code>CLAUDE_CODE_FORWARD_SUBAGENT_TEXT</code> 環境變數，讓 stream-json 輸出包含子 agent 文字；<b>「永遠允許」規則存於 repo 根目錄</b>；<code>/usage-credits</code> 加入金額確認提示；Vim NORMAL 模式 <code>s</code>/<code>S</code> 行為修正。修復：permission preview 未中和特殊 Unicode 字元；auto mode 覆蓋 PreToolUse hook 的 <code>ask</code> 決策；多個平行 session 喚醒後同時登出；plugin MCP servers 閒置 web session 喚醒後未重連；Vertex/Bedrock 啟動時嘗試預設 Opus 模型；子 agent 明確覆寫模型後恢復時回退至父模型；巢狀 <code>.claude/rules/*.md</code> 在停用專案設定時仍載入；DOS 裝置後綴與尾部點的上傳驗證；Chrome 遠端 session 檔案上傳；編輯輸入為「?」靜默丟棄；Chrome 擴充啟用但未執行時啟動卡死；300ms 非同步內容延遲；重開停止的背景 session 顯示空白對話；<code>/loop</code> 將 session 隱藏於 <code>/resume</code>；螢幕閱讀器失去聲音鈴聲；LLM gateway 認證在 daemon 重生後失敗；<code>claude agents</code> 工作因 git worktree 問題永久無法刪除；<code>/clear</code> 未重置費用計數器；Chrome 設定頁面在 Windows 失敗；headless print-mode 在 Windows 以不可讀 stdin 崩潰；背景 session 標題顯示命名模型的拒絕文字；背景 agent 被使用者終止後自動重生；無排程例程回報 1970 年下次執行時間；Bedrock/Vertex/Mantle/Foundry prompt-cache 回歸問題。改進：終端機版面與渲染效能；背景 agent 結果回報；記憶體索引超限警告；整數環境變數接受科學記號（如 <code>1e6</code>）。"},
     {v:"2.1.210", date:"2026-07-14", cat:"Permissions/Security", body:"<b>Agent 工具安全強化</b>：加強防範間接提示注入攻擊；<b>即時耗時計時器</b>：摺疊工具摘要列新增 elapsed-time 即時計數器；<b>權限規則啟動警告</b>：對 <code>Write(path)</code>、<code>NotebookEdit(path)</code>、<code>Glob(path)</code> 類型的規則顯示啟動警告；<code>ultracode</code> 關鍵字 opt-in 不再對非人工發起的輸入觸發。自動模式改進：外部 sessions 的分類器預設改用 Sonnet 5；記憶體寫入超過讀取限制現顯示明確錯誤而非靜默截斷；螢幕閱讀器模式可朗讀權限模式變更；agent footer 顯示等待輸入的背景 agent 數量。修復：<code>isolation: 'worktree'</code> 子 agent 對主 repo 執行 git 指令（應在獨立 worktree）；<code>claude attach</code> 出現「job not found」或「agent is still starting」；工具結果渲染器回傳 bigint 或純文字時 session 崩潰；hook 回呼逾時被誤報為使用者拒絕；<code>cd</code> 移至背景後 Claude 誤以為目錄已切換；plugin 提供的 MCP servers 在重新同步時被拆除；計畫核准未含編輯時被標記「(edited by user)」；<code>/doctor</code> 在 Bedrock、Vertex、Foundry 跳過 auto-mode 預設建議；Grep 分頁時誤回「No matches found」；skill/command 中未配對佔位符被移除；plugin 快取寫入失敗後留下暫存檔；背景 worker 在連線重置時崩潰迴圈；<code>claude agents --effort ultracode</code> 未傳達至 dispatched sessions；← 返回 session 時丟失任務追蹤器；agent dashboard 保留已放棄草稿的貼圖；已終止背景 sessions 留下永久 <code>git worktree lock</code>；SDK MCP servers 等到下一輪才開始連線；<code>CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1</code> 時 agent view 出現重疊幽靈框；延遲出現的 <code>.claude/*</code> symlinks 未同步至 sandbox deny-write 清單。"},
     {v:"2.1.209", date:"2026-07-14", cat:"Performance/Bug Fix", body:"<b>背景 session 對話框封鎖修復</b>：修復 <code>/model</code> 選擇器與互動對話框（含 permission dialogs）在背景 sessions 中被封鎖、無法正常顯示的問題。"},
@@ -1490,7 +1491,17 @@
        {h:"實際操作", c:"bash", b:"claude\n> /resume\n> https://github.com/your-org/ios-app/pull/1234\n# Claude 自動：\n#  1. 找出對應 session（依 commit hash + branch）\n#  2. 載入當時的對話、TODO、思考紀錄\n#  3. 提示「上次討論到 XX，要繼續嗎？」"},
        {h:"支援的 git host", l:["GitHub / GitHub Enterprise","GitLab / GitLab Self-managed","Bitbucket Cloud + Data Center","可自訂 <code>prUrlTemplate</code> 對應內網 git server"]},
        {h:"進階：自動帶上 review checklist", p:"配合 <code>--print</code> 非互動式跑：<code>claude /resume &lt;PR&gt; --print '依 style skill 給 review 意見'</code>，產出當下分析給 ChatOps bot。"}
-     ]}
+     ]},
+    {ico:"🍴", color:"blue", feat:"/fork — Session 平行分叉探索", ver:"v2.1.212 · 2026-07-17",
+     desc:"<code>/fork</code> 把當前 session 完整複製為背景 session，可同時試不同修法，取最優者合入。",
+     scen:"<b>Sprint 場景：</b>遇到複雜 bug 有兩種修法，直接 <code>/fork</code> 開一條背景 session 試 Plan B，主 session 繼續試 Plan A——誰先跑通誰上 PR，不再序列化試錯。",
+     roles:["backend","frontend","qa","pm"],
+     d:[
+       {h:"為什麼有用", p:"以前試不同修法要先 stash、重開 terminal、重建上下文。<code>/fork</code> 一鍵複製整個 session（含對話歷史與 worktree 狀態）到背景，兩路並行後用 <code>/resume</code> 選贏家繼續。"},
+       {h:"設定 / 操作", c:"bash", b:"# 1. 在主 session 決定分叉點\n> /fork\n# → 已建立背景 session，繼承完整上下文\n\n# 2. 主 session 繼續 Plan A；背景跑 Plan B\n# 3. 查看所有 sessions\nclaude agents\n\n# 4. 選贏家繼續\n> /resume"},
+       {h:"小技巧", l:["<code>/fork</code> 後兩 session 的 git worktree 各自獨立，不會互相污染","搭配 <code>/subtask</code> 在 session 內再派子 agent 處理子問題","背景 session 完成後會推播通知，不需要守著等"]}
+     ],
+     auto:true}
   ];
 
   const INSP_CA = [
