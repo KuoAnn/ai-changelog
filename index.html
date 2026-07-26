@@ -1052,7 +1052,7 @@
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
-      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-07-26 13:10 (Taipei)</b></span></span>
+      <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-07-26 13:17 (Taipei)</b></span></span>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
         <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
       </button>
@@ -1317,6 +1317,8 @@
   ];
 
   const DATA_CA = [
+    {v:"2026-07-23", date:"2026-07-23", cat:"UI/UX", title:"ChatGPT Voice（GPT-Live）+ 多資料夾本地專案", body:"新增 <b>ChatGPT Voice（GPT-Live）</b>：在 ChatGPT 桌面應用程式（macOS/Windows）中透過語音跨 Chat、Work、Codex 協調任務，說一句話即可同時觸發討論、指派 Codex 任務與查詢文件；<b>多資料夾本地專案</b>：本地專案可包含多個相關資料夾，並可指定主要資料夾，適合跨 repo 或 monorepo 工作情境。"},
+    {v:"2026-07-20", date:"2026-07-20", cat:"UI/UX", title:"iOS 互動表單 + Mermaid 圖表 inline 渲染", body:"<b>Codex for iOS 任務互動表單</b>：任務中的互動表單（interactive forms）正式支援，可在 iOS 裝置上直接填寫表單與操作；<b>Mermaid 圖表 inline 渲染</b>：任務 transcript 中的 Mermaid 語法可直接在 iOS 上 inline 渲染為視覺化圖表，無需切換外部工具。"},
     {v:"2026-07-13", date:"2026-07-13", cat:"UI/UX", title:"任務 Inline 視覺化、Composer 鍵盤優化與多項修復", body:"新增<b>任務 Inline 視覺化</b>：可直接在 Codex 任務中預覽圖表與視覺化輸出；改善從對話中<b>建立與管理任務的流程</b>，新建任務的連結更穩定可靠；優化工具活動樣式與進度指示器；改善開檔回饋體驗；改善 Composer 在長提示與較大文字尺寸下的鍵盤配置，確保控制項持續可見於鍵盤上方。修復：每個任務的 Fast mode 選擇與還原；初始提示忽略已選核准預設值；autocomplete 背景色異常及滑動手勢中 task row 無回應等問題。"},
     {v:"2026-07-09", date:"2026-07-09", cat:"Cloud/Web", title:"Codex 整合進 ChatGPT 桌面應用程式；GPT-5.6 加速 Computer Use", body:"<b>Codex 正式成為 ChatGPT 桌面應用程式的一部分</b>（macOS 與 Windows）；現有 Codex App 使用者可照常更新，專案、設定與工作流程完整保留，可將 Codex 設為預設視圖，macOS 亦可保留 Codex App 圖示。新增<b>直接在 App 內編輯 Markdown 與程式碼</b>，支援 inline 批注與要求 Codex 修訂選取內容；<b>側邊欄整合 GitHub PR 審查</b>，可在 diff 旁並排查看審查意見而無需離開 App；支援在同一專案內<b>跨多個 repo 工作</b>；<b>Computer Use 改用 GPT-5.6 提速</b>；改善任務活動與進度追蹤可視性；<b>Plugin 管理移至 Settings 頁面</b>；提升行動端連線穩定性並修復 SSH 專案的影片渲染。"},
     {v:"2026-07-06", date:"2026-07-06", cat:"UI/UX", title:"任務管理、Diff 篩選器、附件預覽與 SSH 快捷鍵", body:"新增從對話中<b>直接建立、搜尋、開啟、分叉與管理 Codex 任務</b>；新增 Diff 檢視<b>篩選器</b>（staged、unstaged、branch、last-turn 變更），支援跨分支比較；支援將選取的 transcript 文字<b>直接加入 composer</b>；圖片與檔案附件可在送出前<b>預覽</b>；附件選單加入 Photos 與 Camera 快速選取器；新增 SSH 主機連線捷徑，支援使用私鑰或免密碼登入；任務選單顯示<b>用量限制與點數明細</b>。"},
@@ -1567,7 +1569,17 @@
        {h:"操作", c:"bash", b:"# Codex App 視窗右上角 →「⊞ Pop out」\n# 浮動視窗可拖到任何角落\n# 再按一次回到主視窗"},
        {h:"iOS pair programming 場景", l:["Xcode 主畫面 + Codex 浮在右下","Spec 在 Notion / Confluence 開另一邊","三面同步看，不用 Cmd+Tab"]},
        {h:"小技巧", p:"搭配 mid-turn steering 特別好用 — 看 Xcode 預覽發現問題立刻在浮動 Codex 打字修正。"}
-     ]}
+     ]},
+    {ico:"🎙️", color:"teal", feat:"ChatGPT Voice（GPT-Live）— 語音協調 Codex 任務", ver:"2026-07-23",
+     desc:"透過語音在 Chat、Work、Codex 之間協調任務，直接口述方向讓 Codex 在桌面背景執行。",
+     scen:"<b>iOS 開發場景：</b>通勤戴 AirPods 對 ChatGPT 說「幫我繼續修 feature/payment-fix 的 bug」，Mac 上的 Codex 自動接手背景任務；進公司只需審 diff，開發節奏不中斷。",
+     roles:["frontend","backend","pm"],
+     d:[
+       {h:"為什麼有用", p:"GPT-Live 讓語音輸入從「單純聽寫」升級為「跨模組任務協調」。一句話可同時觸發 Chat 討論、指派 Codex 任務、查詢 Work 文件，特別適合雙手忙或移動中的情境。"},
+       {h:"設定 / 操作", c:"bash", b:"# ChatGPT 桌面 App（macOS/Windows）\n# 點選右上角麥克風啟動 ChatGPT Voice\n# 範例指令：\n# 「幫我繼續修 feature/payment-fix 分支的 bug」\n# 「把昨天 sprint review 的 TODO 整理成 Jira tickets」\n# Codex 自動開啟對應 session 並在背景執行"},
+       {h:"小技巧", l:["搭配 <b>Codex Remote Control</b>：手機說話、Mac 執行，隨時查看進度","會議空檔說「整理一下剛才討論的 TODO」讓 Work 記錄決策","通勤確認方向 → 進公司審 diff → 節省 context switch 時間"]}
+     ],
+     auto: true}
   ];
 
   const INSP_CI = [
