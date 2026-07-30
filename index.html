@@ -5,9 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>AI Coding Tools 更新摘要 · Claude Code / Codex 變更追蹤</title>
 <meta name="description" content="一頁追蹤 Claude Code、Codex App、Codex CLI 的版本變更：三工具合併時間軸、依角色（Frontend/Backend/Designer/QA/PM）與 AI Agent 篩選靈感卡，並以類別趨勢圖呈現。" />
-<meta name="color-scheme" content="light dark" />
-<meta name="theme-color" content="#059669" media="(prefers-color-scheme: light)" />
-<meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)" />
+<meta name="color-scheme" content="dark" />
+<meta name="theme-color" content="#050505" />
 <!-- Open Graph -->
 <meta property="og:type" content="website" />
 <meta property="og:title" content="AI Coding Tools 更新摘要" />
@@ -15,10 +14,10 @@
 <meta property="og:locale" content="zh_TW" />
 <meta name="twitter:card" content="summary_large_image" />
 <!-- Emoji favicon (inline SVG, no extra request) -->
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23059669'/%3E%3Ctext x='50' y='72' font-size='62' text-anchor='middle' fill='white' font-family='monospace'%3E%E2%9D%AF%3C/text%3E%3C/svg%3E" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23050505'/%3E%3Cpath fill='%23ff7a00' d='M12,6 C16,1 22,0 26,4 C29,7 30,7 33,4 C37,0 44,1 46,6 C48,10 50,10 53,8 C58,6 62,10 60,15 L56,17 L61,21 L55,24 L60,28 L54,31 L59,35 L53,38 L58,42 L52,45 L57,49 L55,50 L56,52 Z'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   /* ===========================================================
      TERMINAL / CLEAN — light & fresh changelog console
@@ -26,71 +25,58 @@
      Class names + --mono/--ink-muted vars preserved for JS.
      =========================================================== */
   :root {
-    color-scheme: light;
-    --bg:         #f6f8fb;
-    --bg-2:       #eef2f7;
-    --surface:    #ffffff;
-    --surface-2:  #f1f5f9;
-    --surface-3:  #e6ecf3;
-    --ink:        #1e293b;
-    --ink-soft:   #475569;
-    --ink-muted:  #64748b;          /* WCAG AA on light surfaces (~4.8:1) */
-    --line:       #e6ebf1;
-    --line-strong:#d3dbe5;
-    --accent:     #059669;          /* fresh emerald */
-    --accent-dim: #047857;
-    --accent-soft: rgba(5,150,105,0.10);
-    --accent-glow: rgba(5,150,105,0.20);
-    --amber:      #d97706;
-    --gold:       #d97706;
-    --green:      #059669;
-    --blue:       #2563eb;
-    --indigo:     #6366f1;
-    --purple:     #9333ea;
-    --red:        #e11d48;
-    --teal:       #0d9488;
-    --orange:     #ea580c;
-    --shadow: 0 1px 2px rgba(16,24,40,0.04), 0 10px 28px -18px rgba(16,24,40,0.16);
-    --shadow-pop: 0 2px 6px rgba(16,24,40,0.06), 0 22px 48px -20px rgba(16,24,40,0.20);
-    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
-    --sans: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
-    --display: "Bricolage Grotesque", "Hanken Grotesk", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
-    --radius: 8px;
-    --radius-sm: 5px;
-  }
-
-  /* ===================== DARK THEME ===================== */
-  html[data-theme="dark"] {
     color-scheme: dark;
-    --bg:         #0b1220;
-    --bg-2:       #0f192b;
-    --surface:    #111c30;
-    --surface-2:  #16243c;
-    --surface-3:  #1d2f4c;
-    --ink:        #e6edf6;
-    --ink-soft:   #aebbcd;
-    --ink-muted:  #8493a8;
-    --line:       rgba(148,163,184,0.15);
-    --line-strong:rgba(148,163,184,0.28);
-    --accent:     #2dd4a7;
-    --accent-dim: #10b981;
-    --accent-soft: rgba(45,212,167,0.13);
-    --accent-glow: rgba(45,212,167,0.30);
-    --amber:      #fbbf24;
-    --gold:       #fbbf24;
-    --green:      #4ade80;
-    --blue:       #60a5fa;
-    --indigo:     #818cf8;
-    --purple:     #c084fc;
-    --red:        #f87171;
-    --teal:       #2dd4bf;
-    --orange:     #fb923c;
-    --shadow: 0 1px 2px rgba(0,0,0,0.30), 0 14px 34px -20px rgba(0,0,0,0.65);
-    --shadow-pop: 0 2px 8px rgba(0,0,0,0.40), 0 26px 56px -22px rgba(0,0,0,0.70);
+    /* ---- 單一主視覺：橘色系階調（僅緊急紅例外）----
+       o-1 最亮 → o-7 最暗，全站層次一律取自這條階梯。 */
+    --o-1: #ffe0b3;
+    --o-2: #ffc24a;
+    --o-3: #ffb000;
+    --o-4: #ff7a00;          /* 主色 · NERV 橘 */
+    --o-5: #d45f00;
+    --o-6: #9c4400;
+    --o-7: #5e2900;
+    --red: #f01818;          /* 唯一非橘色系：緊急警報 */
+
+    /* 背景：暖黑階 */
+    --bg:         #050505;
+    --bg-2:       #0a0705;
+    --surface:    #0d0906;
+    --surface-2:  #14100b;
+    --surface-3:  #1e1610;
+    /* 文字：暖白階 */
+    --ink:        #f2e7d8;
+    --ink-soft:   #c3ac8e;
+    --ink-muted:  #8d7a63;
+    --line:       rgba(255,122,0,0.16);
+    --line-strong:rgba(255,122,0,0.42);
+
+    /* 舊變數名沿用，實際值全部指向橘色階梯 */
+    --o:          var(--o-4);
+    --amber:      var(--o-3);
+    --warn-y:     var(--o-2);
+    --green:      var(--o-3);
+    --cyan:       var(--o-2);
+    --blue:       var(--o-2);
+    --teal:       var(--o-3);
+    --gold:       var(--o-2);
+    --purple:     var(--o-1);
+    --indigo:     var(--o-5);
+    --orange:     var(--o-4);
+    --core-p:     var(--o-6);
+    --accent:     var(--o-4);
+    --accent-dim: var(--o-6);
+    --accent-soft: rgba(255,122,0,0.12);
+    --accent-glow: rgba(255,122,0,0.50);
+    --eva-cnr:    rgba(255,122,0,0.85);
+    --shadow: 0 0 0 1px rgba(255,122,0,0.06), 0 14px 30px -20px #000;
+    --shadow-pop: 0 0 26px -12px var(--accent-glow), 0 24px 50px -26px #000;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    --display: "Oswald", "JetBrains Mono", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    --cjk: "Yu Gothic", "Meiryo", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Microsoft JhengHei", sans-serif;
+    --radius: 0px;
+    --radius-sm: 0px;
   }
-  /* dark-specific overrides for hard-coded light surfaces */
-  html[data-theme="dark"] .code-block { background: #0c1626; color: #cbd5e1; }
-  html[data-theme="dark"] .modal-backdrop { background: rgba(2,6,16,0.62); }
 
   * { box-sizing: border-box; }
 
@@ -105,23 +91,22 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* blueprint grid + phosphor glow atmosphere */
+  /* 蜂巢網格 + 磷光大氣 */
   body::before {
     content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
-    background-image:
-      linear-gradient(rgba(100,116,139,0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(100,116,139,0.05) 1px, transparent 1px);
-    background-size: 44px 44px;
-    mask-image: radial-gradient(ellipse 120% 80% at 50% 0%, #000 35%, transparent 100%);
+    /* 正六角蜂巢：週期 W=√3R × H=3R（R=20），左右邊描邊各半、鋪排後接合成完整線 */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34.64 60'%3E%3Cpath d='M17.32,0L34.64,10L34.64,30L17.32,40L0,30L0,10ZM17.32,40L17.32,60' fill='none' stroke='%23ff7a00' stroke-opacity='0.20' stroke-width='1'/%3E%3C/svg%3E");
+    background-size: 52px 90px;
+    mask-image: radial-gradient(ellipse 130% 90% at 50% 0%, #000 30%, transparent 100%);
   }
   body::after {
     content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
     background:
-      radial-gradient(1100px 480px at 50% -8%, rgba(5,150,105,0.07), transparent 60%),
-      radial-gradient(900px 500px at 100% 10%, rgba(37,99,235,0.05), transparent 55%);
+      radial-gradient(1200px 520px at 50% -8%, rgba(255,122,0,0.10), transparent 62%),
+      radial-gradient(900px 480px at 50% 108%, rgba(255,176,0,0.05), transparent 60%);
   }
 
-  ::selection { background: var(--accent); color: #ffffff; }
+  ::selection { background: var(--o); color: #000; }
 
   /* scrollbars */
   * { scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
@@ -136,9 +121,10 @@
   /* ===================== AGENT IDENTITY =====================
      Every agent-scoped element carries .agent-cc / .agent-ca / .agent-ci,
      which sets --ag / --ag-soft / --ag-line for downstream styling. */
-  .agent-cc { --ag: var(--orange); --ag-soft: rgba(251,146,60,0.13);  --ag-line: rgba(251,146,60,0.38); }
-  .agent-ca { --ag: var(--teal);   --ag-soft: rgba(45,212,191,0.13);  --ag-line: rgba(45,212,191,0.38); }
-  .agent-ci { --ag: var(--indigo); --ag-soft: rgba(129,140,248,0.13); --ag-line: rgba(129,140,248,0.38); }
+  /* 三個 agent 用同一色系的三段亮度區分，不換色相 */
+  .agent-cc { --ag: var(--o-4); --ag-soft: rgba(255,122,0,0.14);  --ag-line: rgba(255,122,0,0.42); }
+  .agent-ca { --ag: var(--o-2); --ag-soft: rgba(255,194,74,0.13); --ag-line: rgba(255,194,74,0.38); }
+  .agent-ci { --ag: #e6480a;    --ag-soft: rgba(230,72,10,0.14); --ag-line: rgba(230,72,10,0.45); }
 
   .agent-tag {
     font-family: var(--mono);
@@ -163,7 +149,7 @@
     border: 1px solid var(--line-strong);
     border-radius: var(--radius);
     background:
-      linear-gradient(180deg, rgba(5,150,105,0.05), transparent 40%),
+      linear-gradient(180deg, rgba(255,122,0,0.06), transparent 40%),
       var(--surface);
     margin-bottom: 16px;
     box-shadow: var(--shadow);
@@ -178,9 +164,9 @@
     font-family: var(--mono);
   }
   .term-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
-  .term-dot.r { background: #ff5f57; }
-  .term-dot.y { background: #febc2e; }
-  .term-dot.g { background: #28c840; }
+  .term-dot.r { background: var(--o-5); }
+  .term-dot.y { background: var(--o-3); }
+  .term-dot.g { background: var(--o-1); }
   .term-path {
     margin-left: 8px;
     font-size: 13.5px; color: var(--ink-muted);
@@ -203,26 +189,6 @@
   }
   .refresh-badge::before { content: "↻"; color: var(--accent); }
   .refresh-badge b { color: var(--ink-soft); font-weight: 500; }
-
-  .theme-toggle {
-    margin-left: 10px;
-    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    width: 34px; height: 28px;
-    background: var(--surface-2);
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    color: var(--ink-soft);
-    font-size: 14px;
-    cursor: pointer;
-    transition: border-color .15s, color .15s, background .15s, box-shadow .15s;
-    flex-shrink: 0;
-  }
-  .theme-toggle:hover { border-color: var(--accent-dim); color: var(--accent); box-shadow: 0 0 14px -5px var(--accent-glow); }
-  .theme-toggle:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-dim); }
-  .theme-toggle .icon-sun { display: none; }
-  .theme-toggle .icon-moon { display: inline; }
-  html[data-theme="dark"] .theme-toggle .icon-sun { display: inline; }
-  html[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
 
   .term-body { padding: 18px 26px 20px; }
 
@@ -262,6 +228,7 @@
     background: var(--surface-2);
   }
   .cat-bar .seg { height: 100%; min-width: 3px; }
+  .cat-bar .seg + .seg { border-left: 1px solid var(--bg); }   /* 同色系需要分隔線才分得出段 */
   .cat-legend {
     display: flex; flex-wrap: wrap; gap: 4px 14px;
     margin-top: 8px;
@@ -286,7 +253,8 @@
   }
   /* 每列一種 filter 類型：Agent（含全站搜尋）／Role */
   .dock-row {
-    display: flex; align-items: center; gap: 10px; min-width: 0;
+    display: flex; align-items: center; gap: 10px 10px; min-width: 0;
+    flex-wrap: wrap;            /* 寬度不足時換行，不用橫向捲軸 */
   }
   .dock-row + .dock-row {
     border-top: 1px dashed var(--line);
@@ -305,9 +273,9 @@
     white-space: nowrap;
   }
   .dock-row--agent .dock-label {
-    color: var(--blue);
-    border-color: rgba(96,165,250,0.4);
-    background: rgba(96,165,250,0.10);
+    color: var(--cyan);
+    border-color: rgba(255,194,74,0.42);
+    background: rgba(255,194,74,0.10);
   }
   .dock-row--role .dock-label {
     color: var(--accent);
@@ -315,12 +283,12 @@
     background: var(--accent-soft);
   }
   .filter-dock .chips {
-    display: flex; gap: 6px; flex-wrap: nowrap;
-    overflow-x: auto; min-width: 0;
-    padding-bottom: 2px;
+    display: flex; gap: 6px; flex-wrap: wrap;
+    overflow: visible; min-width: 0;
     flex: 1 1 auto;
   }
-  .dock-row .search { flex: 0 0 auto; margin-left: 0; }
+  /* 搜尋框可壓縮，空間不足時整條掉到下一行 */
+  .dock-row .search { flex: 1 1 230px; min-width: 170px; max-width: 320px; margin-left: auto; }
   .role-chip, .agent-chip {
     font-family: var(--mono);
     font-size: 14px;
@@ -378,8 +346,8 @@
 
   .auto-badge {
     display: inline-flex; align-items: center; gap: 5px;
-    background: rgba(251,191,36,0.10);
-    border: 1px solid rgba(251,191,36,0.4);
+    background: rgba(255,194,74,0.10);
+    border: 1px solid rgba(255,194,74,0.40);
     color: var(--amber);
     font-family: var(--mono);
     font-size: 11px;
@@ -392,8 +360,8 @@
   .auto-badge::before { content: "●"; font-size: 9.5px; }
 
   .modal-auto-notice {
-    background: rgba(251,191,36,0.07);
-    border: 1px solid rgba(251,191,36,0.3);
+    background: rgba(255,194,74,0.07);
+    border: 1px solid rgba(255,194,74,0.30);
     border-radius: var(--radius-sm);
     padding: 11px 14px;
     margin: 0 0 18px;
@@ -404,16 +372,52 @@
   .modal-auto-notice::before { content: "▲"; color: var(--amber); font-size: 14px; line-height: 1.3; }
   .modal-auto-notice b { color: var(--amber); }
 
-  .insp-grid.empty-state {
-    border: 1px dashed var(--line-strong);
-    border-radius: var(--radius);
-    padding: 30px 20px;
-    text-align: center;
-    color: var(--ink-muted);
-    font-size: 15px;
-    grid-template-columns: 1fr;
-    font-family: var(--mono);
+  .insp-grid.empty-state { display: block; border: none; padding: 0; }
+
+  /* ===================== 查無資料：PATTERN NOT DETECTED ===================== */
+  .void {
+    border: 1px solid var(--line-strong);
+    background:
+      linear-gradient(180deg, rgba(255,122,0,0.07), transparent 55%),
+      var(--surface);
+    text-align: left;
   }
+  .void-strip {
+    height: 7px;
+    background: repeating-linear-gradient(45deg, var(--o-3) 0 10px, #0a0705 10px 20px);
+    opacity: .7;
+  }
+  .void-body { display: flex; gap: 18px; align-items: flex-start; padding: 22px 24px; }
+  .void-mark {
+    width: 46px; height: 46px; flex-shrink: 0;
+    display: grid; place-items: center;
+    border: 1px solid var(--o-4); color: var(--o-4);
+    font-family: var(--display); font-size: 27px; font-weight: 600; line-height: 1;
+    animation: blink 1.4s steps(1) infinite;
+  }
+  .void-code {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.22em;
+    color: var(--o-5); text-transform: uppercase;
+  }
+  .void-title {
+    font-family: var(--display); font-size: 25px; font-weight: 600;
+    letter-spacing: 0.14em; color: var(--o-4);
+    margin: 4px 0 11px;
+  }
+  .void-msg { font-family: var(--mono); font-size: 14px; color: var(--ink-soft); line-height: 1.75; }
+  .void-msg b { color: var(--o-2); font-weight: 600; }
+  .void-hint {
+    margin-top: 7px;
+    font-family: var(--mono); font-size: 13px; color: var(--ink-muted);
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .void-release {
+    font-family: var(--mono); font-size: 13px; letter-spacing: 0.06em;
+    padding: 4px 12px; cursor: pointer;
+    background: transparent; border: 1px solid var(--o-4); color: var(--o-4);
+    transition: background .15s, color .15s;
+  }
+  .void-release:hover { background: var(--o-4); color: #050505; }
 
   /* ===================== SECTIONS ===================== */
   section { margin: 34px 0; }
@@ -532,13 +536,14 @@
   .insp:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-dim); }
 
   /* icon color chips (dark translucent + bright ink) */
-  .insp .icon.purple { background: rgba(192,132,252,0.13); color: var(--purple); border-color: rgba(192,132,252,0.3); }
-  .insp .icon.blue   { background: rgba(96,165,250,0.13);  color: var(--blue);   border-color: rgba(96,165,250,0.3); }
-  .insp .icon.orange { background: rgba(251,146,60,0.13);  color: var(--orange); border-color: rgba(251,146,60,0.3); }
-  .insp .icon.green  { background: rgba(74,222,128,0.13);  color: var(--green);  border-color: rgba(74,222,128,0.3); }
-  .insp .icon.red    { background: rgba(248,113,113,0.13); color: var(--red);    border-color: rgba(248,113,113,0.3); }
-  .insp .icon.gold   { background: rgba(251,191,36,0.13);  color: var(--gold);   border-color: rgba(251,191,36,0.3); }
-  .insp .icon.teal   { background: rgba(45,212,191,0.13);  color: var(--teal);   border-color: rgba(45,212,191,0.3); }
+  /* 圖示色票：色相統一，只以亮度分層（class 名沿用資料欄位） */
+  .insp .icon.purple,
+  .insp .icon.gold   { background: rgba(255,194,74,0.10);  color: var(--o-2); border-color: rgba(255,194,74,0.32); }
+  .insp .icon.blue,
+  .insp .icon.teal   { background: rgba(255,176,0,0.10);   color: var(--o-3); border-color: rgba(255,176,0,0.30); }
+  .insp .icon.orange,
+  .insp .icon.green  { background: rgba(255,122,0,0.11);   color: var(--o-4); border-color: rgba(255,122,0,0.34); }
+  .insp .icon.red    { background: rgba(230,72,10,0.12);   color: #e6480a;    border-color: rgba(230,72,10,0.38); }
 
   /* ===================== FILTER BAR ===================== */
   .filter-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; align-items: center; }
@@ -575,7 +580,7 @@
     transition: border-color .15s, color .15s, background .15s;
   }
   .clear-filter.show { display: inline-flex; }
-  .clear-filter:hover { border-style: solid; border-color: var(--red); color: var(--red); background: rgba(248,113,113,0.08); }
+  .clear-filter:hover { border-style: solid; border-color: var(--red); color: var(--red); background: rgba(240,24,24,0.10); }
   .clear-filter::before { content: "✕"; font-size: 11px; }
   .search {
     margin-left: auto;
@@ -723,22 +728,23 @@
   }
   .entry-detail .title-line { color: var(--ink); font-weight: 600; margin-bottom: 4px; font-size: 15px; }
 
-  /* ===================== CATEGORY COLORS ===================== */
-  .cat-Subagents-Skills    { background: rgba(192,132,252,0.12); color: var(--purple); border-color: rgba(192,132,252,0.3); }
-  .cat-Plugins-MCP         { background: rgba(96,165,250,0.12);  color: var(--blue);   border-color: rgba(96,165,250,0.3); }
-  .cat-Hooks               { background: rgba(251,146,60,0.12);  color: var(--orange); border-color: rgba(251,146,60,0.3); }
-  .cat-Slash-Commands      { background: rgba(74,222,128,0.12);  color: var(--green);  border-color: rgba(74,222,128,0.3); }
-  .cat-IDE-Editor          { background: rgba(129,140,248,0.12); color: var(--indigo); border-color: rgba(129,140,248,0.3); }
-  .cat-Settings-Config     { background: rgba(251,191,36,0.12);  color: var(--gold);   border-color: rgba(251,191,36,0.3); }
-  .cat-Permissions-Security{ background: rgba(248,113,113,0.12); color: var(--red);    border-color: rgba(248,113,113,0.3); }
-  .cat-UI-UX               { background: rgba(45,212,191,0.12);  color: var(--teal);   border-color: rgba(45,212,191,0.3); }
-  .cat-Performance-Bug-Fix { background: rgba(148,163,184,0.12); color: #94a3b8;       border-color: rgba(148,163,184,0.3); }
-  .cat-Other               { background: rgba(148,163,184,0.12); color: #94a3b8;       border-color: rgba(148,163,184,0.3); }
-  .cat-Models-Inference    { background: rgba(45,212,191,0.12);  color: var(--teal);   border-color: rgba(45,212,191,0.3); }
-  .cat-Cloud-Web           { background: rgba(96,165,250,0.12);  color: var(--blue);   border-color: rgba(96,165,250,0.3); }
-  .cat-Local-Sandbox       { background: rgba(251,146,60,0.12);  color: var(--orange); border-color: rgba(251,146,60,0.3); }
-  .cat-MCP-Tools           { background: rgba(96,165,250,0.12);  color: var(--blue);   border-color: rgba(96,165,250,0.3); }
-  .cat-Remote-Mobile       { background: rgba(129,140,248,0.12); color: var(--indigo); border-color: rgba(129,140,248,0.3); }
+  /* ===================== CATEGORY COLORS =====================
+     單一色相、五段亮度分層（亮 → 暗），不再使用彩虹配色。 */
+  .cat-Subagents-Skills,
+  .cat-Settings-Config     { background: rgba(255,224,179,0.10); color: var(--o-1); border-color: rgba(255,224,179,0.28); }
+  .cat-Plugins-MCP,
+  .cat-MCP-Tools,
+  .cat-Models-Inference    { background: rgba(255,194,74,0.10);  color: var(--o-2); border-color: rgba(255,194,74,0.30); }
+  .cat-Slash-Commands,
+  .cat-UI-UX,
+  .cat-Cloud-Web           { background: rgba(255,176,0,0.10);   color: var(--o-3); border-color: rgba(255,176,0,0.30); }
+  .cat-Hooks,
+  .cat-IDE-Editor,
+  .cat-Local-Sandbox,
+  .cat-Remote-Mobile       { background: rgba(255,122,0,0.11);   color: var(--o-4); border-color: rgba(255,122,0,0.32); }
+  .cat-Permissions-Security{ background: rgba(230,72,10,0.12);   color: #e6480a;    border-color: rgba(230,72,10,0.38); }
+  .cat-Performance-Bug-Fix,
+  .cat-Other               { background: rgba(141,122,99,0.12);  color: var(--ink-muted); border-color: rgba(141,122,99,0.30); }
 
   /* ===================== LOAD MORE ===================== */
   .load-more-row { display: flex; justify-content: center; margin-top: 18px; }
@@ -767,13 +773,7 @@
   }
   .timeline-status::before { content: "// "; opacity: 0.6; }
 
-  .empty {
-    padding: 22px;
-    text-align: center;
-    color: var(--ink-muted);
-    font-family: var(--mono);
-    font-size: 14.5px;
-  }
+  .empty { padding: 0; }
 
   /* ===================== SCRUM BOARD ===================== */
   .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
@@ -870,7 +870,7 @@
   /* ===================== MODAL ===================== */
   .modal-backdrop {
     position: fixed; inset: 0;
-    background: rgba(30,41,59,0.35);
+    background: rgba(10,7,5,0.55);
     backdrop-filter: blur(6px);
     z-index: 1000;
     display: none; align-items: flex-start; justify-content: center;
@@ -893,7 +893,7 @@
     padding: 22px 26px 18px;
     border-bottom: 1px solid var(--line);
     display: flex; align-items: flex-start; gap: 14px;
-    background: linear-gradient(180deg, rgba(5,150,105,0.05), transparent);
+    background: linear-gradient(180deg, rgba(255,122,0,0.06), transparent);
   }
   .modal-head .icon {
     width: 44px; height: 44px;
@@ -902,13 +902,13 @@
     font-size: 23.5px; flex-shrink: 0;
     border: 1px solid transparent;
   }
-  .modal-head .icon.purple { background: rgba(192,132,252,0.13); color: var(--purple); border-color: rgba(192,132,252,0.3); }
-  .modal-head .icon.blue   { background: rgba(96,165,250,0.13);  color: var(--blue);   border-color: rgba(96,165,250,0.3); }
-  .modal-head .icon.orange { background: rgba(251,146,60,0.13);  color: var(--orange); border-color: rgba(251,146,60,0.3); }
-  .modal-head .icon.green  { background: rgba(74,222,128,0.13);  color: var(--green);  border-color: rgba(74,222,128,0.3); }
-  .modal-head .icon.red    { background: rgba(248,113,113,0.13); color: var(--red);    border-color: rgba(248,113,113,0.3); }
-  .modal-head .icon.gold   { background: rgba(251,191,36,0.13);  color: var(--gold);   border-color: rgba(251,191,36,0.3); }
-  .modal-head .icon.teal   { background: rgba(45,212,191,0.13);  color: var(--teal);   border-color: rgba(45,212,191,0.3); }
+  .modal-head .icon.purple,
+  .modal-head .icon.gold   { background: rgba(255,194,74,0.10);  color: var(--o-2); border-color: rgba(255,194,74,0.32); }
+  .modal-head .icon.blue,
+  .modal-head .icon.teal   { background: rgba(255,176,0,0.10);   color: var(--o-3); border-color: rgba(255,176,0,0.30); }
+  .modal-head .icon.orange,
+  .modal-head .icon.green  { background: rgba(255,122,0,0.11);   color: var(--o-4); border-color: rgba(255,122,0,0.34); }
+  .modal-head .icon.red    { background: rgba(230,72,10,0.12);   color: #e6480a;    border-color: rgba(230,72,10,0.38); }
   .modal-head .feat {
     font-family: var(--display);
     font-size: 21px; font-weight: 700; color: var(--ink); line-height: 1.25;
@@ -1002,8 +1002,8 @@
   }
   .code-block .lang-bar .copy-btn:hover { background: var(--accent-soft); color: var(--accent); border-color: var(--accent-dim); }
   .code-block pre { margin: 0; padding: 14px 16px; overflow-x: auto; white-space: pre; }
-  .code-block .kw { color: var(--purple); }
-  .code-block .str { color: var(--accent); }
+  .code-block .kw { color: var(--o-2); }
+  .code-block .str { color: var(--o-3); }
   .code-block .com { color: var(--ink-muted); font-style: italic; }
 
   /* ===================== REDUCED MOTION ===================== */
@@ -1033,29 +1033,514 @@
     .modal-head { padding: 18px 18px 14px; }
     .modal-body { padding: 16px 18px 22px; }
   }
+
+
+  /* ===========================================================
+     NERV COMMAND DECK — 軍規介面：主控臺·MAGI 儀表板·警報系統
+     單一主題（無 light/dark）。配比 70 功能 / 20 框線刻度 / 10 雜訊動態。
+     =========================================================== */
+
+  /* ---------- 全域直角化：清掉殘留圓角 ---------- */
+  .agent-tag, .role-chip, .agent-chip, .dock-label, .refresh-badge,
+  .auto-badge, .cat-bar, .chip, .load-more, .expand-btn, .cat-badge,
+  .insp-role-tag, .clear-filter, .search, .modal-close,
+  .insp p code, .insp .scenario code, .entry .e-sum .sum-text code,
+  .entry-detail code, .col li code, .modal-body .lead code,
+  .modal-section p code, .modal-section ul li code { border-radius: 0; }
+
+  /* ---------- 面板：直角框 + 四角定位標記 ---------- */
+  header.hero, .filter-dock, .insp, .col, .compare-card, .deck, .modal {
+    border-radius: 0;
+    border-color: var(--line-strong);
+    background-image:
+      linear-gradient(var(--eva-cnr), var(--eva-cnr)), linear-gradient(var(--eva-cnr), var(--eva-cnr)),
+      linear-gradient(var(--eva-cnr), var(--eva-cnr)), linear-gradient(var(--eva-cnr), var(--eva-cnr)),
+      linear-gradient(var(--eva-cnr), var(--eva-cnr)), linear-gradient(var(--eva-cnr), var(--eva-cnr)),
+      linear-gradient(var(--eva-cnr), var(--eva-cnr)), linear-gradient(var(--eva-cnr), var(--eva-cnr));
+    background-repeat: no-repeat;
+    background-size: 16px 2px, 2px 16px, 16px 2px, 2px 16px, 16px 2px, 2px 16px, 16px 2px, 2px 16px;
+    background-position: 0 0, 0 0, 100% 0, 100% 0, 0 100%, 0 100%, 100% 100%, 100% 100%;
+  }
+  /* 斜切角面板 */
+  .notch { clip-path: polygon(0 0, calc(100% - 13px) 0, 100% 13px, 100% 100%, 13px 100%, 0 calc(100% - 13px)); }
+
+  /* 終端機號誌燈 */
+  .term-dot { border-radius: 0; width: 9px; height: 9px; }
+  .term-dot.r { background: var(--red);   box-shadow: 0 0 8px var(--red); }
+  .term-dot.y { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+  .term-dot.g { background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .term-bar { background: linear-gradient(90deg, rgba(255,122,0,0.14), transparent 60%); border-bottom: 1px solid var(--line-strong); }
+
+  /* ---------- 標題：超大、全大寫、字距緊 ---------- */
+  h1 {
+    font-family: var(--display);
+    font-size: 42px; line-height: 0.95;
+    text-transform: uppercase; letter-spacing: 0.01em; font-weight: 700;
+    color: var(--o); text-shadow: 0 0 22px rgba(255,122,0,0.30);
+  }
+  h1 .accent { color: var(--ink); }
+  h2 {
+    font-family: var(--display);
+    font-size: 27px; text-transform: uppercase; letter-spacing: 0.07em; font-weight: 600;
+    color: var(--o);
+    border-bottom: 1px solid var(--line-strong);
+    padding-bottom: 8px;
+  }
+  h2 .num-tag { background: var(--o); color: #000; border-color: var(--o); font-weight: 700; clip-path: polygon(0 0, 100% 0, 100% 68%, 86% 100%, 0 100%); padding-right: 12px; }
+  h2 .num-tag::before { content: "SEC "; opacity: .65; }
+  h2 .num-tag::after { content: none; }
+  .sub-h::before { content: "▐ "; color: var(--o); }
+  .month-label { color: var(--green); border-bottom-color: var(--line-strong); }
+  .month-label > span:first-child::before { content: "▮ "; color: var(--o); }
+
+  /* ---------- 通用小零件 ---------- */
+  .rule-ticks {          /* 邊框刻度尺 */
+    height: 7px; width: 100%;
+    background:
+      repeating-linear-gradient(90deg, var(--o) 0 1px, transparent 1px 9px);
+    opacity: .5;
+  }
+  .hz {                  /* 黑黃／黑紅警戒條紋 */
+    background: repeating-linear-gradient(45deg, var(--warn-y) 0 11px, #0a0a0a 11px 22px);
+  }
+  .hz.red { background: repeating-linear-gradient(45deg, var(--red) 0 11px, #0a0a0a 11px 22px); }
+
+  /* ===================== 主控臺 HUD ===================== */
+  .deck-hud {
+    display: flex; align-items: center; gap: 16px;
+    border: 1px solid var(--o);
+    background: linear-gradient(180deg, rgba(255,122,0,0.13), rgba(0,0,0,0.78));
+    padding: 9px 14px; margin-bottom: 10px;
+    font-family: var(--display);
+    position: relative; overflow: hidden;
+  }
+  .deck-hud::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
+    background: repeating-linear-gradient(90deg, var(--o) 0 12px, transparent 12px 24px);
+    opacity: .55;
+  }
+  .hud-emblem { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .hud-mark { width: 30px; height: 30px; flex-shrink: 0; color: var(--o); filter: drop-shadow(0 0 6px rgba(255,122,0,0.65)); }
+  .hud-org { line-height: 1.05; }
+  .hud-org b {                      /* 原作 logo 為襯線體 */
+    display: block; font-size: 23px; font-weight: 700;
+    font-family: Georgia, "Times New Roman", "Noto Serif TC", serif;
+    color: var(--o); letter-spacing: 0.2em; text-indent: 0.2em; line-height: 1;
+  }
+  .hud-org span {
+    display: block; font-family: var(--cjk);
+    font-size: 9.5px; color: var(--ink-muted); letter-spacing: 0.2em;
+  }
+  .hud-mid {
+    display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1 1 auto;
+    font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em;
+    color: var(--ink-muted); text-transform: uppercase;
+  }
+  .hud-code { color: #000; background: var(--o); padding: 2px 9px; font-weight: 700; letter-spacing: 0.1em; clip-path: polygon(0 0, 100% 0, 100% 100%, 7px 100%, 0 calc(100% - 7px)); }
+  .hud-slash { flex: 0 0 auto; width: 42px; height: 8px; background: repeating-linear-gradient(45deg, var(--o) 0 5px, transparent 5px 10px); }
+  .hud-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hud-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-shrink: 0; }
+  .led { width: 8px; height: 8px; flex-shrink: 0; }
+  .led.ok   { background: var(--o-1); box-shadow: 0 0 8px var(--o-1); animation: blink 2.4s steps(1) infinite; }
+  .led.warn { background: var(--o-3); box-shadow: 0 0 8px var(--o-3); animation: blink 1.6s steps(1) infinite .3s; }
+  .led.crit { background: var(--red);   box-shadow: 0 0 8px var(--red);   animation: blink 1.0s steps(1) infinite .6s; }
+  @keyframes blink { 0%,55% { opacity: 1; } 56%,100% { opacity: 0.15; } }
+  .hud-clock {
+    font-family: var(--mono); font-size: 13px; font-weight: 600;
+    color: var(--green); letter-spacing: 0.1em;
+    background: rgba(255,176,0,0.08); border: 1px solid rgba(255,176,0,0.35);
+    padding: 2px 9px;
+  }
+
+  /* ===================== 警報系統 ===================== */
+  .alert-bar { margin-bottom: 12px; position: relative; }
+  .alert-strip { height: 9px; }
+  .alert-body {
+    display: flex; align-items: center; gap: 14px;
+    padding: 11px 46px 11px 16px;
+    background: linear-gradient(90deg, rgba(240,24,24,0.22), rgba(240,24,24,0.05) 60%, transparent);
+    border-left: 3px solid var(--red); border-right: 3px solid var(--red);
+    animation: alertPulse 1.4s steps(2) infinite;
+  }
+  @keyframes alertPulse {
+    0%, 100% { box-shadow: inset 0 0 34px rgba(240,24,24,0.10); }
+    50%      { box-shadow: inset 0 0 64px rgba(240,24,24,0.34); }
+  }
+  .alert-kanji {
+    font-family: var(--cjk); font-size: 27px; font-weight: 700;
+    color: var(--red); letter-spacing: 0.12em; line-height: 1;
+    text-shadow: 0 0 15px rgba(240,24,24,0.8);
+    flex-shrink: 0; animation: blink 1.1s steps(1) infinite;
+  }
+  .alert-text { min-width: 0; font-family: var(--mono); font-size: 13.5px; color: var(--ink-soft); line-height: 1.45; }
+  .alert-text > b {
+    display: block; font-family: var(--display); font-size: 13px; font-weight: 600;
+    color: var(--red); letter-spacing: 0.26em; text-transform: uppercase;
+  }
+  .alert-text em { font-style: normal; color: var(--o); font-weight: 600; }
+  .alert-code {
+    margin-left: auto; flex-shrink: 0;
+    font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em;
+    color: var(--red); border: 1px solid var(--red); padding: 3px 9px;
+    text-transform: uppercase;
+  }
+  .alert-close {
+    position: absolute; top: 14px; right: 8px;
+    width: 26px; height: 26px; padding: 0;
+    background: transparent; border: 1px solid rgba(240,24,24,0.55);
+    color: var(--red); font-size: 15px; line-height: 1;
+    cursor: pointer; display: grid; place-items: center;
+  }
+  .alert-close:hover { background: var(--red); color: #000; }
+
+  /* ===================== 儀表板 DECK ===================== */
+  .deck {
+    border: 1px solid var(--line-strong);
+    background-color: rgba(13,9,6,0.90);
+    padding: 0 0 14px;
+    margin-bottom: 13px;
+  }
+  .deck-head {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    padding: 11px 16px 10px; margin-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(90deg, rgba(255,122,0,0.10), transparent 55%);
+  }
+  .deck-title {
+    font-family: var(--display); font-size: 20px; font-weight: 600;
+    color: var(--o); letter-spacing: 0.26em; text-transform: uppercase;
+  }
+  .deck-sub { font-family: var(--cjk); font-size: 10.5px; color: var(--ink-muted); letter-spacing: 0.18em; }
+  .deck-verdict {
+    margin-left: auto;
+    font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: 0.12em;
+    color: #000; background: var(--green); padding: 3px 11px;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  }
+  .deck-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 16px; }
+
+  /* 節點卡 */
+  .node {
+    border: 1px solid var(--ag, var(--line-strong));
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+    padding: 11px 12px 12px;
+    position: relative;
+  }
+  .node-top {
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em;
+    color: var(--ink-muted); margin-bottom: 6px;
+  }
+  .node-state { font-family: var(--cjk); color: var(--green); font-weight: 700; letter-spacing: 0.14em; }
+  .node-name {
+    font-family: var(--display); font-size: 18px; font-weight: 600;
+    color: var(--ag, var(--o)); letter-spacing: 0.14em; text-transform: uppercase; line-height: 1.1;
+  }
+  .node-name span { font-size: 12px; opacity: .6; }
+  .node-owner { font-family: var(--mono); font-size: 10.5px; color: var(--ink-muted); letter-spacing: 0.1em; margin-top: 2px; }
+  .node-metric { display: flex; align-items: baseline; gap: 6px; margin: 9px 0 6px; }
+  .node-metric b { font-family: var(--display); font-size: 29px; font-weight: 600; color: var(--ink); line-height: 1; }
+  .node-metric span { font-family: var(--mono); font-size: 10.5px; color: var(--ink-muted); letter-spacing: 0.12em; text-transform: uppercase; }
+  .node-foot {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
+    margin-top: 8px; font-family: var(--mono); font-size: 10.5px; color: var(--ink-muted); letter-spacing: 0.08em;
+  }
+  .node-foot b { color: var(--ink-soft); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* 多段式進度條 */
+  .segbar {
+    height: 8px; border: 1px solid var(--line);
+    background: repeating-linear-gradient(90deg, rgba(255,255,255,0.05) 0 4px, transparent 4px 7px);
+    position: relative; overflow: hidden;
+  }
+  .segbar i {
+    display: block; height: 100%;
+    background: repeating-linear-gradient(90deg, var(--ag, var(--o)) 0 4px, transparent 4px 7px);
+    box-shadow: 0 0 9px var(--ag, var(--o));
+    transition: width .35s steps(8);
+  }
+
+  /* 儀表 */
+  .gauges { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .gauge { border: 1px solid var(--line); padding: 10px 12px; background: rgba(255,255,255,0.02); position: relative; }
+  .gauge-label {
+    font-family: var(--cjk); font-size: 12px; color: var(--ink-soft); letter-spacing: 0.14em;
+    display: flex; align-items: baseline; gap: 7px;
+  }
+  .gauge-label span { font-family: var(--mono); font-size: 9px; color: var(--ink-muted); letter-spacing: 0.14em; }
+  .gauge-val {
+    font-family: var(--display); font-size: 27px; font-weight: 600;
+    color: var(--o-2); letter-spacing: 0.04em; line-height: 1.1; margin: 4px 0 7px;
+    text-shadow: 0 0 12px rgba(255,194,74,0.35);
+    font-variant-numeric: tabular-nums;
+  }
+  .gauge.warn .gauge-val { color: var(--o-4); text-shadow: 0 0 12px rgba(255,122,0,0.45); }
+  .gauge.crit .gauge-val { color: var(--red);   text-shadow: 0 0 12px rgba(240,24,24,0.5); }
+  .gauge .segbar i { background: repeating-linear-gradient(90deg, var(--o-2) 0 4px, transparent 4px 7px); box-shadow: 0 0 9px var(--o-2); }
+  .gauge.warn .segbar i { background: repeating-linear-gradient(90deg, var(--o-4) 0 4px, transparent 4px 7px); box-shadow: 0 0 9px var(--o-4); }
+  .gauge.crit .segbar i { background: repeating-linear-gradient(90deg, var(--red) 0 4px, transparent 4px 7px);   box-shadow: 0 0 9px var(--red); }
+  .gauge-scale {
+    display: flex; justify-content: space-between;
+    font-family: var(--mono); font-size: 8.5px; color: var(--ink-muted);
+    letter-spacing: 0.1em; margin-top: 3px;
+  }
+
+  /* 波形圖（近 12 週更新量，真實資料） */
+  .wave-box { grid-column: 1 / -1; border: 1px solid var(--line); padding: 9px 12px 8px; background: rgba(255,255,255,0.02); }
+  .wave-head {
+    display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+    font-family: var(--mono); font-size: 10px; color: var(--ink-muted); letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .wave-head b { font-family: var(--cjk); font-size: 12px; color: var(--ink-soft); letter-spacing: 0.14em; text-transform: none; font-weight: 500; }
+  .wave-head .peak { margin-left: auto; color: var(--o); }
+  .wave {
+    width: 100%; height: 54px; display: block; margin-top: 6px;
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.05) 0 1px, transparent 1px 24px),
+      repeating-linear-gradient(0deg,  rgba(255,255,255,0.05) 0 1px, transparent 1px 13px);
+  }
+  .wave polyline { fill: none; stroke: var(--o-2); stroke-width: 1.5; vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 4px rgba(255,194,74,0.7)); }
+  .wave polygon { fill: rgba(255,194,74,0.13); }
+  .wave .base { stroke: rgba(255,255,255,0.16); stroke-width: 1; vector-effect: non-scaling-stroke; }
+
+  /* 雷達／掃描 */
+  .radar {
+    width: 46px; height: 46px; flex-shrink: 0; position: relative;
+    border: 1px solid rgba(255,122,0,0.5); border-radius: 50%;
+    background:
+      radial-gradient(circle, transparent 0 46%, rgba(255,122,0,0.28) 46% 47%, transparent 47%),
+      linear-gradient(90deg, transparent calc(50% - 0.5px), rgba(255,122,0,0.3) calc(50% - 0.5px) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      linear-gradient(0deg,  transparent calc(50% - 0.5px), rgba(255,122,0,0.3) calc(50% - 0.5px) calc(50% + 0.5px), transparent calc(50% + 0.5px));
+    overflow: hidden;
+  }
+  .radar::after {
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    background: conic-gradient(from 0deg, rgba(255,176,0,0.55), transparent 62deg);
+    animation: sweep 3.2s linear infinite;
+  }
+  @keyframes sweep { to { transform: rotate(360deg); } }
+
+  /* ===================== 底部跑馬燈 ===================== */
+  .ticker {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 9997;
+    height: 26px; overflow: hidden;
+    background: #0a0705; border-top: 1px solid var(--o);
+  }
+  .ticker-inner {
+    display: inline-block; white-space: nowrap;
+    padding-left: 100%;
+    font-family: var(--mono); font-size: 12px; line-height: 26px;
+    color: var(--green); letter-spacing: 0.08em;
+    animation: tickerRun 46s linear infinite;
+  }
+  .ticker-inner b { color: var(--o); font-weight: 600; }
+  @keyframes tickerRun { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+
+  /* ===================== 側邊直式標籤 ===================== */
+  .edge-label {
+    position: fixed; top: 96px; left: 12px; z-index: 2; pointer-events: none;
+    writing-mode: vertical-rl; text-orientation: upright;
+    font-family: var(--cjk); font-size: 11.5px; letter-spacing: 0.38em;
+    color: rgba(255,122,0,0.40);
+  }
+  .edge-label.right { left: auto; right: 12px; color: rgba(255,122,0,0.30); }
+  @media (max-width: 1480px) { .edge-label { display: none; } }
+
+  /* ===================== CRT 後製層 ===================== */
+  .crt {
+    position: fixed; inset: 0; z-index: 9998; pointer-events: none;
+    background:
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.17) 0 1px, transparent 1px 3px),
+      radial-gradient(ellipse 120% 100% at 50% 50%, transparent 60%, rgba(0,0,0,0.58) 100%);
+    animation: crtFlicker 5.5s steps(1) infinite;
+  }
+  @keyframes crtFlicker { 0%,96% { opacity: 1; } 97% { opacity: 0.84; } 98% { opacity: 1; } 99% { opacity: 0.9; } }
+  .crt-noise {
+    position: fixed; inset: -50%; z-index: 9996; pointer-events: none; opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: noiseShift .6s steps(3) infinite;
+  }
+  @keyframes noiseShift {
+    0%   { transform: translate(0, 0); }
+    33%  { transform: translate(-2%, 1%); }
+    66%  { transform: translate(1%, -2%); }
+    100% { transform: translate(0, 0); }
+  }
+
+  /* 逐字輸入狀態列 */
+  .typeline {
+    font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.12em;
+    color: var(--green); text-transform: uppercase;
+    white-space: nowrap; overflow: hidden;
+    border-right: 6px solid var(--green);
+    width: 0; animation: typing 3.4s steps(46) .4s forwards, caret .9s steps(1) infinite;
+  }
+  @keyframes typing { to { width: 100%; } }
+  @keyframes caret { 0%,50% { border-color: var(--green); } 51%,100% { border-color: transparent; } }
+
+  /* ===================== HUD 狀態列 ===================== */
+  .hud-status {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    padding: 5px 12px; margin-bottom: 12px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--green);
+    background: rgba(255,176,0,0.04);
+  }
+  .hud-stat {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em;
+    border-left: 1px solid var(--line); padding-left: 10px;
+  }
+  .hud-status .hud-stat:first-of-type { border-left: none; padding-left: 0; }
+  .hud-stat i { font-style: normal; color: var(--ink-muted); }
+  .hud-stat b { color: var(--amber); font-weight: 600; }
+  .hud-stat b.pat { color: var(--o-1); }
+
+  /* 頁尾標語 */
+  .motto {
+    flex: 1 1 100%; margin-top: 14px; padding-top: 12px;
+    border-top: 1px dashed var(--line);
+    font-family: var(--display); font-size: 15px; font-weight: 500;
+    letter-spacing: 0.24em; line-height: 1.5; text-transform: uppercase;
+    color: rgba(240,24,24,0.85); text-align: right;
+  }
+
+  /* ===================== SVG 圖示 ===================== */
+  .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+  .ic {
+    width: 1em; height: 1em; display: block;
+    fill: none; stroke: currentColor; stroke-width: 1.7;
+    stroke-linecap: square; stroke-linejoin: miter;
+  }
+  .insp .icon .ic, .role-chip .role-icn .ic { width: 18px; height: 18px; }
+  .modal-head .icon .ic { width: 24px; height: 24px; }
+  .role-chip .role-icn { display: inline-flex; }
+
+  /* ---------- 其餘元件配合 ---------- */
+  .entry:hover { background-color: rgba(255,122,0,0.06); }
+  .insp::after { content: "▸ INSPECT"; font-family: var(--mono); letter-spacing: 0.12em; }
+  .timeline-status::before { content: "▮ "; color: var(--o); opacity: 1; }
+  .timeline-status:empty { display: none; }   /* 查無資料時不要留下孤立的標記 */
+  #footerSpan::before { content: "▮ "; color: var(--o); opacity: 1; }
+  .code-block { background: #0a0705; color: #e8d8bf; border-color: var(--line-strong); }
+  .modal-backdrop { background: rgba(2,4,7,0.80); }
+  .modal-head { background: linear-gradient(180deg, rgba(255,122,0,0.12), transparent); }
+  .modal-section h4::before { content: "▐"; color: var(--o); }
+  .modal-section ul li::before { content: "▹"; color: var(--green); }
+  .modal-auto-notice { color: var(--amber); background: rgba(255,176,0,0.07); border-color: rgba(255,176,0,0.32); }
+
+  @media (max-width: 900px) {
+    .deck-grid, .gauges { grid-template-columns: 1fr; }
+    .deck-hud { flex-wrap: wrap; gap: 10px; }
+    .hud-mid { order: 3; flex: 1 1 100%; }
+    .alert-body { flex-wrap: wrap; padding-right: 40px; }
+    .alert-code { margin-left: 0; }
+    h1 { font-size: 32px; }
+  }
 </style>
 </head>
 <body>
-<script>
-  /* Apply saved theme before paint to avoid flash. Default: follow OS. */
-  (function () {
-    try {
-      var saved = localStorage.getItem("ctx_theme_v1");
-      var theme = saved || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-      document.documentElement.setAttribute("data-theme", theme);
-    } catch (e) {}
-  })();
-</script>
+<!-- ============ SVG 圖示庫（全站不使用 emoji） ============ -->
+<svg class="sprite" aria-hidden="true" focusable="false"><defs>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 L5 14h6l-1 8 8-12h-6z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-4 8-8 10-4-2-8-5-8-10V6z"/><path d="M12 8v6"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><path d="M5 11h14v10H5z"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="7" cy="12" r="4"/><path d="M11 12h11M18 12v4M21 12v3"/></symbol>
+  <symbol id="i-badge" viewBox="0 0 24 24"><path d="M3 5h18v14H3z"/><path d="M7 10h4v4H7zM14 10h4M14 14h4"/></symbol>
+  <symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6 18.4 18.4"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 1v3M12 20v3M1 12h3M20 12h3"/></symbol>
+  <symbol id="i-flask" viewBox="0 0 24 24"><path d="M9 2h6M10 2v7L4 21h16L14 9V2M7 16h10"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4M9 12h6M9 16h6"/></symbol>
+  <symbol id="i-puzzle" viewBox="0 0 24 24"><path d="M4 4h6v2a2 2 0 1 0 4 0V4h6v6h-2a2 2 0 1 0 0 4h2v6h-6v-2a2 2 0 1 0-4 0v2H4z"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 2v6M15 2v6M6 8h12v3a6 6 0 0 1-12 0zM12 17v5"/></symbol>
+  <symbol id="i-antenna" viewBox="0 0 24 24"><path d="M4 14A10 10 0 0 1 14 4M8 16a6 6 0 0 1 6-6M3 21l7-7"/><circle cx="17" cy="7" r="2"/></symbol>
+  <symbol id="i-terminal" viewBox="0 0 24 24"><path d="M3 4h18v16H3z"/><path d="M6 9l3 3-3 3M12 15h6"/></symbol>
+  <symbol id="i-desktop" viewBox="0 0 24 24"><path d="M3 4h18v12H3z"/><path d="M9 20h6M12 16v4"/></symbol>
+  <symbol id="i-mobile" viewBox="0 0 24 24"><path d="M7 2h10v20H7z"/><path d="M10 18h4"/></symbol>
+  <symbol id="i-cursor" viewBox="0 0 24 24"><path d="M5 3l14 7-6 2-2 6z"/></symbol>
+  <symbol id="i-window" viewBox="0 0 24 24"><path d="M3 4h18v16H3z"/><path d="M3 9h18M8 4v5"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></symbol>
+  <symbol id="i-scope" viewBox="0 0 24 24"><path d="M7 21h13M12 3h4v7h-4z"/><path d="M15 10c3 1 4 4 4 7M10 21a5 5 0 0 1 2-9"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><path d="M9 3h6v10a3 3 0 0 1-6 0z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4M8 22h8"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16v3M11 10v9M15 13v6M19 6v13"/></symbol>
+  <symbol id="i-db" viewBox="0 0 24 24"><path d="M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3v12c0 1.7-3.6 3-8 3s-8-1.3-8-3z"/><path d="M4 10c0 1.7 3.6 3 8 3s8-1.3 8-3M4 15c0 1.7 3.6 3 8 3s8-1.3 8-3"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18h2a2 2 0 0 0 0-4 2 2 0 0 1 2-2h2a3 3 0 0 0 3-3c0-5-4-9-9-9z"/><path d="M7.5 11h.01M10.5 7.5h.01M15 8h.01"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><path d="M3 5h18v14H3z"/><path d="M3 16l5-5 4 4 3-3 6 6"/></symbol>
+  <symbol id="i-branch" viewBox="0 0 24 24"><path d="M6 4v12"/><circle cx="6" cy="19" r="2.6"/><circle cx="18" cy="6" r="2.6"/><path d="M18 9c0 5-12 3-12 8"/></symbol>
+  <symbol id="i-loop" viewBox="0 0 24 24"><path d="M4 10a8 8 0 0 1 14-4M20 14A8 8 0 0 1 6 18"/><path d="M17 2v5h-5M7 22v-5h5"/></symbol>
+  <symbol id="i-robot" viewBox="0 0 24 24"><path d="M12 2v3M5 5h14v14H5z"/><path d="M9 10h.01M15 10h.01M9 15h6"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 2l2.2 6.8L21 11l-6.8 2.2L12 20l-2.2-6.8L3 11l6.8-2.2z"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M6 3v18M12 3v18M18 3v18M3 8h6M9 14h6M15 7h6"/></symbol>
+  <symbol id="i-hook" viewBox="0 0 24 24"><path d="M16 3a4 4 0 0 0-8 0v11a4 4 0 1 1-4-4"/></symbol>
+  <symbol id="i-ruler" viewBox="0 0 24 24"><path d="M3 9h18v6H3z"/><path d="M7 9v3M11 9v4M15 9v3M19 9v4"/></symbol>
+  <symbol id="i-clip" viewBox="0 0 24 24"><path d="M20 10l-8.5 8.5a5 5 0 0 1-7-7L13 3a3.5 3.5 0 0 1 5 5l-8.5 8.5a2 2 0 0 1-3-3L15 5"/></symbol>
+  <symbol id="i-rocket" viewBox="0 0 24 24"><path d="M12 2c4 3 6 7 6 12l-3 3H9l-3-3c0-5 2-9 6-12z"/><path d="M9 20l-2 2M15 20l2 2M12 9h.01"/></symbol>
+  <symbol id="i-web" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 4 3 14 0 18M12 3c-3 4-3 14 0 18"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M3 5h18v16H3z"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-pulse" viewBox="0 0 24 24"><path d="M2 12h5l2-7 4 14 2-7h7"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></symbol>
+  <symbol id="i-hex" viewBox="0 0 24 24"><path d="M12 2l9 5v10l-9 5-9-5V7z"/><path d="M12 8l4 2.4v4.2L12 17l-4-2.4v-4.2z"/></symbol>
+</defs></svg>
+
 <div class="wrap">
+
+  <!-- ============ NERV 主控臺 HUD ============ -->
+  <div class="deck-hud">
+    <div class="hud-emblem">
+      <svg class="hud-mark" viewBox="0 0 64 64" aria-label="NERV" role="img">
+        <!-- 斜切半葉：沿左上→右下對角線切開，保留右上側鋸齒剪影 -->
+        <path fill="currentColor" d="M12,6 C16,1 22,0 26,4 C29,7 30,7 33,4 C37,0 44,1 46,6 C48,10 50,10 53,8 C58,6 62,10 60,15 L56,17 L61,21 L55,24 L60,28 L54,31 L59,35 L53,38 L58,42 L52,45 L57,49 L55,50 L56,52 Z"/>
+      </svg>
+      <div class="hud-org">
+        <b>NERV</b>
+        <span>特務機關 · 中央本部</span>
+      </div>
+    </div>
+    <div class="hud-mid">
+      <span class="hud-code">CODE:601</span>
+      <span class="hud-slash" aria-hidden="true"></span>
+      <span class="hud-title">CENTRAL DOGMA · CHANGELOG TERMINAL · <span id="hudScope">ALL UNITS</span></span>
+    </div>
+    <div class="hud-right">
+      <span class="led ok" aria-hidden="true"></span>
+      <span class="led warn" aria-hidden="true"></span>
+      <span class="led crit" aria-hidden="true"></span>
+      <span class="hud-clock" id="hudClock">--:--:--</span>
+    </div>
+  </div>
+
+  <!-- HUD 狀態列：逐字輸入 + 系統狀態標籤 -->
+  <div class="hud-status">
+    <span class="typeline" id="bootLine">MAGI CONNECTION: ONLINE — ENTRY PLUG CONNECTED</span>
+    <span class="hud-stat"><i>SECURITY</i><b>AAA</b></span>
+    <span class="hud-stat"><i>A.T. FIELD</i><b>DEPLOYED</b></span>
+    <span class="hud-stat"><i>PATTERN</i><b class="pat">BLUE</b></span>
+    <span class="hud-stat"><i>UNIT</i><b>EVA-01</b></span>
+  </div>
+
+  <!-- ============ 警報訊息 ============ -->
+  <div class="alert-bar" id="alertBar" role="status">
+    <div class="alert-strip hz red" aria-hidden="true"></div>
+    <div class="alert-body">
+      <span class="alert-kanji">警告</span>
+      <div class="alert-text">
+        <b>EMERGENCY · PATTERN BLUE · ANGEL DETECTED</b>
+        <span id="alertMsg">SYNCHRONIZATION IN PROGRESS…</span>
+      </div>
+      <span class="alert-code">ALERT LV.<b id="alertLv">1</b></span>
+    </div>
+    <div class="alert-strip hz red" aria-hidden="true"></div>
+    <button class="alert-close" id="alertClose" type="button" aria-label="關閉警報">×</button>
+  </div>
 
   <header class="hero">
     <div class="term-bar">
       <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
       <span class="term-path"><span class="b">~/ai-coding-changelog</span> — tracker</span>
       <span class="refresh-badge"><span>last sync <b id="lastRefreshed">2026-07-30 18:13 (Taipei)</b></span></span>
-      <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色／淺色主題" title="切換主題">
-        <span class="icon-moon" aria-hidden="true">🌙</span><span class="icon-sun" aria-hidden="true">☀️</span>
-      </button>
     </div>
     <div class="term-body">
       <h1>AI Coding Tools <span class="accent">更新摘要</span></h1>
@@ -1067,6 +1552,74 @@
       </div>
     </div>
   </header>
+
+  <!-- ============ MAGI 儀表板 ============ -->
+  <section class="deck" aria-label="MAGI SYSTEM 儀表板">
+    <div class="deck-head">
+      <span class="radar" aria-hidden="true"></span>
+      <span class="deck-title">MAGI SYSTEM</span>
+      <span class="deck-sub">人工進化研究所 · 決議機關 / CENTRAL DOGMA</span>
+      <span class="deck-verdict" id="deckVerdict">全員一致 通過</span>
+    </div>
+    <div class="deck-grid">
+      <div class="node notch agent-cc">
+        <div class="node-top"><span>NODE-01 / MELCHIOR-1</span><span class="node-state">通過</span></div>
+        <div class="node-name">Melchior<span>-1</span></div>
+        <div class="node-owner">CLAUDE CODE / ANTHROPIC</div>
+        <div class="node-metric"><b id="magiCcCount">—</b><span>records</span></div>
+        <div class="segbar"><i id="magiCcBar" style="width:0%"></i></div>
+        <div class="node-foot"><span>LATEST</span><b id="magiCcVer">—</b></div>
+      </div>
+      <div class="node notch agent-ca">
+        <div class="node-top"><span>NODE-02 / BALTHASAR-2</span><span class="node-state">通過</span></div>
+        <div class="node-name">Balthasar<span>-2</span></div>
+        <div class="node-owner">CODEX APP / OPENAI</div>
+        <div class="node-metric"><b id="magiCaCount">—</b><span>records</span></div>
+        <div class="segbar"><i id="magiCaBar" style="width:0%"></i></div>
+        <div class="node-foot"><span>LATEST</span><b id="magiCaVer">—</b></div>
+      </div>
+      <div class="node notch agent-ci">
+        <div class="node-top"><span>NODE-03 / CASPER-3</span><span class="node-state">通過</span></div>
+        <div class="node-name">Casper<span>-3</span></div>
+        <div class="node-owner">CODEX CLI / OPENAI</div>
+        <div class="node-metric"><b id="magiCiCount">—</b><span>records</span></div>
+        <div class="segbar"><i id="magiCiBar" style="width:0%"></i></div>
+        <div class="node-foot"><span>LATEST</span><b id="magiCiVer">—</b></div>
+      </div>
+      <div class="gauges">
+        <div class="gauge" id="gaugeSync">
+          <div class="gauge-label">同步率 <span>SYNC RATE</span></div>
+          <div class="gauge-val" id="gaugeSyncVal">—</div>
+          <div class="segbar"><i id="gaugeSyncBar" style="width:0%"></i></div>
+          <div class="gauge-scale"><span>0</span><span>50</span><span>100</span></div>
+        </div>
+        <div class="gauge" id="gaugeAct">
+          <div class="gauge-label">活性度 <span>HARMONICS · 30D</span></div>
+          <div class="gauge-val" id="gaugeActVal">—</div>
+          <div class="segbar"><i id="gaugeActBar" style="width:0%"></i></div>
+          <div class="gauge-scale"><span>0</span><span>15</span><span>30</span></div>
+        </div>
+        <div class="gauge" id="gaugeAt">
+          <div class="gauge-label">絕對領域 <span>A.T. FIELD</span></div>
+          <div class="gauge-val" id="gaugeAtVal">—</div>
+          <div class="segbar"><i id="gaugeAtBar" style="width:0%"></i></div>
+          <div class="gauge-scale"><span>0</span><span>50</span><span>100</span></div>
+        </div>
+      </div>
+      <div class="wave-box">
+        <div class="wave-head">
+          <b>諧波記錄</b>
+          <span>HARMONICS PATTERN · 12 WEEKS</span>
+          <span class="peak" id="wavePeak">PEAK —</span>
+        </div>
+        <svg class="wave" id="waveChart" viewBox="0 0 240 54" preserveAspectRatio="none" role="img" aria-label="近 12 週更新量波形">
+          <polygon id="waveArea" points=""></polygon>
+          <polyline id="waveLine" points=""></polyline>
+          <line class="base" x1="0" y1="53" x2="240" y2="53"></line>
+        </svg>
+      </div>
+    </div>
+  </section>
 
   <!-- Filter dock：agent（全站，含全站搜尋）＋ role（影響應用靈感），捲動時懸浮置頂 -->
   <div class="filter-dock" id="filterDock">
@@ -1092,7 +1645,7 @@
       <label class="perf-toggle" title="開關顯示「效能/修復 · Performance/Bug Fix」類別；仍可點上方分類單獨篩選"><input type="checkbox" id="perfToggle" /> 效能/修復</label>
     </div>
     <div class="timeline" id="timelineAll"></div>
-    <div class="empty" id="emptyAll" style="display:none;">沒有符合條件的版本，試著清空篩選或關鍵字。</div>
+    <div class="empty" id="emptyAll" style="display:none;"></div>
     <div class="timeline-status" id="statusAll"></div>
     <div class="load-more-row" id="moreAll" style="display:none;">
       <button class="load-more" id="loadMoreBtn" type="button">顯示更多版本 <span class="arrow">↓</span></button>
@@ -1182,6 +1735,7 @@
       <a href="https://developers.openai.com/codex/changelog?type=codex-cli" target="_blank" rel="noopener">Codex CLI</a>
     </span>
     <span id="footerSpan">覆蓋 —</span>
+    <span class="motto">GOD'S IN HIS HEAVEN.<br />ALL'S RIGHT WITH THE WORLD.</span>
   </footer>
 </div>
 
@@ -1199,7 +1753,15 @@
     <div class="modal-body" id="modalBody"></div>
   </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+
+<!-- 裝飾層：側邊直式標籤、底部跑馬燈、CRT 後製 -->
+<div class="edge-label" aria-hidden="true">初號機 起動 EVA UNIT-01</div>
+<div class="edge-label right" aria-hidden="true">中央作戰司令部 發令所</div>
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-inner" id="tickerText">SYNCHRONIZATION IN PROGRESS…</div>
+</div>
+<div class="crt-noise" aria-hidden="true"></div>
+<div class="crt" aria-hidden="true"></div>
 <script>
   /* ===========================
      DATA
@@ -1229,7 +1791,7 @@
     {v:"2.1.199", date:"2026-07-02", cat:"Subagents/Skills", body:"<b>疊加 slash-skill 呼叫最多可載入 5 個 skill</b>；修復 SSL 憑證錯誤處理、串流中途錯誤丟棄回應、subagent 部分工作處理、背景 daemon Linux 問題、<code>claude stop</code> 競態條件、背景任務進度、記憶體壓力、遠端 session 抖動、model picker、hooks stderr、SendMessage 路由錯誤、色彩底色、設定檔復原、Chrome 重連與 plan mode 提示等多項問題。"},
     {v:"2.1.198", date:"2026-07-01", cat:"UI/UX", body:"<b>Claude in Chrome 正式發布（GA）</b>：Chrome 瀏覽器延伸功能正式上線，可在任意頁面呼叫 Claude Code；<b>背景 agent 完成推播通知</b>：背景 agent 任務結束時推送桌面通知；新增 <code>/dataviz</code> 資料視覺化 skill；<b>AWS 平台支援強化</b>；背景 session 完成後<b>自動建立 PR</b>；多項可靠性改進。"},
     {v:"2.1.197", date:"2026-06-30", cat:"Settings/Config", body:"<b>Claude Sonnet 5 成為 Claude Code 預設模型</b>：具備原生 <b>1M token context window</b>，促銷定價 $2/$10 per Mtok（至 2026-08-31）；需更新至 2.1.197 才能存取 Sonnet 5。"},
-    {v:"2.1.196", date:"2026-06-29", cat:"Performance/Bug Fix", body:"<b>新增組織預設模型</b>：管理員可在 org console 設定，<code>/model</code> 顯示為「Org default」或「Role default」；<b>Session 啟動自動產生易讀預設名稱</b>；<b>聊天文件附件可點擊</b>（Cmd/Ctrl-click 在 Finder/Explorer 顯示）；<b>安全修復</b>：<code>claude mcp list/get</code> 不再啟動工作區自行核准的 <code>.mcp.json</code> MCP 伺服器（未信任 workspace 顯示「⏸ Pending approval」）；<b>串流閒置看門狗</b>預設對所有 provider 開啟（5 分鐘無事件即中止並重試，設 <code>CLAUDE_ENABLE_STREAM_WATCHDOG=0</code> 停用）；<code>claude agents</code> 改為單次 ← 進入 agent 視圖；<code>/code-review</code> 合併清理 finder 減少約 25% token 用量；修復背景 session 對話遺失、速率限制閃爍、PowerShell git 指令回傳碼誤判、語音聽寫吞字等多項問題。"},
+    {v:"2.1.196", date:"2026-06-29", cat:"Performance/Bug Fix", body:"<b>新增組織預設模型</b>：管理員可在 org console 設定，<code>/model</code> 顯示為「Org default」或「Role default」；<b>Session 啟動自動產生易讀預設名稱</b>；<b>聊天文件附件可點擊</b>（Cmd/Ctrl-click 在 Finder/Explorer 顯示）；<b>安全修復</b>：<code>claude mcp list/get</code> 不再啟動工作區自行核准的 <code>.mcp.json</code> MCP 伺服器（未信任 workspace 顯示「Pending approval」）；<b>串流閒置看門狗</b>預設對所有 provider 開啟（5 分鐘無事件即中止並重試，設 <code>CLAUDE_ENABLE_STREAM_WATCHDOG=0</code> 停用）；<code>claude agents</code> 改為單次 ← 進入 agent 視圖；<code>/code-review</code> 合併清理 finder 減少約 25% token 用量；修復背景 session 對話遺失、速率限制閃爍、PowerShell git 指令回傳碼誤判、語音聽寫吞字等多項問題。"},
     {v:"2.1.195", date:"2026-06-26", cat:"Performance/Bug Fix", body:"<b>新增 <code>CLAUDE_CODE_DISABLE_MOUSE_CLICKS</code> 環境變數</b>：停用全螢幕模式的滑鼠點擊／拖曳／懸停（保留滾輪捲動）；修復帶連字號識別字的 hook matcher 意外走子字串比對（<code>code-reviewer</code>、<code>mcp__brave-search</code> 等改為精確匹配，如需比對所有同名 MCP 工具請用 <code>mcp__brave-search__.*</code>）；修復 macOS 長 session 預設輸入裝置異動導致語音擷取靜音；修復日文／中文／泰文等無空格語言語音聽寫自動送出失效；修復僅由專案 <code>.claude/settings.json</code> 啟用的外部 plugin 每次重複要求安裝同意；修復 <code>/plugin</code> Enable/Disable 在 plugin.json name 與 marketplace 名稱不符時失效；修復背景作業由新版 Claude Code 寫入後從 <code>claude agents</code> 消失或資料遺失；修復崩潰背景任務重啟顯示空白畫面最長 5 秒（現為即時重啟）；修復控制 socket 啟動失敗時 daemon 不可達；Linux 語音模式現區分「無麥克風」與「未安裝 SoX」；<code>claude agents</code> 完成清單填滿可用垂直空間，短終端自動縮小標題；遠端 session 啟動加入設定清單。"},
     {v:"2.1.193", date:"2026-06-25", cat:"Settings/Config", body:"<b>新增 <code>autoMode.classifyAllShell</code> 設定</b>：所有 Bash/PowerShell 指令均走 auto-mode 分類器（原僅分類任意程式碼執行樣式）；<b>auto-mode 拒絕原因</b>同步顯示於 transcript、拒絕提示與 <code>/permissions</code> 最近拒絕清單；<b>新增 <code>claude_code.assistant_response</code> OpenTelemetry 記錄事件</b>（含模型回應文字，預設遮蔽；設 <code>OTEL_LOG_ASSISTANT_RESPONSES=1</code> 解鎖；若已啟用 <code>OTEL_LOG_USER_PROMPTS</code> 升級後亦自動記錄回應，可設 <code>=0</code> 僅記錄 prompt）；<b>bash 模式（<code>!</code>）加入即時檔案路徑自動補全</b>；<b>MCP 伺服器需認證時啟動顯示通知</b>並引導至 <code>/mcp</code>；<b>閒置背景 shell 自動回收記憶體壓力</b>（可用 <code>CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1</code> 停用）。修復：<code>/login</code> 後 <code>/model</code> 等 UI 顯示舊／空白狀態；背景切換（←←）在所有任務均已移轉時誤報「N 背景任務將被放棄」；釘選背景 agent 每次自動更新後重複要求「繼續未完成工作」；切換主 turn 至背景時產生幽靈「general-purpose (resumed)」子 agent 重跑對話；查看子 agent 時面板隱藏兄弟 agent；MCP <code>headersHelper</code> 在工具呼叫回傳 401/403 時自動重跑並重新連線；plugin 自動套用 marketplace <code>renames</code> 對應表更新本地設定名稱；<code>/add-dir</code> 目錄已是工作目錄時提供更清晰提示。"},
     {v:"2.1.191", date:"2026-06-24", cat:"Performance/Bug Fix", body:"<b>CPU 使用率降低 37%</b>：將文字更新合併為 100ms 批次間隔，大幅降低串流回應期間的 CPU 用量；<b>恢復 <code>/rewind</code> 支援</b>：<code>/clear</code> 後可從先前對話點復原；<b>MCP 伺服器可靠性改進</b>：<code>tools/list</code>/<code>prompts/list</code>/<code>resources/list</code> 遇暫時網路錯誤自動重試（含短退避），MCP OAuth 重試強化，無頭環境直接顯示 URL 貼上提示；沙箱網路允許主機在整個 session 內記住（不再每次連線重新詢問）；Vim NORMAL <code>/</code> 搜尋現提示如何存取 slash 指令。修復：串流期間捲動位置跳至底部；停止的背景 agent 在停止後復活；<code>/voice</code> 被組織政策停用時顯示明確說明；Windows Terminal 中 <code>/login</code> URL 換行截斷；<code>/permissions</code>「Recently-denied」標籤批准拒絕後靜默丟棄；hook matcher 逗號分隔樣式永不觸發；<code>forceRemoteSettingsRefresh</code> 透過 MDM 設定時未生效；Ghostty over ssh/tmux 的 Cmd+click 連結異常；長 session 終端輸出快取導致記憶持續增長。"},
@@ -1333,7 +1895,7 @@
     {v:"2026-05-05", date:"2026-05-05", cat:"UI/UX", title:"語音聽寫字典與圖片 lightbox 強化", body:"新增 <b>dictation cleanup</b> 與可設定的聽寫字典（含人名、檔案路徑、程式符號）。圖片 lightbox 加入縮放與下載；in-app 瀏覽器留言錨點在捲動與縮放下保持對齊；PR 建立與重連流程更穩定。"},
     {v:"2026-04-24", date:"2026-04-24", cat:"UI/UX", title:"Realtime 委派提示與多項桌面修復", body:"在 realtime 委派訊息加上 tooltip 說明會以周圍語音對話為 context。修復長 review 檔案的搜尋跳轉、embedded MCP 面板於全螢幕切換時不再重啟、舊版 macOS 全域聽寫熱鍵與 tray crash 等問題。"},
     {v:"2026-04-20", date:"2026-04-20", cat:"UI/UX", title:"Composer 支援本地 branch 搜尋與可摺疊側欄", body:"新增 composer 內 <b>local branch search</b> 與非圖片檔案貼上、<b>可摺疊側欄區段</b>、tray 顯示 usage limit、命令面板主題切換。Review diff 批次與狀態保留更穩定。"},
-    {v:"2026-04-16", date:"2026-04-16", cat:"UI/UX", title:"🎉 Codex 擴展為通用工作空間（重大更新）", body:"重大更新：新增 <b>in-app browser</b>（可對渲染頁面留言）、<b>Computer Use</b>（操作 macOS App）、無需先選資料夾的 <b>Chats</b>、<b>thread automations</b>、<b>task sidebar</b>、context-aware suggestions、GitHub PR 流程嵌入、<b>artifact viewer</b>（預覽 PDF/試算表/簡報）、<b>Memories</b>。另含 SSH remote connections alpha、多終端機、Windows 系統匣、多視窗、Intel Mac 支援。"},
+    {v:"2026-04-16", date:"2026-04-16", cat:"UI/UX", title:"Codex 擴展為通用工作空間（重大更新）", body:"重大更新：新增 <b>in-app browser</b>（可對渲染頁面留言）、<b>Computer Use</b>（操作 macOS App）、無需先選資料夾的 <b>Chats</b>、<b>thread automations</b>、<b>task sidebar</b>、context-aware suggestions、GitHub PR 流程嵌入、<b>artifact viewer</b>（預覽 PDF/試算表/簡報）、<b>Memories</b>。另含 SSH remote connections alpha、多終端機、Windows 系統匣、多視窗、Intel Mac 支援。"},
     {v:"2026-04-12", date:"2026-04-12", cat:"UI/UX", title:"命令選單檔案搜尋與側欄豐富預覽", body:"新增 command-menu 檔案搜尋（<code>Cmd+P</code> 進入 workspace 檔案搜尋）、側欄 file viewer 支援圖片/PDF/Markdown 預覽、每個 thread 獨立 terminal tabs、選取文字 <b>Ask Codex</b> overlay、Help 選單回饋入口。"},
     {v:"2026-04-10", date:"2026-04-10", cat:"Cloud/Web", title:"Windows Store 更新器與 PR 流程擴充", body:"新增 <b>Windows Store updater</b>。PR 流程加上活動 timeline、PR 頁面留言、push modal 推送選項。Thread 側欄新增 workspace 檔案 tabs、tab 拖曳排序、run action 編輯與登出確認。"},
     {v:"2026-04-01", date:"2026-04-01", cat:"UI/UX", title:"原生 Windows 更新器與 workspace 設定", body:"新增 workspace 設定、MCP 核准面板的 <b>Don't ask again</b>、<b>原生 Windows updater</b>（含 MSIX）與 Windows 系統匣常駐選單、automation composer 內 <code>@</code> mention App/檔案、subagent diff 統計、artifact cards。"},
@@ -1398,7 +1960,7 @@
   ];
 
   const INSP_CC = [
-    {ico:"⚡", color:"purple", feat:"/ultrareview — 平行多 Agent Code Review", ver:"v2.1.111 · 2026-04-16",
+    {ico:"bolt", color:"purple", feat:"/ultrareview — 平行多 Agent Code Review", ver:"v2.1.111 · 2026-04-16",
      desc:"非互動式雲端平行多 agent review，可一次跑安全、效能、可讀性、Style 多視角。",
      scen:"<b>iOS 場景：</b>每次 PR 進 develop 前自動跑 <code>claude ultrareview</code>，產出 Swift Concurrency、SwiftUI 效能、銀行交易資安、團隊 Style 四份報告。RD 不再瓶頸於 Senior Reviewer。",
      d:[
@@ -1407,7 +1969,7 @@
        {h:"四種 iOS 視角分工建議", l:["<b>Concurrency</b>：actor 隔離、Sendable、@MainActor 違規","<b>Security</b>：Keychain、APIClient、TLS pinning、log 是否漏個資","<b>UI Perf</b>：SwiftUI body 重繪、Combine 訂閱洩漏","<b>團隊 Style</b>：內部命名規範、SwiftLint warnings"]},
        {h:"包成團隊 Slash Command", c:"bash", b:"# .claude/commands/review.md\nclaude ultrareview $1 \\\n  --agent concurrency-swift \\\n  --agent security-banking \\\n  --agent ui-perf \\\n  --agent style"}
      ]},
-    {ico:"🔒", color:"orange", feat:"Hooks 條件式 if + permission 語法", ver:"v2.1.85 · 2026-03-26",
+    {ico:"lock", color:"orange", feat:"Hooks 條件式 if + permission 語法", ver:"v2.1.85 · 2026-03-26",
      desc:"Hooks 可加 <code>if</code> 條件，使用 <code>Bash(git push *)</code> 這類 permission 規則精準觸發。",
      scen:"<b>銀行 APP 場景：</b>偵測 <code>Bash(git push origin main)</code> 自動 block；<code>Edit(*Secrets.swift)</code> 強制二次確認。",
      d:[
@@ -1416,7 +1978,7 @@
        {h:"Secrets.swift 編輯需二次確認", c:"json", b:"{\n  \"event\": \"PreToolUse\",\n  \"if\": \"Edit(**/Secrets.swift) || Edit(**/*ApiKey*.swift)\",\n  \"action\": { \"decision\": \"ask\" }\n}"},
        {h:"延伸玩法", l:["改 <code>.pbxproj</code> 自動寄通知到 Slack","或自動標記 PR 需資安 sign-off","可疊加多個 hook 互不干擾"]}
      ]},
-    {ico:"📋", color:"green", feat:"/recap + 模型自動 /init /review", ver:"v2.1.108 · 2026-04-14",
+    {ico:"doc", color:"green", feat:"/recap + 模型自動 /init /review", ver:"v2.1.108 · 2026-04-14",
      desc:"新 <code>/recap</code> 重點摘要；模型可透過 Skill 工具呼叫 <code>/init</code>、<code>/review</code>、<code>/security-review</code>。",
      scen:"<b>Scrum 場景：</b>站立會議前用 <code>/recap</code> 整理昨日對話與 commit；Sprint 中段排程跑 <code>/security-review</code>，提早發現金融合規風險。",
      d:[
@@ -1425,7 +1987,7 @@
        {h:"自動週五安全 review", c:"yaml", b:"# .claude/skills/auto-security.md\n---\nname: auto-security\ntrigger: every-friday\n---\n當 sprint 進入週五時自動跑 /security-review，\n把結果寫到 .claude/reports/security-{date}.md"},
        {h:"和 Sprint 流程整合", l:["<b>Daily standup</b>：用 /recap 跨 session 串聯昨日進度","<b>Sprint review</b>：批次跑 /recap 拼成 sprint summary","<b>Retro</b>：對 retrospective session 跑 /recap 摘錄共識"]}
      ]},
-    {ico:"🧩", color:"blue", feat:"Plugin 可內附 bin/ 執行檔", ver:"v2.1.91 · 2026-04-02",
+    {ico:"puzzle", color:"blue", feat:"Plugin 可內附 bin/ 執行檔", ver:"v2.1.91 · 2026-04-02",
      desc:"Plugins 可打包 <code>bin/</code> 執行檔，配合 marketplace 內部分發。",
      scen:"<b>iOS 場景：</b>把 xcodegen wrapper、SwiftLint custom rules、API mock server 打成 plugin，新人 <code>claude plugin install ios-toolkit</code> 一行入手。",
      d:[
@@ -1434,7 +1996,7 @@
        {h:"plugin.json 範例", c:"json", b:"{\n  \"name\": \"ios-toolkit\",\n  \"version\": \"1.0.0\",\n  \"bin\": {\n    \"mock\": \"./bin/mock\",\n    \"xcgen\": \"./bin/xcgen\"\n  }\n}"},
        {h:"安裝與分發", l:["內網架 plugin marketplace（HTTP 即可）","新人執行 <code>claude plugin install ios-toolkit</code>","版本控管走 semver，破壞性變更升 major"]}
      ]},
-    {ico:"🛡️", color:"red", feat:"Sandbox + 子程序 PID namespace", ver:"v2.1.98 · 2026-04-09",
+    {ico:"shield", color:"red", feat:"Sandbox + 子程序 PID namespace", ver:"v2.1.98 · 2026-04-09",
      desc:"Linux 子程序加 PID namespace、<code>CLAUDE_CODE_SUBPROCESS_ENV_SCRUB</code> 自動清除憑證 env var。",
      scen:"<b>金融資安場景：</b>避免 Claude 把生產 token 漏給外部 MCP server。資安團隊會非常開心。",
      d:[
@@ -1443,7 +2005,7 @@
        {h:"配合 deniedDomains 雙重保險", c:"json", b:"// .claude/settings.json\n{\n  \"sandbox\": {\n    \"network\": {\n      \"deniedDomains\": [\"*.production.example.com\"],\n      \"failIfUnavailable\": true\n    }\n  }\n}"},
        {h:"哪些變數會被 scrub", l:["<code>AWS_*</code>、<code>ANTHROPIC_API_KEY</code>、<code>OPENAI_API_KEY</code>","結尾為 <code>_TOKEN</code>、<code>_SECRET</code>、<code>_PASSWORD</code> 的變數","自訂前綴可透過設定加入"]}
      ]},
-    {ico:"📐", color:"gold", feat:"/team-onboarding 指令", ver:"v2.1.101 · 2026-04-10",
+    {ico:"ruler", color:"gold", feat:"/team-onboarding 指令", ver:"v2.1.101 · 2026-04-10",
      desc:"幫助新人快速進入專案。",
      scen:"<b>AI Scrum 場景：</b>新進 iOS RD 第一天執行，自動帶過 repo 結構、CI flow、銀行 API gateway、code review checklist。學習曲線從 1-2 週壓到半天。",
      d:[
@@ -1451,7 +2013,7 @@
        {h:"建立團隊 onboarding 模板", c:"yaml", b:"# .claude/commands/onboarding.md\n---\nname: ios-onboarding\ndescription: iOS 新進 RD 入門導覽\n---\n你是新人。請依序帶我認識：\n1. 專案結構（先讀 README.md、Package.swift）\n2. CI flow（.github/workflows、fastlane）\n3. 銀行 API gateway 的呼叫慣例（讀 NetworkLayer/）\n4. Code review checklist（從 .claude/skills/style.md）\n5. 第一個練習 task：實作假交易明細頁"},
        {h:"執行流程", l:["新人第一天 <code>claude /team-onboarding</code>","Claude 邊讀 code 邊解釋，每步問「有問題嗎」","結束後產出個人版 onboarding.md 摘要","Mentor 看摘要快速確認新人理解程度"]}
      ]},
-    {ico:"🪝", color:"orange", feat:"CwdChanged / FileChanged Hooks", ver:"v2.1.83 · 2026-03-25",
+    {ico:"hook", color:"orange", feat:"CwdChanged / FileChanged Hooks", ver:"v2.1.83 · 2026-03-25",
      desc:"新增檔案變動與切換工作目錄的 hook。",
      scen:"<b>iOS 場景：</b><code>.xcodeproj</code>/<code>Package.swift</code> 變動自動跑 <code>xcodegen</code>；切到 feature 分支自動 <code>pod install</code>。",
      d:[
@@ -1460,7 +2022,7 @@
        {h:"切分支自動 pod install", c:"json", b:"{\n  \"event\": \"CwdChanged\",\n  \"action\": {\n    \"run\": \"if [ -f Podfile.lock ]; then pod install --silent; fi\"\n  }\n}"},
        {h:"還可以做的事", l:["改 <code>Localizable.strings</code> → 跑 <code>swiftgen</code>","切到 <code>main</code> → 跑 <code>git pull --ff-only</code>","Sprint 開始日 → 自動清 <code>DerivedData</code>"]}
      ]},
-    {ico:"🤖", color:"purple", feat:"Forked Subagents + Agent mcpServers", ver:"v2.1.117 · 2026-04-22",
+    {ico:"robot", color:"purple", feat:"Forked Subagents + Agent mcpServers", ver:"v2.1.117 · 2026-04-22",
      desc:"開 forked subagent；agent frontmatter 支援 <code>mcpServers</code> 限縮工具集。",
      scen:"<b>Scrum 場景：</b>定義 Sprint Planner（只連 Jira）、UI Reviewer（只連 Figma）、Compliance Bot（只連 Confluence + 資安規則）。互不干擾、可平行。",
      d:[
@@ -1469,7 +2031,7 @@
        {h:"Compliance Bot agent", c:"yaml", b:"# .claude/agents/compliance-bot.md\n---\nname: compliance-bot\nmcpServers:\n  - confluence\n  - policy-api\n---\n你是金融合規檢查員。\n對任何 PR 比對 .claude/policies/ 規則。\n如違反則建議補丁，不直接改 code。"},
        {h:"啟用 forked 平行跑", c:"bash", b:"export CLAUDE_CODE_FORK_SUBAGENT=1\nclaude --agent sprint-planner /plan-next-sprint &\nclaude --agent compliance-bot /review HEAD &\nwait"}
      ]},
-    {ico:"📡", color:"blue", feat:"Status Line worktree / 模型 / effort", ver:"v2.1.97 · 2026-04-08",
+    {ico:"antenna", color:"blue", feat:"Status Line worktree / 模型 / effort", ver:"v2.1.97 · 2026-04-08",
      desc:"Status line 支援 <code>refreshInterval</code>、<code>workspace.git_worktree</code>、<code>effort.level</code>。",
      scen:"<b>iOS RD 場景：</b>Status Line 顯示「Sprint · 分支 · Xcode scheme · 跑了幾分鐘」，搭配 <code>Ctrl+O</code> 切 verbose。",
      d:[
@@ -1478,7 +2040,7 @@
        {h:"自製腳本範例", c:"bash", b:"#!/bin/bash\n# scripts/statusline.sh\nSPRINT=$(jq -r '.sprint' .claude/sprint.json)\nBRANCH=$(git branch --show-current)\nSCHEME=$(xcodebuild -list -json | jq -r '.workspace.schemes[0]')\necho \"{\\\"sprint\\\":\\\"$SPRINT\\\",\\\"branch\\\":\\\"$BRANCH\\\",\\\"scheme\\\":\\\"$SCHEME\\\"}\""},
        {h:"小技巧", l:["<b>Ctrl+O</b> 切 verbose 看詳細上下文","<code>workspace.git_worktree</code> 顯示目前 worktree 名","<code>effort.level</code> 顯示目前思考強度（避免不小心開 xhigh 燒額度）"]}
      ]},
-    {ico:"⏰", color:"green", feat:"排程任務 + Monitor 工具", ver:"v2.1.98, 2.1.110 · 2026-04",
+    {ico:"clock", color:"green", feat:"排程任務 + Monitor 工具", ver:"v2.1.98, 2.1.110 · 2026-04",
      desc:"支援排程任務、背景腳本事件流，<code>--resume</code> 可復活排程。",
      scen:"<b>銀行專案場景：</b>排程「每週五跑 SwiftLint + 依賴檢查 + 資安掃描」自動產 PR，週一站會直接看報告。",
      d:[
@@ -1487,7 +2049,7 @@
        {h:"Monitor 工具用法", c:"bash", b:"# 跑長時間任務時看背景進度\nclaude monitor ./scripts/full-build.sh \\\n  --pattern 'warning|error' \\\n  --notify-on-match"},
        {h:"小技巧", l:["排程跑出來的失敗會自動 <code>--resume</code> 復活","可以串接 Slack webhook 通知 Scrum Master","跨 sprint 累積掃描資料能畫趨勢圖"]}
      ]},
-    {ico:"🪪", color:"gold", feat:"Skills 用 ${CLAUDE_EFFORT}", ver:"v2.1.120 · 2026-04-28",
+    {ico:"badge", color:"gold", feat:"Skills 用 ${CLAUDE_EFFORT}", ver:"v2.1.120 · 2026-04-28",
      desc:"Skills 可依 effort 動態調整內容；描述上限 250 字讓觸發更精準。",
      scen:"<b>AI Scrum 場景：</b>建立 <i>ios-style</i>、<i>api-mock</i>、<i>compliance-checklist</i> skills。Effort 高時詳列規則，平常給摘要。",
      d:[
@@ -1496,7 +2058,7 @@
        {h:"建議的 skill 清單", l:["<b>ios-style</b>：命名 / 架構規範","<b>api-mock</b>：產生符合內部 API 規格的 mock","<b>compliance-checklist</b>：金管會 / 個資法 checklist","<b>swift-perf-tips</b>：SwiftUI / Combine 效能陷阱"]},
        {h:"觸發精準度", p:"description 上限 250 字後 skill 觸發更穩 — 把 description 寫成「什麼情境會用到」，而不是 skill 內容本身的摘要。"}
      ]},
-    {ico:"🔍", color:"red", feat:"/resume 用 PR URL 搜尋", ver:"v2.1.122 · 2026-04-28",
+    {ico:"search", color:"red", feat:"/resume 用 PR URL 搜尋", ver:"v2.1.122 · 2026-04-28",
      desc:"PR URL 貼進 <code>/resume</code> 自動找對應 session。",
      scen:"<b>iOS 工作流：</b>同事丟 PR 連結，貼到 <code>/resume</code> 立刻接回上下文，不用重讀 diff。",
      d:[
@@ -1505,7 +2067,7 @@
        {h:"支援的 git host", l:["GitHub / GitHub Enterprise","GitLab / GitLab Self-managed","Bitbucket Cloud + Data Center","可自訂 <code>prUrlTemplate</code> 對應內網 git server"]},
        {h:"進階：自動帶上 review checklist", p:"配合 <code>--print</code> 非互動式跑：<code>claude /resume &lt;PR&gt; --print '依 style skill 給 review 意見'</code>，產出當下分析給 ChatOps bot。"}
      ]},
-    {ico:"🍴", color:"blue", feat:"/fork — Session 平行分叉探索", ver:"v2.1.212 · 2026-07-17",
+    {ico:"branch", color:"blue", feat:"/fork — Session 平行分叉探索", ver:"v2.1.212 · 2026-07-17",
      desc:"<code>/fork</code> 把當前 session 完整複製為背景 session，可同時試不同修法，取最優者合入。",
      scen:"<b>Sprint 場景：</b>遇到複雜 bug 有兩種修法，直接 <code>/fork</code> 開一條背景 session 試 Plan B，主 session 繼續試 Plan A——誰先跑通誰上 PR，不再序列化試錯。",
      roles:["backend","frontend","qa","pm"],
@@ -1518,7 +2080,7 @@
   ];
 
   const INSP_CA = [
-    {ico:"🌿", color:"teal", feat:"對話 Forking（分支）", ver:"v260212 · 2026-02-12",
+    {ico:"branch", color:"teal", feat:"對話 Forking（分支）", ver:"v260212 · 2026-02-12",
      desc:"在同一個 thread 開分支試不同方向，不必重起一個 session。",
      scen:"<b>iOS UI 探索場景：</b>同一個 SwiftUI navigation 設計，先 fork 一支試 NavigationStack、另一支試 NavigationSplitView。比完再選，不會搞混上下文。",
      d:[
@@ -1527,7 +2089,7 @@
        {h:"操作", c:"bash", b:"# Codex App UI:\n# 1. 在某輪 AI 回應上右鍵 → Fork from here\n# 2. 新 thread 用相同上下文開始\n# 3. 父 thread 與分支可同時開，不互相影響"},
        {h:"小技巧", p:"取個有意義的 thread 名字（例如「nav-stack」「nav-split」）。Cmd+K 切 thread 時一目瞭然。"}
      ]},
-    {ico:"🎯", color:"purple", feat:"Mid-turn Steering", ver:"v260205 · 2026-02-05",
+    {ico:"target", color:"purple", feat:"Mid-turn Steering", ver:"v260205 · 2026-02-05",
      desc:"Codex 跑到一半時可以送訊息調整方向。",
      scen:"<b>銀行交易流程場景：</b>Codex 在改 transfer flow 寫到一半，發現方向偏了，立刻送一句「請改用 Result type 而不是 throw」，省下整輪 retry。",
      d:[
@@ -1536,7 +2098,7 @@
        {h:"什麼時候用", l:["發現 Codex 誤解需求","想加額外限制（不要動某檔案）","看到一半想插一句測試案例","品味方向偏離想拉回"]},
        {h:"配合 Steer Mode（CLI）", p:"CLI 0.98+ 已穩定 Steer Mode：Tab 排隊訊息、Enter 立即送。把 mid-turn steering 從 GUI 帶到 terminal 工作流。"}
      ]},
-    {ico:"⚡", color:"green", feat:"GPT-5.3-Codex-Spark（>1000 tok/s）", ver:"2026-02-12",
+    {ico:"bolt", color:"green", feat:"GPT-5.3-Codex-Spark（>1000 tok/s）", ver:"2026-02-12",
      desc:"小型快模型，串流速度極快，適合互動式編輯。",
      scen:"<b>iOS 開發場景：</b>SwiftUI 預覽迭代、Repeat-style refactor、寫 unit test boilerplate — 用 Spark 比 5.3-Codex 快上不少，迭代節奏直接上一階。",
      d:[
@@ -1545,7 +2107,7 @@
        {h:"iOS 適合的工作流", l:["<b>SwiftUI 預覽迭代</b>：改一個顏色看效果，Spark 速度跟得上","<b>Test boilerplate</b>：產 XCTestCase 樣板","<b>Doc comment</b>：產生 ///- Parameters / Returns","<b>Snippet 翻譯</b>：把 Obj-C 轉 Swift"]},
        {h:"什麼不適合 Spark", p:"複雜 architecture decision、跨檔案 refactor、debug 邏輯錯誤這類需要深度推理的，還是切回 5.3-Codex 比較穩。"}
      ]},
-    {ico:"🧩", color:"blue", feat:"VS Code / Cursor 原生整合", ver:"2026-02-09",
+    {ico:"puzzle", color:"blue", feat:"VS Code / Cursor 原生整合", ver:"2026-02-09",
      desc:"GPT-5.3-Codex 在兩大編輯器原生可用。",
      scen:"<b>iOS 工作流：</b>銀行 APP 部分後端 / Web 用 VS Code 開發，跨團隊 review 時不必切工具。Cursor 主力是 Swift Server，可同時用同一個模型。",
      d:[
@@ -1554,7 +2116,7 @@
        {h:"iOS 的隱性好處", p:"雖然 Xcode 沒有 native extension，但 Cursor / VS Code 可以開啟 .swift 檔做小型編輯後再回 Xcode build。對 SwiftPM 為主的 iOS 專案很順手。"},
        {h:"團隊協作建議", l:["前端 / 後端 / iOS 共用同一個 Codex thread 討論 API spec","SwiftLint / ESLint 都用 Codex 一鍵修","跨團隊 PR 都用 Codex 摘要"]}
      ]},
-    {ico:"📎", color:"gold", feat:"附加任意檔案類型 + PDF 預覽", ver:"v260205, v260204",
+    {ico:"clip", color:"gold", feat:"附加任意檔案類型 + PDF 預覽", ver:"v260205, v260204",
      desc:"可拖曳任何格式的檔案；review 面板可預覽 PDF。",
      scen:"<b>銀行金管會 / 規範場景：</b>把法規 PDF（個資法、金管會規定）直接拖進 Codex App，討論 APP 功能設計時對著條文寫 code。",
      d:[
@@ -1563,7 +2125,7 @@
        {h:"場景：UX 原稿轉 SwiftUI", l:["把 Figma 截圖拖進","「實作這個交易明細卡片，用 SwiftUI」","Codex 產 code + 註解像素位置"]},
        {h:"支援格式", l:["PDF（含預覽）","PNG / JPG / WebP / GIF","CSV / JSON / XML","Swift / Obj-C / 任何文字檔"]}
      ]},
-    {ico:"🎈", color:"orange", feat:"Floating Pop-out Window", ver:"v260212 · 2026-02-12",
+    {ico:"spark", color:"orange", feat:"Floating Pop-out Window", ver:"v260212 · 2026-02-12",
      desc:"Codex App 可獨立浮動視窗。",
      scen:"<b>iOS pair programming 場景：</b>Xcode 全螢幕同時讓 Codex 浮在角落；不用 Cmd+Tab 來回切，spec / 程式 / AI 三件可同步看。",
      d:[
@@ -1572,7 +2134,7 @@
        {h:"iOS pair programming 場景", l:["Xcode 主畫面 + Codex 浮在右下","Spec 在 Notion / Confluence 開另一邊","三面同步看，不用 Cmd+Tab"]},
        {h:"小技巧", p:"搭配 mid-turn steering 特別好用 — 看 Xcode 預覽發現問題立刻在浮動 Codex 打字修正。"}
      ]},
-    {ico:"🎙️", color:"teal", feat:"ChatGPT Voice（GPT-Live）— 語音協調 Codex 任務", ver:"2026-07-23",
+    {ico:"mic", color:"teal", feat:"ChatGPT Voice（GPT-Live）— 語音協調 Codex 任務", ver:"2026-07-23",
      desc:"透過語音在 Chat、Work、Codex 之間協調任務，直接口述方向讓 Codex 在桌面背景執行。",
      scen:"<b>iOS 開發場景：</b>通勤戴 AirPods 對 ChatGPT 說「幫我繼續修 feature/payment-fix 的 bug」，Mac 上的 Codex 自動接手背景任務；進公司只需審 diff，開發節奏不中斷。",
      roles:["frontend","backend","pm"],
@@ -1585,7 +2147,7 @@
   ];
 
   const INSP_CI = [
-    {ico:"🔌", color:"blue", feat:"codex exec-server（實驗）", ver:"0.119.0 · 2026-04-10",
+    {ico:"plug", color:"blue", feat:"codex exec-server（實驗）", ver:"0.119.0 · 2026-04-10",
      desc:"把 Codex 變成可被外部呼叫的長駐 server，IPC / WebSocket 都行。",
      scen:"<b>銀行內網 CI 場景：</b>把 codex exec-server 跑在內網 build agent，CI pipeline 透過 IPC 呼叫做 PR 審查 / 測試生成；不用每次都 spin up CLI。",
      d:[
@@ -1594,7 +2156,7 @@
        {h:"CI pipeline 呼叫範例", c:"yaml", b:"# .github/workflows/pr-review.yml\n- name: Codex PR review\n  run: |\n    curl -X POST http://build-agent.internal/codex \\\n      -H \"Authorization: Bearer $TOKEN\" \\\n      -d '{\"prompt\":\"review PR #${{ github.event.number }}\"}'"},
        {h:"和 Claude /ultrareview 的差別", l:["<b>Claude /ultrareview</b>：適合「在我桌機上跑 4 個視角」","<b>codex exec-server</b>：適合「CI / 內網長駐共用」","可以兩個都用 — 桌機跑 Claude、CI 跑 Codex"]}
      ]},
-    {ico:"🛡️", color:"red", feat:"Windows Proxy-only Sandbox", ver:"0.118.0 · 2026-03-31",
+    {ico:"shield", color:"red", feat:"Windows Proxy-only Sandbox", ver:"0.118.0 · 2026-03-31",
      desc:"Windows 在 OS 層強制只能透過 proxy 出網。",
      scen:"<b>銀行合規場景：</b>RD 工作機常被要求所有出網都要走 proxy 並記錄。Codex CLI 在這環境直接合規，不用額外封裝。",
      d:[
@@ -1603,7 +2165,7 @@
        {h:"和 Mac 比較", l:["Mac 沒有 OS 層強制 — 但可靠 <code>requirements.toml</code> 限制 domain","Windows 是 OS 層 — 連 Codex spawn 的子程序都受限","建議：Windows 工作機開 proxy-only，Mac 用 deniedDomains 補強"]},
        {h:"資安團隊 sign-off 要點", l:["所有對外 request 經 proxy 留 log","違規連線在 OS 層被拒，Codex 自身無法繞過","可搭配 <code>requirements.toml</code> 白名單 domain"]}
      ]},
-    {ico:"📡", color:"teal", feat:"Realtime V2 串流", ver:"0.120.0 · 2026-04-11",
+    {ico:"antenna", color:"teal", feat:"Realtime V2 串流", ver:"0.120.0 · 2026-04-11",
      desc:"背景 agent 進度即時串流，可 queue 後續 response。",
      scen:"<b>iOS / 後端整合場景：</b>讓 Codex 跑長任務（重構整個 networking layer），在 terminal 看著它推進度，需要插話直接 queue 下一個指示。",
      d:[
@@ -1612,7 +2174,7 @@
        {h:"觀察 hook 活動", c:"bash", b:"# 在 TUI 中按 h 切到 hook 活動視圖\n# 看到所有 hook 觸發的時間軸\n# 對 debug 自製 hook 超有用"},
        {h:"和 Codex App 的差別", p:"App 偏向互動式對話、CLI Realtime V2 偏向「啟動 → 看著它工作」。長任務優先選 CLI。"}
      ]},
-    {ico:"🎙️", color:"purple", feat:"Realtime Voice v2 WebRTC", ver:"0.119.0 · 2026-04-10",
+    {ico:"mic", color:"purple", feat:"Realtime Voice v2 WebRTC", ver:"0.119.0 · 2026-04-10",
      desc:"預設 v2 WebRTC 的語音 session。",
      scen:"<b>Pair programming 場景：</b>iPad 或耳機接 codex CLI，邊喝咖啡邊跟它對話：「跑 unit test」「把這支函式加 logging」。手不離鍵盤但能 multitask。",
      d:[
@@ -1621,7 +2183,7 @@
        {h:"iOS 場景", l:["<b>通勤路上</b>：「幫我跑一下 unit test」「最後 commit 是什麼」","<b>洗碗時</b>：「把這支函式加 debug log」（事先講出函式名）","<b>會議空檔</b>：用 AirPods 跟 Codex 確認某段邏輯是否正確"]},
        {h:"安全提醒", p:"在公司 / 公共場所講 code 要小心 — 客戶資料、API key 不要念出來。建議只在 home 環境用語音。"}
      ]},
-    {ico:"🧪", color:"gold", feat:"js_repl 持久 Runtime", ver:"0.100.0 · 2026-02-12",
+    {ico:"flask", color:"gold", feat:"js_repl 持久 Runtime", ver:"0.100.0 · 2026-02-12",
      desc:"Codex 內建 JS REPL，跨 turn 保留狀態。",
      scen:"<b>原型驗證場景：</b>iOS RD 偶爾要驗 backend JSON / API 行為，直接在 Codex 內 js_repl 跑 fetch 測試，不用切 Postman。",
      d:[
@@ -1630,7 +2192,7 @@
        {h:"進階：模擬 Combine pipeline 邏輯", p:"用 RxJS 模擬 Combine 行為，先在 JS 跑通邏輯再翻成 Swift — 比起直接寫 Swift 更快迭代。"},
        {h:"小提醒", l:["js_repl 是實驗性功能，可能 break","狀態跨 turn 保留，但 session 結束就清空","不要拿來跑生產資料"]}
      ]},
-    {ico:"🎛️", color:"orange", feat:"Steer Mode 預設開啟", ver:"0.98.0 · 2026-02-05",
+    {ico:"gauge", color:"orange", feat:"Steer Mode 預設開啟", ver:"0.98.0 · 2026-02-05",
      desc:"Tab queue 訊息、Enter 立即送，不再實驗性。",
      scen:"<b>長任務場景：</b>請 Codex CLI 分析整個 repo，邊跑邊 Tab 預先送下一步「跑完幫我寫 changelog」「再幫我列 TODO」。Pipeline 思維。",
      d:[
@@ -1639,7 +2201,7 @@
        {h:"iOS 場景", c:"bash", b:"$ codex \"分析整個 repo 的 SwiftConcurrency 使用\"\n\n[正在分析...]\n[Tab] 跑完幫我列 5 個改善建議\n[Tab] 再幫我把第一個改善開 PR\n[Tab] PR 標題用 [iOS][refactor] 格式\n# 三個指令排好，agent 跑完一個自動接下一個"},
        {h:"什麼時候別用", p:"探索性對話（不確定下一步問什麼）就別預排 — 用普通互動模式比較自然。"}
      ]},
-    {ico:"🔐", color:"red", feat:"ReadOnlyAccess Sandbox Policy", ver:"0.100.0 · 2026-02-12",
+    {ico:"key", color:"red", feat:"ReadOnlyAccess Sandbox Policy", ver:"0.100.0 · 2026-02-12",
      desc:"新 sandbox policy，僅讀取不寫入。",
      scen:"<b>銀行 read-only 探索：</b>叫 Codex 分析線上 incident log、DB dump、舊版 codebase 時用此模式，避免任何 mutation 風險。",
      d:[
@@ -1648,7 +2210,7 @@
        {h:"哪些操作會被擋", l:["所有檔案寫入（Edit、Write、touch、>）","git commit / push / reset","mv / cp 到非 /tmp 路徑","Bash 中的 rm、unlink"]},
        {h:"和 deniedDomains 搭配", p:"分析 prod log 時通常也不該出網。<code>read-only-access</code> + <code>requirements.toml</code> 白名單 domain 一起用，雙重保險。"}
      ]},
-    {ico:"📊", color:"green", feat:"/statusline + 排序 resume picker", ver:"0.99.0 · 2026-02-11",
+    {ico:"chart", color:"green", feat:"/statusline + 排序 resume picker", ver:"0.99.0 · 2026-02-11",
      desc:"TUI 底部 statusline、resume picker 可排序。",
      scen:"<b>多專案 iOS 工作流：</b>同時跑 main app、watch app、widget，statusline 顯示哪個 session、哪個 branch；resume 按時間 / 大小排序找回上下文超快。",
      d:[
@@ -1657,7 +2219,7 @@
        {h:"resume picker 操作", l:["<code>/resume</code> 不帶參數 → 開 picker","按 <code>s</code> 切排序：時間 / 大小 / 專案","按 <code>/</code> 模糊搜尋","Enter 載入 session"]},
        {h:"小技巧", p:"把 session title 設成 <code>[ios-app/feature/transfer-flow] sprint 42</code> 這種結構化字串，picker 篩起來很快。"}
      ]},
-    {ico:"🔁", color:"blue", feat:"並行 Shell + Active Turn", ver:"0.99.0 · 2026-02-11",
+    {ico:"loop", color:"blue", feat:"並行 Shell + Active Turn", ver:"0.99.0 · 2026-02-11",
      desc:"直接 shell 指令可與 active agent turn 並行執行。",
      scen:"<b>iOS 開發效率：</b>Codex 在重構時，你同時 <code>xcodebuild test</code>、<code>swift test</code>、<code>git status</code>。雙線推進不必等。",
      d:[
@@ -1723,7 +2285,7 @@
      =========================== */
   // Android RD
   INSP_CC.push({
-    ico:"📦", color:"green", feat:"FileChanged hook 自動跑 Gradle sync", ver:"v2.1.83 · 2026-03-25",
+    ico:"box", color:"green", feat:"FileChanged hook 自動跑 Gradle sync", ver:"v2.1.83 · 2026-03-25",
     desc:"Android 改 build.gradle 後常忘記 Sync，跑出來才發現 dependency 不對。Hook 解決。",
     scen:"<b>Android 場景：</b>儲存 <code>build.gradle.kts</code> 自動跑 <code>./gradlew --refresh-dependencies</code>，不再有「我 code 對啊為什麼跑不起來」。",
     roles:["android"],
@@ -1734,7 +2296,7 @@
     ]
   });
   INSP_CC.push({
-    ico:"🎨", color:"purple", feat:"Compose Preview 用 Spark 迭代", ver:"GPT-5.3-Codex-Spark · 2026-02-12",
+    ico:"palette", color:"purple", feat:"Compose Preview 用 Spark 迭代", ver:"GPT-5.3-Codex-Spark · 2026-02-12",
     desc:"Jetpack Compose 預覽 + Codex Spark 的快速 streaming 是黃金組合。",
     scen:"<b>Android UI 場景：</b>Spark 速度 >1000 tok/s，配合 Compose Preview 改一個 modifier 立刻看效果。比起 5.3-Codex 在 UI 微調上快很多。",
     roles:["android","designer"],
@@ -1747,7 +2309,7 @@
 
   // Designer (UI/UX)
   INSP_CA.push({
-    ico:"🖼️", color:"teal", feat:"Figma 截圖 → SwiftUI / Compose code", ver:"v260205 · 2026-02-05",
+    ico:"image", color:"teal", feat:"Figma 截圖 → SwiftUI / Compose code", ver:"v260205 · 2026-02-05",
     desc:"設計師最常做的事：把 design spec 變成 code 給 RD 參考。",
     scen:"<b>Designer 場景：</b>把 Figma 截圖拖進 Codex App，「實作這個交易明細卡片」→ Codex 產 SwiftUI/Compose code + 像素位置註解。直接貼進 RD spec 文件當參考實作。",
     roles:["designer"],
@@ -1758,7 +2320,7 @@
     ]
   });
   INSP_CC.push({
-    ico:"🎨", color:"gold", feat:"Skills 產生 Design Token 程式碼", ver:"v2.1.120 · 2026-04-28",
+    ico:"palette", color:"gold", feat:"Skills 產生 Design Token 程式碼", ver:"v2.1.120 · 2026-04-28",
     desc:"設計師更新色票後，由 Skill 自動產 Swift / Kotlin / Web 多平台 Token 檔。",
     scen:"<b>Designer 場景：</b>更新 Figma colors 後，跑 <code>/design-tokens</code>，Skill 讀 Figma export → 產三個平台的 Token 檔給 RD。",
     roles:["designer","ios","android"],
@@ -1771,7 +2333,7 @@
 
   // QA / Tester
   INSP_CC.push({
-    ico:"🧪", color:"green", feat:"Skills 自動產 Test Case", ver:"v2.1.120 · 2026-04-28",
+    ico:"flask", color:"green", feat:"Skills 自動產 Test Case", ver:"v2.1.120 · 2026-04-28",
     desc:"PRD 變動後最痛苦的就是補 test case。Skill 把這變成半自動。",
     scen:"<b>QA 場景：</b>把 PRD 段落貼進 Claude，跑 <code>/test-cases</code>，Skill 用 Given-When-Then 格式產出 happy path / edge case / negative case 三組。",
     roles:["qa"],
@@ -1782,7 +2344,7 @@
     ]
   });
   INSP_CC.push({
-    ico:"🌙", color:"red", feat:"排程：每晚 smoke test + 結果報告", ver:"v2.1.98 · 2026-04-09",
+    ico:"clock", color:"red", feat:"排程：每晚 smoke test + 結果報告", ver:"v2.1.98 · 2026-04-09",
     desc:"用 Claude 排程跑 smoke test，早上 QA 上工就看報告。",
     scen:"<b>QA 場景：</b>每晚 23:00 對 staging 跑 critical path test，把失敗報告 + 截圖整理成 Slack 訊息，早上開電腦就看到。不再需要手動跑 baseline。",
     roles:["qa"],
@@ -1793,7 +2355,7 @@
     ]
   });
   INSP_CI.push({
-    ico:"🔬", color:"red", feat:"ReadOnlyAccess 分析 Incident Log", ver:"0.100.0 · 2026-02-12",
+    ico:"scope", color:"red", feat:"ReadOnlyAccess 分析 Incident Log", ver:"0.100.0 · 2026-02-12",
     desc:"處理線上 incident 時最怕 AI 不小心改到 prod data。",
     scen:"<b>QA 場景：</b>把 incident log dump 給 Codex，用 <code>--sandbox read-only-access</code>，叫它分析 root cause、找相似歷史 incident — 完全沒寫入風險。",
     roles:["qa","backend"],
@@ -1806,7 +2368,7 @@
 
   // Backend RD
   INSP_CI.push({
-    ico:"🚀", color:"blue", feat:"exec-server 嵌入 CI/CD Pipeline", ver:"0.119.0 · 2026-04-10",
+    ico:"rocket", color:"blue", feat:"exec-server 嵌入 CI/CD Pipeline", ver:"0.119.0 · 2026-04-10",
     desc:"把 Codex 變成 CI 上的長駐 service，PR 自動 review 不用 spin-up。",
     scen:"<b>Backend 場景：</b>內網 build agent 跑 <code>codex exec-server</code>，GitLab CI 收到 PR 時 curl 一下，三十秒回 review。比啟動新 process 快 10 倍。",
     roles:["backend"],
@@ -1817,7 +2379,7 @@
     ]
   });
   INSP_CC.push({
-    ico:"🗄️", color:"blue", feat:"MCP 接公司內部 DB / API", ver:"v2.1.121 · 2026-04-28",
+    ico:"db", color:"blue", feat:"MCP 接公司內部 DB / API", ver:"v2.1.121 · 2026-04-28",
     desc:"用 MCP 把內網 DB、API gateway 接進 Claude，agent 可以查資料解 bug。",
     scen:"<b>Backend 場景：</b>寫一個 internal MCP server，包 Postgres read-only 連線、API gateway 查詢。Claude 解 ticket 時直接 query 確認資料、找 root cause。",
     roles:["backend"],
@@ -1831,7 +2393,7 @@
 
   // PM
   INSP_CC.push({
-    ico:"📅", color:"gold", feat:"Subagent + Jira MCP 做 Sprint Planning", ver:"v2.1.117 · 2026-04-22",
+    ico:"calendar", color:"gold", feat:"Subagent + Jira MCP 做 Sprint Planning", ver:"v2.1.117 · 2026-04-22",
     desc:"Sprint Planner agent 只連 Jira / Confluence，專注故事點估算與依賴分析。",
     scen:"<b>PM 場景：</b>定義專屬 agent <code>sprint-planner</code>，連 Jira MCP 自動拉 backlog、分析依賴、產出可投票的 sprint plan，省下 1-2 小時會議準備時間。",
     roles:["pm"],
@@ -1842,7 +2404,7 @@
     ]
   });
   INSP_CC.push({
-    ico:"📝", color:"green", feat:"/recap 產 Stakeholder Update", ver:"v2.1.108 · 2026-04-14",
+    ico:"doc", color:"green", feat:"/recap 產 Stakeholder Update", ver:"v2.1.108 · 2026-04-14",
     desc:"PM 每週要對 stakeholder 報告進度，最痛是「整理進度」這件事本身。",
     scen:"<b>PM 場景：</b>每週五跑 <code>/recap --target=stakeholder</code>，自動把這週 commit + Jira 狀態變動 + Slack 討論摘要，產出可貼進 email 的高階摘要。",
     roles:["pm"],
@@ -1855,7 +2417,7 @@
   });
   // === Auto-generated cards (from scheduled refresh) ===
   INSP_CC.push({
-    ico:"👁️", color:"purple", feat:"Agent View — 一個畫面看所有 sessions", ver:"v2.1.139 · 2026-05-11",
+    ico:"eye", color:"purple", feat:"Agent View — 一個畫面看所有 sessions", ver:"v2.1.139 · 2026-05-11",
     desc:"<code>claude agents</code> 開啟 Research Preview 視圖，看所有執行中、待回應、完工的 Claude session。",
     scen:"<b>場景：</b>同時跑 main app、watch app、widget、internal tools 重構時，不再要切多個 tmux 視窗。一畫面看哪個 session 在等你回話、哪個跑完可以 review、哪個還在跑。",
     roles:["ios","android","backend"],
@@ -1867,7 +2429,7 @@
     auto:true
   });
   INSP_CA.push({
-    ico:"🖥️", color:"orange", feat:"Codex 變通用工作空間：In-app Browser + Computer Use", ver:"2026-04-16",
+    ico:"desktop", color:"orange", feat:"Codex 變通用工作空間：In-app Browser + Computer Use", ver:"2026-04-16",
     desc:"Codex App 大改版：內建瀏覽器（可對渲染頁面留言）、操作 macOS 原生 App、artifact viewer 預覽 PDF/試算表/簡報、Memories、多視窗、多終端機。",
     scen:"<b>場景：</b>用 in-app browser 開內部 admin 系統，邊操作邊讓 Codex 觀察並建議改進；artifact viewer 可直接預覽從 backend 撈出來的 Excel report，不用切到 Numbers 或瀏覽器。讓 Codex App 從「對話介面」變成「整個工作環境」。",
     roles:["ios","android","backend","designer","qa","pm"],
@@ -1881,7 +2443,7 @@
   });
 
   INSP_CA.push({
-    ico:"📱", color:"teal", feat:"ChatGPT 手機 app 連到你的 Mac Codex", ver:"2026-05-14",
+    ico:"mobile", color:"teal", feat:"ChatGPT 手機 app 連到你的 Mac Codex", ver:"2026-05-14",
     desc:"<b>手機 app 連你執行中的 Mac Codex</b>，共用同一份專案、檔案、認證、plugins、skills、設定。Hooks 同步 GA。",
     scen:"<b>場景：</b>會議空檔在手機接手 sprint 任務 — 「Codex，看一下 #PR-1234 並寫 review summary」「跑一下 SwiftLint 看 warning」。Mac 上的 Cowork 環境一致，不需切上下文。",
     roles:["ios","android","backend","pm"],
@@ -1894,7 +2456,7 @@
   });
 
   INSP_CC.push({
-    ico:"📊", color:"blue", feat:"排程 + MCP：自動產 Roadmap 進度", ver:"v2.1.98 · 2026-04-09",
+    ico:"chart", color:"blue", feat:"排程 + MCP：自動產 Roadmap 進度", ver:"v2.1.98 · 2026-04-09",
     desc:"自動拉 Jira / GitHub / Confluence 資料拼成可視化 roadmap。",
     scen:"<b>PM 場景：</b>每週一早上自動跑「拉 Jira epics、抓 GitHub milestone、合成 roadmap」並更新 Confluence 頁面，PM 上工就看到最新狀態。",
     roles:["pm"],
@@ -1909,7 +2471,7 @@
 
   // === Claude Code 手刻 ===
   INSP_CC.push({
-    ico:"⚡", color:"gold", feat:"Opus 4.8 + 動態工作流 /workflows", ver:"v2.1.154 · 2026-05-28",
+    ico:"bolt", color:"gold", feat:"Opus 4.8 + 動態工作流 /workflows", ver:"v2.1.154 · 2026-05-28",
     desc:"<b>Opus 4.8 釋出</b>，預設 high effort、可開 <code>/effort xhigh</code> 應戰最難任務；<b>動態工作流</b>讓 Claude 在背景同時編排數十到上百個 agent，<code>/workflows</code> 檢視進度。",
     scen:"<b>場景：</b>銀行 APP 的「跨 module migration」「全 repo 安全掃描」「大型 refactor」這類任務，過去要手動拆給多個 RD 跑。現在 <code>/workflows</code> 一句話讓 Claude 編排 50+ subagent 平行處理，Opus 4.8 xhigh 確保品質。",
     roles:["ios","android","backend","qa","pm"],
@@ -1920,7 +2482,7 @@
     ]
   });
   INSP_CC.push({
-    ico:"🔍", color:"green", feat:"/code-review（+ --fix 直接套用）", ver:"v2.1.147, 2.1.152 · 2026-05",
+    ico:"search", color:"green", feat:"/code-review（+ --fix 直接套用）", ver:"v2.1.147, 2.1.152 · 2026-05",
     desc:"<b>/simplify 改名為 /code-review</b>，依 effort 等級回報問題；新 <code>--fix</code> 直接套用修改到工作樹；<code>--comment</code> 把意見貼進 PR。",
     scen:"<b>場景：</b>每支 PR 推上去自動跑 <code>/code-review --comment</code>，意見直接貼到 GitLab PR；reviewer 不再做「找小問題」。<code>--fix</code> 可選擇性套用安全的修補。",
     roles:["ios","android","backend"],
@@ -1933,7 +2495,7 @@
 
   // === Codex App 手刻 ===
   INSP_CA.push({
-    ico:"🖱️", color:"purple", feat:"Windows Computer Use + Mobile Remote Control", ver:"2026-05-28",
+    ico:"cursor", color:"purple", feat:"Windows Computer Use + Mobile Remote Control", ver:"2026-05-28",
     desc:"<b>Computer Use 登陸 Windows</b>：Codex 看得到、點得了、能輸入到 Windows 原生 App。<b>Mobile remote control</b> 也支援 Windows 主機 — 從 ChatGPT iOS/Android 啟動並追蹤 Windows 工作。",
     scen:"<b>場景：</b>銀行內部很多 Windows-only 系統（Outlook、Office、內部 CRM）。讓 Codex 自動填表、跨 App 搬資料；QA 跨平台測試；通勤時用手機看 Windows 主機在跑什麼。",
     roles:["ios","android","backend","qa"],
@@ -1945,7 +2507,7 @@
     ]
   });
   INSP_CA.push({
-    ico:"🪟", color:"blue", feat:"Codex App for Windows 正式版", ver:"2026-03-04",
+    ico:"window", color:"blue", feat:"Codex App for Windows 正式版", ver:"2026-03-04",
     desc:"Codex App 原生 Windows 版本，用 <b>PowerShell + 原生 Windows sandbox</b> 提供受限權限，無需 WSL/VM。支援 Skills、Automations、Worktrees。",
     scen:"<b>場景：</b>銀行 RD 多數用 Windows 開發機。Codex App 原生版讓你不必架 WSL 環境也能用，sandbox 又符合資安要求。一份 ChatGPT 帳號跨 Mac + Windows 共用。",
     roles:["android","backend","qa","pm"],
@@ -1958,7 +2520,7 @@
 
   // === Codex CLI 手刻 ===
   INSP_CI.push({
-    ico:"🩺", color:"red", feat:"codex doctor — 全面環境診斷", ver:"0.131.0 · 2026-05-18",
+    ico:"pulse", color:"red", feat:"codex doctor — 全面環境診斷", ver:"0.131.0 · 2026-05-18",
     desc:"<code>codex doctor</code> 一鍵跑全套診斷：runtime、auth、terminal、network、config、local state。新人 onboarding 或環境出問題第一個跑的指令。",
     scen:"<b>場景：</b>新進 RD 第一天裝 Codex，跑 <code>codex doctor</code> 自動檢查所有相依、認證、proxy、sandbox 狀態，產出 report 給 mentor 看哪邊還沒設好。debug 環境問題從幾小時降到幾分鐘。",
     roles:["ios","android","backend","qa"],
@@ -1969,7 +2531,7 @@
     ]
   });
   INSP_CI.push({
-    ico:"🎯", color:"green", feat:"Goals 預設開啟 — 跨 turn 持續工作", ver:"0.133.0 · 2026-05-21",
+    ico:"target", color:"green", feat:"Goals 預設開啟 — 跨 turn 持續工作", ver:"0.133.0 · 2026-05-21",
     desc:"Goals 從實驗性升為預設開啟。設一個目標後，Codex 跨 turn 自動推進直到完成（或 usage limit / blocker）。",
     scen:"<b>場景：</b>「把 NetworkLayer 整個改用 async/await」這種大任務設成 goal，Codex 自動拆 PR、跑 test、改 callsite，跨數十個 turn 推進。你只需要 review、回 question、不必每次重述目標。",
     roles:["ios","android","backend"],
@@ -1983,7 +2545,7 @@
   // === Auto cards（自動生成、可被手改） ===
 
   INSP_CC.push({
-    ico:"🎯", color:"green", feat:"/goal — 跨 turn 持續推進至完成", ver:"v2.1.139 · 2026-05-11",
+    ico:"target", color:"green", feat:"/goal — 跨 turn 持續推進至完成", ver:"v2.1.139 · 2026-05-11",
     desc:"Claude Code 新 <code>/goal</code> 指令：設一個目標後，Claude 跨 turn 持續工作直到達成。",
     scen:"<b>場景：</b>大型 refactor 或 bug hunt，告訴 Claude「目標：把所有 callback API 改 async/await，含 tests」，Claude 自己一輪一輪做下去，你只在 blocker 時介入。",
     roles:["ios","android","backend"],
@@ -1995,7 +2557,7 @@
     auto:true
   });
   INSP_CC.push({
-    ico:"🚫", color:"red", feat:"Skills/slash frontmatter 加 disallowed-tools", ver:"v2.1.152 · 2026-05-27",
+    ico:"ban", color:"red", feat:"Skills/slash frontmatter 加 disallowed-tools", ver:"v2.1.152 · 2026-05-27",
     desc:"Skills 與 slash command frontmatter 可加 <code>disallowed-tools</code> 限制能用的工具，最小權限原則。",
     scen:"<b>場景：</b>合規 skill 禁止用 Bash（不能跑 shell）；review skill 禁止用 Edit/Write（只能讀）。確保不同 skill 各自有適當權限邊界，避免越權操作。",
     roles:["ios","android","backend","qa","pm"],
@@ -2007,7 +2569,7 @@
     auto:true
   });
   INSP_CC.push({
-    ico:"✨", color:"purple", feat:"Claude Fable 5 — Mythos 級旗艦模型", ver:"v2.1.170 · 2026-06-09",
+    ico:"spark", color:"purple", feat:"Claude Fable 5 — Mythos 級旗艦模型", ver:"v2.1.170 · 2026-06-09",
     desc:"Fable 5 效能超越先前所有公開模型，適用最複雜任務（大型 refactor、深度推理、跨 repo migration）。",
     scen:"<b>場景：</b>銀行 iOS App 年度大重構（Combine → Swift Concurrency），以往用較弱模型易推理失誤。Fable 5 搭配 <code>/effort xhigh</code> 準確率大幅提升。",
     roles:["frontend","backend","qa","pm"],
@@ -2019,7 +2581,7 @@
     auto:true
   });
   INSP_CA.push({
-    ico:"📟", color:"blue", feat:"Codex 可讀取整合終端機輸出", ver:"2026-03-11",
+    ico:"terminal", color:"blue", feat:"Codex 可讀取整合終端機輸出", ver:"2026-03-11",
     desc:"Codex 能讀取目前 thread 的 <b>integrated terminal</b> 輸出 — 確認 dev server 狀態、回查失敗的 build。",
     scen:"<b>場景：</b>iOS build 失敗時不用複製貼上 error log；Codex 直接看 Xcode build output 找 root cause。Backend 跑 server 時 Codex 即時看 stderr 確認服務狀態。",
     roles:["ios","android","backend"],
@@ -2031,7 +2593,7 @@
     auto:true
   });
   INSP_CI.push({
-    ico:"🗄️", color:"gold", feat:"/archive 封存 session（防誤刪）", ver:"0.136.0 · 2026-06-01",
+    ico:"db", color:"gold", feat:"/archive 封存 session（防誤刪）", ver:"0.136.0 · 2026-06-01",
     desc:"新 <code>/archive</code> slash 指令 + <code>codex archive</code>/<code>codex unarchive</code> CLI，封存的 session 不會被 resume/fork 誤動。",
     scen:"<b>場景：</b>重要 incident review session、跨團隊討論 session 封存起來不會誤刪；之後審計/重看時 unarchive 即可。當 session 是 audit trail 時特別實用。",
     roles:["ios","android","backend","qa","pm"],
@@ -2043,7 +2605,7 @@
     auto:true
   });
   INSP_CI.push({
-    ico:"🎨", color:"teal", feat:"CLI 0.131.0 TUI 大更新（@ mention + plugin marketplace）", ver:"0.131.0 · 2026-05-18",
+    ico:"palette", color:"teal", feat:"CLI 0.131.0 TUI 大更新（@ mention + plugin marketplace）", ver:"0.131.0 · 2026-05-18",
     desc:"TUI 多項升級：service-tier、token 用量、permissions/approval mode、響應式 Markdown 表格；<code>@</code> mention 一鍵搜尋檔案/目錄/plugin/skill；plugin marketplace CLI 指令。",
     scen:"<b>場景：</b>@ mention 一秒帶入內部 skill；plugin marketplace 找團隊共用工具；TUI 顯示當下 effort / approval mode 上下文。日常用 codex CLI 整體體驗大幅升級。",
     roles:["ios","android","backend"],
@@ -2055,7 +2617,7 @@
     auto:true
   });
   INSP_CI.push({
-    ico:"🔀", color:"blue", feat:"/app — CLI thread 無縫交棒 Codex Desktop", ver:"0.138.0 · 2026-06-08",
+    ico:"loop", color:"blue", feat:"/app — CLI thread 無縫交棒 Codex Desktop", ver:"0.138.0 · 2026-06-08",
     desc:"CLI 工作到一半可用 <code>/app</code> 把整個 thread 交棒到 Codex Desktop（macOS/Windows），不丟失任何 context。",
     scen:"<b>場景：</b>用 CLI 跑了一半的 refactor，想切到桌面環境用 In-app browser 對照 spec 繼續工作。<code>/app</code> 一下，CLI 的 context 完整帶進 Desktop，不用重頭說明背景。",
     roles:["frontend","backend"],
@@ -2068,7 +2630,7 @@
   });
 
   INSP_CC.push({
-    ico:"🕸️", color:"orange", feat:"子 Agent 可遞迴派生（最深 5 層）", ver:"v2.1.172 · 2026-06-10",
+    ico:"web", color:"orange", feat:"子 Agent 可遞迴派生（最深 5 層）", ver:"v2.1.172 · 2026-06-10",
     desc:"Sub-agent 可以繼續派生自己的 sub-agent，最深 5 層巢狀，構成真正的多層 agent 樹狀結構。",
     scen:"<b>場景：</b>大型 monorepo migration：頂層 agent 拆分成 module agent，各 module agent 再拆出檔案 agent，平行處理數百個檔案；每層負責自己範圍內的推理。",
     roles:["backend","frontend","qa","pm"],
@@ -2081,7 +2643,7 @@
   });
 
   INSP_CC.push({
-    ico:"🛡️", color:"purple", feat:"Tool Parameter Permission Rules（Tool(param:value) 語法）", ver:"v2.1.178 · 2026-06-15",
+    ico:"shield", color:"purple", feat:"Tool Parameter Permission Rules（Tool(param:value) 語法）", ver:"v2.1.178 · 2026-06-15",
     desc:"權限規則新增參數比對語法，可精確限制工具的使用方式——不只控制「能不能用」，更管制「怎麼用」。",
     scen:"<b>場景：</b>企業 Backend Sprint 中，Security Team 在 <code>settings.json</code> 設定 <code>WebFetch(domain:*.external.com)</code> 為拒絕規則，確保 Claude agent 只能存取公司內部 API，有效防止敏感資料透過 WebFetch 外洩。",
     roles:["backend","qa","pm"],
@@ -2138,6 +2700,32 @@
   const PERF_CAT = "Performance/Bug Fix";
   if (state.agent !== "all" && !AGENT_MAP[state.agent]) state.agent = "all";
 
+  /* ===========================
+     SVG 圖示對照：資料仍沿用 emoji 鍵，渲染時一律換成 sprite symbol。
+     未列出的鍵回退 i-hex，未來自動更新新增的卡片也不會破版。
+     =========================== */
+  const ICO_MAP = {
+    "⚡":"bolt", "🛡️":"shield", "🔒":"lock", "🔐":"key", "🪪":"badge", "🚫":"ban",
+    "🎯":"target", "🧪":"flask", "📋":"doc", "📝":"doc", "🧩":"puzzle", "🔌":"plug",
+    "📡":"antenna", "📟":"terminal", "🖥️":"desktop", "💻":"desktop", "📱":"mobile",
+    "🖱️":"cursor", "🪟":"window", "🔍":"search", "🔬":"scope", "👁️":"eye", "🎙️":"mic",
+    "📊":"chart", "🗄️":"db", "📦":"box", "🎨":"palette", "🖼️":"image", "🌿":"branch",
+    "🍴":"branch", "🔀":"loop", "🔁":"loop", "🤖":"robot", "✨":"spark", "🎈":"spark",
+    "🎛️":"gauge", "🪝":"hook", "📐":"ruler", "📎":"clip", "🚀":"rocket", "🕸️":"web",
+    "⏰":"clock", "📅":"calendar", "🩺":"pulse", "⚙️":"gear", "✦":"hex"
+  };
+  const ICON_IDS = new Set([
+    "bolt","shield","lock","key","badge","ban","target","flask","doc","puzzle","plug",
+    "antenna","terminal","desktop","mobile","cursor","window","search","scope","eye","mic",
+    "chart","db","box","palette","image","branch","loop","robot","spark","gauge","hook",
+    "ruler","clip","rocket","web","clock","calendar","pulse","gear","hex"
+  ]);
+  function icoSvg(key){
+    const mapped = ICO_MAP[key] || key;
+    const id = ICON_IDS.has(mapped) ? mapped : "hex";
+    return `<svg class="ic" aria-hidden="true"><use href="#i-${id}"></use></svg>`;
+  }
+
   function catClass(c){ return "cat-" + c.replace(/[\/\s]/g, "-"); }
   // 分類顯示用簡短中文（資料鍵仍為英文，供 CSS class／顏色／比對）
   const CAT_LABEL = {
@@ -2192,12 +2780,12 @@
      ROLE PICKER（影響應用靈感）
      =========================== */
   const ROLES = [
-    { id: "all",      label: "全部",        ico: "✦" },
-    { id: "frontend", label: "Frontend",    ico: "💻" },
-    { id: "backend",  label: "Backend",     ico: "⚙️" },
-    { id: "designer", label: "Designer",    ico: "🎨" },
-    { id: "qa",       label: "QA / Tester", ico: "🧪" },
-    { id: "pm",       label: "PM",          ico: "📋" }
+    { id: "all",      label: "全部",        ico: "hex" },
+    { id: "frontend", label: "Frontend",    ico: "desktop" },
+    { id: "backend",  label: "Backend",     ico: "gear" },
+    { id: "designer", label: "Designer",    ico: "palette" },
+    { id: "qa",       label: "QA / Tester", ico: "flask" },
+    { id: "pm",       label: "PM",          ico: "doc" }
   ];
   const ROLE_LABEL_MAP = Object.fromEntries(ROLES.map(r => [r.id, r.label]));
   const ROLE_KEY = "ctx_active_role_v1";
@@ -2211,7 +2799,7 @@
     chip.type = "button";
     chip.className = "role-chip" + (r.id === activeRole ? " active" : "");
     chip.dataset.role = r.id;
-    chip.innerHTML = `<span class="role-icn" aria-hidden="true">${r.ico}</span><span>${r.label}</span>`;
+    chip.innerHTML = `<span class="role-icn" aria-hidden="true">${icoSvg(r.ico)}</span><span>${r.label}</span>`;
     chip.addEventListener("click", () => {
       activeRole = r.id;
       store.set(ROLE_KEY, r.id);
@@ -2249,6 +2837,7 @@
     const chip = document.createElement("button");
     chip.type = "button";
     chip.className = ("agent-chip " + def.cls).trim() + (state.agent === def.id ? " active" : "");
+    chip.dataset.agent = def.id;
     const cnt = def.id === "all" ? ENTRIES.length : AGENT_MAP[def.id].data.length;
     chip.innerHTML = `<span class="dot" aria-hidden="true"></span><span>${def.label}</span><span class="cnt">· ${cnt}</span>`;
     if (def.id !== "all"){
@@ -2318,13 +2907,59 @@
     clearBtn = document.createElement("button");
     clearBtn.type = "button";
     clearBtn.className = "clear-filter";
-    clearBtn.textContent = "清除篩選";
+    clearBtn.textContent = "解除限制器";
     clearBtn.addEventListener("click", resetFilters);
     bar.appendChild(clearBtn);
   })();
   function updateClearBtn(){
     const hasFilter = state.cat !== "All" || (state.search && state.search.trim() !== "");
     clearBtn.classList.toggle("show", !!hasFilter);
+  }
+
+  /* 解除全部限制器：分類、關鍵字、Agent、Role 一次歸零 */
+  function releaseLimiter(){
+    const agentAll = agentChipsRoot.querySelector('.agent-chip[data-agent="all"]');
+    const roleAll = roleChipsRoot.querySelector('.role-chip[data-role="all"]');
+    if (agentAll && !agentAll.classList.contains("active")) agentAll.click();
+    if (roleAll && !roleAll.classList.contains("active")) roleAll.click();
+    resetFilters();
+  }
+
+  /* ===========================
+     查無資料 — PATTERN NOT DETECTED
+     keyword 有值時點名關鍵字，否則說明是限制條件造成
+     =========================== */
+  function voidNotice(opts){
+    const what = opts.what || "資料";
+    const msg = opts.keyword
+      ? `MAGI 找不到符合「<b>${escapeHtml(opts.keyword)}</b>」的${what}。`
+      : `MAGI 在目前限制條件（${escapeHtml(opts.limiter || "篩選")}）下找不到${what}。`;
+    const hint = opts.keyword ? "請變更關鍵字，或" : "請變更限制條件，或";
+    return `<div class="void">
+      <div class="void-strip" aria-hidden="true"></div>
+      <div class="void-body">
+        <div class="void-mark" aria-hidden="true">!</div>
+        <div>
+          <div class="void-code">Pattern not detected · MAGI analysis complete</div>
+          <div class="void-title">未偵測到相符模式</div>
+          <div class="void-msg">${msg}</div>
+          <div class="void-hint">${hint}<button type="button" class="void-release">解除限制器</button></div>
+        </div>
+      </div>
+      <div class="void-strip" aria-hidden="true"></div>
+    </div>`;
+  }
+  function bindVoidRelease(root){
+    const btn = root.querySelector(".void-release");
+    if (btn) btn.addEventListener("click", releaseLimiter);
+  }
+  /* 目前生效的限制器摘要，給無關鍵字的情境用 */
+  function limiterSummary(extra){
+    const parts = [];
+    if (state.agent !== "all") parts.push("Agent " + AGENT_MAP[state.agent].label);
+    if (state.cat !== "All") parts.push("類別 " + catLabel(state.cat));
+    if (extra) parts.push(extra);
+    return parts.length ? parts.join(" · ") : "篩選";
   }
 
   function debounce(fn, ms){
@@ -2377,16 +3012,25 @@
       return hay.includes(q);
     });
 
+    evaSyncUpdate(filtered.length);
+
     root.innerHTML = "";
     updateClearBtn();
 
     if (!filtered.length){
       empty.style.display = "block";
+      empty.innerHTML = voidNotice({
+        keyword: state.search.trim(),
+        limiter: limiterSummary(),
+        what: "版本紀錄"
+      });
+      bindVoidRelease(empty);
       status.textContent = "";
       moreRow.style.display = "none";
       return;
     }
     empty.style.display = "none";
+    empty.innerHTML = "";        /* 有資料就清掉殘留的查無資料節點 */
 
     const total = filtered.length;
     const showCount = Math.min(state.visible, total);
@@ -2519,10 +3163,13 @@
 
     if (!filtered.length){
       root.classList.add("empty-state");
-      const label = ROLE_LABEL_MAP[activeRole] || activeRole;
-      root.innerHTML = q
-        ? `<div>找不到符合「<b>${escapeHtml(state.search.trim())}</b>」的靈感卡。<br>換個關鍵字，或清空搜尋。</div>`
-        : `<div>目前沒有針對 <b>${label}</b> 的靈感卡。<br>換個角色，或把 Agent 篩選切回「全部」。</div>`;
+      const roleLabel = ROLE_LABEL_MAP[activeRole] || activeRole;
+      root.innerHTML = voidNotice({
+        keyword: state.search.trim(),
+        limiter: limiterSummary(activeRole === "all" ? "" : "Role " + roleLabel),
+        what: "應用靈感"
+      });
+      bindVoidRelease(root);
       moreRow.style.display = "none";
       return;
     }
@@ -2542,11 +3189,11 @@
         return `<span class="insp-role-tag${isMatch ? " match" : ""}">${ROLE_LABEL_MAP[r] || r}</span>`;
       }).join("");
 
-      const autoBadgeHtml = c.auto ? `<span class="auto-badge" title="自動生成的卡片 — 尚未手動 review 過">auto</span>` : "";
+      const autoBadgeHtml = c.auto ? `<span class="auto-badge" title="自動生成的卡片 — 尚未手動 review 過（DUMMY PLUG：由排程接管產出）">dummy plug</span>` : "";
 
       el.innerHTML = `
         <div class="insp-head">
-          <div class="icon ${c.color}" aria-hidden="true">${c.ico}</div>
+          <div class="icon ${c.color}" aria-hidden="true">${icoSvg(c.ico)}</div>
           <div style="flex:1;min-width:0;">
             <div class="feat">${c.feat}</div>
             <div class="ver">${c.ver}</div>
@@ -2602,7 +3249,7 @@
   function openModal(card){
     lastFocusedEl = document.activeElement;
     modalIcon.className = "icon " + (card.color || "");
-    modalIcon.textContent = card.ico || "";
+    modalIcon.innerHTML = icoSvg(card.ico);
     modalFeat.textContent = card.feat;
     const agentLabel = card.agent && AGENT_MAP[card.agent] ? AGENT_MAP[card.agent].label + " · " : "";
     modalVer.textContent = agentLabel + card.ver;
@@ -2670,22 +3317,22 @@
   /* ===========================
      COMPACT CATEGORY BAR（hero 內，看個大概）
      =========================== */
+  /* 單一色相階調：亮 → 暗，靠亮度分層而非色相 */
   const CAT_COLORS = {
-    "UI/UX": "#0d9488",
-    "Performance/Bug Fix": "#64748b",
-    "Settings/Config": "#d97706",
-    "Plugins/MCP": "#2563eb",
-    "Permissions/Security": "#e11d48",
-    "MCP/Tools": "#0ea5e9",
-    "IDE/Editor": "#6366f1",
-    "Slash Commands": "#059669",
-    "Cloud/Web": "#8b5cf6",
-    "Hooks": "#ea580c",
-    "Subagents/Skills": "#9333ea",
-    "Models/Inference": "#06b6d4",
-    "Local Sandbox": "#f59e0b",
-    "Remote/Mobile": "#14b8a6",
-    "其他": "#94a3b8"
+    "UI/UX": "#ffe0b3",
+    "Settings/Config": "#ffd08a",
+    "Plugins/MCP": "#ffc24a",
+    "MCP/Tools": "#ffb000",
+    "Models/Inference": "#ff9d1c",
+    "Slash Commands": "#ff8a00",
+    "Cloud/Web": "#ff7a00",
+    "Hooks": "#ec6a00",
+    "IDE/Editor": "#d45f00",
+    "Local Sandbox": "#bd5300",
+    "Remote/Mobile": "#a34700",
+    "Permissions/Security": "#e6480a",
+    "Performance/Bug Fix": "#6b563c",
+    "其他": "#4d3d2b"
   };
   const CAT_BAR_TOP = 8; // 前 8 大類別，其餘併入「其他」
   function renderCatBar(){
@@ -2711,15 +3358,125 @@
   }
 
   /* ===========================
-     THEME TOGGLE
+     NERV COMMAND DECK — 主控臺·MAGI 儀表板·警報系統
+     所有數字都取自 ENTRIES 實際資料，不是裝飾用假值。
      =========================== */
-  const THEME_KEY = "ctx_theme_v1";
-  const themeToggle = document.getElementById("themeToggle");
-  if (themeToggle) {
-    themeToggle.addEventListener("click", () => {
-      const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
-      document.documentElement.setAttribute("data-theme", next);
-      try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+  const $el = id => document.getElementById(id);
+  const MAGI_SUFFIX = { cc: "Cc", ca: "Ca", ci: "Ci" };
+  const DAY_MS = 86400000;
+  function daysAgo(dateStr){
+    const d = new Date(dateStr + "T00:00:00");
+    return Math.max(0, Math.floor((Date.now() - d.getTime()) / DAY_MS));
+  }
+  function setGauge(id, pct, text){
+    const box = $el(id), val = $el(id + "Val"), bar = $el(id + "Bar");
+    if (!box || !val || !bar) return;
+    const p = Math.max(0, Math.min(100, pct));
+    val.textContent = text;
+    bar.style.width = p.toFixed(1) + "%";
+    box.classList.toggle("warn", p < 60 && p >= 25);
+    box.classList.toggle("crit", p < 25);
+  }
+
+  /* SYNC RATE：目前篩選結果 ÷ 全部版本紀錄 */
+  function evaSyncUpdate(shown){
+    const total = ENTRIES.length || 1;
+    const pct = shown / total * 100;
+    setGauge("gaugeSync", pct, pct.toFixed(2) + "%");
+    const scope = $el("hudScope");
+    if (scope) scope.textContent = (state.agent === "all" ? "ALL UNITS" : AGENT_MAP[state.agent].label).toUpperCase();
+  }
+
+  function clockTick(){
+    const el = $el("hudClock");
+    if (!el) return;
+    const d = new Date();
+    const p = n => String(n).padStart(2, "0");
+    el.textContent = p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds());
+  }
+
+  /* HARMONICS PATTERN：近 12 週（每週 7 日）更新量波形 */
+  function renderWave(){
+    const line = $el("waveLine"), area = $el("waveArea"), peakEl = $el("wavePeak");
+    if (!line || !area) return;
+    const W = 12, weeks = new Array(W).fill(0);
+    ENTRIES.forEach(e => {
+      const d = daysAgo(e.date);
+      if (d < W * 7) weeks[W - 1 - Math.floor(d / 7)]++;
+    });
+    const max = Math.max.apply(null, weeks.concat([1]));
+    const stepX = 240 / (W - 1);
+    const pts = weeks.map((v, i) => (i * stepX).toFixed(1) + "," + (53 - v / max * 46).toFixed(1));
+    line.setAttribute("points", pts.join(" "));
+    area.setAttribute("points", "0,53 " + pts.join(" ") + " 240,53");
+    if (peakEl) peakEl.textContent = "PEAK " + max + " / W-" + (W - weeks.indexOf(max));
+  }
+
+  function initDeck(){
+    /* --- MAGI 三節點：MELCHIOR-1 / BALTHASAR-2 / CASPER-3 --- */
+    const maxCount = Math.max.apply(null, AGENTS.map(a => a.data.length).concat([1]));
+    let quorum = 0;
+    AGENTS.forEach(a => {
+      const pool = ENTRIES.filter(e => e.agent === a.id);   // ENTRIES 已由新到舊排序
+      const s = MAGI_SUFFIX[a.id];
+      const cnt = $el("magi" + s + "Count"), bar = $el("magi" + s + "Bar"), ver = $el("magi" + s + "Ver");
+      if (cnt) cnt.textContent = pool.length;
+      if (bar) bar.style.width = (pool.length / maxCount * 100).toFixed(1) + "%";
+      if (ver && pool.length) ver.textContent = fmtVer(pool[0].v) + " · " + pool[0].date;
+      if (pool.length) quorum++;
+    });
+    const verdict = $el("deckVerdict");
+    if (verdict) {
+      verdict.textContent = quorum === AGENTS.length ? "全員一致 通過" : (quorum ? "多數決 通過" : "審議中");
+      verdict.style.background = quorum === AGENTS.length ? "var(--green)" : "var(--amber)";
+    }
+
+    /* --- HARMONICS：近 30 日更新筆數（30 筆為滿格） --- */
+    const recent30 = ENTRIES.filter(e => daysAgo(e.date) <= 30).length;
+    setGauge("gaugeAct", recent30 / 30 * 100, recent30 + " 件");
+
+    /* --- A.T. FIELD：資料鮮度，距最新一筆每過 1 日衰減 4% --- */
+    const freshDays = ENTRIES.length ? daysAgo(ENTRIES[0].date) : 99;
+    const integrity = Math.max(0, 100 - freshDays * 4);
+    setGauge("gaugeAt", integrity, integrity.toFixed(2) + "%");
+    const atBox = $el("gaugeAt");
+    if (atBox) atBox.title = "最新一筆為 " + freshDays + " 日前（DEPLOYED）";
+
+    renderWave();
+
+    /* --- 警報：近 14 日的使徒性訊號 --- */
+    const recent14 = ENTRIES.filter(e => daysAgo(e.date) <= 14);
+    const msg = $el("alertMsg"), lv = $el("alertLv");
+    if (msg) {
+      if (recent14.length) {
+        const top = recent14[0];
+        msg.innerHTML = "使徒性訊號 <em>" + recent14.length + "</em> 件（近 14 日）／ TARGET：<em>" +
+          escapeHtml(AGENT_MAP[top.agent].label) + " " + escapeHtml(fmtVer(top.v)) + "</em> · " + top.date;
+      } else {
+        msg.innerHTML = "PATTERN UNKNOWN — 近 14 日無新訊號，全域監視續行。";
+      }
+    }
+    if (lv) lv.textContent = recent14.length >= 20 ? "1" : recent14.length >= 8 ? "2" : "3";
+
+    /* --- 底部跑馬燈：最近 12 筆變更 --- */
+    const ticker = $el("tickerText");
+    if (ticker) {
+      const line = ENTRIES.slice(0, 12).map(e =>
+        "<b>" + escapeHtml(AGENT_MAP[e.agent].label) + " " + escapeHtml(fmtVer(e.v)) + "</b> " +
+        escapeHtml(catLabel(e.cat)) + " · " + e.date
+      ).join("　／　");
+      ticker.innerHTML = "NERV CENTRAL DOGMA — 更新記錄 ／　" + line + "　／　";
+    }
+
+    clockTick();
+    setInterval(clockTick, 1000);
+  }
+
+  const alertCloseBtn = $el("alertClose");
+  if (alertCloseBtn) {
+    alertCloseBtn.addEventListener("click", () => {
+      const box = $el("alertBar");
+      if (box) box.style.display = "none";
     });
   }
 
@@ -2730,6 +3487,7 @@
   renderTimeline();
   renderInspiration();
   renderCatBar();
+  initDeck();
 </script>
 </body>
 </html>
