@@ -23,20 +23,76 @@ Hero 的 Date Span、Total Versions、Agent 篩選 chip 計數都由 JS 動態�
 
 2) 三個來源各自抓 — 不同來源用不同策略（這些是經驗證最可靠的）：
 
+   **🚨 抓取通則（所有 curl 都照這樣寫）：** 排程環境走共用出口 IP，靜默失敗過去常被誤判成「解析失敗」。一律帶上這幾個旗標：
+
+   ```bash
+   curl -sfL -A 'Mozilla/5.0' --retry 3 --retry-delay 5 --retry-all-errors \
+     -D /tmp/hdr.txt \
+     -w '\nHTTP_STATUS=%{http_code} FINAL_URL=%{url_effective} BYTES=%{size_download}\n' \
+     '<URL>'
+   ```
+
+   - `-L` 必加：來源常有 308 搬家（`developers.openai.com` 就已搬到 `learn.chatgpt.com`），沒 `-L` 會拿到空 body。
+   - `-f` 必加：讓 4xx/5xx 回非 0 exit code。原本 `curl -s` 遇 403 也是 exit 0，agent 分不出「沒新版」和「被擋」。
+   - **拿到非 200 或 `BYTES=0` 一律視為此來源失敗**，套用「部分來源失敗」規則（見約束），並照下面的 fallback chain 往下一層退。
+   - 失敗時從 `/tmp/hdr.txt` 撈出診斷 header 寫進 summary（見約束「403 診斷」）。
+
    2a) Claude Code（DATA_CC）：
    - 用 WebFetch 抓 `https://code.claude.com/docs/en/changelog`
    - WebFetch 有快取且會自動摘要，**明確要求列出每個版本的版本號與日期**，避免漏版本；同一版若已存在於陣列即視為「無新內容」。
 
-   2b) Codex CLI（DATA_CI）— 抓 GitHub API（權威來源）：
-   - 用 WebFetch 抓 `https://api.github.com/repos/openai/codex/releases?per_page=30`
-   - 只挑 stable 版（`prerelease: false`），跳過 alpha
-   - 用 `tag_name` 抓版本（例 `rust-v0.136.0`，取 `0.136.0`）、`published_at` 抓日期、`body` 抓 release notes 整理成繁中
-   - 未授權的 `api.github.com` 每小時限 60 次；若收到 rate limit / 403，視為此來源解析失敗並套用「部分來源失敗」規則（見約束）。
+   2b) Codex CLI（DATA_CI）— 三層 fallback，**依序嘗試、成功即停**：
+
+   **第 1 層：GitHub API（僅在有 token 時走這層）** — 窗口最大（30 筆），最安全。
+
+   ```bash
+   TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-}}"
+   if [ -n "$TOKEN" ]; then
+     curl -sfL -H "Authorization: Bearer $TOKEN" -H 'Accept: application/vnd.github+json' \
+       -w '\nHTTP_STATUS=%{http_code}\n' \
+       'https://api.github.com/repos/openai/codex/releases?per_page=30'
+   fi
+   ```
+
+   - 帶 token = 5000 次/小時 **per token**（不看 IP）；**未授權則是 60 次/小時 per 出口 IP，且排程環境是共用 NAT、額度會被其他人吃光** → 沒 token 就別打這層，直接走第 2 層。
+   - **不要用 WebFetch 打這層** — WebFetch 無法帶 `Authorization` header，等於未授權請求。
+   - 只挑 `prerelease: false`；用 `tag_name`（例 `rust-v0.136.0` → 取 `0.136.0`）、`published_at`、`body`。
+
+   **第 2 層：releases.atom（無 token 時的主來源，不吃 API 額度）**
+
+   ```bash
+   curl -sfL -A 'Mozilla/5.0' --retry 3 --retry-delay 5 \
+     -w '\nHTTP_STATUS=%{http_code} BYTES=%{size_download}\n' \
+     'https://github.com/openai/codex/releases.atom'
+   ```
+
+   - 走 github.com 網頁層，**不消耗 `api.github.com` 的 60/hr 額度**。
+   - 結構：`<entry>` 內 `<title>` = 版本（stable 是裸 semver 如 `0.146.0`）、`<updated>` = ISO 日期、`<content type="html">` = release notes（HTML entity-encoded，需 unescape）。
+   - **⚠️ 只回最新 10 筆且不支援分頁**，而 alpha 版發佈很密（實測 10 筆內只有 1 筆是 codex stable）→ 若排程中斷超過 1 天，stable 版可能已滑出窗口。此層抓不到就往第 3 層退，不要當成「無新版」。
+   - **⚠️ 兩道過濾都要做**：
+     1. 跳過含 `-alpha` 的 title；
+     2. 只收 title 符合 `^\d+\.\d+\.\d+$` 的 entry — 此 feed 混有非 codex 的依賴發佈（實測有 `rusty-v8-v150.4.0`），不濾會插錯條目。
+   - `<content>` 內有大量 GitHub 的 `<a class="issue-link" data-hovercard-...>` 雜訊，整理繁中時剝掉，只留 feature 描述。
+
+   **第 3 層：learn.chatgpt.com RSS 的 CLI 項目**（見 2c 的 feed）
+   - 取 link 含 `#github-release-` 的 entries，`<title>` 形如 `Codex CLI Release: 0.146.0`。
+   - 內容較精簡，僅在第 1、2 層都失敗時當保底。
 
    2c) Codex App（DATA_CA）— 抓 RSS feed（避開 stale CDN）：
-   - 用 Bash 跑 `curl -s -A 'Mozilla/5.0' 'https://developers.openai.com/codex/changelog/rss.xml'`
-   - 只挑 link/guid 含 `-app` 的 entries
+
+   ```bash
+   curl -sfL -A 'Mozilla/5.0' --retry 3 --retry-delay 5 --retry-all-errors \
+     -w '\nHTTP_STATUS=%{http_code} FINAL_URL=%{url_effective} BYTES=%{size_download}\n' \
+     'https://learn.chatgpt.com/docs/changelog/rss.xml'
+   ```
+
+   - **⚠️ URL 已搬家**：舊的 `https://developers.openai.com/codex/changelog/rss.xml` 現在回 `308 → https://learn.chatgpt.com/docs/changelog/rss.xml`。直接抓新網址；`-L` 仍要留著以防再搬。
+   - 這個 feed（實測 ~1.1MB / 109 items）**同時含三種來源，靠 link 分流**：
+     - `#codex-YYYY-MM-DD-app` → Codex App（本節要的）
+     - `#github-release-<id>` → Codex CLI（2b 第 3 層保底用）
+     - `#codex-YYYY-MM-DD-mobile` → 行動版，**忽略**
    - 從 `<title>`、`<pubDate>`、`<description>`（HTML-encoded）抓內容；保留英文 feature 名、用 <code> 包指令、<b> 強調
+   - fallback：此 feed 失敗時，改用 WebFetch 抓 `https://developers.openai.com/codex/changelog`（CDN 可能 stale，僅保底）。
 
 3) 對每個來源，找出對應陣列**尚未收錄**的新條目。整理成繁中後插入陣列「最前面」（維持新到舊順序）。**不可刪舊條目。**
 
@@ -103,6 +159,11 @@ Hero 的 Date Span、Total Versions、Agent 篩選 chip 計數都由 JS 動態�
 - 即使三來源都沒新版，仍要更新時間戳並執行 push 腳本（腳本會因有差異而 commit 時間戳）。
 - **部分來源失敗時：跳過該來源、不要中止整個流程**，用成功的來源照常更新；summary 標註哪些來源失敗（例「Codex App 解析失敗，跳過」）。
 - 三來源**都**解析失敗時：仍更新時間戳、執行 push 腳本，summary 寫「所有來源解析失敗，僅更新時間戳記」。
+- **🚨 403 診斷（失敗時必附原因，否則沒人查得出來）：** 任一來源非 200 時，從 `/tmp/hdr.txt` 撈 header 判斷類型，寫進 summary：
+  - 有 `X-RateLimit-Remaining: 0` → 寫「API 額度耗盡（共用 IP）」。排程環境走共用 NAT，未授權的 60/hr 額度會被其他 tenant 吃光 — **這不是本 repo 打太多次**，不要因此降低排程頻率，要改帶 token 或走 releases.atom。
+  - 有 `cf-ray` / `cf-mitigated` 或 body 是 challenge HTML → 寫「Cloudflare 擋 datacenter IP」。無法靠重試解決，只能換來源。
+  - `HTTP_STATUS=000` 或 timeout → 寫「連線失敗」。
+  - 其他狀態碼 → 原樣寫出狀態碼，不要只寫「解析失敗」。
 
 ## 完成定義（DoD — 結束前自我檢查）
 
@@ -111,4 +172,5 @@ Hero 的 Date Span、Total Versions、Agent 篩選 chip 計數都由 JS 動態�
 3. **時間戳**：`<b id="lastRefreshed">` 已更新為 `YYYY-MM-DD HH:MM (Taipei)`。
 4. **靈感卡**：合計 ≤ 2 張、同一 INSP_* ≤ 1 張，且皆含 `auto: true`。
 5. **Push**：push 腳本回報 `pushed to main` 或 `no changes`（兩者皆為成功收尾）。
-6. **Summary**：如實反映各來源新增筆數與失敗情形。
+6. **Summary**：如實反映各來源新增筆數與失敗情形；失敗來源必須帶 403 診斷分類（見約束），不可只寫「解析失敗」。
+7. **抓取健康度**：每個來源都確認過 `HTTP_STATUS=200` 且 `BYTES>0`；Codex CLI 若退到第 2/3 層，summary 註明走了哪一層。
