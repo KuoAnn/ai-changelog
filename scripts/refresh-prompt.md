@@ -107,6 +107,17 @@ TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-}}"
 
 - **🚨 寫入 `data/claude-app.json`，不得寫入 `DATA_CC`。**
 - 主要解析 `products.claude-app` 的 priority 1（Cowork changelog **Markdown**）。Markdown 解析失敗才退到 priority 2 的 HTML 版。
+- **解析結構（實測 2026-07-31）：** 該 Markdown 用 MDX 標籤而非 heading 分段，每個版本一段：
+
+  ```text
+  <Update label="v1.24012.9" description="2026-07-24">
+    **General** / **Code** / **Cowork** / **3P**  ← 四個子區塊，各自列 bullet
+  </Update>
+  ```
+
+  取 `label` 當 `version`（去掉 `v` 前綴，形如 `1.24012.9`；注意**不是** CLI 的 `2.1.x`）、`description` 當 `date`。
+  **🚨 段落內的 `**Code**` 子區塊講的是 Desktop 內建的 Claude Code 介面，仍屬 Desktop 版本的一部分 — 不要因為看到 Code 就寫進 `DATA_CC`。**
+  子區塊寫「No user-facing changes.」時，該版通常是 `low` / `notify: false`。
 - priority 3（Claude Apps Release Notes）與 priority 4（Desktop Code Changelog）是 enrichment / cross-check：只補摘要與重要性、**不建立重複的 Desktop 版本**。
 - JSON 結構：
 
