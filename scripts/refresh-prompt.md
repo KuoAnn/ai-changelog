@@ -10,16 +10,16 @@
 
 | 產品 | 寫入目標 | 版本形式 |
 | --- | --- | --- |
-| Claude Code CLI | `index.html` → `DATA_CC`、`INSP_CC` | CLI semver（`2.1.x`） |
+| Claude Code CLI | `data/changelog-data.js` → `DATA_CC`、`INSP_CC` | CLI semver（`2.1.x`） |
 | Claude Desktop | `data/claude-desktop.json` → `entries`（**獨立檔案**） | Desktop build（`1.24012.9`） |
-| Codex CLI | `index.html` → `DATA_CI`、`INSP_CI` | CLI semver |
-| Codex App / ChatGPT Desktop | `index.html` → `DATA_CA`、`INSP_CA` | 無版本號，`v` 用 `"YYYY-MM-DD"` |
+| Codex CLI | `data/changelog-data.js` → `DATA_CI`、`INSP_CI` | CLI semver |
+| Codex App / ChatGPT Desktop | `data/changelog-data.js` → `DATA_CA`、`INSP_CA` | 無版本號，`v` 用 `"YYYY-MM-DD"` |
 
 前端規則（**動資料、不動版面**）：
 
-- `index.html` 為單頁合併版面（無 Tab）：只維護上表六個陣列＋JSON，前端 JS 會自行合併渲染，**不需要動任何 HTML 版面**。
-- Hero 的 Date Span、Total Versions、Agent 篩選 chip 計數皆由 JS 動態計算 — 勿改那些靜態字串（含「Anthropic · 36 versions · ...」這類字樣的 find-replace）、勿動 Chart.js 的 `<script src=...>`。
-- **🚨 `DATA_CD` 是產物，不可手改**：由 `scripts/build-claude-desktop.mjs` 從 `data/claude-desktop.json` 產生，寫在 `index.html` 的 `CLAUDE-DESKTOP-DATA:START/END` 標記間。改資料一律改 JSON 再跑產生器（步驟 8）。
+- 版面與資料分離：`index.html` 是版面＋渲染邏輯，`data/changelog-data.js` 是資料層（classic script，`index.html` 以 `<script src>` 載入）。排程**只維護上表六個陣列＋JSON**，前端 JS 會自行合併渲染，**🚨 不需要也不得動 `index.html` 的任何版面／邏輯**（唯一例外：步驟 9 的 `lastRefreshed` 時間戳）。
+- Hero 的 Date Span、Total Versions、Agents 數、Agent 篩選 chip 計數皆由 JS 動態計算 — 勿改那些靜態字串、勿動 `<script src="data/changelog-data.js">` 載入行。
+- **🚨 `DATA_CD` 是產物，不可手改**：由 `scripts/build-claude-desktop.mjs` 從 `data/claude-desktop.json` 產生，寫在 `data/changelog-data.js` 的 `CLAUDE-DESKTOP-DATA:START/END` 標記間。改資料一律改 JSON 再跑產生器（步驟 8）。
 - **EVA 機體編號固定不變**（依加入時間配發）：EVA00＝Claude Code、EVA01＝Codex App、EVA02＝Codex CLI、EVA03＝Claude Desktop；新增第五個來源取 `EVA04`，**不可重新分配既有編號**。
 - **MAGI 三節點是產品線群組**（EVA 設定三賢者固定三個），非 1:1 產品：MELCHIOR-1 同收 Claude Code 與 Claude Desktop，四產品都在儀表板上。要加來源改 `MAGI_GROUPS`，**不可加第四個節點**。
 
@@ -28,7 +28,7 @@
 ### 1) 同步 git 與定位
 
 - `git pull --rebase --autostash origin main`（此 pull 讓接下來 Read 到最新內容；push 腳本內部會再 pull 一次確保 fast-forward，兩者非冗餘）。
-- `index.html` 290KB+ **勿整檔讀**：先 Grep `const DATA_CC` / `const DATA_CI` / `const DATA_CA` / `INSP_` 行號，再用 Read offset/limit 分塊讀。`data/claude-desktop.json` 很小，可整檔讀。
+- `data/changelog-data.js` 200KB+ **勿整檔讀**：先 Grep `const DATA_CC` / `const DATA_CI` / `const DATA_CA` / `INSP_` 行號，再用 Read offset/limit 分塊讀。`data/claude-desktop.json` 很小，可整檔讀。`index.html` 只有步驟 9 時間戳需要碰。
 
 ### 2) 讀 manifest
 
@@ -139,7 +139,7 @@ curl -sfL -A 'Mozilla/5.0 (compatible; ai-changelog/1.0; +https://github.com/Kuo
 
 整理成繁中後插入最前面（維持新到舊）。**不可刪舊條目**（含 JSON 既有 entries）。
 
-**🚨 改 `index.html` 一律用 Edit 工具 surgical 替換，禁止 Write 重寫整檔**（290KB+）。`data/claude-desktop.json` 可整檔重寫，但必須保留既有 entries。
+**🚨 改 `data/changelog-data.js` 一律用 Edit 工具 surgical 替換，禁止 Write 重寫整檔**（200KB+）。`data/claude-desktop.json` 可整檔重寫，但必須保留既有 entries。
 
 ### 6) severity 與 notify
 
@@ -177,7 +177,7 @@ Claude Desktop 目前沒有對應 `INSP_*` 陣列，**不要硬塞進 `INSP_CC`*
 node scripts/build-claude-desktop.mjs
 ```
 
-把 JSON 內嵌成 `index.html` 的 `DATA_CD`。**JSON 是唯一真實來源，`DATA_CD` 是產物。** 內嵌而非 runtime fetch 是因頁面需支援瀏覽器直開（`file://` 下 `fetch` 被 CORS 擋）。產生器冪等（資料沒變無 diff）、會擋重複版本與非法 `severity`；`node scripts/build-claude-desktop.mjs --check` 只驗證同步不寫檔（不同步回非 0）。
+把 JSON 內嵌成 `data/changelog-data.js` 的 `DATA_CD`。**JSON 是唯一真實來源，`DATA_CD` 是產物。** 內嵌而非 runtime fetch 是因頁面需支援瀏覽器直開（`file://` 下 `fetch` 被 CORS 擋）。產生器冪等（資料沒變無 diff）、會擋重複版本與非法 `severity`；`node scripts/build-claude-desktop.mjs --check` 只驗證同步不寫檔（不同步回非 0）。
 
 ### 9) 更新時間戳
 
@@ -193,15 +193,16 @@ node scripts/build-claude-desktop.mjs
 ```bash
 python3 -m json.tool scripts/update-sources.json >/dev/null
 python3 -m json.tool data/claude-desktop.json >/dev/null
+node --check data/changelog-data.js
 node scripts/build-claude-desktop.mjs --check
 ```
 
-- 抽出修改過的 `DATA_*` / `INSP_*` 區塊，用 `node --check` 或 `node -e "..."` parse；無 Node 至少確認括號／大括號數量平衡。
+- `node --check data/changelog-data.js` 可直接驗整個資料層語法（它是獨立 JS 檔）；無 Node 至少確認括號／大括號數量平衡。
 - **驗證不過就中止，不要 push 內容。** 若時間戳是唯一變更仍執行 push 腳本，summary 註明「內容語法驗證失敗，僅更新時間戳記」。
 
 ### 11) Commit + push（🚨 一律直推 main）
 
-push 腳本已 stage `index.html`、`data/claude-desktop.json`、`scripts/update-sources.json`，內部用 `git push origin HEAD:main` 直推（與起始分支無關）。**不開 PR、不自行開分支。** 兩腳本都會自動偵測「無變更」→ 不 commit 直接結束；push 成功後 Pages 約 1 分鐘重建。
+push 腳本已 stage `index.html`、`data/changelog-data.js`、`data/claude-desktop.json`、`scripts/update-sources.json`，內部用 `git push origin HEAD:main` 直推（與起始分支無關）。**不開 PR、不自行開分支。** 兩腳本都會自動偵測「無變更」→ 不 commit 直接結束；push 成功後 Pages 約 1 分鐘重建。
 
 ```bash
 bash scripts/push-changelog.sh "<summary>"             # 遠端 / Linux（排程環境）
@@ -239,9 +240,9 @@ Codex CLI GitHub API 額度耗盡，改用 Atom
 ## 完成定義（DoD — 結束前自我檢查）
 
 1. **來源設定**：已讀 manifest，抓取照 priority 與 role 語意（primary 成功即停、enrichment 不建條目）。
-2. **產品分流**：Claude Desktop 版本只在 `data/claude-desktop.json`；`DATA_CC` 只有 Claude Code CLI 的 semver。
+2. **產品分流**：Claude Desktop 版本只在 `data/claude-desktop.json`；`DATA_CC` 只有 Claude Code CLI 的 semver；`index.html` 除時間戳外零改動。
 3. **去重**：各陣列／`entries` 無重複版本，只插入嚴格新於原最前筆的條目（鍵 `product + version + publishedDate`）。
-4. **語法**：兩個 JSON 過 `python3 -m json.tool`；`build-claude-desktop.mjs --check` 過；修改過的 `DATA_*` / `INSP_*` 區塊過 parse／括號平衡檢查。
+4. **語法**：兩個 JSON 過 `python3 -m json.tool`；`node --check data/changelog-data.js` 過；`build-claude-desktop.mjs --check` 過。
 5. **重要性**：JSON 每筆 entry 有合法 `severity` 與依規則判定的 `notify`。
 6. **時間戳**：`index.html` 的 `<b id="lastRefreshed">` 與 JSON 的 `lastRefreshed` 皆為 `YYYY-MM-DD HH:MM (Taipei)`。
 7. **靈感卡**：合計 ≤ 2 張、同一 `INSP_*` ≤ 1 張，皆含 `auto: true`。

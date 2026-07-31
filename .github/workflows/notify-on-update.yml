@@ -1,10 +1,10 @@
 name: Notify on real update
 
-# 當 index.html 或 data/claude-desktop.json 有「實際內容更新」或發生「異常」時，
+# 當 data/changelog-data.js 或 data/claude-desktop.json 有「實際內容更新」或發生「異常」時，
 # 透過 Telegram 與 Slack 發通知。
 # 通知分兩類，同一次 push 若兩者都有 → 併成一則；只有其一 → 只發該類：
 #   1. 更新通知：
-#      - index.html 新增 DATA_* 版本條目或 INSP_* 靈感卡（靠 git diff 偵測）。
+#      - data/changelog-data.js 新增 DATA_* 版本條目或 INSP_* 靈感卡（靠 git diff 偵測）。
 #      - data/claude-desktop.json 新增 entries，且該筆 "notify": true（靠 before/after JSON 比對）。
 #   2. 異常通知：commit summary 出現解析/驗證失敗等關鍵字（靠 %b 內文偵測）。
 # 只更新 <b id="lastRefreshed"> 或 claude-desktop.json 的 lastRefreshed 同步時間戳、
@@ -21,6 +21,7 @@ on:
     branches: [main]
     paths:
       - index.html
+      - data/changelog-data.js
       - data/claude-desktop.json
   workflow_dispatch: {}
 
@@ -102,7 +103,7 @@ jobs:
           echo "diff 範圍：$BEFORE..$AFTER"
 
           # ── 取新增行（排除 +++ 檔頭）──
-          ADDED="$(git diff "$BEFORE" "$AFTER" -- index.html | grep -E '^\+' | grep -vE '^\+\+\+' || true)"
+          ADDED="$(git diff "$BEFORE" "$AFTER" -- data/changelog-data.js | grep -E '^\+' | grep -vE '^\+\+\+' || true)"
 
           # 新版本條目：DATA_* 物件的 v: "..." 欄位（排除時間戳那行）。
           # 排除帶 sev:" 的列 = DATA_CD（Claude Desktop）。那組是由 scripts/build-claude-desktop.mjs
@@ -233,10 +234,10 @@ jobs:
                   cut = limit
               return text[:cut].rstrip(" ，；：") + "…"
 
-          # 由 AFTER 版本的 index.html 判斷每個新增物件屬於哪個 DATA_* 陣列。
+          # 由 AFTER 版本的 data/changelog-data.js 判斷每個新增物件屬於哪個 DATA_* 陣列。
           source_by_version = {}
           current = ""
-          with open("index.html", encoding="utf-8") as page:
+          with open("data/changelog-data.js", encoding="utf-8") as page:
               for raw in page:
                   start = re.search(r"const DATA_(CC|CA|CI)\s*=\s*\[", raw)
                   if start:

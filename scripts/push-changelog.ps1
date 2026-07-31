@@ -40,7 +40,7 @@ Write-Host "[push-changelog] Taipei time: $taipei"
 git pull --rebase --autostash origin main 2>&1 | Write-Host
 
 # Stage the dashboard + Claude Desktop data + source manifest (any that changed)
-git add index.html data/claude-desktop.json scripts/update-sources.json 2>&1 | Write-Host
+git add index.html data/changelog-data.js data/claude-desktop.json scripts/update-sources.json 2>&1 | Write-Host
 
 # Nothing to commit? bail cleanly.
 $staged = git diff --cached --name-only

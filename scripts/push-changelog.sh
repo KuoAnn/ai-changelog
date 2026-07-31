@@ -32,7 +32,7 @@ git config user.email >/dev/null 2>&1 || git config user.email "bot@users.norepl
 git fetch origin main || true
 git pull --rebase --autostash origin main || true
 
-git add index.html data/claude-desktop.json scripts/update-sources.json
+git add index.html data/changelog-data.js data/claude-desktop.json scripts/update-sources.json
 
 if git diff --cached --quiet; then
   echo "[push-changelog] no changes staged — skipping commit."

@@ -6,10 +6,10 @@
 
 | 產品面向 | 說明 | 資料位置 |
 | --- | --- | --- |
-| Claude Code CLI | Anthropic 的 CLI 工具 | `index.html` → `DATA_CC` |
+| Claude Code CLI | Anthropic 的 CLI 工具 | [`data/changelog-data.js`](data/changelog-data.js) → `DATA_CC` |
 | Claude Desktop | Anthropic 桌面應用程式（build 版本 `1.x`，內含 Chat / Cowork / Code） | [`data/claude-desktop.json`](data/claude-desktop.json) |
-| Codex CLI | OpenAI 的 CLI 工具 | `index.html` → `DATA_CI` |
-| Codex App / ChatGPT Desktop | OpenAI 的桌面 App（已併入 ChatGPT Desktop） | `index.html` → `DATA_CA` |
+| Codex CLI | OpenAI 的 CLI 工具 | [`data/changelog-data.js`](data/changelog-data.js) → `DATA_CI` |
+| Codex App / ChatGPT Desktop | OpenAI 的桌面 App（已併入 ChatGPT Desktop） | [`data/changelog-data.js`](data/changelog-data.js) → `DATA_CA` |
 
 四個來源在頁面上各有**固定不變的 EVA 機體編號**（依加入時間配發，既有編號永不重新分配）：
 
@@ -20,9 +20,9 @@
 | **EVA02 貳號機** | Codex CLI | CASPER-3 |
 | **EVA03 參號機** | Claude Desktop | MELCHIOR-1 |
 
-MAGI 三賢者依 EVA 設定固定三節點，所以節點語意是**產品線群組**而非 1:1 產品：MELCHIOR-1 同時承載 Anthropic 的兩條線（節點內會列出 `Claude Code N · Claude Desktop N` 分項），四個產品都在儀表板上，沒有任何一個被排除。
+MAGI 三賢者依 EVA 設定固定三節點，所以節點語意是**產品線群組**而非 1:1 產品：MELCHIOR-1 同時承載 Anthropic 的兩條線（節點內列出 EVA00 與 EVA03 兩台機體的分項筆數），四個產品都在儀表板上，沒有任何一個被排除。
 
-每台機體都會顯示**同步率**：來源正常（最新一筆在 21 日內）顯示 `100.00%`；來源停更或抓取失敗則顯示**負數同步率**並亮出 **精神汙染** 警示，同時把 HUD 的 `PATTERN` 由 `BLUE` 轉 `RED`、警報列改列出失聯機體。判定完全取自實際資料，不是裝飾值。
+每台機體都會顯示**同步率**：10 日內以新鮮度（每日遞減 10%）加上近 14 日更新動能（每筆額外更新 +6%、最高 +60%）計算，因此密集更新時可超過 `100%`；超過 10 日臨界值後同步率直接跌為負數並亮出 **精神汙染** 警示，同時把 HUD 的 `PATTERN` 由 `BLUE` 轉 `RED`。警報列永遠保留：有異常時列出失聯機體；全部正常時顯示清楚標示「演習／無實質意義」的裝飾性警告。
 
 > Claude Code CLI 與 Claude Desktop 是**兩個不同產品**，資料刻意分開存放，Desktop 版本不會混入 `DATA_CC`。
 > 另外 **Claude Desktop ≠ Claude Apps**：`Claude Apps` 是 Anthropic 對 web／desktop／iOS／Android 的傘狀稱呼、**沒有版本號**（[Claude Apps Release Notes](https://support.claude.com/en/articles/12138966-release-notes) 依日期分段）；本站追蹤的是可版本化的 **Desktop build**（[Cowork changelog](https://claude.com/docs/cowork/changelog)，自述 `Release notes for Claude Desktop`）。同一天兩邊內容不同，不是同一份資料。
@@ -39,7 +39,7 @@ MAGI 三賢者依 EVA 設定固定三節點，所以節點語意是**產品線�
 
 ## 本機查看
 
-這是 self-contained 靜態頁，不需要安裝依賴。
+這是純靜態頁，不需要安裝依賴；資料層 `data/changelog-data.js` 以 `<script src>` 載入（非 `fetch`），所以 `file://` 直開也能動。
 
 直接用瀏覽器開啟：
 
@@ -49,10 +49,10 @@ index.html
 
 ## 自動更新
 
-內容由 Claude Code 遠端排程維護。排程會抓四個產品面向的官方來源，更新 `index.html` 與 `data/claude-desktop.json`，再 commit 並 push 到 `main`，觸發 GitHub Pages 重建。
+內容由 Claude Code 遠端排程維護。排程會抓四個產品面向的官方來源，更新 `data/changelog-data.js` 與 `data/claude-desktop.json`（`index.html` 只碰時間戳），再 commit 並 push 到 `main`，觸發 GitHub Pages 重建。
 
 ```text
-排程觸發 -> 讀 update-sources.json -> 抓官方 changelog -> 更新 HTML / JSON -> commit/push -> Pages 重建
+排程觸發 -> 讀 update-sources.json -> 抓官方 changelog -> 更新資料檔 -> commit/push -> Pages 重建
 ```
 
 官方來源：
@@ -72,7 +72,7 @@ index.html
 
 ## 更新通知（Telegram / Slack）
 
-當 `index.html` 有**實際內容更新**（新增 `DATA_*` 版本條目或 `INSP_*` 靈感卡），或 `data/claude-desktop.json` 新增 `"notify": true` 的 Claude Desktop 條目時，會自動發通知到 Telegram 與 Slack。通知會列出每筆新增版本／靈感卡的來源、名稱與短摘要；Claude Desktop 條目另含版本、日期、severity、標題與摘要。只更新同步時間戳（`<b id="lastRefreshed">` 或 JSON 的 `lastRefreshed`）的 commit **不會**觸發。
+當 `data/changelog-data.js` 有**實際內容更新**（新增 `DATA_*` 版本條目或 `INSP_*` 靈感卡），或 `data/claude-desktop.json` 新增 `"notify": true` 的 Claude Desktop 條目時，會自動發通知到 Telegram 與 Slack。通知會列出每筆新增版本／靈感卡的來源、名稱與短摘要；Claude Desktop 條目另含版本、日期、severity、標題與摘要。只更新同步時間戳（`<b id="lastRefreshed">` 或 JSON 的 `lastRefreshed`）的 commit **不會**觸發。
 
 ```text
 push 到 main -> workflow 比對 diff / JSON 差集 -> 判定是否有新版本/靈感卡 -> 發 Telegram / Slack
@@ -110,40 +110,42 @@ Linux / 遠端排程使用：
 bash scripts/push-changelog.sh "手動更新"
 ```
 
-兩個腳本都會先同步 `origin/main`，stage `index.html`、`data/claude-desktop.json`、`scripts/update-sources.json`，有變更才 commit，最後 push 到 `main`；沒有變更時直接 no-op 結束。
+兩個腳本都會先同步 `origin/main`，stage `index.html`、`data/changelog-data.js`、`data/claude-desktop.json`、`scripts/update-sources.json`，有變更才 commit，最後 push 到 `main`；沒有變更時直接 no-op 結束。
 
 ## 主要檔案
 
 | 檔案 | 說明 |
 | --- | --- |
-| [`index.html`](index.html) | 主頁面（兼 GitHub Pages 入口），包含資料、樣式與互動邏輯 |
+| [`index.html`](index.html) | 主頁面（兼 GitHub Pages 入口），包含版面、樣式與互動邏輯 |
+| [`data/changelog-data.js`](data/changelog-data.js) | 資料層：`DATA_*` 版本條目與 `INSP_*` 靈感卡（排程更新的主要目標） |
 | [`scripts/update-sources.json`](scripts/update-sources.json) | Claude / Codex CLI 與 App 的官方來源、備援策略、版本過濾及通知分級 |
-| [`data/claude-desktop.json`](data/claude-desktop.json) | Claude Desktop 的獨立版本資料（頁面 `DATA_CD` 的來源） |
-| [`scripts/build-claude-desktop.mjs`](scripts/build-claude-desktop.mjs) | 把 `data/claude-desktop.json` 內嵌成 `index.html` 的 `DATA_CD`（冪等，支援 `--check`） |
+| [`data/claude-desktop.json`](data/claude-desktop.json) | Claude Desktop 的獨立版本資料（`DATA_CD` 的來源） |
+| [`scripts/build-claude-desktop.mjs`](scripts/build-claude-desktop.mjs) | 把 `data/claude-desktop.json` 內嵌成 `data/changelog-data.js` 的 `DATA_CD`（冪等，支援 `--check`） |
 | [`scripts/refresh-prompt.md`](scripts/refresh-prompt.md) | 排程 agent 的完整刷新指示 |
 | [`scripts/push-changelog.ps1`](scripts/push-changelog.ps1) | Windows 手動 commit/push 腳本 |
 | [`scripts/push-changelog.sh`](scripts/push-changelog.sh) | Linux/遠端排程 commit/push 腳本 |
 | [`.github/workflows/notify-on-update.yml`](.github/workflows/notify-on-update.yml) | 實際更新時發 Telegram / Slack 通知的 workflow |
+| [`favicon.svg`](favicon.svg) | 分頁圖示（NERV 紋章葉形版）；`index.html` 另以 data URI 內嵌同一份，維持零外部請求 |
+| [`favicon.ico`](favicon.ico) | Windows 釘選／舊瀏覽器用；正方尺寸階梯 16／24／32／48／64，未滿 48px 用葉形版，48px 起用含 NERV 字樣的完整版 |
 
 ## 編輯提示
 
 Claude Desktop 的資料在 `data/claude-desktop.json`（`entries` 陣列，最新在最前面，每筆含 `version`、`date`、`severity`、`notify`、`title`、`summary`、`categories`），頁面上的 `DATA_CD` 由 [`scripts/build-claude-desktop.mjs`](scripts/build-claude-desktop.mjs) 從該 JSON 產生 — **改資料請改 JSON 再跑產生器，不要直接改 `DATA_CD`**：
 
 ```bash
-node scripts/build-claude-desktop.mjs          # 產生／更新 index.html 的 DATA_CD
+node scripts/build-claude-desktop.mjs          # 產生／更新 data/changelog-data.js 的 DATA_CD
 node scripts/build-claude-desktop.mjs --check  # 只檢查是否同步（不寫檔）
 ```
 
-之所以 build-time 內嵌而不是 runtime `fetch`：`index.html` 要能直接用瀏覽器開（`file://`），而 `file://` 下 `fetch` 會被 CORS 擋掉。其餘主資料都在 `index.html`：
+之所以 build-time 內嵌而不是 runtime `fetch`：頁面要能直接用瀏覽器開（`file://`），而 `file://` 下 `fetch` 會被 CORS 擋掉。內容分佈：
 
-| 內容 | HTML 內位置 |
+| 內容 | 位置 |
 | --- | --- |
-| changelog 資料 | `DATA_CC`、`DATA_CA`、`DATA_CI`、`DATA_CD`（產物） |
-| 靈感卡 | `INSP_CC`、`INSP_CA`、`INSP_CI`、`INSP_CD`（目前為空） |
-| EVA 編號／MAGI 分組 | `AGENTS`（`eva` 欄位）、`MAGI_GROUPS` |
-| 同步率／精神汙染 | `EVA_STALE_DAYS`、`evaUnitStatus()`、`renderEvaUnits()` |
-| 角色定義 | `ROLES` |
-| 卡片渲染 | `renderInspirationCards()` |
-| Modal 邏輯 | `openModal(card)` |
+| changelog 資料 | `data/changelog-data.js` → `DATA_CC`、`DATA_CA`、`DATA_CI`、`DATA_CD`（產物） |
+| 靈感卡 | `data/changelog-data.js` → `INSP_CC`、`INSP_CA`、`INSP_CI`、`INSP_CD`（目前為空） |
+| EVA 編號／MAGI 分組 | `index.html` → `AGENTS`（`eva` 欄位）、`MAGI_GROUPS` |
+| 同步率／精神汙染 | `index.html` → `EVA_STALE_DAYS`、`evaUnitStatus()`、`renderEvaUnits()` |
+| 角色定義 | `index.html` → `ROLES` |
+| 卡片渲染／Modal | `index.html` → `renderInspiration()`、`openModal(card)` |
 
-目前刻意維持單一 HTML，方便離線分享與 GitHub Pages 發佈。
+版面（`index.html`）與資料（`data/`）分離：排程只動資料檔，token 成本與誤改版面的風險都大幅下降；頁面本體仍是零依賴靜態檔，方便離線分享與 GitHub Pages 發佈。

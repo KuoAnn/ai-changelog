@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
- * 把 data/claude-desktop.json 內嵌成 index.html 的 DATA_CD 陣列。
+ * 把 data/claude-desktop.json 內嵌成 data/changelog-data.js 的 DATA_CD 陣列。
  *
- * 為什麼要內嵌而不是 runtime fetch：index.html 是 self-contained 單檔，
- * README 明示可直接用瀏覽器開啟（file://），而 file:// 下 fetch 會被 CORS 擋掉。
- * 所以 JSON 是唯一真實來源，HTML 內的 DATA_CD 是 build 產物。
+ * 為什麼要內嵌而不是 runtime fetch：頁面（index.html + data/changelog-data.js）
+ * 需支援直接用瀏覽器開啟（file://），而 file:// 下 fetch 會被 CORS 擋掉。
+ * 所以 JSON 是唯一真實來源，changelog-data.js 內的 DATA_CD 是 build 產物。
  *
  * 用法：
- *   node scripts/build-claude-desktop.mjs           # 寫入 index.html
+ *   node scripts/build-claude-desktop.mjs           # 寫入 data/changelog-data.js
  *   node scripts/build-claude-desktop.mjs --check   # 只檢查是否為最新（CI / 驗證用，不寫檔）
  *
  * 冪等：同樣的 JSON 重跑不會產生 diff。
@@ -18,7 +18,7 @@ import { dirname, join } from "node:path";
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const JSON_PATH = join(REPO_ROOT, "data", "claude-desktop.json");
-const HTML_PATH = join(REPO_ROOT, "index.html");
+const DATA_JS_PATH = join(REPO_ROOT, "data", "changelog-data.js");
 
 const START = "  /* CLAUDE-DESKTOP-DATA:START — 由 scripts/build-claude-desktop.mjs 從 data/claude-desktop.json 產生，勿手改 */";
 const END = "  /* CLAUDE-DESKTOP-DATA:END */";
@@ -48,27 +48,27 @@ function buildBlock(data) {
 const data = JSON.parse(readFileSync(JSON_PATH, "utf8"));
 const block = buildBlock(data);
 
-const html = readFileSync(HTML_PATH, "utf8");
-const from = html.indexOf(START);
-const to = html.indexOf(END);
+const dataJs = readFileSync(DATA_JS_PATH, "utf8");
+const from = dataJs.indexOf(START);
+const to = dataJs.indexOf(END);
 if (from < 0 || to < 0 || to < from) {
-  console.error(`[build-claude-desktop] 在 index.html 找不到 DATA_CD marker，請確認 START/END 註解還在。`);
+  console.error(`[build-claude-desktop] 在 data/changelog-data.js 找不到 DATA_CD marker，請確認 START/END 註解還在。`);
   process.exit(2);
 }
-const next = html.slice(0, from) + block + html.slice(to + END.length);
+const next = dataJs.slice(0, from) + block + dataJs.slice(to + END.length);
 
 if (process.argv.includes("--check")) {
-  if (next === html) {
+  if (next === dataJs) {
     console.log(`[build-claude-desktop] up to date（${data.entries.length} 筆）`);
     process.exit(0);
   }
-  console.error("[build-claude-desktop] index.html 的 DATA_CD 與 data/claude-desktop.json 不同步，請跑 node scripts/build-claude-desktop.mjs");
+  console.error("[build-claude-desktop] data/changelog-data.js 的 DATA_CD 與 data/claude-desktop.json 不同步，請跑 node scripts/build-claude-desktop.mjs");
   process.exit(1);
 }
 
-if (next === html) {
+if (next === dataJs) {
   console.log(`[build-claude-desktop] 無變更（${data.entries.length} 筆）`);
 } else {
-  writeFileSync(HTML_PATH, next);
-  console.log(`[build-claude-desktop] 已更新 index.html 的 DATA_CD（${data.entries.length} 筆）`);
+  writeFileSync(DATA_JS_PATH, next);
+  console.log(`[build-claude-desktop] 已更新 data/changelog-data.js 的 DATA_CD（${data.entries.length} 筆）`);
 }
