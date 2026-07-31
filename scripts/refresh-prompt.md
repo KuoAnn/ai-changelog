@@ -1,55 +1,42 @@
 # 自動刷新 prompt — AI Changelog GitHub Page
 
-> 這份 prompt 給 **Claude Code 排程 (schedule / cron)** 使用。每次觸發時，agent 會抓四個產品面向的官方 changelog、更新 repo 內的資料檔、然後 push 回 GitHub 讓 Pages 重建。
+> 給 **Claude Code 排程 (schedule / cron)** 使用。每次觸發：抓四個產品的官方 changelog → 更新資料檔 → 產生少量自動靈感卡 → 更新時間戳 → commit 並 push 到 `main`，讓 GitHub Pages（<https://kuoann.github.io/ai-changelog/>）重建。
 >
-> **Repo：** `https://github.com/KuoAnn/ai-changelog`（遠端排程會自動 clone 一份）
-> **要編輯的檔案：** `index.html`（Claude Code / Codex CLI / Codex App）、`data/claude-desktop.json`（Claude Desktop）
-> **來源設定檔：** `scripts/update-sources.json`（所有官方 URL、優先順序、版本過濾、重要性分級的唯一來源）
-> **路徑慣例：** 一律用 **repo-relative** 路徑（例 `index.html`、`scripts/push-changelog.sh`），不要用任何本機絕對路徑——遠端環境是 Linux、工作目錄已是 repo 根。
+> - **Repo：** `https://github.com/KuoAnn/ai-changelog`（遠端排程自動 clone；環境是 Linux、工作目錄即 repo 根）。路徑一律 **repo-relative**（例 `index.html`），不用本機絕對路徑。
+> - **單一資訊源：** 所有官方 URL、優先順序、版本過濾、標題別名、重要性分級，唯一定義於 `scripts/update-sources.json`（下稱 **manifest**）。**🚨 禁止把來源 URL 寫死在本 prompt 或程式碼各處**；來源異動只改 manifest，本 prompt 只描述「怎麼用」。
+> - 所有新增內容一律**繁體中文**，與既有條目風格一致。
 
----
+## 產品與寫入目標（四產品彼此不可混用）
 
-你的目標：刷新四個產品面向的 changelog 資料、產生少量「自動靈感卡」、更新「最後更新」時間戳，最後 **commit 並 push** 讓 GitHub Page（<https://kuoann.github.io/ai-changelog/>）自動重建。所有新加入的內容都必須使用繁體中文，與既有條目風格一致。
-
-## 背景
-
-追蹤的產品分成**四類，彼此不可混用**：
-
-| 產品 | 寫入目標 | 說明 |
+| 產品 | 寫入目標 | 版本形式 |
 | --- | --- | --- |
-| Claude Code CLI | `index.html` → `DATA_CC`、`INSP_CC` | CLI 版本（`2.1.x` 這種 semver） |
-| Claude Desktop | `data/claude-desktop.json` → `entries` | 桌面應用程式 build 版本（`1.24012.9` 這種），**獨立檔案** |
-| Codex CLI | `index.html` → `DATA_CI`、`INSP_CI` | CLI 版本 |
-| Codex App / ChatGPT Desktop | `index.html` → `DATA_CA`、`INSP_CA` | 桌面 App，已逐步併入 ChatGPT Desktop |
+| Claude Code CLI | `index.html` → `DATA_CC`、`INSP_CC` | CLI semver（`2.1.x`） |
+| Claude Desktop | `data/claude-desktop.json` → `entries`（**獨立檔案**） | Desktop build（`1.24012.9`） |
+| Codex CLI | `index.html` → `DATA_CI`、`INSP_CI` | CLI semver |
+| Codex App / ChatGPT Desktop | `index.html` → `DATA_CA`、`INSP_CA` | 無版本號，`v` 用 `"YYYY-MM-DD"` |
 
-- **🚨 Claude Code CLI 與 Claude Desktop 是兩個不同產品。** Claude Desktop 的版本號（例 `1.24012.9`）**絕對不可**寫入 `DATA_CC`，只能寫進 `data/claude-desktop.json`。
-- **🚨 Claude Desktop 也不等於 Claude Apps。** `Claude Apps` 是 web／desktop／iOS／Android 的傘狀稱呼、無版本號，只當 enrichment（見 4b）。本專案追蹤的是可版本化的 **Desktop build**。
-- **🚨 Codex App 不能只搜尋「Codex App」字樣**：官方已把 Codex 併入 ChatGPT Desktop，標題會出現 `ChatGPT desktop app`、`Codex joins the ChatGPT desktop app` 等寫法。一律以 `scripts/update-sources.json` 的 `products.codex-app.titleAliases` 為接受清單。
-- `index.html` 為單頁合併版面（已無 Tab）：前端 JS 於渲染時把 `DATA_*` 合併成單一時間軸與靈感卡區。**只要維護那六個陣列即可，不需要動任何 HTML 版面。**
-- Hero 的 Date Span、Total Versions、Agent 篩選 chip 計數都由 JS 動態計算 — 不要去動那些靜態字串。
-- **🚨 `DATA_CD` 是產物，不要手改。** 前端的 Claude Desktop 資料由 `scripts/build-claude-desktop.mjs` 從 `data/claude-desktop.json` 產生，寫在 `index.html` 的 `CLAUDE-DESKTOP-DATA:START/END` 標記之間。改資料一律改 JSON，再跑產生器（見步驟 8）。
-- **EVA 機體編號固定不變**：`AGENTS` 內每個來源有專屬 `eva` 編號（EVA00 Claude Code、EVA01 Codex App、EVA02 Codex CLI、EVA03 Claude Desktop），依加入時間配發。新增第五個來源取 `EVA04`，**不可重新分配既有編號**。
-- **MAGI 三節點是產品線群組**，不是 1:1 產品（EVA 設定裡三賢者就是三個）。MELCHIOR-1 同時收 Claude Code 與 Claude Desktop，另兩節點各收一條 OpenAI 產品線 — 四個產品都在儀表板上，沒有任何一個被排除。要加來源時改 `MAGI_GROUPS`，不要加第四個節點。
+前端規則（**動資料、不動版面**）：
+
+- `index.html` 為單頁合併版面（無 Tab）：只維護上表六個陣列＋JSON，前端 JS 會自行合併渲染，**不需要動任何 HTML 版面**。
+- Hero 的 Date Span、Total Versions、Agent 篩選 chip 計數皆由 JS 動態計算 — 勿改那些靜態字串（含「Anthropic · 36 versions · ...」這類字樣的 find-replace）、勿動 Chart.js 的 `<script src=...>`。
+- **🚨 `DATA_CD` 是產物，不可手改**：由 `scripts/build-claude-desktop.mjs` 從 `data/claude-desktop.json` 產生，寫在 `index.html` 的 `CLAUDE-DESKTOP-DATA:START/END` 標記間。改資料一律改 JSON 再跑產生器（步驟 8）。
+- **EVA 機體編號固定不變**（依加入時間配發）：EVA00＝Claude Code、EVA01＝Codex App、EVA02＝Codex CLI、EVA03＝Claude Desktop；新增第五個來源取 `EVA04`，**不可重新分配既有編號**。
+- **MAGI 三節點是產品線群組**（EVA 設定三賢者固定三個），非 1:1 產品：MELCHIOR-1 同收 Claude Code 與 Claude Desktop，四產品都在儀表板上。要加來源改 `MAGI_GROUPS`，**不可加第四個節點**。
 
 ## 步驟
 
-### 1) 先同步 git
+### 1) 同步 git 與定位
 
-避免 push 衝突：`git pull --rebase --autostash origin main`
+- `git pull --rebase --autostash origin main`（此 pull 讓接下來 Read 到最新內容；push 腳本內部會再 pull 一次確保 fast-forward，兩者非冗餘）。
+- `index.html` 290KB+ **勿整檔讀**：先 Grep `const DATA_CC` / `const DATA_CI` / `const DATA_CA` / `INSP_` 行號，再用 Read offset/limit 分塊讀。`data/claude-desktop.json` 很小，可整檔讀。
 
-（此處 pull 是為了讓接下來的 Read 讀到最新內容；push 腳本內部會再 pull 一次以確保 fast-forward，兩者不是冗餘 bug。）
+### 2) 讀 manifest
 
-接著建議**先用 Grep 定位** `const DATA_CC` / `const DATA_CA` / `const DATA_CI` / `INSP_` 的行號，再用 Read 的 offset/limit 分塊讀需要的陣列區段（`index.html` 290KB+，勿整檔讀）。`data/claude-desktop.json` 很小，可整檔讀。
+排程開始先讀 `scripts/update-sources.json`：各產品 `sources[]`（priority、role、format、url、filters）、`stableVersionPattern`、`titleAliases`、`requestPolicy`、`deduplication`、`importance`。
 
-### 2) 讀來源設定檔
+### 3) 抓取通則（所有產品共用）
 
-**排程開始時先讀 `scripts/update-sources.json`**，取得每個產品的來源清單、優先順序、版本 pattern、標題別名與重要性規則。
-
-**🚨 禁止再把來源 URL 分散寫死在這份 prompt 或程式碼各處。** 來源有變更時只改 `scripts/update-sources.json`。這份 prompt 只描述「怎麼用」那些來源，不重複列 URL。
-
-### 3) 抓取策略（所有產品共用）
-
-**🚨 抓取通則（所有 curl 都照這樣寫）：** 排程環境走共用出口 IP，靜默失敗過去常被誤判成「解析失敗」。一律照 `requestPolicy` 帶上這幾個旗標：
+**🚨 所有 curl 都照 `requestPolicy` 帶旗標**（排程走共用出口 IP，靜默失敗過去常被誤判成「解析失敗」）：
 
 ```bash
 curl -sfL -A 'Mozilla/5.0 (compatible; ai-changelog/1.0; +https://github.com/KuoAnn/ai-changelog)' \
@@ -59,58 +46,40 @@ curl -sfL -A 'Mozilla/5.0 (compatible; ai-changelog/1.0; +https://github.com/Kuo
   '<URL>'
 ```
 
-- `-L` 必加：來源常有 308 搬家（`developers.openai.com` 就已搬到 `learn.chatgpt.com`），沒 `-L` 會拿到空 body。
-- `-f` 必加：讓 4xx/5xx 回非 0 exit code。原本 `curl -s` 遇 403 也是 exit 0，agent 分不出「沒新版」和「被擋」。
-- **成功判定（`requestPolicy.successConditions`）：** `HTTP_STATUS=200`、body 非空、且至少能解析出一筆 release。任一條不成立 → **此來源失敗**，套用「部分來源失敗」規則（見約束），並照 priority 往下一層退。
-- 失敗時從 `/tmp/hdr.txt` 撈出診斷 header 寫進 summary（見約束「403 診斷」）。
+- `-L` 必加：來源常有 308 搬家（`developers.openai.com` 已搬到 `learn.chatgpt.com`），沒 `-L` 拿到空 body。
+- `-f` 必加：讓 4xx/5xx 回非 0 exit code，否則 403 也 exit 0，分不出「沒新版」和「被擋」。
+- **成功判定（`requestPolicy.successConditions`）：** `HTTP_STATUS=200`、body 非空、且解析出至少 1 筆 release。任一不成立 → **此來源失敗**：照 priority 退下一層，並套「部分來源失敗」規則（見失敗處理）；同時從 `/tmp/hdr.txt` 撈 header 做 403 診斷。
 
-**優先順序與 role 語意：** 每個產品依 `sources[].priority` **由小到大**嘗試：
+**Role 語意**（每產品依 `sources[].priority` 由小到大嘗試）：
 
-- `version-primary`：**成功後就停**，不再呼叫任何 version fallback。
-- `version-fallback`：**只有 primary 失敗時才使用**，同樣成功即停。
-- `product-enrichment` / `notability-enrichment` / `human-readable-canonical` / `code-surface-cross-check`：**enrichment 類**，只能用來
-  1. 補充摘要文字
-  2. 判斷更新重要性（severity / notify）
-  3. 補充功能名稱
-  **🚨 不得用 enrichment 類來源建立版本條目**，尤其不得因為 enrichment 又提到同一版就重複寫入一筆。
+- `version-primary`：成功即停，不再呼叫任何 version fallback。
+- `version-fallback`：僅 primary 失敗才用，同樣成功即停。
+- `product-enrichment` / `notability-enrichment` / `human-readable-canonical` / `code-surface-cross-check`：**enrichment 類**，只能 (1) 補摘要 (2) 判重要性 (3) 補功能名稱。**🚨 不得用 enrichment 建立版本條目，也不得因 enrichment 又提到同版而重複寫入。**
 
-**GitHub API Token：**
+**GitHub API Token：** `TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-}}"`
 
-```bash
-TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-}}"
-```
-
-- 有 Token → 走 `github-releases-api` 來源，帶 `-H "Authorization: Bearer $TOKEN" -H 'Accept: application/vnd.github+json'`。額度 5000 次/小時 **per token**（不看 IP）。
-- **沒有 Token → 不得打未授權的 `api.github.com`**，直接退到該產品的 Atom 來源。未授權是 60 次/小時 per 出口 IP，排程環境是共用 NAT、額度會被其他 tenant 吃光。
-- **不要用 WebFetch 打 GitHub API** — WebFetch 無法帶 `Authorization` header，等於未授權請求。
+- 有 token → 走 `github-releases-api` 來源，帶 `-H "Authorization: Bearer $TOKEN" -H 'Accept: application/vnd.github+json'`（5000 次/hr per token）。
+- 無 token → **不得打未授權 `api.github.com`**（60 次/hr per 出口 IP，共用 NAT 額度會被其他 tenant 吃光），直接退該產品 Atom 來源。
+- **不要用 WebFetch 打 GitHub API**（帶不了 `Authorization` header，等於未授權）。
 
 **Atom / RSS 解析要點：**
 
-- `releases.atom`：`<entry>` 內 `<title>` = 版本、`<updated>` = ISO 日期、`<content type="html">` = release notes（HTML entity-encoded，需 unescape）。**只回最新 10 筆且不支援分頁** → 排程中斷超過 1 天時 stable 版可能已滑出窗口；抓不到就往下一層退，不要當成「無新版」。`<content>` 內有大量 GitHub 的 `<a class="issue-link" data-hovercard-...>` 雜訊，整理繁中時剝掉，只留 feature 描述。
-- Codex RSS（實測 ~1.1MB / 109 items）**同時含三種來源，靠 link 分流**，見下方 4c / 4d。
+- `releases.atom`：`<title>`＝版本、`<updated>`＝ISO 日期、`<content type="html">`＝release notes（entity-encoded 需 unescape；剝掉 GitHub `<a class="issue-link" data-hovercard-...>` 雜訊，只留 feature 描述）。**只回最新 10 筆、不支援分頁** → 排程中斷 >1 天 stable 可能滑出窗口；抓不到就退下一層，不可當「無新版」。
+- Codex RSS（實測 ~1.1MB / 109 items）**同時含三種來源，靠 link 分流**（見 4c / 4d）。
 
-### 4) 各產品抓取與寫入
+### 4) 各產品要點
 
-#### 4a) Claude Code CLI → `index.html` 的 `DATA_CC`
+#### 4a) Claude Code CLI → `DATA_CC`
 
-- 依 priority：GitHub Releases API（`anthropics/claude-code`，需 token）→ `releases.atom` → `CHANGELOG.md`（raw markdown）→ 官方 HTML changelog。
-- 過濾條件：
-
-  ```text
-  draft == false
-  prerelease == false
-  版本符合 ^v?\d+\.\d+\.\d+$
-  ```
-
-- 用 `tag_name`／`<title>` 取版本號（有 `v` 前綴則去掉）、`published_at`／`<updated>` 取日期、`body`／`<content>` 取內容。
-- `notability-enrichment`（What's New）只用來判斷「這版重不重要」與補功能名稱，**不建立條目**。
-- 條目結構：`{ v, date, cat, body }`，`cat` ∈ {Subagents/Skills, Plugins/MCP, Hooks, Slash Commands, IDE/Editor, Settings/Config, Permissions/Security, UI/UX, Performance/Bug Fix}
+- 依 priority：GitHub Releases API（需 token）→ `releases.atom` → `CHANGELOG.md`（raw markdown）→ 官方 HTML changelog；What's New 為 notability-enrichment。
+- 過濾照 manifest：`draft == false`、`prerelease == false`、版本符合 `stableVersionPattern`。
+- 版本取 `tag_name`／`<title>`（去 `v` 前綴）、日期取 `published_at`／`<updated>`、內容取 `body`／`<content>`。
+- 條目 `{ v, date, cat, body }`；`cat` ∈ {Subagents/Skills, Plugins/MCP, Hooks, Slash Commands, IDE/Editor, Settings/Config, Permissions/Security, UI/UX, Performance/Bug Fix}。
 
 #### 4b) Claude Desktop → `data/claude-desktop.json`
 
-- **🚨 寫入 `data/claude-desktop.json`，不得寫入 `DATA_CC`。**
-- 主要解析 `products.claude-desktop` 的 priority 1（Cowork changelog **Markdown**）。Markdown 解析失敗才退到 priority 2 的 HTML 版。
-- **解析結構（實測 2026-07-31）：** 該 Markdown 用 MDX 標籤而非 heading 分段，每個版本一段：
+- **🚨 只寫入 JSON，版本絕不可寫入 `DATA_CC`**（Desktop 的 `1.24012.9` ≠ CLI 的 `2.1.x`，兩個不同產品）。
+- 主要解析 priority 1（Cowork changelog **Markdown**），解析失敗才退 priority 2 HTML。**解析結構（實測 2026-07-31）：** 用 MDX 標籤而非 heading 分段，每版一段：
 
   ```text
   <Update label="v1.24012.9" description="2026-07-24">
@@ -118,132 +87,71 @@ TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-}}"
   </Update>
   ```
 
-  取 `label` 當 `version`（去掉 `v` 前綴，形如 `1.24012.9`；注意**不是** CLI 的 `2.1.x`）、`description` 當 `date`。
-  **🚨 段落內的 `**Code**` 子區塊講的是 Desktop 內建的 Claude Code 介面，仍屬 Desktop 版本的一部分 — 不要因為看到 Code 就寫進 `DATA_CC`。**
-  子區塊寫「No user-facing changes.」時，該版通常是 `low` / `notify: false`。
-- **🚨 Claude Desktop ≠ Claude Apps（實測 2026-07-31 確認）：** priority 3 的 Claude Apps Release Notes 是 **web／desktop／iOS／Android 的傘狀公告頁、完全沒有版本號**（依 `July 24, 2026` 這種日期分段）。它與 Cowork changelog **同一天內容完全不同**（2026-07-24：Desktop build 是「修 Windows plugin hooks」，Apps 公告是「Claude Opus 5 launch」）。
-  → 它只能當 `product-enrichment`：補摘要、判重要性、補功能名稱，**永遠不建立條目**。要收傘狀公告請另開產品，不要塞進本檔。
-- JSON 結構：
+  `label` → `version`（去 `v` 前綴）、`description` → `date`。
+  **🚨 `**Code**` 子區塊講的是 Desktop 內建的 Claude Code 介面，仍屬 Desktop 版本 — 不要因為看到 Code 就寫進 `DATA_CC`。** 子區塊寫「No user-facing changes.」時該版通常 `low` / `notify: false`。
+- **🚨 Claude Desktop ≠ Claude Apps（實測 2026-07-31 確認）：** priority 3 的 Claude Apps Release Notes 是 web／desktop／iOS／Android 傘狀公告頁、**完全沒有版本號**（依日期分段），與 Cowork changelog 同一天內容完全不同（2026-07-24：Desktop build＝修 Windows plugin hooks、Apps 公告＝Claude Opus 5 launch）→ **永遠只當 enrichment、不建立條目**；要收傘狀公告請另開產品。
+- JSON 結構與 entry 範例：
 
   ```json
   {
     "product": "Claude Desktop",
     "canonicalSource": "https://claude.com/docs/cowork/changelog",
     "lastRefreshed": "YYYY-MM-DD HH:MM (Taipei)",
-    "entries": []
+    "entries": [
+      {
+        "version": "1.24012.9",
+        "date": "2026-07-24",
+        "severity": "high",
+        "notify": true,
+        "title": "Windows Plugin Hooks 修復、MCP 永久允許控管與 Opus 5 effort",
+        "summary": "修正 Windows 上 plugin hooks 靜默不執行；新增 mcpPersistentAlwaysAllowEnabled…",
+        "categories": ["Hooks", "MCP/Permissions", "Models"]
+      }
+    ]
   }
   ```
 
-- 每筆 entry：
+- 規則：`entries[0]` 為最新；版本不得重複；`severity` ∈ critical/high/medium/low；`notify` 照步驟 6；`title`/`summary` 繁中、`categories` 保留英文功能領域名。
 
-  ```json
-  {
-    "version": "1.24012.9",
-    "date": "2026-07-24",
-    "severity": "high",
-    "notify": true,
-    "title": "Windows Plugin Hooks 修復、MCP 永久允許控管與 Opus 5 effort",
-    "summary": "修正 Windows 上 plugin hooks 靜默不執行；新增 mcpPersistentAlwaysAllowEnabled，管理員可停用 MCP 工具的永久 Always allow、保留單次工作階段核准；Opus 5 加入五段式 effort 選擇。",
-    "categories": ["Hooks", "MCP/Permissions", "Models"]
-  }
-  ```
+#### 4c) Codex CLI → `DATA_CI`
 
-- 規則：
-  1. **最新條目放最前面**（`entries[0]` 為最新）。
-  2. **不得重複版本。**
-  3. **不得把 Claude Desktop 版本寫入 `DATA_CC`。**
-  4. `severity` 只能是 `critical` / `high` / `medium` / `low`。
-  5. `notify` 依步驟 6 的通知規則判定。
-  6. `title` 與 `summary` 用繁中；`categories` 保留英文功能領域名。
+- 依 priority：GitHub Releases API（需 token）→ `releases.atom` → Codex RSS 中 link 含 `#github-release-` 的 entries（`<title>` 形如 `Codex CLI Release: 0.146.0`，內容精簡，僅保底）。
+- 過濾照 manifest **三道全做**（排除 `-alpha`、排除 `rusty-v8-*`、符合 `stableVersionPattern`）— 實測不濾會插錯條目；alpha 發佈極密（atom 10 筆內常僅 1 筆 stable）。`rust-v0.136.0` → 取 `0.136.0`。
+- 條目 `{ v, date, cat, title, body }`；`cat` ∈ {Models/Inference, MCP/Tools, Local Sandbox, Slash Commands, UI/UX, Permissions/Security, Performance/Bug Fix, Plugins/MCP}。
+- summary 需註明實際走了哪一層（見步驟 11）。
 
-#### 4c) Codex CLI → `index.html` 的 `DATA_CI`
+#### 4d) Codex App / ChatGPT Desktop → `DATA_CA`
 
-- 依 priority：GitHub Releases API（`openai/codex`，需 token）→ `releases.atom` → Codex RSS 中 link 含 `#github-release-` 的 entries（`<title>` 形如 `Codex CLI Release: 0.146.0`，內容較精簡，僅保底）。
-- 過濾條件（**三道都要做**，實測不濾會插錯條目）：
+- priority 1＝Codex RSS，**靠 link 分流**：取 `#codex-YYYY-MM-DD-app`；忽略 `#codex-YYYY-MM-DD-mobile`（行動版）；`#github-release-<id>` 屬 4c。
+- **🚨 標題不能只搜「Codex App」字樣**（官方已把 Codex 併入 ChatGPT Desktop）：一律以 manifest 的 `products.codex-app.titleAliases` 為接受清單（含 `ChatGPT desktop app`、`Codex joins the ChatGPT desktop app` 等寫法）。
+- RSS 失敗才退 priority 2 HTML changelog（CDN 可能 stale，僅保底）；priority 3 只作 enrichment。
+- 從 `<title>`／`<pubDate>`／`<description>`（HTML-encoded）抓內容；保留英文 feature 名、指令用 `<code>` 包、強調用 `<b>`。
+- 條目 `{ v, date, cat, title, body }`，`v` 用 `"YYYY-MM-DD"`；`cat` ∈ {Models/Inference, IDE/Editor, UI/UX, Performance/Bug Fix, Cloud/Web, MCP/Tools}。
 
-  ```text
-  draft == false
-  prerelease == false
-  排除 -alpha
-  排除 rusty-v8-*
-  只接受 ^(?:rust-v)?\d+\.\d+\.\d+$
-  ```
+### 5) 去重與寫入
 
-- `rust-v0.136.0` → 取 `0.136.0`。alpha 版發佈很密（實測 atom 10 筆內只有 1 筆是 codex stable）。
-- 條目結構：`{ v, date, cat, title, body }`，`cat` ∈ {Models/Inference, MCP/Tools, Local Sandbox, Slash Commands, UI/UX, Permissions/Security, Performance/Bug Fix, Plugins/MCP}
-- summary 需註明實際走了哪一層（見步驟 9）。
+統一去重鍵：`product + version + publishedDate`（同 manifest `deduplication`）。防排程重複插入，依序執行：
 
-#### 4d) Codex App / ChatGPT Desktop → `index.html` 的 `DATA_CA`
+1. 先讀目標最新筆（`DATA_*[0]` 的 `v`、`entries[0]` 的 `version`）。
+2. 只接受版本／日期**嚴格新於該筆**的條目。
+3. 插入前再掃一次完整資料，確認該版本不存在。
+4. 同一版本不得因 enrichment 來源重複寫入。
 
-- priority 1 = Codex RSS，**靠 link 分流**：
+整理成繁中後插入最前面（維持新到舊）。**不可刪舊條目**（含 JSON 既有 entries）。
 
-  ```text
-  取   #codex-YYYY-MM-DD-app      → Codex App（本節要的）
-  忽略 #codex-YYYY-MM-DD-mobile   → 行動版
-  （#github-release-<id> 屬 Codex CLI，見 4c 保底層）
-  ```
+**🚨 改 `index.html` 一律用 Edit 工具 surgical 替換，禁止 Write 重寫整檔**（290KB+）。`data/claude-desktop.json` 可整檔重寫，但必須保留既有 entries。
 
-- **解析標題時需接受 manifest `titleAliases` 的全部寫法**，至少包含：
+### 6) severity 與 notify
 
-  ```text
-  Codex app
-  Codex desktop app
-  ChatGPT desktop app
-  ChatGPT Voice and multi-folder projects
-  Codex joins the ChatGPT desktop app
-  ```
+依 manifest `importance` 分級填 `severity`（critical / high / medium / low）。通知規則：critical、high 一律通知；**有實質使用者影響的 medium** 才通知；一般 medium 與 low 不通知。
 
-- RSS 失敗才退到 priority 2 的 HTML changelog（CDN 可能 stale，僅保底）；priority 3（OpenAI Product Release Notes）只作 enrichment。
-- 從 `<title>`、`<pubDate>`、`<description>`（HTML-encoded）抓內容；保留英文 feature 名、用 `<code>` 包指令、`<b>` 強調。
-- 條目結構：`{ v, date, cat, title, body }`，`cat` ∈ {Models/Inference, IDE/Editor, UI/UX, Performance/Bug Fix, Cloud/Web, MCP/Tools}；Codex App 的 `v` 用 `"YYYY-MM-DD"`。
+僅 `data/claude-desktop.json` 的 entry 填 `severity` + `notify`（boolean）；`index.html` 的 `DATA_*` 沿用既有結構、不加 severity 欄位（通知由 workflow 依 diff 判定）。
 
-### 5) 去重
+### 7) 自動靈感卡
 
-**統一去重鍵：**
+**全來源合計每次最多 2 張、同一 `INSP_*` 最多 1 張** — 嚴格節制。只在新版本有明確破天荒功能（新 slash command、新模型、功能類別首發）才產；寫不出有意義的應用情境就跳過，寧缺勿濫。不動既有手寫靈感卡。
 
-```text
-product + version + publishedDate
-```
-
-另外仍需依序執行（防排程重複插入，最重要）：
-
-1. **先讀目標陣列／JSON 的最新版**（`DATA_*[0]` 的 `v`、`entries[0]` 的 `version`）。
-2. **只接受版本／日期嚴格新於該筆**的條目。
-3. **插入前再掃一次完整資料**，確認該版本不存在才寫入。
-4. **同一版本不得因 enrichment 來源重複寫入。**
-
-整理成繁中後插入「最前面」（維持新到舊順序）。**不可刪舊條目。**
-
-**🚨 改 `index.html` 一律用 Edit 工具 surgical 替換，禁止用 Write 重寫整檔**（HTML 已 290KB+）。`data/claude-desktop.json` 可整檔重寫，但必須保留既有 entries。
-
-### 6) 重要性與通知判定
-
-依 `scripts/update-sources.json` 的 `importance` 分級：
-
-| severity | 判定依據 |
-| --- | --- |
-| `critical` | 資安漏洞、Sandbox escape、資料遺失、操作錯誤 repository、操作錯誤檔案、重大認證或權限破壞性變更 |
-| `high` | 新模型、Context window 重大變更、MCP、Plugin、Hooks、Subagent、Worktree、Remote execution、Enterprise policy、Breaking change |
-| `medium` | 明顯 UI 改善、工作流程改善、效能改善、穩定性改善 |
-| `low` | 一般 bug fix、依賴更新、重打包、no user-facing changes |
-
-通知規則：
-
-```text
-critical              -> 通知
-high                  -> 通知
-有實質使用者影響的 medium -> 通知
-一般 medium            -> 不通知
-low                   -> 不通知
-```
-
-`data/claude-desktop.json` 的每筆 entry 都要照這張表填 `severity` 與 `notify`（`notify` 為 boolean）。`index.html` 的 `DATA_*` 條目沿用既有結構、不加 severity 欄位（通知由 workflow 依 diff 判定）。
-
-### 7) 自動生成靈感卡
-
-**全部來源合計每次最多 2 張，且同一個 `INSP_*` 最多 1 張** — 嚴格節制。只在新版本有明確破天荒功能時產（新 slash command、新模型、新功能類別首發）。寫不出有意義的應用情境就跳過，寧缺勿濫。
-
-往對應 `INSP_*` 陣列末尾 push 一個 object，必須含 `auto: true`：
+往對應 `INSP_*` 陣列末尾 push，必含 `auto: true`：
 
 ```js
 INSP_CC.push({
@@ -261,31 +169,26 @@ INSP_CC.push({
 });
 ```
 
-Claude Desktop 目前沒有對應 `INSP_*` 陣列，**不要為它硬塞靈感卡到 `INSP_CC`**。
+Claude Desktop 目前沒有對應 `INSP_*` 陣列，**不要硬塞進 `INSP_CC`**。
 
-### 8) 產生 DATA_CD（只要動過 Claude Desktop 資料就必跑）
+### 8) 產生 DATA_CD（動過 Claude Desktop 資料就必跑）
 
 ```bash
 node scripts/build-claude-desktop.mjs
 ```
 
-把 `data/claude-desktop.json` 內嵌成 `index.html` 的 `DATA_CD`。**JSON 是唯一真實來源，`DATA_CD` 是產物。**
-
-- 為什麼要內嵌而不是 runtime fetch：`index.html` 是 self-contained 單檔、README 明示可直接用瀏覽器開（`file://`），而 `file://` 下 `fetch` 會被 CORS 擋掉。
-- 產生器是冪等的，資料沒變就不會產生 diff。
-- 驗證同步狀態（不寫檔）：`node scripts/build-claude-desktop.mjs --check`，不同步會回非 0。
-- 產生器會擋掉重複版本與非法 `severity`，等於多一層資料驗證。
+把 JSON 內嵌成 `index.html` 的 `DATA_CD`。**JSON 是唯一真實來源，`DATA_CD` 是產物。** 內嵌而非 runtime fetch 是因頁面需支援瀏覽器直開（`file://` 下 `fetch` 被 CORS 擋）。產生器冪等（資料沒變無 diff）、會擋重複版本與非法 `severity`；`node scripts/build-claude-desktop.mjs --check` 只驗證同步不寫檔（不同步回非 0）。
 
 ### 9) 更新時間戳
 
-**格式必須 `YYYY-MM-DD HH:MM (Taipei)`**：先取台北時間 `bash TZ=Asia/Taipei date '+%Y-%m-%d %H:%M'`，再
+格式必為 `YYYY-MM-DD HH:MM (Taipei)`：先 `TZ=Asia/Taipei date '+%Y-%m-%d %H:%M'` 取台北時間，再：
 
-- 用 Edit 替換 `index.html` 的 `<b id="lastRefreshed">舊時間 (Taipei)</b>`；
+- Edit 替換 `index.html` 的 `<b id="lastRefreshed">舊時間 (Taipei)</b>`；
 - 同步更新 `data/claude-desktop.json` 的 `lastRefreshed`。
 
 ### 10) 語法驗證 gate（push 前必做）
 
-全程用 Edit surgical 替換大檔 HTML，一個逗號/括號錯誤就會讓整頁 JS 掛掉，且排程環境沒人看得到。push 前務必驗證：
+一個逗號／括號錯誤就會讓整頁 JS 掛掉，且排程環境沒人看得到：
 
 ```bash
 python3 -m json.tool scripts/update-sources.json >/dev/null
@@ -293,78 +196,55 @@ python3 -m json.tool data/claude-desktop.json >/dev/null
 node scripts/build-claude-desktop.mjs --check
 ```
 
-- 抽出修改過的 `DATA_*` / `INSP_*` 區塊，用 `node --check` 或 `node -e "..."` parse 一次；無 Node 時至少確認陣列開合括號 / 大括號數量平衡。
-- **驗證不過就中止，不要 push。** 仍執行 push 腳本只更新時間戳（若時間戳是唯一變更），summary 註明「內容語法驗證失敗，僅更新時間戳記」。
+- 抽出修改過的 `DATA_*` / `INSP_*` 區塊，用 `node --check` 或 `node -e "..."` parse；無 Node 至少確認括號／大括號數量平衡。
+- **驗證不過就中止，不要 push 內容。** 若時間戳是唯一變更仍執行 push 腳本，summary 註明「內容語法驗證失敗，僅更新時間戳記」。
 
-### 11) Commit + push
+### 11) Commit + push（🚨 一律直推 main）
 
-執行 push 腳本（腳本已 stage `index.html`、`data/claude-desktop.json`、`scripts/update-sources.json`），把四來源檢查結果當 summary 傳入。
+push 腳本已 stage `index.html`、`data/claude-desktop.json`、`scripts/update-sources.json`，內部用 `git push origin HEAD:main` 直推（與起始分支無關）。**不開 PR、不自行開分支。** 兩腳本都會自動偵測「無變更」→ 不 commit 直接結束；push 成功後 Pages 約 1 分鐘重建。
 
-- 遠端 / Linux（排程環境）：
+```bash
+bash scripts/push-changelog.sh "<summary>"             # 遠端 / Linux（排程環境）
+```
 
-  ```bash
-  bash scripts/push-changelog.sh "Claude Code +N 筆、Claude Desktop +N 筆、Codex CLI +N 筆、Codex App +N 筆"
-  ```
+```powershell
+pwsh scripts/push-changelog.ps1 -Message "<summary>"   # 本機 / Windows（手動跑）
+```
 
-- 本機 / Windows（手動跑）：
-
-  ```powershell
-  pwsh scripts/push-changelog.ps1 -Message "Claude Code +N 筆、Claude Desktop +N 筆、Codex CLI +N 筆、Codex App +N 筆"
-  ```
-
-**Summary 格式**——基本行固定四個產品：
+**Summary 格式** — 基本行固定四產品，視情況附註 fallback 層級與失敗原因：
 
 ```text
 Claude Code +N 筆、Claude Desktop +N 筆、Codex CLI +N 筆、Codex App +N 筆
-```
-
-若有走 fallback，附註實際層級：
-
-```text
-Claude Code 使用 Atom fallback
-Codex CLI 使用 RSS fallback
-```
-
-若有失敗，附註失敗與改用來源：
-
-```text
+Codex CLI 使用 Atom fallback
 Claude Desktop Markdown 解析失敗，改用 HTML
 Codex CLI GitHub API 額度耗盡，改用 Atom
 ```
 
-兩個腳本都會自動偵測「無變更」→ 不 commit、直接結束。push 成功後 Pages 約 1 分鐘內重建。
+## 失敗處理
 
-**🚨 一律直接更新 main 分支：** 不要開 PR、不要把變更留在工作分支。push 腳本內部用 `git push origin HEAD:main` 把當前 commit 直接推到 `main`（與排程環境起始在哪個分支無關）。**不要自己另外開分支或發 PR。**
-
-## 約束
-
-- 所有新增內容必須繁中。
-- **來源 URL 只能來自 `scripts/update-sources.json`**，不要在別處硬寫。
-- **一律在 main 上作業並 push 到 main**，不開 PR、不留工作分支（用 push 腳本即可，它已處理）。
-- 不要修改 Chart.js 的 `<script src=...>` 標籤。
-- 不要刪舊條目（含 `data/claude-desktop.json` 的既有 entries）、不要動既有手寫靈感卡。
-- **不要手改 `index.html` 的 `DATA_CD`**，改 JSON 後跑 `node scripts/build-claude-desktop.mjs`。
-- **不要重新分配 EVA 機體編號**，也不要為了第四個產品去加第四個 MAGI 節點。
-- 不要 find-replace「Anthropic · 36 versions · ...」這類字串 — 已改為動態計算。
-- 本階段不要為了顯示 Claude Desktop 去大改前端版面；也**不要把 Claude Desktop 偽裝成 Claude Code**。
-- 即使四來源都沒新版，仍要更新時間戳並執行 push 腳本（腳本會因有差異而 commit 時間戳）。
-- **部分來源失敗時：跳過該來源、不要中止整個流程**，用成功的來源照常更新；summary 標註哪些來源失敗（例「Codex App 解析失敗，跳過」）。
-- 四來源**都**解析失敗時：仍更新時間戳、執行 push 腳本，summary 寫「所有來源解析失敗，僅更新時間戳記」。
-- **🚨 403 診斷（失敗時必附原因，否則沒人查得出來）：** 任一來源非 200 時，從 `/tmp/hdr.txt` 撈 header 判斷類型，寫進 summary：
-  - 有 `X-RateLimit-Remaining: 0` → 寫「API 額度耗盡（共用 IP）」。排程環境走共用 NAT，未授權的 60/hr 額度會被其他 tenant 吃光 — **這不是本 repo 打太多次**，不要因此降低排程頻率，要改帶 token 或走 releases.atom。
-  - 有 `cf-ray` / `cf-mitigated` 或 body 是 challenge HTML → 寫「Cloudflare 擋 datacenter IP」。無法靠重試解決，只能換來源。
+- **部分來源失敗：跳過該來源、不中止流程**，用成功的來源照常更新；summary 標註（例「Codex App 解析失敗，跳過」）。
+- **四來源全失敗：** 仍更新時間戳、執行 push 腳本，summary 寫「所有來源解析失敗，僅更新時間戳記」。
+- **即使四來源都沒新版**，仍要更新時間戳並執行 push 腳本（腳本會因時間戳差異而 commit）。
+- **🚨 403 診斷（任一來源非 200 時必附分類，不可只寫「解析失敗」）** — 從 `/tmp/hdr.txt` 判斷：
+  - `X-RateLimit-Remaining: 0` → 寫「API 額度耗盡（共用 IP）」。共用 NAT 的未授權額度被其他 tenant 吃光 — **不是本 repo 打太多次，不要降低排程頻率**，要改帶 token 或走 `releases.atom`。
+  - `cf-ray` / `cf-mitigated` 或 body 是 challenge HTML → 寫「Cloudflare 擋 datacenter IP」。重試無效，只能換來源。
   - `HTTP_STATUS=000` 或 timeout → 寫「連線失敗」。
-  - 其他狀態碼 → 原樣寫出狀態碼，不要只寫「解析失敗」。
+  - 其他狀態碼 → 原樣寫出，不要只寫「解析失敗」。
+
+## 其他硬性約束
+
+- 所有新增內容繁中；來源 URL 只能來自 manifest。
+- 本階段不要為了顯示 Claude Desktop 大改前端版面，也**不要把 Claude Desktop 偽裝成 Claude Code**。
 
 ## 完成定義（DoD — 結束前自我檢查）
 
-1. **來源設定**：已讀 `scripts/update-sources.json`，抓取一律照 priority 與 role 語意（primary 成功即停、enrichment 不建立條目）。
+1. **來源設定**：已讀 manifest，抓取照 priority 與 role 語意（primary 成功即停、enrichment 不建條目）。
 2. **產品分流**：Claude Desktop 版本只在 `data/claude-desktop.json`；`DATA_CC` 只有 Claude Code CLI 的 semver。
-3. **去重**：每個陣列／`entries` 無重複版本，且只插入了嚴格新於原最前筆的條目（去重鍵 `product + version + publishedDate`）。
-4. **語法**：`scripts/update-sources.json` 與 `data/claude-desktop.json` 通過 `python3 -m json.tool`；`node scripts/build-claude-desktop.mjs --check` 通過（`DATA_CD` 與 JSON 同步）；修改過的 `DATA_*` / `INSP_*` 區塊通過 parse / 括號平衡檢查。
-5. **重要性**：`data/claude-desktop.json` 每筆 entry 都有合法 `severity`（critical/high/medium/low）與依規則判定的 `notify`。
-6. **時間戳**：`index.html` 的 `<b id="lastRefreshed">` 與 `data/claude-desktop.json` 的 `lastRefreshed` 都已更新為 `YYYY-MM-DD HH:MM (Taipei)`。
-7. **靈感卡**：合計 ≤ 2 張、同一 `INSP_*` ≤ 1 張，且皆含 `auto: true`。
-8. **Push**：push 腳本回報 `pushed to main` 或 `no changes`（兩者皆為成功收尾）。
-9. **Summary**：四個產品筆數都寫出；有 fallback 註明層級；失敗來源必須帶 403 診斷分類（見約束），不可只寫「解析失敗」。
-10. **抓取健康度**：每個來源都確認過 `HTTP_STATUS=200` 且 `BYTES>0`；退到 fallback 的產品在 summary 註明走了哪一層。
+3. **去重**：各陣列／`entries` 無重複版本，只插入嚴格新於原最前筆的條目（鍵 `product + version + publishedDate`）。
+4. **語法**：兩個 JSON 過 `python3 -m json.tool`；`build-claude-desktop.mjs --check` 過；修改過的 `DATA_*` / `INSP_*` 區塊過 parse／括號平衡檢查。
+5. **重要性**：JSON 每筆 entry 有合法 `severity` 與依規則判定的 `notify`。
+6. **時間戳**：`index.html` 的 `<b id="lastRefreshed">` 與 JSON 的 `lastRefreshed` 皆為 `YYYY-MM-DD HH:MM (Taipei)`。
+7. **靈感卡**：合計 ≤ 2 張、同一 `INSP_*` ≤ 1 張，皆含 `auto: true`。
+8. **Push**：腳本回報 `pushed to main` 或 `no changes`（皆為成功收尾）。
+9. **Summary**：四產品筆數齊全；fallback 註明層級；失敗來源附 403 診斷分類。
+10. **抓取健康度**：每來源確認過 `HTTP_STATUS=200` 且 `BYTES>0`；退 fallback 的產品註明走了哪一層。
