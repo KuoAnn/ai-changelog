@@ -3,7 +3,7 @@
 > 這份 prompt 給 **Claude Code 排程 (schedule / cron)** 使用。每次觸發時，agent 會抓四個產品面向的官方 changelog、更新 repo 內的資料檔、然後 push 回 GitHub 讓 Pages 重建。
 >
 > **Repo：** `https://github.com/KuoAnn/ai-changelog`（遠端排程會自動 clone 一份）
-> **要編輯的檔案：** `index.html`（Claude Code / Codex CLI / Codex App）、`data/claude-app.json`（Claude Desktop / Claude App）
+> **要編輯的檔案：** `index.html`（Claude Code / Codex CLI / Codex App）、`data/claude-desktop.json`（Claude Desktop）
 > **來源設定檔：** `scripts/update-sources.json`（所有官方 URL、優先順序、版本過濾、重要性分級的唯一來源）
 > **路徑慣例：** 一律用 **repo-relative** 路徑（例 `index.html`、`scripts/push-changelog.sh`），不要用任何本機絕對路徑——遠端環境是 Linux、工作目錄已是 repo 根。
 
@@ -18,15 +18,16 @@
 | 產品 | 寫入目標 | 說明 |
 | --- | --- | --- |
 | Claude Code CLI | `index.html` → `DATA_CC`、`INSP_CC` | CLI 版本（`2.1.x` 這種 semver） |
-| Claude Desktop / Claude App | `data/claude-app.json` → `entries` | 桌面／App 版本，**獨立檔案** |
+| Claude Desktop | `data/claude-desktop.json` → `entries` | 桌面應用程式 build 版本（`1.24012.9` 這種），**獨立檔案** |
 | Codex CLI | `index.html` → `DATA_CI`、`INSP_CI` | CLI 版本 |
 | Codex App / ChatGPT Desktop | `index.html` → `DATA_CA`、`INSP_CA` | 桌面 App，已逐步併入 ChatGPT Desktop |
 
-- **🚨 Claude Code CLI 與 Claude Desktop App 是兩個不同產品。** Claude Desktop 的版本號（例 `1.24012.9`）**絕對不可**寫入 `DATA_CC`，只能寫進 `data/claude-app.json`。
+- **🚨 Claude Code CLI 與 Claude Desktop 是兩個不同產品。** Claude Desktop 的版本號（例 `1.24012.9`）**絕對不可**寫入 `DATA_CC`，只能寫進 `data/claude-desktop.json`。
+- **🚨 Claude Desktop 也不等於 Claude Apps。** `Claude Apps` 是 web／desktop／iOS／Android 的傘狀稱呼、無版本號，只當 enrichment（見 4b）。本專案追蹤的是可版本化的 **Desktop build**。
 - **🚨 Codex App 不能只搜尋「Codex App」字樣**：官方已把 Codex 併入 ChatGPT Desktop，標題會出現 `ChatGPT desktop app`、`Codex joins the ChatGPT desktop app` 等寫法。一律以 `scripts/update-sources.json` 的 `products.codex-app.titleAliases` 為接受清單。
 - `index.html` 為單頁合併版面（已無 Tab）：前端 JS 於渲染時把 `DATA_*` 合併成單一時間軸與靈感卡區。**只要維護那六個陣列即可，不需要動任何 HTML 版面。**
 - Hero 的 Date Span、Total Versions、Agent 篩選 chip 計數都由 JS 動態計算 — 不要去動那些靜態字串。
-- 本階段 `data/claude-app.json` 只作為**獨立更新與通知資料源**，前端尚未顯示第四個 Agent；不要為了顯示它去改前端版面。
+- 本階段 `data/claude-desktop.json` 只作為**獨立更新與通知資料源**，前端尚未顯示第四個 Agent；不要為了顯示它去改前端版面。
 
 ## 步驟
 
@@ -36,7 +37,7 @@
 
 （此處 pull 是為了讓接下來的 Read 讀到最新內容；push 腳本內部會再 pull 一次以確保 fast-forward，兩者不是冗餘 bug。）
 
-接著建議**先用 Grep 定位** `const DATA_CC` / `const DATA_CA` / `const DATA_CI` / `INSP_` 的行號，再用 Read 的 offset/limit 分塊讀需要的陣列區段（`index.html` 290KB+，勿整檔讀）。`data/claude-app.json` 很小，可整檔讀。
+接著建議**先用 Grep 定位** `const DATA_CC` / `const DATA_CA` / `const DATA_CI` / `INSP_` 的行號，再用 Read 的 offset/limit 分塊讀需要的陣列區段（`index.html` 290KB+，勿整檔讀）。`data/claude-desktop.json` 很小，可整檔讀。
 
 ### 2) 讀來源設定檔
 
@@ -103,10 +104,10 @@ TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-}}"
 - `notability-enrichment`（What's New）只用來判斷「這版重不重要」與補功能名稱，**不建立條目**。
 - 條目結構：`{ v, date, cat, body }`，`cat` ∈ {Subagents/Skills, Plugins/MCP, Hooks, Slash Commands, IDE/Editor, Settings/Config, Permissions/Security, UI/UX, Performance/Bug Fix}
 
-#### 4b) Claude Desktop / Claude App → `data/claude-app.json`
+#### 4b) Claude Desktop → `data/claude-desktop.json`
 
-- **🚨 寫入 `data/claude-app.json`，不得寫入 `DATA_CC`。**
-- 主要解析 `products.claude-app` 的 priority 1（Cowork changelog **Markdown**）。Markdown 解析失敗才退到 priority 2 的 HTML 版。
+- **🚨 寫入 `data/claude-desktop.json`，不得寫入 `DATA_CC`。**
+- 主要解析 `products.claude-desktop` 的 priority 1（Cowork changelog **Markdown**）。Markdown 解析失敗才退到 priority 2 的 HTML 版。
 - **解析結構（實測 2026-07-31）：** 該 Markdown 用 MDX 標籤而非 heading 分段，每個版本一段：
 
   ```text
@@ -118,12 +119,13 @@ TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-}}"
   取 `label` 當 `version`（去掉 `v` 前綴，形如 `1.24012.9`；注意**不是** CLI 的 `2.1.x`）、`description` 當 `date`。
   **🚨 段落內的 `**Code**` 子區塊講的是 Desktop 內建的 Claude Code 介面，仍屬 Desktop 版本的一部分 — 不要因為看到 Code 就寫進 `DATA_CC`。**
   子區塊寫「No user-facing changes.」時，該版通常是 `low` / `notify: false`。
-- priority 3（Claude Apps Release Notes）與 priority 4（Desktop Code Changelog）是 enrichment / cross-check：只補摘要與重要性、**不建立重複的 Desktop 版本**。
+- **🚨 Claude Desktop ≠ Claude Apps（實測 2026-07-31 確認）：** priority 3 的 Claude Apps Release Notes 是 **web／desktop／iOS／Android 的傘狀公告頁、完全沒有版本號**（依 `July 24, 2026` 這種日期分段）。它與 Cowork changelog **同一天內容完全不同**（2026-07-24：Desktop build 是「修 Windows plugin hooks」，Apps 公告是「Claude Opus 5 launch」）。
+  → 它只能當 `product-enrichment`：補摘要、判重要性、補功能名稱，**永遠不建立條目**。要收傘狀公告請另開產品，不要塞進本檔。
 - JSON 結構：
 
   ```json
   {
-    "product": "Claude Desktop / Claude App",
+    "product": "Claude Desktop",
     "canonicalSource": "https://claude.com/docs/cowork/changelog",
     "lastRefreshed": "YYYY-MM-DD HH:MM (Taipei)",
     "entries": []
@@ -210,7 +212,7 @@ product + version + publishedDate
 
 整理成繁中後插入「最前面」（維持新到舊順序）。**不可刪舊條目。**
 
-**🚨 改 `index.html` 一律用 Edit 工具 surgical 替換，禁止用 Write 重寫整檔**（HTML 已 290KB+）。`data/claude-app.json` 可整檔重寫，但必須保留既有 entries。
+**🚨 改 `index.html` 一律用 Edit 工具 surgical 替換，禁止用 Write 重寫整檔**（HTML 已 290KB+）。`data/claude-desktop.json` 可整檔重寫，但必須保留既有 entries。
 
 ### 6) 重要性與通知判定
 
@@ -233,7 +235,7 @@ high                  -> 通知
 low                   -> 不通知
 ```
 
-`data/claude-app.json` 的每筆 entry 都要照這張表填 `severity` 與 `notify`（`notify` 為 boolean）。`index.html` 的 `DATA_*` 條目沿用既有結構、不加 severity 欄位（通知由 workflow 依 diff 判定）。
+`data/claude-desktop.json` 的每筆 entry 都要照這張表填 `severity` 與 `notify`（`notify` 為 boolean）。`index.html` 的 `DATA_*` 條目沿用既有結構、不加 severity 欄位（通知由 workflow 依 diff 判定）。
 
 ### 7) 自動生成靈感卡
 
@@ -257,14 +259,14 @@ INSP_CC.push({
 });
 ```
 
-Claude App 目前沒有對應 `INSP_*` 陣列，**不要為它硬塞靈感卡到 `INSP_CC`**。
+Claude Desktop 目前沒有對應 `INSP_*` 陣列，**不要為它硬塞靈感卡到 `INSP_CC`**。
 
 ### 8) 更新時間戳
 
 **格式必須 `YYYY-MM-DD HH:MM (Taipei)`**：先取台北時間 `bash TZ=Asia/Taipei date '+%Y-%m-%d %H:%M'`，再
 
 - 用 Edit 替換 `index.html` 的 `<b id="lastRefreshed">舊時間 (Taipei)</b>`；
-- 同步更新 `data/claude-app.json` 的 `lastRefreshed`。
+- 同步更新 `data/claude-desktop.json` 的 `lastRefreshed`。
 
 ### 9) 語法驗證 gate（push 前必做）
 
@@ -272,7 +274,7 @@ Claude App 目前沒有對應 `INSP_*` 陣列，**不要為它硬塞靈感卡到
 
 ```bash
 python3 -m json.tool scripts/update-sources.json >/dev/null
-python3 -m json.tool data/claude-app.json >/dev/null
+python3 -m json.tool data/claude-desktop.json >/dev/null
 ```
 
 - 抽出修改過的 `DATA_*` / `INSP_*` 區塊，用 `node --check` 或 `node -e "..."` parse 一次；無 Node 時至少確認陣列開合括號 / 大括號數量平衡。
@@ -280,24 +282,24 @@ python3 -m json.tool data/claude-app.json >/dev/null
 
 ### 10) Commit + push
 
-執行 push 腳本（腳本已 stage `index.html`、`data/claude-app.json`、`scripts/update-sources.json`），把四來源檢查結果當 summary 傳入。
+執行 push 腳本（腳本已 stage `index.html`、`data/claude-desktop.json`、`scripts/update-sources.json`），把四來源檢查結果當 summary 傳入。
 
 - 遠端 / Linux（排程環境）：
 
   ```bash
-  bash scripts/push-changelog.sh "Claude Code +N 筆、Claude App +N 筆、Codex CLI +N 筆、Codex App +N 筆"
+  bash scripts/push-changelog.sh "Claude Code +N 筆、Claude Desktop +N 筆、Codex CLI +N 筆、Codex App +N 筆"
   ```
 
 - 本機 / Windows（手動跑）：
 
   ```powershell
-  pwsh scripts/push-changelog.ps1 -Message "Claude Code +N 筆、Claude App +N 筆、Codex CLI +N 筆、Codex App +N 筆"
+  pwsh scripts/push-changelog.ps1 -Message "Claude Code +N 筆、Claude Desktop +N 筆、Codex CLI +N 筆、Codex App +N 筆"
   ```
 
 **Summary 格式**——基本行固定四個產品：
 
 ```text
-Claude Code +N 筆、Claude App +N 筆、Codex CLI +N 筆、Codex App +N 筆
+Claude Code +N 筆、Claude Desktop +N 筆、Codex CLI +N 筆、Codex App +N 筆
 ```
 
 若有走 fallback，附註實際層級：
@@ -310,7 +312,7 @@ Codex CLI 使用 RSS fallback
 若有失敗，附註失敗與改用來源：
 
 ```text
-Claude App Markdown 解析失敗，改用 HTML
+Claude Desktop Markdown 解析失敗，改用 HTML
 Codex CLI GitHub API 額度耗盡，改用 Atom
 ```
 
@@ -324,9 +326,9 @@ Codex CLI GitHub API 額度耗盡，改用 Atom
 - **來源 URL 只能來自 `scripts/update-sources.json`**，不要在別處硬寫。
 - **一律在 main 上作業並 push 到 main**，不開 PR、不留工作分支（用 push 腳本即可，它已處理）。
 - 不要修改 Chart.js 的 `<script src=...>` 標籤。
-- 不要刪舊條目（含 `data/claude-app.json` 的既有 entries）、不要動既有手寫靈感卡。
+- 不要刪舊條目（含 `data/claude-desktop.json` 的既有 entries）、不要動既有手寫靈感卡。
 - 不要 find-replace「Anthropic · 36 versions · ...」這類字串 — 已改為動態計算。
-- 本階段不要為了顯示 Claude App 去大改前端版面；也**不要把 Claude App 偽裝成 Claude Code**。
+- 本階段不要為了顯示 Claude Desktop 去大改前端版面；也**不要把 Claude Desktop 偽裝成 Claude Code**。
 - 即使四來源都沒新版，仍要更新時間戳並執行 push 腳本（腳本會因有差異而 commit 時間戳）。
 - **部分來源失敗時：跳過該來源、不要中止整個流程**，用成功的來源照常更新；summary 標註哪些來源失敗（例「Codex App 解析失敗，跳過」）。
 - 四來源**都**解析失敗時：仍更新時間戳、執行 push 腳本，summary 寫「所有來源解析失敗，僅更新時間戳記」。
@@ -339,11 +341,11 @@ Codex CLI GitHub API 額度耗盡，改用 Atom
 ## 完成定義（DoD — 結束前自我檢查）
 
 1. **來源設定**：已讀 `scripts/update-sources.json`，抓取一律照 priority 與 role 語意（primary 成功即停、enrichment 不建立條目）。
-2. **產品分流**：Claude Desktop 版本只在 `data/claude-app.json`；`DATA_CC` 只有 Claude Code CLI 的 semver。
+2. **產品分流**：Claude Desktop 版本只在 `data/claude-desktop.json`；`DATA_CC` 只有 Claude Code CLI 的 semver。
 3. **去重**：每個陣列／`entries` 無重複版本，且只插入了嚴格新於原最前筆的條目（去重鍵 `product + version + publishedDate`）。
-4. **語法**：`scripts/update-sources.json` 與 `data/claude-app.json` 通過 `python3 -m json.tool`；修改過的 `DATA_*` / `INSP_*` 區塊通過 parse / 括號平衡檢查。
-5. **重要性**：`data/claude-app.json` 每筆 entry 都有合法 `severity`（critical/high/medium/low）與依規則判定的 `notify`。
-6. **時間戳**：`index.html` 的 `<b id="lastRefreshed">` 與 `data/claude-app.json` 的 `lastRefreshed` 都已更新為 `YYYY-MM-DD HH:MM (Taipei)`。
+4. **語法**：`scripts/update-sources.json` 與 `data/claude-desktop.json` 通過 `python3 -m json.tool`；修改過的 `DATA_*` / `INSP_*` 區塊通過 parse / 括號平衡檢查。
+5. **重要性**：`data/claude-desktop.json` 每筆 entry 都有合法 `severity`（critical/high/medium/low）與依規則判定的 `notify`。
+6. **時間戳**：`index.html` 的 `<b id="lastRefreshed">` 與 `data/claude-desktop.json` 的 `lastRefreshed` 都已更新為 `YYYY-MM-DD HH:MM (Taipei)`。
 7. **靈感卡**：合計 ≤ 2 張、同一 `INSP_*` ≤ 1 張，且皆含 `auto: true`。
 8. **Push**：push 腳本回報 `pushed to main` 或 `no changes`（兩者皆為成功收尾）。
 9. **Summary**：四個產品筆數都寫出；有 fallback 註明層級；失敗來源必須帶 403 診斷分類（見約束），不可只寫「解析失敗」。

@@ -90,10 +90,10 @@
         }
       ]
     },
-    "claude-app": {
-      "displayName": "Claude Desktop / Claude App",
+    "claude-desktop": {
+      "displayName": "Claude Desktop",
       "surface": "desktop-app",
-      "dataTarget": "data/claude-app.json",
+      "dataTarget": "data/claude-desktop.json",
       "stableVersionPattern": "^v?\\d+\\.\\d+\\.\\d+$",
       "sources": [
         {
@@ -112,13 +112,12 @@
           "priority": 3,
           "role": "product-enrichment",
           "format": "html",
-          "url": "https://support.claude.com/en/articles/12138966-release-notes"
-        },
-        {
-          "priority": 4,
-          "role": "code-surface-cross-check",
-          "format": "html",
-          "url": "https://code.claude.com/docs/en/desktop-changelog"
+          "url": "https://support.claude.com/en/articles/12138966-release-notes",
+          "notes": [
+            "This is the Claude Apps umbrella release-notes page (web + desktop + iOS + Android).",
+            "It carries no build version numbers and is organised by date, so it can never create entries.",
+            "Enrichment only: use it to judge severity and to name features."
+          ]
         }
       ]
     },

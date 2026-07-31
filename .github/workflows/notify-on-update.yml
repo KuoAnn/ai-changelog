@@ -1,13 +1,13 @@
 name: Notify on real update
 
-# 當 index.html 或 data/claude-app.json 有「實際內容更新」或發生「異常」時，
+# 當 index.html 或 data/claude-desktop.json 有「實際內容更新」或發生「異常」時，
 # 透過 Telegram 與 Slack 發通知。
 # 通知分兩類，同一次 push 若兩者都有 → 併成一則；只有其一 → 只發該類：
 #   1. 更新通知：
 #      - index.html 新增 DATA_* 版本條目或 INSP_* 靈感卡（靠 git diff 偵測）。
-#      - data/claude-app.json 新增 entries，且該筆 "notify": true（靠 before/after JSON 比對）。
+#      - data/claude-desktop.json 新增 entries，且該筆 "notify": true（靠 before/after JSON 比對）。
 #   2. 異常通知：commit summary 出現解析/驗證失敗等關鍵字（靠 %b 內文偵測）。
-# 只更新 <b id="lastRefreshed"> 或 claude-app.json 的 lastRefreshed 同步時間戳、
+# 只更新 <b id="lastRefreshed"> 或 claude-desktop.json 的 lastRefreshed 同步時間戳、
 # 且無異常的 commit 不觸發。
 # 偵測與排程 agent / push 腳本解耦。
 #
@@ -21,7 +21,7 @@ on:
     branches: [main]
     paths:
       - index.html
-      - data/claude-app.json
+      - data/claude-desktop.json
   workflow_dispatch: {}
 
 permissions:
@@ -113,12 +113,12 @@ jobs:
           n_cards=$(printf '%s\n' "$NEW_CARDS" | grep -cE '.' || true)
           echo "new_entries=$n_entries  new_cards=$n_cards"
 
-          # ── Claude App（data/claude-app.json）新增 entries ──
+          # ── Claude Desktop（data/claude-desktop.json）新增 entries ──
           # 不靠 diff 行格式：直接把 before/after 兩版 JSON 撈出來比 version 集合差集，
           # 只有 "notify": true 的新條目才發通知（severity 分級由排程 agent 寫入）。
           # 檔案在 before 版可能還不存在（首次加入），fallback 成空 JSON。
-          git show "$BEFORE:data/claude-app.json" > /tmp/app-before.json 2>/dev/null || echo '{}' > /tmp/app-before.json
-          git show "$AFTER:data/claude-app.json"  > /tmp/app-after.json  2>/dev/null || echo '{}' > /tmp/app-after.json
+          git show "$BEFORE:data/claude-desktop.json" > /tmp/app-before.json 2>/dev/null || echo '{}' > /tmp/app-before.json
+          git show "$AFTER:data/claude-desktop.json"  > /tmp/app-after.json  2>/dev/null || echo '{}' > /tmp/app-after.json
 
           app_details="$(python3 -c '
           import html
@@ -162,7 +162,7 @@ jobs:
               if entry.get("notify") is not True:
                   continue
               meta = " · ".join(p for p in (plain(entry.get("date")), plain(entry.get("severity"))) if p)
-              label = "Claude App " + version + (("（" + meta + "）") if meta else "")
+              label = "Claude Desktop " + version + (("（" + meta + "）") if meta else "")
               text = "：".join(p for p in (plain(entry.get("title")), shorten(plain(entry.get("summary")))) if p)
               print(label + ("｜" + text if text else ""))
           ' /tmp/app-before.json /tmp/app-after.json || true)"
@@ -170,7 +170,7 @@ jobs:
           n_app_entries=$(printf '%s\n' "$app_details" | grep -cE '.' || true)
           echo "new_app_entries=$n_app_entries"
 
-          # ── 更新：有新版本條目、新靈感卡，或 notify 的 Claude App 新條目 ──
+          # ── 更新：有新版本條目、新靈感卡，或 notify 的 Claude Desktop 新條目 ──
           has_update=false
           if [ "$n_entries" -gt 0 ] || [ "$n_cards" -gt 0 ] || [ "$n_app_entries" -gt 0 ]; then
             has_update=true
@@ -397,7 +397,7 @@ jobs:
               printf '%s%s新版本（%s）%s%s%s%s' "$nl" "$bo" "$NEW_ENTRIES" "$bc" "$nl" "$V_LIST" "$nl"
             fi
             if [ "$NEW_APP_ENTRIES" -gt 0 ]; then
-              printf '%s%sClaude App 新版本（%s）%s%s%s%s' "$nl" "$bo" "$NEW_APP_ENTRIES" "$bc" "$nl" "$P_LIST" "$nl"
+              printf '%s%sClaude Desktop 新版本（%s）%s%s%s%s' "$nl" "$bo" "$NEW_APP_ENTRIES" "$bc" "$nl" "$P_LIST" "$nl"
             fi
             if [ "$NEW_CARDS" -gt 0 ]; then
               printf '%s%s新靈感卡（%s）%s%s%s%s' "$nl" "$bo" "$NEW_CARDS" "$bc" "$nl" "$C_LIST" "$nl"

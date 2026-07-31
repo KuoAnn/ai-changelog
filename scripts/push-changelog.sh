@@ -3,12 +3,12 @@
 #
 # Linux/macOS counterpart of push-changelog.ps1 — used by the REMOTE
 # scheduled agent (which runs on Linux). Called AFTER the agent has edited
-# index.html and/or data/claude-app.json.
+# index.html and/or data/claude-desktop.json.
 #
 # Pulls latest, stages changed files, commits with a Taipei timestamp, and
 # pushes to origin/main. No-op safe: if nothing changed, exits 0 without a commit.
 #
-# Usage: scripts/push-changelog.sh "Claude Code +2 筆、Claude App +1 筆、Codex CLI +1 筆、Codex App +0 筆"
+# Usage: scripts/push-changelog.sh "Claude Code +2 筆、Claude Desktop +1 筆、Codex CLI +1 筆、Codex App +0 筆"
 set -euo pipefail
 
 MSG="${1:-內容刷新}"
@@ -32,7 +32,7 @@ git config user.email >/dev/null 2>&1 || git config user.email "bot@users.norepl
 git fetch origin main || true
 git pull --rebase --autostash origin main || true
 
-git add index.html data/claude-app.json scripts/update-sources.json
+git add index.html data/claude-desktop.json scripts/update-sources.json
 
 if git diff --cached --quiet; then
   echo "[push-changelog] no changes staged — skipping commit."

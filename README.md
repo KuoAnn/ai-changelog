@@ -7,18 +7,19 @@
 | 產品面向 | 說明 | 資料位置 |
 | --- | --- | --- |
 | Claude Code CLI | Anthropic 的 CLI 工具 | `index.html` → `DATA_CC` |
-| Claude Desktop / Claude App | Anthropic 的桌面／App 版本 | [`data/claude-app.json`](data/claude-app.json) |
+| Claude Desktop | Anthropic 桌面應用程式（build 版本 `1.x`，內含 Chat / Cowork / Code） | [`data/claude-desktop.json`](data/claude-desktop.json) |
 | Codex CLI | OpenAI 的 CLI 工具 | `index.html` → `DATA_CI` |
 | Codex App / ChatGPT Desktop | OpenAI 的桌面 App（已併入 ChatGPT Desktop） | `index.html` → `DATA_CA` |
 
-> Claude Code CLI 與 Claude Desktop App 是**兩個不同產品**，資料刻意分開存放，Desktop 版本不會混入 `DATA_CC`。
-> 目前頁面上的時間軸顯示 Claude Code、Codex App、Codex CLI 三組；Claude Desktop / App 先作為獨立的更新與通知資料源，UI 整合另開任務處理。
+> Claude Code CLI 與 Claude Desktop 是**兩個不同產品**，資料刻意分開存放，Desktop 版本不會混入 `DATA_CC`。
+> 另外 **Claude Desktop ≠ Claude Apps**：`Claude Apps` 是 Anthropic 對 web／desktop／iOS／Android 的傘狀稱呼、**沒有版本號**（[Claude Apps Release Notes](https://support.claude.com/en/articles/12138966-release-notes) 依日期分段）；本站追蹤的是可版本化的 **Desktop build**（[Cowork changelog](https://claude.com/docs/cowork/changelog)，自述 `Release notes for Claude Desktop`）。同一天兩邊內容不同，不是同一份資料。
+> 目前頁面上的時間軸顯示 Claude Code、Codex App、Codex CLI 三組；Claude Desktop 先作為獨立的更新與通知資料源，UI 整合另開任務處理。
 
 線上版：<https://kuoann.github.io/ai-changelog/>
 
 ## 內容
 
-- 合併時間軸：Claude Code、Codex App、Codex CLI（Claude App 資料獨立於 `data/claude-app.json`）
+- 合併時間軸：Claude Code、Codex App、Codex CLI（Claude Desktop 資料獨立於 `data/claude-desktop.json`）
 - 角色切換：依職能篩出較相關的應用靈感卡
 - 靈感卡詳情：包含用途、設定範例、實戰技巧與 code copy
 - 時間軸：支援分類篩選、關鍵字搜尋、分頁載入
@@ -36,7 +37,7 @@ index.html
 
 ## 自動更新
 
-內容由 Claude Code 遠端排程維護。排程會抓四個產品面向的官方來源，更新 `index.html` 與 `data/claude-app.json`，再 commit 並 push 到 `main`，觸發 GitHub Pages 重建。
+內容由 Claude Code 遠端排程維護。排程會抓四個產品面向的官方來源，更新 `index.html` 與 `data/claude-desktop.json`，再 commit 並 push 到 `main`，觸發 GitHub Pages 重建。
 
 ```text
 排程觸發 -> 讀 update-sources.json -> 抓官方 changelog -> 更新 HTML / JSON -> commit/push -> Pages 重建
@@ -47,7 +48,7 @@ index.html
 | 產品 | 主要來源 | 備援／補充來源 |
 | --- | --- | --- |
 | Claude Code | GitHub Releases API | Atom、CHANGELOG.md、官方 Changelog、What's New |
-| Claude Desktop / App | Cowork changelog.md | HTML Changelog、Claude Apps Release Notes、Desktop Code Changelog |
+| Claude Desktop | Cowork changelog.md | HTML Changelog、Claude Apps Release Notes（僅補充，無版本號） |
 | Codex CLI | GitHub Releases API | Atom、Codex RSS 中的 `#github-release-` |
 | Codex App / ChatGPT Desktop | Codex RSS 的 App 項目 | Codex Changelog、OpenAI Product Release Notes |
 
@@ -59,13 +60,13 @@ index.html
 
 ## 更新通知（Telegram / Slack）
 
-當 `index.html` 有**實際內容更新**（新增 `DATA_*` 版本條目或 `INSP_*` 靈感卡），或 `data/claude-app.json` 新增 `"notify": true` 的 Claude App 條目時，會自動發通知到 Telegram 與 Slack。通知會列出每筆新增版本／靈感卡的來源、名稱與短摘要；Claude App 條目另含版本、日期、severity、標題與摘要。只更新同步時間戳（`<b id="lastRefreshed">` 或 JSON 的 `lastRefreshed`）的 commit **不會**觸發。
+當 `index.html` 有**實際內容更新**（新增 `DATA_*` 版本條目或 `INSP_*` 靈感卡），或 `data/claude-desktop.json` 新增 `"notify": true` 的 Claude Desktop 條目時，會自動發通知到 Telegram 與 Slack。通知會列出每筆新增版本／靈感卡的來源、名稱與短摘要；Claude Desktop 條目另含版本、日期、severity、標題與摘要。只更新同步時間戳（`<b id="lastRefreshed">` 或 JSON 的 `lastRefreshed`）的 commit **不會**觸發。
 
 ```text
 push 到 main -> workflow 比對 diff / JSON 差集 -> 判定是否有新版本/靈感卡 -> 發 Telegram / Slack
 ```
 
-Claude App 的通知門檻由資料本身控制：排程依 `scripts/update-sources.json` 的重要性規則寫入 `severity`（`critical` / `high` / `medium` / `low`）與 `notify`；只有 `notify: true` 才會發送（critical、high 一律通知，有實質使用者影響的 medium 才通知，low 不通知）。
+Claude Desktop 的通知門檻由資料本身控制：排程依 `scripts/update-sources.json` 的重要性規則寫入 `severity`（`critical` / `high` / `medium` / `low`）與 `notify`；只有 `notify: true` 才會發送（critical、high 一律通知，有實質使用者影響的 medium 才通知，low 不通知）。
 
 機制在 [`.github/workflows/notify-on-update.yml`](.github/workflows/notify-on-update.yml)，偵測完全靠 `git diff`，與排程 agent 解耦（agent 與 push 腳本無需改動）。
 
@@ -97,7 +98,7 @@ Linux / 遠端排程使用：
 bash scripts/push-changelog.sh "手動更新"
 ```
 
-兩個腳本都會先同步 `origin/main`，stage `index.html`、`data/claude-app.json`、`scripts/update-sources.json`，有變更才 commit，最後 push 到 `main`；沒有變更時直接 no-op 結束。
+兩個腳本都會先同步 `origin/main`，stage `index.html`、`data/claude-desktop.json`、`scripts/update-sources.json`，有變更才 commit，最後 push 到 `main`；沒有變更時直接 no-op 結束。
 
 ## 主要檔案
 
@@ -105,7 +106,7 @@ bash scripts/push-changelog.sh "手動更新"
 | --- | --- |
 | [`index.html`](index.html) | 主頁面（兼 GitHub Pages 入口），包含資料、樣式與互動邏輯 |
 | [`scripts/update-sources.json`](scripts/update-sources.json) | Claude / Codex CLI 與 App 的官方來源、備援策略、版本過濾及通知分級 |
-| [`data/claude-app.json`](data/claude-app.json) | Claude Desktop / Claude App 的獨立版本資料 |
+| [`data/claude-desktop.json`](data/claude-desktop.json) | Claude Desktop 的獨立版本資料 |
 | [`scripts/refresh-prompt.md`](scripts/refresh-prompt.md) | 排程 agent 的完整刷新指示 |
 | [`scripts/push-changelog.ps1`](scripts/push-changelog.ps1) | Windows 手動 commit/push 腳本 |
 | [`scripts/push-changelog.sh`](scripts/push-changelog.sh) | Linux/遠端排程 commit/push 腳本 |
@@ -113,7 +114,7 @@ bash scripts/push-changelog.sh "手動更新"
 
 ## 編輯提示
 
-Claude Desktop / App 的資料在 `data/claude-app.json`（`entries` 陣列，最新在最前面，每筆含 `version`、`date`、`severity`、`notify`、`title`、`summary`、`categories`）。其餘主資料都在 `index.html`：
+Claude Desktop 的資料在 `data/claude-desktop.json`（`entries` 陣列，最新在最前面，每筆含 `version`、`date`、`severity`、`notify`、`title`、`summary`、`categories`）。其餘主資料都在 `index.html`：
 
 | 內容 | HTML 內位置 |
 | --- | --- |
