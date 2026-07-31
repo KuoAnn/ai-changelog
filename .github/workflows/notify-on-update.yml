@@ -1,10 +1,14 @@
 name: Notify on real update
 
-# 當 index.html 有「實際內容更新」或發生「異常」時，透過 Telegram 與 Slack 發通知。
+# 當 index.html 或 data/claude-app.json 有「實際內容更新」或發生「異常」時，
+# 透過 Telegram 與 Slack 發通知。
 # 通知分兩類，同一次 push 若兩者都有 → 併成一則；只有其一 → 只發該類：
-#   1. 更新通知：新增 DATA_* 版本條目或 INSP_* 靈感卡（靠 git diff 偵測）。
+#   1. 更新通知：
+#      - index.html 新增 DATA_* 版本條目或 INSP_* 靈感卡（靠 git diff 偵測）。
+#      - data/claude-app.json 新增 entries，且該筆 "notify": true（靠 before/after JSON 比對）。
 #   2. 異常通知：commit summary 出現解析/驗證失敗等關鍵字（靠 %b 內文偵測）。
-# 只更新 <b id="lastRefreshed"> 同步時間戳、且無異常的 commit 不觸發。
+# 只更新 <b id="lastRefreshed"> 或 claude-app.json 的 lastRefreshed 同步時間戳、
+# 且無異常的 commit 不觸發。
 # 偵測與排程 agent / push 腳本解耦。
 #
 # 需要的 secrets（未設定的管道會自動跳過，不會讓 workflow 失敗）：
@@ -17,6 +21,7 @@ on:
     branches: [main]
     paths:
       - index.html
+      - data/claude-app.json
   workflow_dispatch: {}
 
 permissions:
@@ -54,12 +59,15 @@ jobs:
               echo "has_anomaly=false"
               echo "new_entries=0"
               echo "new_cards=0"
+              echo "new_app_entries=0"
               echo "anomaly_count=0"
             } >> "$GITHUB_OUTPUT"
             {
               echo "version_details<<EOF"
               echo "EOF"
               echo "card_details<<EOF"
+              echo "EOF"
+              echo "app_details<<EOF"
               echo "EOF"
               echo "anomaly<<EOF"
               echo "EOF"
@@ -105,9 +113,66 @@ jobs:
           n_cards=$(printf '%s\n' "$NEW_CARDS" | grep -cE '.' || true)
           echo "new_entries=$n_entries  new_cards=$n_cards"
 
-          # ── 更新：有新版本條目或新靈感卡 ──
+          # ── Claude App（data/claude-app.json）新增 entries ──
+          # 不靠 diff 行格式：直接把 before/after 兩版 JSON 撈出來比 version 集合差集，
+          # 只有 "notify": true 的新條目才發通知（severity 分級由排程 agent 寫入）。
+          # 檔案在 before 版可能還不存在（首次加入），fallback 成空 JSON。
+          git show "$BEFORE:data/claude-app.json" > /tmp/app-before.json 2>/dev/null || echo '{}' > /tmp/app-before.json
+          git show "$AFTER:data/claude-app.json"  > /tmp/app-after.json  2>/dev/null || echo '{}' > /tmp/app-after.json
+
+          app_details="$(python3 -c '
+          import html
+          import json
+          import re
+          import sys
+
+          def load(path):
+              try:
+                  with open(path, encoding="utf-8") as handle:
+                      data = json.load(handle)
+              except (OSError, ValueError):
+                  return {}
+              if not isinstance(data, dict):
+                  return {}
+              out = {}
+              for entry in data.get("entries") or []:
+                  if isinstance(entry, dict) and entry.get("version"):
+                      out[str(entry["version"])] = entry
+              return out
+
+          def plain(text):
+              text = re.sub(r"<br\s*/?>", " ", str(text or ""), flags=re.I)
+              text = re.sub(r"<[^>]+>", "", text)
+              return re.sub(r"\s+", " ", html.unescape(text)).strip()
+
+          def shorten(text, limit=180):
+              if len(text) <= limit:
+                  return text
+              cut = max((text.rfind(mark, 0, limit + 1) + 1 for mark in "。；"), default=0)
+              if cut < 80:
+                  cut = limit
+              return text[:cut].rstrip(" ，；：") + "…"
+
+          before = load(sys.argv[1])
+          after = load(sys.argv[2])
+          # entries 為新到舊、dict 保留插入順序 → 通知也是新到舊。
+          for version, entry in after.items():
+              if version in before:
+                  continue
+              if entry.get("notify") is not True:
+                  continue
+              meta = " · ".join(p for p in (plain(entry.get("date")), plain(entry.get("severity"))) if p)
+              label = "Claude App " + version + (("（" + meta + "）") if meta else "")
+              text = "：".join(p for p in (plain(entry.get("title")), shorten(plain(entry.get("summary")))) if p)
+              print(label + ("｜" + text if text else ""))
+          ' /tmp/app-before.json /tmp/app-after.json || true)"
+
+          n_app_entries=$(printf '%s\n' "$app_details" | grep -cE '.' || true)
+          echo "new_app_entries=$n_app_entries"
+
+          # ── 更新：有新版本條目、新靈感卡，或 notify 的 Claude App 新條目 ──
           has_update=false
-          if [ "$n_entries" -gt 0 ] || [ "$n_cards" -gt 0 ]; then
+          if [ "$n_entries" -gt 0 ] || [ "$n_cards" -gt 0 ] || [ "$n_app_entries" -gt 0 ]; then
             has_update=true
           fi
 
@@ -115,7 +180,9 @@ jobs:
           # summary = commit body（push 腳本傳入的來源摘要），先去掉 Co-Authored-By trailer 與空行。
           SUMMARY_RAW="$(git log -1 --format=%b "$AFTER" || true)"
           SUMMARY="$(printf '%s\n' "$SUMMARY_RAW" | grep -viE '^[[:space:]]*Co-Authored-By:' | sed -E '/^[[:space:]]*$/d' || true)"
-          ANOMALY_RE='失敗|封鎖|錯誤|逾時|blocked|error|timeout|rate.?limit'
+          # 「耗盡」對應 refresh-prompt 規定的失敗摘要「GitHub API 額度耗盡，改用 Atom」，
+          # 否則 rate limit 退到 fallback 的情形不會被判成異常。
+          ANOMALY_RE='失敗|封鎖|錯誤|逾時|耗盡|blocked|error|timeout|rate.?limit'
           # 依「、」與換行切段，只留命中失敗關鍵字的片段（去頭尾空白、去重）
           # 用 sed 而非 tr 切「、」：tr 逐位元組處理會誤傷含 0x81 位元組的中文字（如「封」）。
           anomaly="$(printf '%s\n' "$SUMMARY" | sed 's/、/\n/g' \
@@ -261,11 +328,13 @@ jobs:
             echo "has_anomaly=$has_anomaly"
             echo "new_entries=$n_entries"
             echo "new_cards=$n_cards"
+            echo "new_app_entries=$n_app_entries"
             echo "anomaly_count=$n_anomaly"
           } >> "$GITHUB_OUTPUT"
           {
             echo "version_details<<EOF"; printf '%s\n' "$version_details"; echo "EOF"
             echo "card_details<<EOF";    printf '%s\n' "$card_details";    echo "EOF"
+            echo "app_details<<EOF";     printf '%s\n' "$app_details";     echo "EOF"
             echo "anomaly<<EOF";         printf '%s\n' "$anomaly";         echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
@@ -280,9 +349,11 @@ jobs:
           HAS_ANOMALY: ${{ steps.detect.outputs.has_anomaly }}
           NEW_ENTRIES: ${{ steps.detect.outputs.new_entries }}
           NEW_CARDS: ${{ steps.detect.outputs.new_cards }}
+          NEW_APP_ENTRIES: ${{ steps.detect.outputs.new_app_entries }}
           ANOMALY_COUNT: ${{ steps.detect.outputs.anomaly_count }}
           VERSION_DETAILS: ${{ steps.detect.outputs.version_details }}
           CARD_DETAILS: ${{ steps.detect.outputs.card_details }}
+          APP_DETAILS: ${{ steps.detect.outputs.app_details }}
           ANOMALY: ${{ steps.detect.outputs.anomaly }}
           COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
         run: |
@@ -296,6 +367,7 @@ jobs:
 
           V_LIST="$(printf '%s\n' "$VERSION_DETAILS" | bullets || true)"
           C_LIST="$(printf '%s\n' "$CARD_DETAILS" | bullets || true)"
+          P_LIST="$(printf '%s\n' "$APP_DETAILS" | bullets || true)"
           A_LIST="$(printf '%s\n' "$ANOMALY" | bullets || true)"
           [ -z "$A_LIST" ] && A_LIST="•（無詳細訊息）"
 
@@ -323,6 +395,9 @@ jobs:
             # 僅輸出有內容的更新區塊，每筆都包含可讀摘要。
             if [ "$NEW_ENTRIES" -gt 0 ]; then
               printf '%s%s新版本（%s）%s%s%s%s' "$nl" "$bo" "$NEW_ENTRIES" "$bc" "$nl" "$V_LIST" "$nl"
+            fi
+            if [ "$NEW_APP_ENTRIES" -gt 0 ]; then
+              printf '%s%sClaude App 新版本（%s）%s%s%s%s' "$nl" "$bo" "$NEW_APP_ENTRIES" "$bc" "$nl" "$P_LIST" "$nl"
             fi
             if [ "$NEW_CARDS" -gt 0 ]; then
               printf '%s%s新靈感卡（%s）%s%s%s%s' "$nl" "$bo" "$NEW_CARDS" "$bc" "$nl" "$C_LIST" "$nl"

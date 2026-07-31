@@ -1,0 +1,207 @@
+{
+  "schemaVersion": 1,
+  "requestPolicy": {
+    "userAgent": "Mozilla/5.0 (compatible; ai-changelog/1.0; +https://github.com/KuoAnn/ai-changelog)",
+    "followRedirects": true,
+    "failOnHttpError": true,
+    "retryCount": 3,
+    "retryDelaySeconds": 5,
+    "successConditions": [
+      "HTTP status is 200",
+      "response body is not empty",
+      "at least one release entry can be parsed"
+    ]
+  },
+  "deduplication": {
+    "key": "product + version + publishedDate",
+    "requireNewerThanCurrentHead": true,
+    "neverDeleteExistingEntries": true
+  },
+  "importance": {
+    "critical": [
+      "security vulnerability or sandbox escape",
+      "data loss, wrong repository, or wrong file mutation",
+      "breaking permission or authentication change"
+    ],
+    "high": [
+      "new model or context-window capability",
+      "MCP, plugin, hook, subagent, worktree, remote execution, or enterprise policy change",
+      "breaking change or major workflow change"
+    ],
+    "medium": [
+      "user-visible UI or workflow improvement",
+      "material performance or reliability improvement"
+    ],
+    "low": [
+      "general bug fixes",
+      "repackaging or dependency-only release",
+      "no user-facing changes"
+    ],
+    "notify": [
+      "critical",
+      "high",
+      "material-medium"
+    ]
+  },
+  "products": {
+    "claude-code": {
+      "displayName": "Claude Code",
+      "surface": "cli",
+      "dataTarget": "index.html#DATA_CC",
+      "stableVersionPattern": "^v?\\d+\\.\\d+\\.\\d+$",
+      "sources": [
+        {
+          "priority": 1,
+          "role": "version-primary",
+          "format": "github-releases-api",
+          "url": "https://api.github.com/repos/anthropics/claude-code/releases?per_page=30",
+          "requiresToken": true,
+          "filters": [
+            "draft == false",
+            "prerelease == false"
+          ]
+        },
+        {
+          "priority": 2,
+          "role": "version-fallback",
+          "format": "atom",
+          "url": "https://github.com/anthropics/claude-code/releases.atom",
+          "filters": [
+            "title matches stableVersionPattern"
+          ]
+        },
+        {
+          "priority": 3,
+          "role": "content-fallback",
+          "format": "markdown",
+          "url": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md"
+        },
+        {
+          "priority": 4,
+          "role": "human-readable-canonical",
+          "format": "html",
+          "url": "https://code.claude.com/docs/en/changelog"
+        },
+        {
+          "priority": 5,
+          "role": "notability-enrichment",
+          "format": "html",
+          "url": "https://code.claude.com/docs/en/whats-new"
+        }
+      ]
+    },
+    "claude-app": {
+      "displayName": "Claude Desktop / Claude App",
+      "surface": "desktop-app",
+      "dataTarget": "data/claude-app.json",
+      "stableVersionPattern": "^v?\\d+\\.\\d+\\.\\d+$",
+      "sources": [
+        {
+          "priority": 1,
+          "role": "version-primary",
+          "format": "markdown",
+          "url": "https://claude.com/docs/cowork/changelog.md"
+        },
+        {
+          "priority": 2,
+          "role": "version-fallback",
+          "format": "html",
+          "url": "https://claude.com/docs/cowork/changelog"
+        },
+        {
+          "priority": 3,
+          "role": "product-enrichment",
+          "format": "html",
+          "url": "https://support.claude.com/en/articles/12138966-release-notes"
+        },
+        {
+          "priority": 4,
+          "role": "code-surface-cross-check",
+          "format": "html",
+          "url": "https://code.claude.com/docs/en/desktop-changelog"
+        }
+      ]
+    },
+    "codex-cli": {
+      "displayName": "Codex CLI",
+      "surface": "cli",
+      "dataTarget": "index.html#DATA_CI",
+      "stableVersionPattern": "^(?:rust-v)?\\d+\\.\\d+\\.\\d+$",
+      "sources": [
+        {
+          "priority": 1,
+          "role": "version-primary",
+          "format": "github-releases-api",
+          "url": "https://api.github.com/repos/openai/codex/releases?per_page=30",
+          "requiresToken": true,
+          "filters": [
+            "draft == false",
+            "prerelease == false",
+            "tag_name matches stableVersionPattern",
+            "tag_name does not contain -alpha",
+            "tag_name does not start with rusty-v8-"
+          ]
+        },
+        {
+          "priority": 2,
+          "role": "version-fallback",
+          "format": "atom",
+          "url": "https://github.com/openai/codex/releases.atom",
+          "filters": [
+            "title matches stableVersionPattern",
+            "title does not contain -alpha",
+            "title does not start with rusty-v8-"
+          ]
+        },
+        {
+          "priority": 3,
+          "role": "version-fallback",
+          "format": "rss",
+          "url": "https://learn.chatgpt.com/docs/changelog/rss.xml",
+          "filters": [
+            "link contains #github-release-"
+          ]
+        }
+      ]
+    },
+    "codex-app": {
+      "displayName": "Codex App / ChatGPT Desktop",
+      "surface": "desktop-app",
+      "dataTarget": "index.html#DATA_CA",
+      "titleAliases": [
+        "Codex app",
+        "Codex desktop app",
+        "ChatGPT desktop app",
+        "ChatGPT Voice and multi-folder projects",
+        "Codex joins the ChatGPT desktop app"
+      ],
+      "sources": [
+        {
+          "priority": 1,
+          "role": "version-primary",
+          "format": "rss",
+          "url": "https://learn.chatgpt.com/docs/changelog/rss.xml",
+          "filters": [
+            "link contains #codex-YYYY-MM-DD-app",
+            "ignore links containing #codex-YYYY-MM-DD-mobile"
+          ]
+        },
+        {
+          "priority": 2,
+          "role": "human-readable-canonical",
+          "format": "html",
+          "url": "https://developers.openai.com/codex/changelog"
+        },
+        {
+          "priority": 3,
+          "role": "product-enrichment",
+          "format": "html",
+          "url": "https://openai.com/products/release-notes/",
+          "filters": [
+            "product is Codex or ChatGPT desktop"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -4,7 +4,7 @@
 
 .DESCRIPTION
   Called by the scheduled refresh agent AFTER it has edited
-  index.html. Pulls latest, stages changed files,
+  index.html and/or data/claude-app.json. Pulls latest, stages changed files,
   commits with a Taipei timestamp, and pushes to origin/main.
 
   Safe to run when nothing changed: it detects an empty diff and exits 0
@@ -12,10 +12,10 @@
 
 .PARAMETER Message
   Optional extra summary appended to the commit message
-  (e.g. "Claude Code +2, Codex CLI +1, Codex App +3").
+  (e.g. "Claude Code +2, Claude App +1, Codex CLI +1, Codex App +3").
 
 .EXAMPLE
-  pwsh scripts/push-changelog.ps1 -Message "Claude Code +2 筆、Codex CLI +1 筆"
+  pwsh scripts/push-changelog.ps1 -Message "Claude Code +2 筆、Claude App +1 筆、Codex CLI +1 筆、Codex App +0 筆"
 #>
 [CmdletBinding()]
 param(
@@ -39,8 +39,8 @@ Write-Host "[push-changelog] Taipei time: $taipei"
 # Get latest first so the push is fast-forward
 git pull --rebase --autostash origin main 2>&1 | Write-Host
 
-# Stage the dashboard + any sibling content that changed
-git add index.html 2>&1 | Write-Host
+# Stage the dashboard + Claude App data + source manifest (any that changed)
+git add index.html data/claude-app.json scripts/update-sources.json 2>&1 | Write-Host
 
 # Nothing to commit? bail cleanly.
 $staged = git diff --cached --name-only
