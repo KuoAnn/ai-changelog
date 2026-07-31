@@ -105,7 +105,9 @@ jobs:
           ADDED="$(git diff "$BEFORE" "$AFTER" -- index.html | grep -E '^\+' | grep -vE '^\+\+\+' || true)"
 
           # 新版本條目：DATA_* 物件的 v: "..." 欄位（排除時間戳那行）。
-          NEW_ENTRIES="$(printf '%s\n' "$ADDED" | grep -E '[^A-Za-z]v:[[:space:]]*"' | grep -v 'lastRefreshed' || true)"
+          # 排除帶 sev:" 的列 = DATA_CD（Claude Desktop）。那組是由 scripts/build-claude-desktop.mjs
+          # 從 data/claude-desktop.json 產生的，改由下面的 JSON 差集計數，否則同一版本會被數兩次。
+          NEW_ENTRIES="$(printf '%s\n' "$ADDED" | grep -E '[^A-Za-z]v:[[:space:]]*"' | grep -v 'lastRefreshed' | grep -v 'sev:"' || true)"
           # 新靈感卡：新增的 INSP_*.push({ 物件。排程產生的 auto 卡與手動新增卡都涵蓋。
           NEW_CARDS="$(printf '%s\n' "$ADDED" | grep -E '^\+[[:space:]]*INSP_(CC|CA|CI)\.push\(\{' || true)"
 
@@ -363,7 +365,25 @@ jobs:
 
           # 跳脫 & < >：Telegram HTML 與 Slack mrkdwn 都吃 &amp; &lt; &gt;
           esc() { sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g'; }
-          bullets() { while IFS= read -r line; do [ -n "$line" ] && printf '• %s\n' "$(printf '%s' "$line" | esc)"; done; }
+
+          # 單一區塊最多列 MAX_BULLETS 筆，其餘併成一行。
+          # 一次補齊大量條目時（例如 Claude Desktop 首次匯入 22 筆），全列出來會讓
+          # Telegram 訊息超過 4096 字元上限，整則發送直接失敗（HTTP 400）。
+          MAX_BULLETS=10
+          bullets() {
+            local n=0 extra=0 line
+            while IFS= read -r line; do
+              [ -z "$line" ] && continue
+              n=$((n + 1))
+              if [ "$n" -le "$MAX_BULLETS" ]; then
+                printf '• %s\n' "$(printf '%s' "$line" | esc)"
+              else
+                extra=$((extra + 1))
+              fi
+            done
+            [ "$extra" -gt 0 ] && printf '• …另 %s 筆（見頁面）\n' "$extra"
+            return 0
+          }
 
           V_LIST="$(printf '%s\n' "$VERSION_DETAILS" | bullets || true)"
           C_LIST="$(printf '%s\n' "$CARD_DETAILS" | bullets || true)"
@@ -440,6 +460,26 @@ jobs:
             echo "TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID 未設定，跳過 Telegram 通知。"
             exit 0
           fi
+          # Telegram sendMessage 上限 4096 字元，超過會整則 400 失敗。
+          # 以「整行」為單位截斷（不切在 HTML 標籤中間，否則 parse_mode=HTML 會噴錯）。
+          TG_TEXT="$(printf '%s' "${TG_TEXT}" | python3 -c '
+          import sys
+
+          LIMIT = 3800
+          text = sys.stdin.read()
+          if len(text) <= LIMIT:
+              sys.stdout.write(text)
+          else:
+              kept, used = [], 0
+              for line in text.splitlines():
+                  if used + len(line) + 1 > LIMIT:
+                      break
+                  kept.append(line)
+                  used += len(line) + 1
+              kept.append("…（訊息過長，已截斷；完整內容見 changelog 頁面）")
+              sys.stdout.write("\n".join(kept))
+          ')"
+          echo "Telegram 內文長度：${#TG_TEXT}"
           code=$(curl -sS -o /tmp/tg.out -w '%{http_code}' \
             "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
             --data-urlencode "chat_id=${TG_CHAT}" \

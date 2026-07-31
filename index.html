@@ -119,12 +119,25 @@
   a { color: var(--accent); }
 
   /* ===================== AGENT IDENTITY =====================
-     Every agent-scoped element carries .agent-cc / .agent-ca / .agent-ci,
+     Every agent-scoped element carries .agent-cc / .agent-cd / .agent-ca / .agent-ci,
      which sets --ag / --ag-soft / --ag-line for downstream styling. */
-  /* 三個 agent 用同一色系的三段亮度區分，不換色相 */
+  /* 四個 agent 用同一色系的四段亮度區分，不換色相 */
   .agent-cc { --ag: var(--o-4); --ag-soft: rgba(255,122,0,0.14);  --ag-line: rgba(255,122,0,0.42); }
+  .agent-cd { --ag: var(--o-1); --ag-soft: rgba(255,224,179,0.11); --ag-line: rgba(255,224,179,0.34); }
   .agent-ca { --ag: var(--o-2); --ag-soft: rgba(255,194,74,0.13); --ag-line: rgba(255,194,74,0.38); }
   .agent-ci { --ag: #e6480a;    --ag-soft: rgba(230,72,10,0.14); --ag-line: rgba(230,72,10,0.45); }
+
+  /* severity 徽章：只有 Claude Desktop 條目帶 sev 欄位，critical/high 才強調 */
+  .sev-badge {
+    font-family: var(--mono); font-size: 10.5px; font-weight: 700;
+    padding: 1px 7px; border-radius: 3px; letter-spacing: 0.06em;
+    text-transform: uppercase; white-space: nowrap;
+    border: 1px solid var(--line-strong); color: var(--ink-muted);
+  }
+  .sev-badge.sev-critical { color: #ffffff; background: var(--red); border-color: var(--red); }
+  .sev-badge.sev-high     { color: #050505; background: var(--o-3); border-color: var(--o-3); }
+  .sev-badge.sev-medium   { color: var(--ink-soft); }
+  .sev-badge.sev-low      { display: none; }
 
   .agent-tag {
     font-family: var(--mono);
@@ -834,7 +847,8 @@
   #footerSpan::before { content: "// "; opacity: 0.6; }
 
   /* ===================== COMPARE CARDS ===================== */
-  .compare-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  /* 四張卡：寬螢幕 4 欄，窄一點自動落成 2 欄，不必再改欄數 */
+  .compare-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
   .compare-card {
     background: var(--surface);
     border: 1px solid var(--line);
@@ -1238,6 +1252,8 @@
   }
   .node-name span { font-size: 12px; opacity: .6; }
   .node-owner { font-family: var(--mono); font-size: 10.5px; color: var(--ink-muted); letter-spacing: 0.1em; margin-top: 2px; }
+  /* 群組節點的分項筆數（例 MELCHIOR 同時收 Claude Code 與 Claude Desktop）；單一產品線時為空字串、不佔高度 */
+  .node-split:not(:empty) { font-family: var(--mono); font-size: 10px; color: var(--ink-muted); letter-spacing: 0.06em; margin-top: 5px; }
   .node-metric { display: flex; align-items: baseline; gap: 6px; margin: 9px 0 6px; }
   .node-metric b { font-family: var(--display); font-size: 29px; font-weight: 600; color: var(--ink); line-height: 1; }
   .node-metric span { font-family: var(--mono); font-size: 10.5px; color: var(--ink-muted); letter-spacing: 0.12em; text-transform: uppercase; }
@@ -1262,6 +1278,43 @@
 
   /* 儀表 */
   .gauges { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+
+  /* ===== EVA 機體同步率：一個資料來源一台，編號固定 ===== */
+  .eva-row {
+    grid-column: 1 / -1;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;
+  }
+  .eva-unit {
+    border: 1px solid var(--ag-line); background: var(--surface);
+    padding: 10px 12px 11px; position: relative;
+  }
+  .eva-code {
+    font-family: var(--mono); font-size: 12.5px; font-weight: 700;
+    color: var(--ag); letter-spacing: 0.1em;
+    display: flex; align-items: baseline; gap: 7px;
+  }
+  .eva-code span { font-family: var(--cjk); font-size: 10.5px; letter-spacing: 0.14em; color: var(--ink-muted); }
+  .eva-owner {
+    font-family: var(--mono); font-size: 10px; color: var(--ink-muted);
+    letter-spacing: 0.1em; margin-top: 3px; text-transform: uppercase;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .eva-sync { font-family: var(--mono); font-size: 11px; color: var(--ink-muted); letter-spacing: 0.06em; margin: 8px 0 5px; }
+  .eva-sync b { font-family: var(--display); font-size: 19px; font-weight: 600; color: var(--ink); margin-left: 5px; }
+  .eva-unit .segbar i { background: var(--ag); }
+  .eva-warn {
+    display: none;
+    margin-top: 8px; padding: 3px 8px;
+    font-family: var(--cjk); font-size: 11px; font-weight: 700; letter-spacing: 0.18em;
+    color: #ffffff; background: var(--red); border: 1px solid var(--red);
+    width: max-content;
+  }
+  /* 精神汙染：同步率為負，整台機體轉紅並閃爍警示 */
+  .eva-unit.contaminated { border-color: var(--red); background: rgba(240,24,24,0.07); }
+  .eva-unit.contaminated .eva-code { color: var(--red); }
+  .eva-unit.contaminated .eva-sync b { color: var(--red); }
+  .eva-unit.contaminated .segbar i { background: repeating-linear-gradient(90deg, var(--red) 0 4px, transparent 4px 7px); }
+  .eva-unit.contaminated .eva-warn { display: block; animation: blink 1.1s steps(1) infinite; }
   .gauge { border: 1px solid var(--line); padding: 10px 12px; background: rgba(255,255,255,0.02); position: relative; }
   .gauge-label {
     font-family: var(--cjk); font-size: 12px; color: var(--ink-soft); letter-spacing: 0.14em;
@@ -1517,8 +1570,8 @@
     <span class="typeline" id="bootLine">MAGI CONNECTION: ONLINE — ENTRY PLUG CONNECTED</span>
     <span class="hud-stat"><i>SECURITY</i><b>AAA</b></span>
     <span class="hud-stat"><i>A.T. FIELD</i><b>DEPLOYED</b></span>
-    <span class="hud-stat"><i>PATTERN</i><b class="pat">BLUE</b></span>
-    <span class="hud-stat"><i>UNIT</i><b>EVA-01</b></span>
+    <span class="hud-stat"><i>PATTERN</i><b class="pat" id="hudPattern">BLUE</b></span>
+    <span class="hud-stat"><i>UNIT</i><b id="hudUnit">ALL UNITS</b></span>
   </div>
 
   <!-- ============ 警報訊息 ============ -->
@@ -1565,9 +1618,10 @@
       <div class="node notch agent-cc">
         <div class="node-top"><span>NODE-01 / MELCHIOR-1</span><span class="node-state">通過</span></div>
         <div class="node-name">Melchior<span>-1</span></div>
-        <div class="node-owner">CLAUDE CODE / ANTHROPIC</div>
+        <div class="node-owner">CLAUDE / ANTHROPIC</div>
         <div class="node-metric"><b id="magiCcCount">—</b><span>records</span></div>
         <div class="segbar"><i id="magiCcBar" style="width:0%"></i></div>
+        <div class="node-split" id="magiCcSplit"></div>
         <div class="node-foot"><span>LATEST</span><b id="magiCcVer">—</b></div>
       </div>
       <div class="node notch agent-ca">
@@ -1606,6 +1660,9 @@
           <div class="gauge-scale"><span>0</span><span>50</span><span>100</span></div>
         </div>
       </div>
+      <!-- EVA 機體同步率：每個資料來源一台，編號固定（見 JS 的 AGENTS.eva）。
+           正常同步 100%；來源停更／抓取失敗則顯示負數同步率並亮出「精神汙染」。 -->
+      <div class="eva-row" id="evaRow" aria-label="EVA 機體同步率"></div>
       <div class="wave-box">
         <div class="wave-head">
           <b>諧波記錄</b>
@@ -1670,16 +1727,23 @@
     <h2>
       <span class="num-tag">03</span>
       團隊合作 AI 工作流建議
-      <span class="desc">— 三工具互補定位 × Frontend / Backend / Designer / QA / PM 協作</span>
+      <span class="desc">— 四工具互補定位 × Frontend / Backend / Designer / QA / PM 協作</span>
     </h2>
 
-    <div class="sub-h">三工具互補定位</div>
+    <div class="sub-h">四工具互補定位</div>
     <div class="compare-grid">
       <div class="compare-card agent-cc">
         <h3><span class="dot"></span>Claude Code</h3>
         <p>定位：<b>長期專案與團隊工具鏈</b>。Plugins、Hooks、Subagents、Skills 讓你建立可重用的銀行 APP 內部工具與流程把關。</p>
         <div class="tags">
           <span class="tag">Plugins</span><span class="tag">Hooks</span><span class="tag">Subagents</span><span class="tag">/ultrareview</span>
+        </div>
+      </div>
+      <div class="compare-card agent-cd">
+        <h3><span class="dot"></span>Claude Desktop</h3>
+        <p>定位：<b>桌面整合與企業管控</b>。同一個 App 內含 Chat、Cowork 與 Code 三個 pane，MDM managed configuration 可統一管住 MCP 連接器、工具政策與遙測。</p>
+        <div class="tags">
+          <span class="tag">Cowork</span><span class="tag">Managed MCP</span><span class="tag">managed-settings.json</span><span class="tag">SSH sessions</span>
         </div>
       </div>
       <div class="compare-card agent-ca">
@@ -1958,6 +2022,36 @@
     {v:"0.97.0", date:"2026-02-05", cat:"Slash Commands", title:"CLI 0.97.0：Approve-remember + /debug-config", body:"加入 session-scoped Allow + remember（MCP / App tool 批准）、live skill 更新偵測、<b>混合 text+image 動態 tool 輸出</b>、<code>/debug-config</code>、初始 memory plumbing、可設定 <code>log_dir</code>。穩定 apps/connectors picker 與 TUI 工作指示。"},
     {v:"0.96.0", date:"2026-02-04", cat:"MCP/Tools", title:"CLI 0.96.0：thread/compact 與 websocket signal", body:"加入 <code>thread/compact</code> async RPC（v2 app-server API）、websocket 端 rate limit signal（<code>codex.rate_limits</code> 事件）、<code>unified_exec</code> 支援所有非 Windows 平台、constrained requirements 來源 provenance。修復 <code>request_user_input</code> notes mode 的 Esc 處理與 thread state DB 問題。"}
   ];
+
+  /* CLAUDE-DESKTOP-DATA:START — 由 scripts/build-claude-desktop.mjs 從 data/claude-desktop.json 產生，勿手改 */
+  const DATA_CD = [
+    {v:"1.24012.9", date:"2026-07-24", cat:"Hooks", sev:"high", title:"Windows Plugin Hooks 修復、MCP 永久允許控管與 Opus 5 effort", body:"修正 Windows 上 plugin hooks 靜默不執行；新增 mcpPersistentAlwaysAllowEnabled，管理員可停用 MCP 工具的永久 Always allow、保留單次工作階段核准；model picker 為 Claude Opus 5 加入五段式 effort 選擇（Opus 5 一律開啟 extended thinking）。"},
+    {v:"1.24012.0", date:"2026-07-21", cat:"Permissions/Security", sev:"critical", title:"worktree 誤動主 repo 修復、iOS Simulator 支援與大量企業設定鍵", body:"修復 Code session 動到錯誤檔案：背景 worktree 清理只刪一半時會切換或重設主 repo checkout，新 session 也可能複製原資料夾的未提交檔案。新增 iOS Simulator 支援（可建置、啟動模擬器並驗證結果）、Pause Project、composer 截圖標註；Cowork 加 /usage 與 /cost 卡片。企業端新增 deploymentDisplayName、enduserAttribution、userContentRendererUrl 與 managed MCP 的 oauth.authorizationUrl/tokenUrl，並修正 managed MCP tool policy 例外反被拒絕的問題。"},
+    {v:"1.22209.3", date:"2026-07-19", cat:"Performance/Bug Fix", sev:"medium", title:"企業 TLS 檢查代理下每輪 Socket is closed 修復", body:"修復 Windows 在會檢查加密連線的公司代理環境下，session 每一輪都以「Socket is closed」失敗；內建 Claude Code CLI 升到 2.1.215，中斷的回應改用新連線重試。"},
+    {v:"1.22209.0", date:"2026-07-16", cat:"Settings/Config", sev:"high", title:"Browser pane 限縮 localhost、OTel traces 與 workspace 政策延伸至 SSH", body:"新增 disableBrowserExternalNavigation，管理員可在 managed-settings.json 把 Code tab 的 Browser pane 限制在 localhost；新增 otlpTracesEnabled（beta）匯出 Cowork/Code 的 OpenTelemetry traces；allowed workspace folders 政策延伸適用於 SSH 主機上的 Code session。修正 managed Auto mode opt-out 未生效、未設 toolPolicy 的工具只給「Allow once / Deny」兩個選項。"},
+    {v:"1.21459.3", date:"2026-07-16", cat:"Performance/Bug Fix", sev:"low", title:"擴充功能載入卡死修復", body:"修復已安裝擴充功能載入失敗、卡在無限載入狀態；修正對話結束後狀態指示器仍持續顯示。"},
+    {v:"1.21459.0", date:"2026-07-14", cat:"Plugins/MCP", sev:"high", title:"MCP toolSearchEnabled 按需載入、envHelper 與 1M context 預設選項", body:"新增 toolSearchEnabled：Code 與 Cowork session 改為按需載入 MCP tool schema，避免大量工具塞爆 context window；managedMcpServers 新增 envHelper / envHelperTtlSec 由管理員提供的執行檔載入環境變數；inferenceModels 新增 prefer1m 讓 1M context 變體成為預設選項；新增 disableFeatureDiscovery 隱藏功能推播。另加 preview pane 網址列、artifact 釘選、SSH 重連改善，並修正 headersHelper 短效憑證到期後連線失效。"},
+    {v:"1.20186.9", date:"2026-07-14", cat:"Permissions/Security", sev:"medium", title:"權限提示與提問靜默消失修復", body:"修復輸入處理錯誤後，權限提示與 session 內提問可能靜默不再出現的問題 — 若 Claude 提問或請求權限但提示從未顯示，本版修正；同時更新內建 Claude Code CLI。"},
+    {v:"1.20186.0", date:"2026-07-09", cat:"Permissions/Security", sev:"high", title:"可偽造訊息卡修復、managed MCP toolPolicy 萬用字元與 CLI session 匯入", body:"修復輸入的 channel-message 回合被渲染成可偽造的「Message from {server}」卡片，改以使用者自身文字呈現；managed MCP toolPolicy 支援 * 萬用字元比對（如 outlook_*），allow 萬用字元會預先核准所比對到的工具。新增 Troubleshooting 選項可匯入本機既有的 Claude Code CLI session；修正 Azure AI Foundry 互動登入後每則訊息認證失敗、gateway-SSO bootstrap 丟失跨來源 managedMcpServers。"},
+    {v:"1.19367.0", date:"2026-07-07", cat:"Settings/Config", sev:"high", title:"破壞性變更：Desktop Extensions 預設不再載入；Linux apt 自動更新", body:"破壞性變更：.dxt 與 .mcpb 桌面擴充預設不再載入，需在 managed configuration 設 isDesktopExtensionEnabled 為 true（原本預設載入、僅擋安裝介面）。新增 Linux 經 Anthropic apt repository 自動更新；managed stdio MCP 新增 startupTimeoutSec，預設啟動逾時由 10 秒提高到 120 秒；新增 inferenceFoundryAuthFlow、microsoftAuthBroker 與背景 agent 於 token 到期後維持登入。"},
+    {v:"1.18286.2", date:"2026-07-07", cat:"Performance/Bug Fix", sev:"low", title:"內建 Claude Code 引擎更新", body:"僅更新內建的 Claude Code 引擎至最新版，無其他使用者面向變更。"},
+    {v:"1.18286.0", date:"2026-07-02", cat:"UI/UX", sev:"medium", title:"遺失工作資料夾的 session 救援、佇列訊息拖曳排序與 live preview 強化", body:"新增「Choose folder」救援：工作資料夾遺失的 session 可分叉到指定資料夾並封存原 session；佇列訊息支援拖曳排序，Steer 支援含圖片的訊息；Code tab live preview 改為回報真實連線／載入狀態並加上上一頁、下一頁、重新載入控制。修正 SSH 大訊息重連迴圈、session 過期後反覆要求登入（10 分鐘內回來可還原草稿）。"},
+    {v:"1.17377.2", date:"2026-07-01", cat:"Models/Inference", sev:"high", title:"model picker 新增 Claude Fable 5", body:"為已取得存取權的組織在 model picker 加入 Claude Fable 5。"},
+    {v:"1.17377.1", date:"2026-06-30", cat:"Settings/Config", sev:"high", title:"Linux 正式支援（.deb）、SSH 整合終端機與 transcript 預設遮罩金鑰", body:"Claude Desktop 正式支援 Linux：Debian 與 Ubuntu 的 x64／arm64 以 .deb 套件安裝，並支援 root-owned /etc/claude-desktop/managed-settings.json 的 managed configuration。SSH session 新增整合終端機面板與 transcript 內嵌圖片預覽；transcript 預設遮罩 API key 與 token（點眼睛圖示才顯示）。新增 allowedPluginMarketplaces managed 設定；修正 inferenceModels[].supports1m 被忽略導致 Bedrock／Vertex／Foundry／gateway 缺少 1M context 選項。"},
+    {v:"1.15962.2", date:"2026-06-30", cat:"Performance/Bug Fix", sev:"low", title:"內建 Claude Code 引擎更新", body:"僅更新內建的 Claude Code 引擎至最新版，無其他使用者面向變更。"},
+    {v:"1.15962.1", date:"2026-06-26", cat:"Plugins/MCP", sev:"medium", title:"第三方部署的 MCP 連線修復", body:"修正第三方部署未使用 MDM 時本機設定的 stdio MCP server 被拒絕；修正 OAuth provider 回傳非標準 refresh 回應導致第三方 MCP 連接器每次重啟即斷線；修正受管 Mac 上 Microsoft 365 brokered 登入回報「No reply address provided」。"},
+    {v:"1.15962.0", date:"2026-06-25", cat:"Settings/Config", sev:"high", title:"受管 websearch 內建工具、otlpContentCapture 與 disableBundledSkills", body:"新增受管 websearch 內建工具，自架部署可由管理員設定 Brave、Tavily、Exa 或自訂端點，Cowork 與 Code 皆可用；新增 otlpContentCapture 讓管理員選擇性把未遮罩內容（使用者提示、回應、工具輸入輸出、原始 API request/response）送到 OTLP collector；新增 disableBundledSkills 可關閉內建 skill 與 workflow（如 deep-research）。另加本機 routine 自訂 cron 運算式與檔案面板的「Open in VS Code／Cursor」。"},
+    {v:"1.15200.0", date:"2026-06-23", cat:"Plugins/MCP", sev:"high", title:"破壞性變更：移除本機 .mcpb／.dxt 連接器安裝；v2 bootstrap schema", body:"破壞性變更：移除從本機 .mcpb 與 .dxt 檔案安裝連接器擴充的支援。發佈 v2 bootstrap 回應 JSON schema（巢狀格式），v1 扁平 schema 仍支援。新增 Claude 多選提問的 inline 卡片（逐題選擇後合併成一次回覆）與從側欄刪除 Cowork session；修正開啟 Code tab 後因本機 session 歷史檔過大而崩潰。"},
+    {v:"1.14271.0", date:"2026-06-18", cat:"Settings/Config", sev:"high", title:"破壞性變更：chatCodeExecutionEnabled 更名；routine 改計入一般用量", body:"破壞性變更：managed configuration 鍵 chatCodeExecutionEnabled 更名為 chatAdvancedFileAnalysisEnabled；betaFeaturesEnabled 標為棄用，改用 chatTabEnabled 與 chatAdvancedFileAnalysisEnabled。routine 改為計入一般用量上限，移除獨立的每日包含次數；新增 inferenceSessionLifetimeSec 於登入到期前提醒重新認證；allowedWorkspaceFolders 支援 ~ 與環境變數展開（如 %APPDATA%）。"},
+    {v:"1.13576.0", date:"2026-06-16", cat:"UI/UX", sev:"high", title:"統一 Artifacts 檢視、Chat tab beta 與 MCP client id 變更", body:"新增統一 Artifacts 檢視，把 chat、Code、Cowork 的 artifact 集中成可搜尋清單；find-in-page 改為搜尋整份 transcript。破壞性注意：送往連線 MCP server 的 client identifier 由 custom3p-desktop 改為 claude-desktop-3p，比對舊值的 MCP allowlist 或 log filter 需更新。新增 Chat tab（beta，chatTabEnabled）、Bedrock Mantle 推論供應商、inferenceModels 的 anthropicFamilyTier／isFamilyDefault；model picker 改版並修正受管 tool policy 的 * 預設值被忽略。"},
+    {v:"1.12603.1", date:"2026-06-11", cat:"Plugins/MCP", sev:"high", title:"內建 Microsoft 365 連接器、SSH Files 面板與 model picker 記憶", body:"新增內建 Microsoft 365 連接器：管理員可從 Setup 視窗的伺服器預設設定，使用者以瀏覽器登入後 Claude 可搜尋與讀取 M365 郵件、行事曆、OneDrive 與 SharePoint（預設唯讀）。遠端與 SSH session 新增 Files 面板；活動指示器新增執行中任務按鈕，背景任務面板的 Bash 列可展開即時輸出；model picker 記住上次選擇。inferenceGatewayAuthScheme 的 sso 值標為棄用，改用 inferenceCredentialKind: interactive。"},
+    {v:"1.11847.5", date:"2026-06-09", cat:"Models/Inference", sev:"high", title:"支援 Fable 模型家族與 Mythos", body:"新增 Fable 模型家族支援，組織有存取權時亦支援 Mythos。修正 Clear Cache and Restart 會直接登出、macOS 上 Logitech Options+ 等驅動管理的滑鼠上一頁／下一頁失效（並新增觸控板滑動導覽）、Code session 從閒置恢復後遺失編碼指示與 worktree 脈絡、shell 匯出的自訂 request header 未傳入 Claude Code session。"},
+    {v:"1.11187.4", date:"2026-06-05", cat:"UI/UX", sev:"medium", title:"effort 滑桿新增 Ultracode、transcript 數學式渲染", body:"effort 滑桿新增 Ultracode，選取後套用最高 effort 並為該 session 開啟 dynamic workflows；Claude Code transcript 支援行內與區塊數學式渲染、三連擊選取整段程式碼；Cowork 新增 session 內 effort 與 thinking 控制。修正 Windows 全機安裝後重裝失敗、開機不自動啟動、更新安裝失敗改顯示橫幅而非靜默失敗。"},
+  ];
+  /* CLAUDE-DESKTOP-DATA:END */
+
+  /* Claude Desktop 目前沒有手寫靈感卡；保留空陣列讓 AGENTS 合約一致。 */
+  const INSP_CD = [];
 
   const INSP_CC = [
     {ico:"bolt", color:"purple", feat:"/ultrareview — 平行多 Agent Code Review", ver:"v2.1.111 · 2026-04-16",
@@ -2673,10 +2767,15 @@
       這裡只在渲染時合併，不改動原始陣列。)
      =========================== */
   const AGENTS = [
-    { id: "cc", label: "Claude Code", vendor: "Anthropic", colorVar: "--orange", data: DATA_CC, insp: INSP_CC, unit: "versions" },
-    { id: "ca", label: "Codex App",   vendor: "OpenAI",    colorVar: "--teal",   data: DATA_CA, insp: INSP_CA, unit: "entries"  },
-    { id: "ci", label: "Codex CLI",   vendor: "OpenAI",    colorVar: "--indigo", data: DATA_CI, insp: INSP_CI, unit: "versions" }
+    { id: "cc", label: "Claude Code",    vendor: "Anthropic", colorVar: "--orange", data: DATA_CC, insp: INSP_CC, unit: "versions", eva: "EVA00", evaName: "零號機" },
+    { id: "cd", label: "Claude Desktop", vendor: "Anthropic", colorVar: "--o-1",    data: DATA_CD, insp: INSP_CD, unit: "builds",   eva: "EVA03", evaName: "參號機" },
+    { id: "ca", label: "Codex App",      vendor: "OpenAI",    colorVar: "--teal",   data: DATA_CA, insp: INSP_CA, unit: "entries",  eva: "EVA01", evaName: "壹號機" },
+    { id: "ci", label: "Codex CLI",      vendor: "OpenAI",    colorVar: "--indigo", data: DATA_CI, insp: INSP_CI, unit: "versions", eva: "EVA02", evaName: "貳號機" }
   ];
+  /* 🚨 EVA 機體編號是「每個來源固定專屬」的識別碼，依加入時間依序配發：
+     EVA00 Claude Code → EVA01 Codex App → EVA02 Codex CLI → EVA03 Claude Desktop。
+     陣列順序（顯示用）可以改，但既有來源的編號永遠不重新分配；
+     新增第五個來源時取 EVA04，不要為了對齊陣列順序去動舊編號。 */
   const AGENT_MAP = Object.fromEntries(AGENTS.map(a => [a.id, a]));
 
   const ENTRIES = AGENTS.flatMap(a => a.data.map(d => ({ ...d, agent: a.id })));
@@ -3062,6 +3161,7 @@
           <div class="e-id">
             <span class="agent-tag" title="${a.label} ${d.v}">${a.label} ${fmtVer(d.v)}</span>
             <span class="cat-badge ${catClass(d.cat)}" title="${d.cat}">${catLabel(d.cat)}</span>
+            ${d.sev ? `<span class="sev-badge sev-${d.sev}" title="重要性 ${d.sev}">${d.sev}</span>` : ""}
           </div>
           <div class="e-sum"><span class="sum-text">${sum.html}</span></div>
           ${expandBtn}
@@ -3362,7 +3462,15 @@
      所有數字都取自 ENTRIES 實際資料，不是裝飾用假值。
      =========================== */
   const $el = id => document.getElementById(id);
-  const MAGI_SUFFIX = { cc: "Cc", ca: "Ca", ci: "Ci" };
+  /* MAGI 三賢者依 EVA 設定固定三節點，但追蹤的產品有四個 →
+     節點語意改成「產品線群組」而非 1:1 產品：MELCHIOR 收 Anthropic 兩條線
+     （Claude Code CLI + Claude Desktop），另兩個節點各收一條 OpenAI 產品線。
+     這樣三節點不變、四個產品也沒有任何一個被排除在儀表板外。 */
+  const MAGI_GROUPS = [
+    { suffix: "Cc", ids: ["cc", "cd"] },
+    { suffix: "Ca", ids: ["ca"] },
+    { suffix: "Ci", ids: ["ci"] }
+  ];
   const DAY_MS = 86400000;
   function daysAgo(dateStr){
     const d = new Date(dateStr + "T00:00:00");
@@ -3385,6 +3493,60 @@
     setGauge("gaugeSync", pct, pct.toFixed(2) + "%");
     const scope = $el("hudScope");
     if (scope) scope.textContent = (state.agent === "all" ? "ALL UNITS" : AGENT_MAP[state.agent].label).toUpperCase();
+    const unit = $el("hudUnit");
+    if (unit) unit.textContent = state.agent === "all" ? "ALL UNITS" : AGENT_MAP[state.agent].eva;
+  }
+
+  /* ===========================
+     EVA 機體同步率
+     每個資料來源 = 一台 EVA，編號固定（AGENTS.eva）。
+     正常同步 → 100%；來源停更或抓取失敗 → 負數同步率 + 「精神汙染」。
+     判定完全取自實際資料，不是裝飾值。
+     =========================== */
+  const EVA_STALE_DAYS = 21;   // 超過 3 週沒有新版本 → 視為同步異常（來源停更／排程抓取失敗）
+
+  function evaUnitStatus(a){
+    if (!a.data.length) {
+      return { pct: -100, ok: false, reason: "無任何紀錄" };
+    }
+    // 不假設陣列已排序，直接取最新日期
+    const latest = a.data.reduce((m, d) => (d.date > m ? d.date : m), a.data[0].date);
+    const days = daysAgo(latest);
+    if (days <= EVA_STALE_DAYS) {
+      return { pct: 100, ok: true, days: days, latest: latest };
+    }
+    // 逾期越久負得越深，下限 -100%
+    return { pct: -Math.min(100, days - EVA_STALE_DAYS), ok: false, days: days, latest: latest,
+             reason: days + " 日未同步（門檻 " + EVA_STALE_DAYS + " 日）" };
+  }
+
+  function renderEvaUnits(){
+    const root = $el("evaRow");
+    if (!root) return 0;
+    root.innerHTML = "";
+    let contaminated = 0;
+    AGENTS.slice().sort((x, y) => x.eva.localeCompare(y.eva)).forEach(a => {
+      const s = evaUnitStatus(a);
+      if (!s.ok) contaminated++;
+      const cell = document.createElement("div");
+      cell.className = "eva-unit agent-" + a.id + (s.ok ? "" : " contaminated");
+      cell.title = a.eva + " " + a.evaName + " · " + a.label + " · " +
+        (s.ok ? "同步正常，最新 " + s.latest + "（" + s.days + " 日前）" : "精神汙染：" + s.reason);
+      cell.innerHTML =
+        '<div class="eva-code">' + a.eva + '<span>' + a.evaName + '</span></div>' +
+        '<div class="eva-owner">' + escapeHtml(a.label) + '</div>' +
+        '<div class="eva-sync">同步率<b>' + s.pct.toFixed(2) + '%</b></div>' +
+        '<div class="segbar"><i style="width:' + Math.min(100, Math.abs(s.pct)).toFixed(1) + '%"></i></div>' +
+        '<div class="eva-warn">精神汙染</div>';
+      root.appendChild(cell);
+    });
+    // 有機體被汙染 → HUD 的 PATTERN 由 BLUE 轉 RED
+    const pat = $el("hudPattern");
+    if (pat) {
+      pat.textContent = contaminated ? "RED" : "BLUE";
+      pat.style.color = contaminated ? "var(--red)" : "";
+    }
+    return contaminated;
   }
 
   function clockTick(){
@@ -3413,22 +3575,38 @@
   }
 
   function initDeck(){
-    /* --- MAGI 三節點：MELCHIOR-1 / BALTHASAR-2 / CASPER-3 --- */
-    const maxCount = Math.max.apply(null, AGENTS.map(a => a.data.length).concat([1]));
+    /* --- EVA 機體同步率：每個資料來源一台 --- */
+    const contaminated = renderEvaUnits();
+
+    /* --- MAGI 三節點：MELCHIOR-1 / BALTHASAR-2 / CASPER-3（見 MAGI_GROUPS） --- */
+    const groupPool = g => ENTRIES.filter(e => g.ids.indexOf(e.agent) >= 0);   // ENTRIES 已由新到舊排序
+    const maxCount = Math.max.apply(null, MAGI_GROUPS.map(g => groupPool(g).length).concat([1]));
     let quorum = 0;
-    AGENTS.forEach(a => {
-      const pool = ENTRIES.filter(e => e.agent === a.id);   // ENTRIES 已由新到舊排序
-      const s = MAGI_SUFFIX[a.id];
-      const cnt = $el("magi" + s + "Count"), bar = $el("magi" + s + "Bar"), ver = $el("magi" + s + "Ver");
+    MAGI_GROUPS.forEach(g => {
+      const pool = groupPool(g);
+      const s = g.suffix;
+      const cnt = $el("magi" + s + "Count"), bar = $el("magi" + s + "Bar");
+      const ver = $el("magi" + s + "Ver"), split = $el("magi" + s + "Split");
       if (cnt) cnt.textContent = pool.length;
       if (bar) bar.style.width = (pool.length / maxCount * 100).toFixed(1) + "%";
-      if (ver && pool.length) ver.textContent = fmtVer(pool[0].v) + " · " + pool[0].date;
+      if (ver && pool.length) {
+        // 群組含多條產品線時，LATEST 要標出是哪一條，避免誤讀成同一產品
+        const top = pool[0];
+        const prefix = g.ids.length > 1 ? AGENT_MAP[top.agent].label + " " : "";
+        ver.textContent = prefix + fmtVer(top.v) + " · " + top.date;
+      }
+      // 分項筆數：確保群組內每條產品線都看得到，儀表板不吃掉任何產品
+      if (split) {
+        split.textContent = g.ids.length > 1
+          ? g.ids.map(id => AGENT_MAP[id].label + " " + AGENT_MAP[id].data.length).join(" · ")
+          : "";
+      }
       if (pool.length) quorum++;
     });
     const verdict = $el("deckVerdict");
     if (verdict) {
-      verdict.textContent = quorum === AGENTS.length ? "全員一致 通過" : (quorum ? "多數決 通過" : "審議中");
-      verdict.style.background = quorum === AGENTS.length ? "var(--green)" : "var(--amber)";
+      verdict.textContent = quorum === MAGI_GROUPS.length ? "全員一致 通過" : (quorum ? "多數決 通過" : "審議中");
+      verdict.style.background = quorum === MAGI_GROUPS.length ? "var(--green)" : "var(--amber)";
     }
 
     /* --- HARMONICS：近 30 日更新筆數（30 筆為滿格） --- */
@@ -3448,7 +3626,12 @@
     const recent14 = ENTRIES.filter(e => daysAgo(e.date) <= 14);
     const msg = $el("alertMsg"), lv = $el("alertLv");
     if (msg) {
-      if (recent14.length) {
+      if (contaminated) {
+        // 同步異常優先於一般訊號：先讓人看到哪幾台機體失聯
+        const bad = AGENTS.filter(a => !evaUnitStatus(a).ok);
+        msg.innerHTML = "<em>精神汙染</em> — 同步異常機體 <em>" + contaminated + "</em> 台：" +
+          bad.map(a => escapeHtml(a.eva + " " + a.label)).join("、") + "。來源停更或抓取失敗，請檢查排程。";
+      } else if (recent14.length) {
         const top = recent14[0];
         msg.innerHTML = "使徒性訊號 <em>" + recent14.length + "</em> 件（近 14 日）／ TARGET：<em>" +
           escapeHtml(AGENT_MAP[top.agent].label) + " " + escapeHtml(fmtVer(top.v)) + "</em> · " + top.date;

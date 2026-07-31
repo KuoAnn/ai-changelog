@@ -2,5 +2,204 @@
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
   "lastRefreshed": "",
-  "entries": []
+  "entries": [
+    {
+      "version": "1.24012.9",
+      "date": "2026-07-24",
+      "severity": "high",
+      "notify": true,
+      "title": "Windows Plugin Hooks 修復、MCP 永久允許控管與 Opus 5 effort",
+      "summary": "修正 Windows 上 plugin hooks 靜默不執行；新增 mcpPersistentAlwaysAllowEnabled，管理員可停用 MCP 工具的永久 Always allow、保留單次工作階段核准；model picker 為 Claude Opus 5 加入五段式 effort 選擇（Opus 5 一律開啟 extended thinking）。",
+      "categories": ["Hooks", "Plugins/MCP", "Models/Inference"]
+    },
+    {
+      "version": "1.24012.0",
+      "date": "2026-07-21",
+      "severity": "critical",
+      "notify": true,
+      "title": "worktree 誤動主 repo 修復、iOS Simulator 支援與大量企業設定鍵",
+      "summary": "修復 Code session 動到錯誤檔案：背景 worktree 清理只刪一半時會切換或重設主 repo checkout，新 session 也可能複製原資料夾的未提交檔案。新增 iOS Simulator 支援（可建置、啟動模擬器並驗證結果）、Pause Project、composer 截圖標註；Cowork 加 /usage 與 /cost 卡片。企業端新增 deploymentDisplayName、enduserAttribution、userContentRendererUrl 與 managed MCP 的 oauth.authorizationUrl/tokenUrl，並修正 managed MCP tool policy 例外反被拒絕的問題。",
+      "categories": ["Permissions/Security", "IDE/Editor", "Plugins/MCP"]
+    },
+    {
+      "version": "1.22209.3",
+      "date": "2026-07-19",
+      "severity": "medium",
+      "notify": true,
+      "title": "企業 TLS 檢查代理下每輪 Socket is closed 修復",
+      "summary": "修復 Windows 在會檢查加密連線的公司代理環境下，session 每一輪都以「Socket is closed」失敗；內建 Claude Code CLI 升到 2.1.215，中斷的回應改用新連線重試。",
+      "categories": ["Performance/Bug Fix", "Settings/Config"]
+    },
+    {
+      "version": "1.22209.0",
+      "date": "2026-07-16",
+      "severity": "high",
+      "notify": true,
+      "title": "Browser pane 限縮 localhost、OTel traces 與 workspace 政策延伸至 SSH",
+      "summary": "新增 disableBrowserExternalNavigation，管理員可在 managed-settings.json 把 Code tab 的 Browser pane 限制在 localhost；新增 otlpTracesEnabled（beta）匯出 Cowork/Code 的 OpenTelemetry traces；allowed workspace folders 政策延伸適用於 SSH 主機上的 Code session。修正 managed Auto mode opt-out 未生效、未設 toolPolicy 的工具只給「Allow once / Deny」兩個選項。",
+      "categories": ["Settings/Config", "Permissions/Security", "Plugins/MCP"]
+    },
+    {
+      "version": "1.21459.3",
+      "date": "2026-07-16",
+      "severity": "low",
+      "notify": false,
+      "title": "擴充功能載入卡死修復",
+      "summary": "修復已安裝擴充功能載入失敗、卡在無限載入狀態；修正對話結束後狀態指示器仍持續顯示。",
+      "categories": ["Performance/Bug Fix"]
+    },
+    {
+      "version": "1.21459.0",
+      "date": "2026-07-14",
+      "severity": "high",
+      "notify": true,
+      "title": "MCP toolSearchEnabled 按需載入、envHelper 與 1M context 預設選項",
+      "summary": "新增 toolSearchEnabled：Code 與 Cowork session 改為按需載入 MCP tool schema，避免大量工具塞爆 context window；managedMcpServers 新增 envHelper / envHelperTtlSec 由管理員提供的執行檔載入環境變數；inferenceModels 新增 prefer1m 讓 1M context 變體成為預設選項；新增 disableFeatureDiscovery 隱藏功能推播。另加 preview pane 網址列、artifact 釘選、SSH 重連改善，並修正 headersHelper 短效憑證到期後連線失效。",
+      "categories": ["Plugins/MCP", "Settings/Config", "Models/Inference"]
+    },
+    {
+      "version": "1.20186.9",
+      "date": "2026-07-14",
+      "severity": "medium",
+      "notify": true,
+      "title": "權限提示與提問靜默消失修復",
+      "summary": "修復輸入處理錯誤後，權限提示與 session 內提問可能靜默不再出現的問題 — 若 Claude 提問或請求權限但提示從未顯示，本版修正；同時更新內建 Claude Code CLI。",
+      "categories": ["Permissions/Security", "Performance/Bug Fix"]
+    },
+    {
+      "version": "1.20186.0",
+      "date": "2026-07-09",
+      "severity": "high",
+      "notify": true,
+      "title": "可偽造訊息卡修復、managed MCP toolPolicy 萬用字元與 CLI session 匯入",
+      "summary": "修復輸入的 channel-message 回合被渲染成可偽造的「Message from {server}」卡片，改以使用者自身文字呈現；managed MCP toolPolicy 支援 * 萬用字元比對（如 outlook_*），allow 萬用字元會預先核准所比對到的工具。新增 Troubleshooting 選項可匯入本機既有的 Claude Code CLI session；修正 Azure AI Foundry 互動登入後每則訊息認證失敗、gateway-SSO bootstrap 丟失跨來源 managedMcpServers。",
+      "categories": ["Permissions/Security", "Plugins/MCP", "IDE/Editor"]
+    },
+    {
+      "version": "1.19367.0",
+      "date": "2026-07-07",
+      "severity": "high",
+      "notify": true,
+      "title": "破壞性變更：Desktop Extensions 預設不再載入；Linux apt 自動更新",
+      "summary": "破壞性變更：.dxt 與 .mcpb 桌面擴充預設不再載入，需在 managed configuration 設 isDesktopExtensionEnabled 為 true（原本預設載入、僅擋安裝介面）。新增 Linux 經 Anthropic apt repository 自動更新；managed stdio MCP 新增 startupTimeoutSec，預設啟動逾時由 10 秒提高到 120 秒；新增 inferenceFoundryAuthFlow、microsoftAuthBroker 與背景 agent 於 token 到期後維持登入。",
+      "categories": ["Settings/Config", "Plugins/MCP", "Permissions/Security"]
+    },
+    {
+      "version": "1.18286.2",
+      "date": "2026-07-07",
+      "severity": "low",
+      "notify": false,
+      "title": "內建 Claude Code 引擎更新",
+      "summary": "僅更新內建的 Claude Code 引擎至最新版，無其他使用者面向變更。",
+      "categories": ["Performance/Bug Fix"]
+    },
+    {
+      "version": "1.18286.0",
+      "date": "2026-07-02",
+      "severity": "medium",
+      "notify": true,
+      "title": "遺失工作資料夾的 session 救援、佇列訊息拖曳排序與 live preview 強化",
+      "summary": "新增「Choose folder」救援：工作資料夾遺失的 session 可分叉到指定資料夾並封存原 session；佇列訊息支援拖曳排序，Steer 支援含圖片的訊息；Code tab live preview 改為回報真實連線／載入狀態並加上上一頁、下一頁、重新載入控制。修正 SSH 大訊息重連迴圈、session 過期後反覆要求登入（10 分鐘內回來可還原草稿）。",
+      "categories": ["UI/UX", "IDE/Editor", "Performance/Bug Fix"]
+    },
+    {
+      "version": "1.17377.2",
+      "date": "2026-07-01",
+      "severity": "high",
+      "notify": true,
+      "title": "model picker 新增 Claude Fable 5",
+      "summary": "為已取得存取權的組織在 model picker 加入 Claude Fable 5。",
+      "categories": ["Models/Inference"]
+    },
+    {
+      "version": "1.17377.1",
+      "date": "2026-06-30",
+      "severity": "high",
+      "notify": true,
+      "title": "Linux 正式支援（.deb）、SSH 整合終端機與 transcript 預設遮罩金鑰",
+      "summary": "Claude Desktop 正式支援 Linux：Debian 與 Ubuntu 的 x64／arm64 以 .deb 套件安裝，並支援 root-owned /etc/claude-desktop/managed-settings.json 的 managed configuration。SSH session 新增整合終端機面板與 transcript 內嵌圖片預覽；transcript 預設遮罩 API key 與 token（點眼睛圖示才顯示）。新增 allowedPluginMarketplaces managed 設定；修正 inferenceModels[].supports1m 被忽略導致 Bedrock／Vertex／Foundry／gateway 缺少 1M context 選項。",
+      "categories": ["Settings/Config", "Permissions/Security", "IDE/Editor"]
+    },
+    {
+      "version": "1.15962.2",
+      "date": "2026-06-30",
+      "severity": "low",
+      "notify": false,
+      "title": "內建 Claude Code 引擎更新",
+      "summary": "僅更新內建的 Claude Code 引擎至最新版，無其他使用者面向變更。",
+      "categories": ["Performance/Bug Fix"]
+    },
+    {
+      "version": "1.15962.1",
+      "date": "2026-06-26",
+      "severity": "medium",
+      "notify": false,
+      "title": "第三方部署的 MCP 連線修復",
+      "summary": "修正第三方部署未使用 MDM 時本機設定的 stdio MCP server 被拒絕；修正 OAuth provider 回傳非標準 refresh 回應導致第三方 MCP 連接器每次重啟即斷線；修正受管 Mac 上 Microsoft 365 brokered 登入回報「No reply address provided」。",
+      "categories": ["Plugins/MCP", "Performance/Bug Fix"]
+    },
+    {
+      "version": "1.15962.0",
+      "date": "2026-06-25",
+      "severity": "high",
+      "notify": true,
+      "title": "受管 websearch 內建工具、otlpContentCapture 與 disableBundledSkills",
+      "summary": "新增受管 websearch 內建工具，自架部署可由管理員設定 Brave、Tavily、Exa 或自訂端點，Cowork 與 Code 皆可用；新增 otlpContentCapture 讓管理員選擇性把未遮罩內容（使用者提示、回應、工具輸入輸出、原始 API request/response）送到 OTLP collector；新增 disableBundledSkills 可關閉內建 skill 與 workflow（如 deep-research）。另加本機 routine 自訂 cron 運算式與檔案面板的「Open in VS Code／Cursor」。",
+      "categories": ["Settings/Config", "Permissions/Security", "Subagents/Skills"]
+    },
+    {
+      "version": "1.15200.0",
+      "date": "2026-06-23",
+      "severity": "high",
+      "notify": true,
+      "title": "破壞性變更：移除本機 .mcpb／.dxt 連接器安裝；v2 bootstrap schema",
+      "summary": "破壞性變更：移除從本機 .mcpb 與 .dxt 檔案安裝連接器擴充的支援。發佈 v2 bootstrap 回應 JSON schema（巢狀格式），v1 扁平 schema 仍支援。新增 Claude 多選提問的 inline 卡片（逐題選擇後合併成一次回覆）與從側欄刪除 Cowork session；修正開啟 Code tab 後因本機 session 歷史檔過大而崩潰。",
+      "categories": ["Plugins/MCP", "Settings/Config", "UI/UX"]
+    },
+    {
+      "version": "1.14271.0",
+      "date": "2026-06-18",
+      "severity": "high",
+      "notify": true,
+      "title": "破壞性變更：chatCodeExecutionEnabled 更名；routine 改計入一般用量",
+      "summary": "破壞性變更：managed configuration 鍵 chatCodeExecutionEnabled 更名為 chatAdvancedFileAnalysisEnabled；betaFeaturesEnabled 標為棄用，改用 chatTabEnabled 與 chatAdvancedFileAnalysisEnabled。routine 改為計入一般用量上限，移除獨立的每日包含次數；新增 inferenceSessionLifetimeSec 於登入到期前提醒重新認證；allowedWorkspaceFolders 支援 ~ 與環境變數展開（如 %APPDATA%）。",
+      "categories": ["Settings/Config", "Permissions/Security", "UI/UX"]
+    },
+    {
+      "version": "1.13576.0",
+      "date": "2026-06-16",
+      "severity": "high",
+      "notify": true,
+      "title": "統一 Artifacts 檢視、Chat tab beta 與 MCP client id 變更",
+      "summary": "新增統一 Artifacts 檢視，把 chat、Code、Cowork 的 artifact 集中成可搜尋清單；find-in-page 改為搜尋整份 transcript。破壞性注意：送往連線 MCP server 的 client identifier 由 custom3p-desktop 改為 claude-desktop-3p，比對舊值的 MCP allowlist 或 log filter 需更新。新增 Chat tab（beta，chatTabEnabled）、Bedrock Mantle 推論供應商、inferenceModels 的 anthropicFamilyTier／isFamilyDefault；model picker 改版並修正受管 tool policy 的 * 預設值被忽略。",
+      "categories": ["UI/UX", "Plugins/MCP", "Settings/Config"]
+    },
+    {
+      "version": "1.12603.1",
+      "date": "2026-06-11",
+      "severity": "high",
+      "notify": true,
+      "title": "內建 Microsoft 365 連接器、SSH Files 面板與 model picker 記憶",
+      "summary": "新增內建 Microsoft 365 連接器：管理員可從 Setup 視窗的伺服器預設設定，使用者以瀏覽器登入後 Claude 可搜尋與讀取 M365 郵件、行事曆、OneDrive 與 SharePoint（預設唯讀）。遠端與 SSH session 新增 Files 面板；活動指示器新增執行中任務按鈕，背景任務面板的 Bash 列可展開即時輸出；model picker 記住上次選擇。inferenceGatewayAuthScheme 的 sso 值標為棄用，改用 inferenceCredentialKind: interactive。",
+      "categories": ["Plugins/MCP", "IDE/Editor", "Settings/Config"]
+    },
+    {
+      "version": "1.11847.5",
+      "date": "2026-06-09",
+      "severity": "high",
+      "notify": true,
+      "title": "支援 Fable 模型家族與 Mythos",
+      "summary": "新增 Fable 模型家族支援，組織有存取權時亦支援 Mythos。修正 Clear Cache and Restart 會直接登出、macOS 上 Logitech Options+ 等驅動管理的滑鼠上一頁／下一頁失效（並新增觸控板滑動導覽）、Code session 從閒置恢復後遺失編碼指示與 worktree 脈絡、shell 匯出的自訂 request header 未傳入 Claude Code session。",
+      "categories": ["Models/Inference", "Performance/Bug Fix", "IDE/Editor"]
+    },
+    {
+      "version": "1.11187.4",
+      "date": "2026-06-05",
+      "severity": "medium",
+      "notify": true,
+      "title": "effort 滑桿新增 Ultracode、transcript 數學式渲染",
+      "summary": "effort 滑桿新增 Ultracode，選取後套用最高 effort 並為該 session 開啟 dynamic workflows；Claude Code transcript 支援行內與區塊數學式渲染、三連擊選取整段程式碼；Cowork 新增 session 內 effort 與 thinking 控制。修正 Windows 全機安裝後重裝失敗、開機不自動啟動、更新安裝失敗改顯示橫幅而非靜默失敗。",
+      "categories": ["UI/UX", "Settings/Config", "Performance/Bug Fix"]
+    }
+  ]
 }

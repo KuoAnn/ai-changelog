@@ -11,15 +11,27 @@
 | Codex CLI | OpenAI 的 CLI 工具 | `index.html` → `DATA_CI` |
 | Codex App / ChatGPT Desktop | OpenAI 的桌面 App（已併入 ChatGPT Desktop） | `index.html` → `DATA_CA` |
 
+四個來源在頁面上各有**固定不變的 EVA 機體編號**（依加入時間配發，既有編號永不重新分配）：
+
+| 機體 | 來源 | 儀表板 MAGI 節點 |
+| --- | --- | --- |
+| **EVA00 零號機** | Claude Code | MELCHIOR-1 |
+| **EVA01 壹號機** | Codex App / ChatGPT Desktop | BALTHASAR-2 |
+| **EVA02 貳號機** | Codex CLI | CASPER-3 |
+| **EVA03 參號機** | Claude Desktop | MELCHIOR-1 |
+
+MAGI 三賢者依 EVA 設定固定三節點，所以節點語意是**產品線群組**而非 1:1 產品：MELCHIOR-1 同時承載 Anthropic 的兩條線（節點內會列出 `Claude Code N · Claude Desktop N` 分項），四個產品都在儀表板上，沒有任何一個被排除。
+
+每台機體都會顯示**同步率**：來源正常（最新一筆在 21 日內）顯示 `100.00%`；來源停更或抓取失敗則顯示**負數同步率**並亮出 **精神汙染** 警示，同時把 HUD 的 `PATTERN` 由 `BLUE` 轉 `RED`、警報列改列出失聯機體。判定完全取自實際資料，不是裝飾值。
+
 > Claude Code CLI 與 Claude Desktop 是**兩個不同產品**，資料刻意分開存放，Desktop 版本不會混入 `DATA_CC`。
 > 另外 **Claude Desktop ≠ Claude Apps**：`Claude Apps` 是 Anthropic 對 web／desktop／iOS／Android 的傘狀稱呼、**沒有版本號**（[Claude Apps Release Notes](https://support.claude.com/en/articles/12138966-release-notes) 依日期分段）；本站追蹤的是可版本化的 **Desktop build**（[Cowork changelog](https://claude.com/docs/cowork/changelog)，自述 `Release notes for Claude Desktop`）。同一天兩邊內容不同，不是同一份資料。
-> 目前頁面上的時間軸顯示 Claude Code、Codex App、Codex CLI 三組；Claude Desktop 先作為獨立的更新與通知資料源，UI 整合另開任務處理。
 
 線上版：<https://kuoann.github.io/ai-changelog/>
 
 ## 內容
 
-- 合併時間軸：Claude Code、Codex App、Codex CLI（Claude Desktop 資料獨立於 `data/claude-desktop.json`）
+- 合併時間軸：四個來源合併成單一時間軸，可依 AI Agent 與分類篩選；Claude Desktop 條目另帶 severity 徽章
 - 角色切換：依職能篩出較相關的應用靈感卡
 - 靈感卡詳情：包含用途、設定範例、實戰技巧與 code copy
 - 時間軸：支援分類篩選、關鍵字搜尋、分頁載入
@@ -106,7 +118,8 @@ bash scripts/push-changelog.sh "手動更新"
 | --- | --- |
 | [`index.html`](index.html) | 主頁面（兼 GitHub Pages 入口），包含資料、樣式與互動邏輯 |
 | [`scripts/update-sources.json`](scripts/update-sources.json) | Claude / Codex CLI 與 App 的官方來源、備援策略、版本過濾及通知分級 |
-| [`data/claude-desktop.json`](data/claude-desktop.json) | Claude Desktop 的獨立版本資料 |
+| [`data/claude-desktop.json`](data/claude-desktop.json) | Claude Desktop 的獨立版本資料（頁面 `DATA_CD` 的來源） |
+| [`scripts/build-claude-desktop.mjs`](scripts/build-claude-desktop.mjs) | 把 `data/claude-desktop.json` 內嵌成 `index.html` 的 `DATA_CD`（冪等，支援 `--check`） |
 | [`scripts/refresh-prompt.md`](scripts/refresh-prompt.md) | 排程 agent 的完整刷新指示 |
 | [`scripts/push-changelog.ps1`](scripts/push-changelog.ps1) | Windows 手動 commit/push 腳本 |
 | [`scripts/push-changelog.sh`](scripts/push-changelog.sh) | Linux/遠端排程 commit/push 腳本 |
@@ -114,12 +127,21 @@ bash scripts/push-changelog.sh "手動更新"
 
 ## 編輯提示
 
-Claude Desktop 的資料在 `data/claude-desktop.json`（`entries` 陣列，最新在最前面，每筆含 `version`、`date`、`severity`、`notify`、`title`、`summary`、`categories`）。其餘主資料都在 `index.html`：
+Claude Desktop 的資料在 `data/claude-desktop.json`（`entries` 陣列，最新在最前面，每筆含 `version`、`date`、`severity`、`notify`、`title`、`summary`、`categories`），頁面上的 `DATA_CD` 由 [`scripts/build-claude-desktop.mjs`](scripts/build-claude-desktop.mjs) 從該 JSON 產生 — **改資料請改 JSON 再跑產生器，不要直接改 `DATA_CD`**：
+
+```bash
+node scripts/build-claude-desktop.mjs          # 產生／更新 index.html 的 DATA_CD
+node scripts/build-claude-desktop.mjs --check  # 只檢查是否同步（不寫檔）
+```
+
+之所以 build-time 內嵌而不是 runtime `fetch`：`index.html` 要能直接用瀏覽器開（`file://`），而 `file://` 下 `fetch` 會被 CORS 擋掉。其餘主資料都在 `index.html`：
 
 | 內容 | HTML 內位置 |
 | --- | --- |
-| changelog 資料 | `DATA_CC`、`DATA_CA`、`DATA_CI` |
-| 靈感卡 | `INSP_CC`、`INSP_CA`、`INSP_CI` |
+| changelog 資料 | `DATA_CC`、`DATA_CA`、`DATA_CI`、`DATA_CD`（產物） |
+| 靈感卡 | `INSP_CC`、`INSP_CA`、`INSP_CI`、`INSP_CD`（目前為空） |
+| EVA 編號／MAGI 分組 | `AGENTS`（`eva` 欄位）、`MAGI_GROUPS` |
+| 同步率／精神汙染 | `EVA_STALE_DAYS`、`evaUnitStatus()`、`renderEvaUnits()` |
 | 角色定義 | `ROLES` |
 | 卡片渲染 | `renderInspirationCards()` |
 | Modal 邏輯 | `openModal(card)` |

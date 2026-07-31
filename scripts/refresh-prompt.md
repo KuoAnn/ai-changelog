@@ -27,7 +27,9 @@
 - **🚨 Codex App 不能只搜尋「Codex App」字樣**：官方已把 Codex 併入 ChatGPT Desktop，標題會出現 `ChatGPT desktop app`、`Codex joins the ChatGPT desktop app` 等寫法。一律以 `scripts/update-sources.json` 的 `products.codex-app.titleAliases` 為接受清單。
 - `index.html` 為單頁合併版面（已無 Tab）：前端 JS 於渲染時把 `DATA_*` 合併成單一時間軸與靈感卡區。**只要維護那六個陣列即可，不需要動任何 HTML 版面。**
 - Hero 的 Date Span、Total Versions、Agent 篩選 chip 計數都由 JS 動態計算 — 不要去動那些靜態字串。
-- 本階段 `data/claude-desktop.json` 只作為**獨立更新與通知資料源**，前端尚未顯示第四個 Agent；不要為了顯示它去改前端版面。
+- **🚨 `DATA_CD` 是產物，不要手改。** 前端的 Claude Desktop 資料由 `scripts/build-claude-desktop.mjs` 從 `data/claude-desktop.json` 產生，寫在 `index.html` 的 `CLAUDE-DESKTOP-DATA:START/END` 標記之間。改資料一律改 JSON，再跑產生器（見步驟 8）。
+- **EVA 機體編號固定不變**：`AGENTS` 內每個來源有專屬 `eva` 編號（EVA00 Claude Code、EVA01 Codex App、EVA02 Codex CLI、EVA03 Claude Desktop），依加入時間配發。新增第五個來源取 `EVA04`，**不可重新分配既有編號**。
+- **MAGI 三節點是產品線群組**，不是 1:1 產品（EVA 設定裡三賢者就是三個）。MELCHIOR-1 同時收 Claude Code 與 Claude Desktop，另兩節點各收一條 OpenAI 產品線 — 四個產品都在儀表板上，沒有任何一個被排除。要加來源時改 `MAGI_GROUPS`，不要加第四個節點。
 
 ## 步驟
 
@@ -261,26 +263,40 @@ INSP_CC.push({
 
 Claude Desktop 目前沒有對應 `INSP_*` 陣列，**不要為它硬塞靈感卡到 `INSP_CC`**。
 
-### 8) 更新時間戳
+### 8) 產生 DATA_CD（只要動過 Claude Desktop 資料就必跑）
+
+```bash
+node scripts/build-claude-desktop.mjs
+```
+
+把 `data/claude-desktop.json` 內嵌成 `index.html` 的 `DATA_CD`。**JSON 是唯一真實來源，`DATA_CD` 是產物。**
+
+- 為什麼要內嵌而不是 runtime fetch：`index.html` 是 self-contained 單檔、README 明示可直接用瀏覽器開（`file://`），而 `file://` 下 `fetch` 會被 CORS 擋掉。
+- 產生器是冪等的，資料沒變就不會產生 diff。
+- 驗證同步狀態（不寫檔）：`node scripts/build-claude-desktop.mjs --check`，不同步會回非 0。
+- 產生器會擋掉重複版本與非法 `severity`，等於多一層資料驗證。
+
+### 9) 更新時間戳
 
 **格式必須 `YYYY-MM-DD HH:MM (Taipei)`**：先取台北時間 `bash TZ=Asia/Taipei date '+%Y-%m-%d %H:%M'`，再
 
 - 用 Edit 替換 `index.html` 的 `<b id="lastRefreshed">舊時間 (Taipei)</b>`；
 - 同步更新 `data/claude-desktop.json` 的 `lastRefreshed`。
 
-### 9) 語法驗證 gate（push 前必做）
+### 10) 語法驗證 gate（push 前必做）
 
 全程用 Edit surgical 替換大檔 HTML，一個逗號/括號錯誤就會讓整頁 JS 掛掉，且排程環境沒人看得到。push 前務必驗證：
 
 ```bash
 python3 -m json.tool scripts/update-sources.json >/dev/null
 python3 -m json.tool data/claude-desktop.json >/dev/null
+node scripts/build-claude-desktop.mjs --check
 ```
 
 - 抽出修改過的 `DATA_*` / `INSP_*` 區塊，用 `node --check` 或 `node -e "..."` parse 一次；無 Node 時至少確認陣列開合括號 / 大括號數量平衡。
 - **驗證不過就中止，不要 push。** 仍執行 push 腳本只更新時間戳（若時間戳是唯一變更），summary 註明「內容語法驗證失敗，僅更新時間戳記」。
 
-### 10) Commit + push
+### 11) Commit + push
 
 執行 push 腳本（腳本已 stage `index.html`、`data/claude-desktop.json`、`scripts/update-sources.json`），把四來源檢查結果當 summary 傳入。
 
@@ -327,6 +343,8 @@ Codex CLI GitHub API 額度耗盡，改用 Atom
 - **一律在 main 上作業並 push 到 main**，不開 PR、不留工作分支（用 push 腳本即可，它已處理）。
 - 不要修改 Chart.js 的 `<script src=...>` 標籤。
 - 不要刪舊條目（含 `data/claude-desktop.json` 的既有 entries）、不要動既有手寫靈感卡。
+- **不要手改 `index.html` 的 `DATA_CD`**，改 JSON 後跑 `node scripts/build-claude-desktop.mjs`。
+- **不要重新分配 EVA 機體編號**，也不要為了第四個產品去加第四個 MAGI 節點。
 - 不要 find-replace「Anthropic · 36 versions · ...」這類字串 — 已改為動態計算。
 - 本階段不要為了顯示 Claude Desktop 去大改前端版面；也**不要把 Claude Desktop 偽裝成 Claude Code**。
 - 即使四來源都沒新版，仍要更新時間戳並執行 push 腳本（腳本會因有差異而 commit 時間戳）。
@@ -343,7 +361,7 @@ Codex CLI GitHub API 額度耗盡，改用 Atom
 1. **來源設定**：已讀 `scripts/update-sources.json`，抓取一律照 priority 與 role 語意（primary 成功即停、enrichment 不建立條目）。
 2. **產品分流**：Claude Desktop 版本只在 `data/claude-desktop.json`；`DATA_CC` 只有 Claude Code CLI 的 semver。
 3. **去重**：每個陣列／`entries` 無重複版本，且只插入了嚴格新於原最前筆的條目（去重鍵 `product + version + publishedDate`）。
-4. **語法**：`scripts/update-sources.json` 與 `data/claude-desktop.json` 通過 `python3 -m json.tool`；修改過的 `DATA_*` / `INSP_*` 區塊通過 parse / 括號平衡檢查。
+4. **語法**：`scripts/update-sources.json` 與 `data/claude-desktop.json` 通過 `python3 -m json.tool`；`node scripts/build-claude-desktop.mjs --check` 通過（`DATA_CD` 與 JSON 同步）；修改過的 `DATA_*` / `INSP_*` 區塊通過 parse / 括號平衡檢查。
 5. **重要性**：`data/claude-desktop.json` 每筆 entry 都有合法 `severity`（critical/high/medium/low）與依規則判定的 `notify`。
 6. **時間戳**：`index.html` 的 `<b id="lastRefreshed">` 與 `data/claude-desktop.json` 的 `lastRefreshed` 都已更新為 `YYYY-MM-DD HH:MM (Taipei)`。
 7. **靈感卡**：合計 ≤ 2 張、同一 `INSP_*` ≤ 1 張，且皆含 `auto: true`。
