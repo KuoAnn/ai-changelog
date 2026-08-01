@@ -23,12 +23,12 @@
      =========================== */
 
   const REFRESH_RUN = {
-    ranAt: "2026-08-01 23:50 (Taipei)",
+    ranAt: "2026-08-02 04:49 (Taipei)",
     sources: {
       cc: { status: "ok" },
       cd: { status: "blocked", detail: "claude.com 全站遭環境網路政策阻擋（policy denial），版本與 HTML 兩層來源皆無法連線" },
       ca: { status: "blocked", detail: "learn.chatgpt.com 遭環境網路政策阻擋，developers.openai.com / openai.com 亦回應 403" },
-      ci: { status: "ok" }
+      ci: { status: "blocked", detail: "github.com 與 api.github.com 本輪同遭環境網路政策阻擋（policy denial），fallback 的 learn.chatgpt.com 亦不可連線，三層來源全數失敗" }
     }
   };
 
