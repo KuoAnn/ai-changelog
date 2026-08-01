@@ -22,7 +22,12 @@
 
 MAGI 三賢者依 EVA 設定固定三節點，所以節點語意是**產品線群組**而非 1:1 產品：MELCHIOR-1 同時承載 Anthropic 的兩條線（節點內列出 EVA00 與 EVA03 兩台機體的分項筆數），四個產品都在儀表板上，沒有任何一個被排除。
 
-每台機體都會顯示**同步率**：10 日內以新鮮度（每日遞減 10%）加上近 14 日更新動能（每筆額外更新 +6%、最高 +60%）計算，因此密集更新時可超過 `100%`；超過 10 日臨界值後同步率直接跌為負數並亮出 **精神汙染** 警示，同時把 HUD 的 `PATTERN` 由 `BLUE` 轉 `RED`。警報列永遠保留：有異常時列出失聯機體；全部正常時顯示清楚標示「演習／無實質意義」的裝飾性警告。
+每台機體都會顯示**同步率**，由兩軸取較差值（不疊加）：
+
+1. **資料新鮮度** — 10 日內以新鮮度（每日遞減 10%）加上近 14 日更新動能（每筆額外更新 +6%、最高 +60%）計算，因此密集更新時可超過 `100%`；超過 10 日臨界值後直接跌為負數（每逾期一日 -12%，下限 -120%）並亮 **精神汙染**。
+2. **抓取健康度** — 讀 `data/changelog-data.js` 的 `REFRESH_RUN`（每次排程重寫）。資料再新，只要**最近一次排程沒抓到該來源**就一樣壓成負值：`transient`（連線失敗／timeout／API 額度耗盡，可重試）**-24%** 亮 **鏈路中斷**；`blocked`（Cloudflare／環境網路政策阻擋，非暫時性）**-48%** 亮 **鏈路封鎖**。兩個罰則都用「等同資料逾期 N 日」換算，與新鮮度共用同一把尺。
+
+任一軸為負就把 HUD 的 `PATTERN` 由 `BLUE` 轉 `RED`。警報列永遠保留：有異常時列出失聯機體與失敗診斷（`ALERT LV.1` 資料逾期或 ≥2 台鏈路異常／`LV.2` 單台非暫時性阻擋／`LV.3` 單台可重試失敗）；全部正常時才顯示清楚標示「演習／無實質意義」的裝飾性警告（`LV.0`）。
 
 > Claude Code CLI 與 Claude Desktop 是**兩個不同產品**，資料刻意分開存放，Desktop 版本不會混入 `DATA_CC`。
 > 另外 **Claude Desktop ≠ Claude Apps**：`Claude Apps` 是 Anthropic 對 web／desktop／iOS／Android 的傘狀稱呼、**沒有版本號**（[Claude Apps Release Notes](https://support.claude.com/en/articles/12138966-release-notes) 依日期分段）；本站追蹤的是可版本化的 **Desktop build**（[Cowork changelog](https://claude.com/docs/cowork/changelog)，自述 `Release notes for Claude Desktop`）。同一天兩邊內容不同，不是同一份資料。
@@ -144,7 +149,8 @@ node scripts/build-claude-desktop.mjs --check  # 只檢查是否同步（不寫�
 | changelog 資料 | `data/changelog-data.js` → `DATA_CC`、`DATA_CA`、`DATA_CI`、`DATA_CD`（產物） |
 | 靈感卡 | `data/changelog-data.js` → `INSP_CC`、`INSP_CA`、`INSP_CI`、`INSP_CD`（目前為空） |
 | EVA 編號／MAGI 分組 | `index.html` → `AGENTS`（`eva` 欄位）、`MAGI_GROUPS` |
-| 同步率／精神汙染 | `index.html` → `EVA_STALE_DAYS`、`evaUnitStatus()`、`renderEvaUnits()` |
+| 同步率／精神汙染 | `index.html` → `EVA_STALE_DAYS`、`evaFreshness()`、`evaUnitStatus()`、`renderEvaUnits()` |
+| 抓取健康度／鏈路警報 | `data/changelog-data.js` → `REFRESH_RUN`；`index.html` → `EVA_LINK_FAULT`、`evaLinkFault()`、`initDeck()` 的警報列 |
 | 角色定義 | `index.html` → `ROLES` |
 | 卡片渲染／Modal | `index.html` → `renderInspiration()`、`openModal(card)` |
 

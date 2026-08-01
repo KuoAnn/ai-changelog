@@ -1,8 +1,8 @@
 /* =============================================================================
    ai-changelog 資料層（classic script，非 module）
    -----------------------------------------------------------------------------
-   - 由排程（scripts/refresh-prompt.md）維護：DATA_CC / DATA_CA / DATA_CI 與
-     INSP_CC / INSP_CA / INSP_CI 直接改本檔。
+   - 由排程（scripts/refresh-prompt.md）維護：DATA_CC / DATA_CA / DATA_CI、
+     INSP_CC / INSP_CA / INSP_CI 與 REFRESH_RUN 直接改本檔。
    - DATA_CD 是產物：由 scripts/build-claude-desktop.mjs 從
      data/claude-desktop.json 產生，寫在 CLAUDE-DESKTOP-DATA:START/END 標記間，
      🚨 勿手改。
@@ -10,6 +10,28 @@
      屬全域 lexical scope，主 script 直接取用。不用 fetch 是因頁面需支援
      瀏覽器 file:// 直開（CORS 會擋 fetch）。
    ============================================================================= */
+  /* ===========================
+     REFRESH RUN — 最近一次排程抓取的健康度（每次刷新都必須整段重寫）
+     -----------------------------------------------------------------
+     只描述「這次有沒有抓到」，不描述「資料有多舊」（後者由日期自行推算）。
+     sources 的鍵＝index.html 的 agent id：cc / cd / ca / ci，每個來源必列。
+       status: "ok"        本次成功抓取（含「確認無新版」）
+               "transient" 可重試型失敗：連線失敗 / timeout / API 額度耗盡
+               "blocked"   非暫時性阻擋：Cloudflare、環境網路政策、需人工換來源
+       detail: 失敗原因（繁中一句，照 refresh-prompt 的 403 診斷分類寫）
+     status 非 ok → index.html 會把該機體同步率壓成負值並亮真實警報。
+     =========================== */
+
+  const REFRESH_RUN = {
+    ranAt: "2026-08-01 13:49 (Taipei)",
+    sources: {
+      cc: { status: "ok" },
+      cd: { status: "blocked",   detail: "claude.com 連線失敗（環境網路政策阻擋，非暫時性）" },
+      ca: { status: "transient", detail: "learn.chatgpt.com / developers.openai.com / openai.com 均連線失敗" },
+      ci: { status: "transient", detail: "api.github.com 僅限本 repo scope、learn.chatgpt.com 連線失敗" }
+    }
+  };
+
   /* ===========================
      DATA
      =========================== */

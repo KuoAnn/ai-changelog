@@ -17,7 +17,8 @@
 
 前端規則（**動資料、不動版面**）：
 
-- 版面與資料分離：`index.html` 是版面＋渲染邏輯，`data/changelog-data.js` 是資料層（classic script，`index.html` 以 `<script src>` 載入）。排程**只維護上表六個陣列＋JSON**，前端 JS 會自行合併渲染，**🚨 不需要也不得動 `index.html` 的任何版面／邏輯**（唯一例外：步驟 9 的 `lastRefreshed` 時間戳）。
+- 版面與資料分離：`index.html` 是版面＋渲染邏輯，`data/changelog-data.js` 是資料層（classic script，`index.html` 以 `<script src>` 載入）。排程**只維護上表六個陣列＋JSON＋`REFRESH_RUN`**，前端 JS 會自行合併渲染，**🚨 不需要也不得動 `index.html` 的任何版面／邏輯**（唯一例外：步驟 9 的 `lastRefreshed` 時間戳）。
+- **🚨 `REFRESH_RUN` 每次都要重寫**（步驟 9）：它是頁面警報列與 EVA 同步率的唯一異常來源。抓取失敗只寫進 commit summary 的話，**頁面永遠只會顯示「演習／無實質意義」的裝飾性警告**，看板上等於沒發生過。
 - Hero 的 Date Span、Total Versions、Agents 數、Agent 篩選 chip 計數皆由 JS 動態計算 — 勿改那些靜態字串、勿動 `<script src="data/changelog-data.js">` 載入行。
 - **🚨 `DATA_CD` 是產物，不可手改**：由 `scripts/build-claude-desktop.mjs` 從 `data/claude-desktop.json` 產生，寫在 `data/changelog-data.js` 的 `CLAUDE-DESKTOP-DATA:START/END` 標記間。改資料一律改 JSON 再跑產生器（步驟 8）。
 - **EVA 機體編號固定不變**（依加入時間配發）：EVA00＝Claude Code、EVA01＝Codex App、EVA02＝Codex CLI、EVA03＝Claude Desktop；新增第五個來源取 `EVA04`，**不可重新分配既有編號**。
@@ -179,12 +180,37 @@ node scripts/build-claude-desktop.mjs
 
 把 JSON 內嵌成 `data/changelog-data.js` 的 `DATA_CD`。**JSON 是唯一真實來源，`DATA_CD` 是產物。** 內嵌而非 runtime fetch 是因頁面需支援瀏覽器直開（`file://` 下 `fetch` 被 CORS 擋）。產生器冪等（資料沒變無 diff）、會擋重複版本與非法 `severity`；`node scripts/build-claude-desktop.mjs --check` 只驗證同步不寫檔（不同步回非 0）。
 
-### 9) 更新時間戳
+### 9) 更新時間戳與抓取健康度（`REFRESH_RUN`）
 
 格式必為 `YYYY-MM-DD HH:MM (Taipei)`：先 `TZ=Asia/Taipei date '+%Y-%m-%d %H:%M'` 取台北時間，再：
 
 - Edit 替換 `index.html` 的 `<b id="lastRefreshed">舊時間 (Taipei)</b>`；
-- 同步更新 `data/claude-desktop.json` 的 `lastRefreshed`。
+- 同步更新 `data/claude-desktop.json` 的 `lastRefreshed`；
+- **整段重寫 `data/changelog-data.js` 的 `REFRESH_RUN`**（四個來源一個都不能少，成功的也要寫 `ok`）：
+
+  ```js
+  const REFRESH_RUN = {
+    ranAt: "YYYY-MM-DD HH:MM (Taipei)",
+    sources: {
+      cc: { status: "ok" },
+      cd: { status: "blocked",   detail: "claude.com 連線失敗（環境網路政策阻擋，非暫時性）" },
+      ca: { status: "transient", detail: "learn.chatgpt.com / developers.openai.com / openai.com 均連線失敗" },
+      ci: { status: "ok" }
+    }
+  };
+  ```
+
+  `status` 由步驟「失敗處理」的 403 診斷分類直接對應：
+
+  | 診斷分類 | `status` | 前端同步率 | 前端標籤 |
+  | --- | --- | --- | --- |
+  | 成功（含「已確認無新版」） | `ok` | 照資料新鮮度計算 | — |
+  | 連線失敗 / timeout（`HTTP_STATUS=000`）、API 額度耗盡 | `transient` | **-24%**（＝逾期 2 日） | 鏈路中斷 |
+  | Cloudflare 擋 datacenter IP、環境網路政策阻擋等非暫時性 | `blocked` | **-48%**（＝逾期 4 日） | 鏈路封鎖 |
+
+  判定以**產品**為單位：該產品所有 priority 來源都失敗才算失敗；退 fallback 後成功仍是 `ok`。
+  `detail` 用繁中一句寫實際主機與原因，會原樣顯示在頁面警報列。
+  同時逾期又抓不到時，前端取兩軸較差值（不疊加），下限仍是 -120%。
 
 ### 10) 語法驗證 gate（push 前必做）
 
@@ -223,7 +249,7 @@ Codex CLI GitHub API 額度耗盡，改用 Atom
 
 ## 失敗處理
 
-- **部分來源失敗：跳過該來源、不中止流程**，用成功的來源照常更新；summary 標註（例「Codex App 解析失敗，跳過」）。
+- **部分來源失敗：跳過該來源、不中止流程**，用成功的來源照常更新；summary 標註（例「Codex App 解析失敗，跳過」）**並在 `REFRESH_RUN` 記下該產品的 `status` 與 `detail`**（步驟 9）— summary 只餵通知，`REFRESH_RUN` 才餵頁面。
 - **四來源全失敗：** 仍更新時間戳、執行 push 腳本，summary 寫「所有來源解析失敗，僅更新時間戳記」。
 - **即使四來源都沒新版**，仍要更新時間戳並執行 push 腳本（腳本會因時間戳差異而 commit）。
 - **🚨 403 診斷（任一來源非 200 時必附分類，不可只寫「解析失敗」）** — 從 `/tmp/hdr.txt` 判斷：
@@ -245,6 +271,7 @@ Codex CLI GitHub API 額度耗盡，改用 Atom
 4. **語法**：兩個 JSON 過 `python3 -m json.tool`；`node --check data/changelog-data.js` 過；`build-claude-desktop.mjs --check` 過。
 5. **重要性**：JSON 每筆 entry 有合法 `severity` 與依規則判定的 `notify`。
 6. **時間戳**：`index.html` 的 `<b id="lastRefreshed">` 與 JSON 的 `lastRefreshed` 皆為 `YYYY-MM-DD HH:MM (Taipei)`。
+6b. **抓取健康度**：`REFRESH_RUN.ranAt` 同上時間戳；`sources` 含 `cc`/`cd`/`ca`/`ci` 四鍵，`status` ∈ `ok`/`transient`/`blocked`，非 `ok` 者有 `detail`；本次沒失敗就四個都是 `ok`（**不可沿用上一次的失敗值**）。
 7. **靈感卡**：合計 ≤ 2 張、同一 `INSP_*` ≤ 1 張，皆含 `auto: true`。
 8. **Push**：腳本回報 `pushed to main` 或 `no changes`（皆為成功收尾）。
 9. **Summary**：四產品筆數齊全；fallback 註明層級；失敗來源附 403 診斷分類。

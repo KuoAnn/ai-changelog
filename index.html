@@ -1202,6 +1202,22 @@
     border: 1px solid currentColor; color: var(--red); font: 700 10px var(--mono); letter-spacing: .12em;
   }
   .alert-text em { font-style: normal; color: var(--o); font-weight: 600; }
+  /* 警報內容一律條列：一台異常機體一列，不寫成敘述句 */
+  .alert-head { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 0; }
+  .alert-sum { font: 700 10.5px var(--mono); letter-spacing: .1em; color: var(--ink-muted); }
+  .alert-list { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+  .alert-list li { display: flex; align-items: baseline; flex-wrap: wrap; gap: 3px 8px; }
+  .alert-list li::before { content: "▸"; color: var(--red); flex-shrink: 0; }
+  .alert-tag {
+    flex-shrink: 0; padding: 0 6px;
+    font: 700 10px var(--cjk); letter-spacing: .16em;
+    color: #ffffff; background: var(--red);
+  }
+  .alert-pct { flex-shrink: 0; font: 600 13px var(--display); color: var(--red); }
+  .alert-unit { flex-shrink: 0; font-weight: 600; color: var(--o); }
+  .alert-why { min-width: 0; color: var(--ink-muted); overflow-wrap: anywhere; }
+  .alert-bar.drill .alert-list li::before { color: var(--o-3); }
+  .alert-bar.drill .alert-tag { background: var(--o-3); color: #0a0a0a; }
   .alert-code {
     margin-left: auto; flex-shrink: 0;
     font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em;
@@ -1328,7 +1344,7 @@
     color: #ffffff; background: var(--red); border: 1px solid var(--red);
     white-space: nowrap;
   }
-  /* 精神汙染：同步率為負，整列轉紅並閃爍警示 */
+  /* 同步率為負（精神汙染＝資料逾期，鏈路中斷／封鎖＝本次抓取失敗）：整列轉紅並閃爍警示 */
   .eva-unit.contaminated { border-color: var(--red); background: rgba(240,24,24,0.07); }
   .eva-unit.contaminated .eva-code { color: var(--red); }
   .eva-unit.contaminated .eva-sync b { color: var(--red); }
@@ -1535,7 +1551,9 @@
     .alert-body { display: block; padding: 12px 38px 12px 12px; }
     .alert-kanji { display: block; margin-bottom: 8px; }
     .alert-text > b { font-size: 11px; letter-spacing: .15em; overflow-wrap: anywhere; }
-    .alert-mode { margin-bottom: 6px; }
+    .alert-head { align-items: baseline; }
+    .alert-sum { overflow-wrap: anywhere; }
+    .alert-list li { gap: 2px 6px; }
     .alert-code { display: inline-block; margin-top: 9px; }
     /* 讀秒＋同步時間獨佔一列；讓出空間給它們，燈號列可捨棄（紋章副標留在上一列，該列本來就有餘裕） */
     .led-bank { display: none; }
@@ -1641,7 +1659,11 @@
       <span class="alert-kanji">警告</span>
       <div class="alert-text">
         <b id="alertTitle">EMERGENCY · PATTERN RED · SYNC LOST</b>
-        <span class="alert-mode" id="alertMode">LIVE</span><span id="alertMsg"></span>
+        <div class="alert-head">
+          <span class="alert-mode" id="alertMode">LIVE</span><span class="alert-sum" id="alertSum"></span>
+        </div>
+        <!-- 每台異常機體一列；正常時只有一列演習說明。內容全由 initDeck() 產生。 -->
+        <ul class="alert-list" id="alertMsg"></ul>
       </div>
       <span class="alert-code">ALERT LV.<b id="alertLv">1</b></span>
     </div>
@@ -1675,10 +1697,12 @@
       <span><b>SYNC MODEL</b> 新鮮度 10D + 更新動能 14D</span>
       <span><b>&gt;100%</b> 高動能</span>
       <span class="negative"><b>&lt;0%</b> 精神汙染</span>
+      <span class="negative"><b>LINK</b> 抓取失敗 −24% / 封鎖 −48%</span>
     </div>
     <!-- MAGI 三節點＝產品線群組（MELCHIOR 收 Anthropic 兩條線）；
          各節點內列出所屬 EVA 機體（每個資料來源一台，編號固定，見 JS 的 AGENTS.eva）。
-         10 日內依新鮮度與更新動能計算（可超過 100%）；逾 10 日降為負數並亮「精神汙染」。 -->
+         10 日內依新鮮度與更新動能計算（可超過 100%）；逾 10 日降為負數並亮「精神汙染」。
+         另一軸是 REFRESH_RUN：本次排程沒抓到該來源時同樣壓成負值並亮「鏈路中斷／鏈路封鎖」。 -->
     <div class="deck-grid">
       <div class="node notch agent-cc">
         <div class="node-top"><span>NODE-01 / MELCHIOR-1</span><span class="node-state">通過</span></div>
@@ -2660,10 +2684,49 @@
   const EVA_MOMENTUM_WINDOW = 14;
   const EVA_MOMENTUM_PER_UPDATE = 6;
   const EVA_MOMENTUM_CAP = 60;
+  const EVA_OVERDUE_PER_DAY = 12;   // 逾期一日 -12%，下限 -120%（＝逾期 10 日）
+
+  /* 鏈路異常（REFRESH_RUN）：抓取失敗跟資料過期是兩件事 —
+     資料可以還很新，但這次排程根本沒連上來源，等於「監視中斷」，必須也吃負值。
+     罰則刻意用「等同資料逾期 N 日」換算，跟新鮮度共用同一把尺（-12%/日），
+     這樣兩軸取較差值時不會出現尺度不一致：
+       transient（連線失敗 / timeout / API 額度耗盡，重試可能自己好）→ 逾期 2 日 = -24%
+       blocked  （Cloudflare / 環境網路政策阻擋，不動手就永遠不會好）→ 逾期 4 日 = -48%
+     兩者都刻意離下限 -120% 還有距離：真正長期失聯仍要比單次抓取失敗更慘。 */
+  const EVA_LINK_FAULT = {
+    transient: { pct: -EVA_OVERDUE_PER_DAY * 2, warn: "鏈路中斷", label: "可重試" },
+    blocked:   { pct: -EVA_OVERDUE_PER_DAY * 4, warn: "鏈路封鎖", label: "非暫時性" }
+  };
+
+  /* REFRESH_RUN 由排程寫在資料層；舊版資料檔沒有這個 const，故用 typeof 保護。 */
+  function evaLinkFault(id){
+    if (typeof REFRESH_RUN === "undefined" || !REFRESH_RUN || !REFRESH_RUN.sources) return null;
+    const s = REFRESH_RUN.sources[id];
+    if (!s || !EVA_LINK_FAULT[s.status]) return null;
+    return { status: s.status, detail: s.detail || "", ...EVA_LINK_FAULT[s.status] };
+  }
 
   function evaUnitStatus(a){
+    const link = evaLinkFault(a.id);
+    const base = evaFreshness(a);
+    if (!link) return base;
+    // 分類已由 warn 標籤（鏈路中斷／鏈路封鎖）表達，reason 只寫實際診斷、不重複分類字樣
+    const linkReason = "本次抓取失敗" + (link.detail ? "：" + link.detail : "（" + link.label + "）");
+    // 兩軸取較差值（不疊加：兩個獨立問題不該被算成三倍慘）
+    return {
+      ...base, link: link,
+      pct: Math.min(base.pct, link.pct),
+      ok: false,
+      level: "contaminated",
+      warn: base.ok ? link.warn : "精神汙染",
+      reason: base.ok ? linkReason : base.reason + "；" + linkReason
+    };
+  }
+
+  /* 資料新鮮度軸：只看最新一筆的日期，不看抓取結果 */
+  function evaFreshness(a){
     if (!a.data.length) {
-      return { pct: -100, ok: false, reason: "無任何紀錄" };
+      return { pct: -100, ok: false, level: "contaminated", warn: "精神汙染", reason: "無任何紀錄" };
     }
     // 不假設陣列已排序，直接取最新日期
     const latest = a.data.reduce((m, d) => (d.date > m ? d.date : m), a.data[0].date);
@@ -2680,13 +2743,14 @@
       };
     }
     // 第 11 日起立即為負值；每逾期一日再下降 12%，下限 -120%。
-    return { pct: -Math.min(120, (days - EVA_STALE_DAYS) * 12), ok: false, days: days, latest: latest,
-             recentUpdates: recentUpdates, momentum: 0, level: "contaminated",
+    return { pct: -Math.min(120, (days - EVA_STALE_DAYS) * EVA_OVERDUE_PER_DAY),
+             ok: false, days: days, latest: latest,
+             recentUpdates: recentUpdates, momentum: 0, level: "contaminated", warn: "精神汙染",
              reason: days + " 日未同步（門檻 " + EVA_STALE_DAYS + " 日）" };
   }
 
   function renderEvaUnits(){
-    let contaminated = 0;
+    const faults = [];   // [{ a, s }] — 供警報列列舉異常機體
     MAGI_GROUPS.forEach(g => {
       const root = $el("magi" + g.suffix + "Units");
       if (!root) return;
@@ -2694,18 +2758,20 @@
       g.ids.forEach(id => {
         const a = AGENT_MAP[id];
         const s = evaUnitStatus(a);
-        if (!s.ok) contaminated++;
+        if (!s.ok) faults.push({ a: a, s: s });
         const row = document.createElement("button");
         row.type = "button";
         row.className = "eva-unit agent-" + a.id + " " + s.level;
         row.title = a.eva + " " + a.evaName + " · " + a.label + " · " +
-          (s.ok ? "同步正常，最新 " + s.latest + "（" + s.days + " 日前）；近 14 日 " + s.recentUpdates + " 筆，動能 +" + s.momentum + "%" : "精神汙染：" + s.reason) + "。點擊套用 Agent 篩選。";
-        row.setAttribute("aria-label", a.label + " 同步率 " + s.pct + "%；點擊篩選此 Agent");
+          (s.ok ? "同步正常，最新 " + s.latest + "（" + s.days + " 日前）；近 14 日 " + s.recentUpdates + " 筆，動能 +" + s.momentum + "%"
+                : s.warn + "：" + s.reason) + "。點擊套用 Agent 篩選。";
+        row.setAttribute("aria-label", a.label + " 同步率 " + s.pct + "%" +
+          (s.ok ? "" : "；" + s.warn + "：" + s.reason) + "；點擊篩選此 Agent");
         row.innerHTML =
           '<span class="eva-code">' + a.eva + '<i>' + a.evaName + '</i></span>' +
           '<span class="eva-owner">' + escapeHtml(a.label) + ' · ' + a.data.length + '</span>' +
           '<span class="eva-sync">同步 <b>' + s.pct.toFixed(0) + '%</b></span>' +
-          '<span class="eva-warn">精神汙染</span><span class="eva-action" aria-hidden="true">▸</span>';
+          '<span class="eva-warn">' + (s.warn || "精神汙染") + '</span><span class="eva-action" aria-hidden="true">▸</span>';
         row.addEventListener("click", () => setAgentFilter(a.id));
         root.appendChild(row);
 
@@ -2713,19 +2779,20 @@
         if (radarBlip) radarBlip.classList.toggle("contaminated", !s.ok);
       });
     });
-    // 有機體被汙染 → HUD 的 PATTERN 由 BLUE 轉 RED
+    // 有機體異常 → HUD 的 PATTERN 由 BLUE 轉 RED
+    const bad = faults.length;
     const pat = $el("hudPattern");
     if (pat) {
-      pat.textContent = contaminated ? "RED" : "BLUE";
-      pat.style.color = contaminated ? "var(--red)" : "";
+      pat.textContent = bad ? "RED" : "BLUE";
+      pat.style.color = bad ? "var(--red)" : "";
     }
     const ledAlert = $el("ledAlert");
-    if (ledAlert) ledAlert.className = "led " + (contaminated ? "crit" : "ok");
+    if (ledAlert) ledAlert.className = "led " + (bad ? "crit" : "ok");
     const ledSync = $el("ledSync");
-    if (ledSync) ledSync.className = "led " + (contaminated ? "crit" : "warn");
+    if (ledSync) ledSync.className = "led " + (bad ? "crit" : "warn");
     const ledBank = $el("ledBank");
-    if (ledBank) ledBank.setAttribute("aria-label", contaminated ? contaminated + " 台機體精神污染" : "資料鏈路正常；同步監視中；無精神污染");
-    return contaminated;
+    if (ledBank) ledBank.setAttribute("aria-label", bad ? bad + " 台機體同步異常" : "資料鏈路正常；同步監視中；無精神污染");
+    return faults;
   }
 
   function clockTick(){
@@ -2758,7 +2825,7 @@
 
   function initDeck(){
     /* --- EVA 機體同步率：每個資料來源一台，列在所屬 MAGI 節點內 --- */
-    const contaminated = renderEvaUnits();
+    const faults = renderEvaUnits();
 
     /* --- MAGI 三節點：MELCHIOR-1 / BALTHASAR-2 / CASPER-3（見 MAGI_GROUPS） --- */
     const groupPool = g => ENTRIES.filter(e => g.ids.indexOf(e.agent) >= 0);   // ENTRIES 已由新到舊排序
@@ -2792,22 +2859,44 @@
 
     renderWave();
 
-    /* --- 警報：異常顯示 LIVE；正常時保留明確標示「無實質意義」的演習警告。 --- */
+    /* --- 警報：真異常（資料逾期／本次抓取失敗）顯示 LIVE；
+           兩者皆無時才回到明確標示「無實質意義」的演習警告。 --- */
     const alertBox = $el("alertBar"), msg = $el("alertMsg"), lv = $el("alertLv");
-    const alertTitle = $el("alertTitle"), alertMode = $el("alertMode");
+    const alertTitle = $el("alertTitle"), alertMode = $el("alertMode"), alertSum = $el("alertSum");
     if (alertBox && msg) {
-      alertBox.classList.toggle("drill", !contaminated);
-      if (contaminated) {
-        const bad = AGENTS.filter(a => !evaUnitStatus(a).ok);
-        if (alertTitle) alertTitle.textContent = "EMERGENCY · PATTERN RED · SYNC LOST";
+      const stale = faults.filter(f => !evaFreshness(f.a).ok);            // 資料逾 10 日 → 精神汙染
+      const linkDown = faults.filter(f => f.s.link);                      // 本次排程沒抓到 → 鏈路異常
+      const blocked = linkDown.filter(f => f.s.link.status === "blocked"); // 非暫時性，需人工處理
+
+      alertBox.classList.toggle("drill", !faults.length);
+      if (faults.length) {
+        if (alertTitle) alertTitle.textContent = stale.length
+          ? "EMERGENCY · PATTERN RED · SYNC LOST"
+          : "CAUTION · PATTERN RED · DATA LINK LOST";
         if (alertMode) alertMode.textContent = "LIVE INCIDENT";
-        msg.innerHTML = "<em>精神汙染</em> — 同步異常機體 <em>" + contaminated + "</em> 台：" +
-          bad.map(a => escapeHtml(a.eva + " " + a.label)).join("、") + "。已超過 10 日臨界值，請檢查來源或排程。";
-        if (lv) lv.textContent = contaminated >= 2 ? "1" : "2";
+        const ranAt = (typeof REFRESH_RUN !== "undefined" && REFRESH_RUN && REFRESH_RUN.ranAt) ? REFRESH_RUN.ranAt : "";
+        if (alertSum) alertSum.textContent =
+          (ranAt ? "RUN " + ranAt + " · " : "") + "異常 " + faults.length + " / " + AGENTS.length + " 台";
+        // 一台異常機體一列，同步率越差排越前面
+        msg.innerHTML = faults.slice().sort((x, y) => x.s.pct - y.s.pct).map(f =>
+          '<li>' +
+            '<span class="alert-tag">' + escapeHtml(f.s.warn) + '</span>' +
+            '<span class="alert-pct">' + f.s.pct.toFixed(0) + '%</span>' +
+            '<span class="alert-unit">' + escapeHtml(f.a.eva + " " + f.a.label) + '</span>' +
+            '<span class="alert-why">' + escapeHtml(f.s.reason) + '</span>' +
+          '</li>'
+        ).join("");
+        /* LV.1 資料逾期或 ≥2 台鏈路異常／LV.2 單台非暫時性阻擋／LV.3 單台可重試失敗 */
+        if (lv) lv.textContent = (stale.length || linkDown.length >= 2) ? "1" : (blocked.length ? "2" : "3");
       } else {
         if (alertTitle) alertTitle.textContent = "WARNING DISPLAY TEST · ALL SYSTEMS NOMINAL";
         if (alertMode) alertMode.textContent = "演習 / 無實質意義";
-        msg.innerHTML = "<em>裝飾性警告</em> — 目前沒有機體精神污染；此訊息只用於維持警告介面與監視氣氛，不代表真實異常。";
+        if (alertSum) alertSum.textContent = "全機同步正常 " + AGENTS.length + " / " + AGENTS.length + " 台";
+        msg.innerHTML =
+          '<li>' +
+            '<span class="alert-tag">裝飾性警告</span>' +
+            '<span class="alert-why">目前沒有機體精神污染；此訊息只用於維持警告介面與監視氣氛，不代表真實異常。</span>' +
+          '</li>';
         if (lv) lv.textContent = "0";
       }
       alertBox.style.display = "";
