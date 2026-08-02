@@ -63,7 +63,7 @@ with open(sys.argv[1], encoding="utf-8") as handle:
 
 try:
     with open("scripts/update-sources.json", encoding="utf-8") as handle:
-        stale_after = float(json.load(handle).get("snapshots", {}).get("staleAfterHours", 8))
+        stale_after = float(json.load(handle).get("snapshots", {}).get("staleAfterHours", 16))
 except (OSError, ValueError, TypeError):
     stale_after = 8.0
 

@@ -50,8 +50,9 @@
     "branch": "data-snapshots",
     "producer": ".github/workflows/fetch-source-snapshots.yml → scripts/fetch-snapshots.mjs",
     "consumer": "scripts/sync-snapshots.sh（排程每輪開頭執行）",
-    "schedule": "每 3 小時，另在 main 的來源清單／抓取腳本異動時觸發",
-    "staleAfterHours": 8,
+    "schedule": "每 12 小時（UTC 00:00 / 12:00），另在 main 的來源清單／抓取腳本異動時觸發，或手動 workflow_dispatch",
+    "staleAfterHours": 16,
+    "staleAfterHoursRationale": "抓取週期 12 小時＋GitHub 排程實測最多約 1 小時延遲 ＝ 正常最差間隔約 13 小時；設 16 讓正常運作不會誤報，漏跑一輪（約 24 小時）才會判定過期。改 cron 時必須一起調整，否則排程會把正常的快照誤記為 transient。",
     "layout": {
       "index.json": "本輪抓取結果：generatedAt / generatedAtIso / totals，以及每個產品每個 priority 的 ok、file、bytes、httpStatus、errorClass、errorDetail",
       "<product>/p<priority>-<slug>.<ext>": "該來源的 HTTP body 原文，未經任何解析或裁切",
@@ -71,7 +72,7 @@
     },
     "rules": [
       "快照只存原文、不解析：解析規則仍只寫在 scripts/refresh-prompt.md，避免 CI 與排程各有一套邏輯而漂移。",
-      "唯一的例外是 sources[].snapshotDropFields：丟掉指名的 JSON 頂層欄位（與內容無關的體積裁切）。releases API 的 assets 佔 openai/codex 回應 98.7%（8.07MB → 108KB）而排程完全不用，每 3 小時推一次會讓 repo 無謂變肥。被裁切過的條目在 index.json 帶 prunedFields 與 rawBytes，bytes / sha256 描述的是落地檔案。",
+      "唯一的例外是 sources[].snapshotDropFields：丟掉指名的 JSON 頂層欄位（與內容無關的體積裁切）。releases API 的 assets 佔 openai/codex 回應 98.7%（8.07MB → 108KB）而排程完全不用，每輪都推一次會讓 repo 無謂變肥。被裁切過的條目在 index.json 帶 prunedFields 與 rawBytes，bytes / sha256 描述的是落地檔案。",
       "來源清單仍以本檔 products[].sources 為唯一定義，fetch-snapshots.mjs 不得寫死任何 URL。",
       "孤兒分支每次 force push 覆蓋（單一 commit、無歷史），不進 main 也不觸發 Pages 重建。",
       "sources[].snapshot === false 的來源不收快照（不計入健康度），排程需要時自行 live 抓。"

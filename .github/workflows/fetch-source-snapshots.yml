@@ -17,8 +17,11 @@ name: Fetch source snapshots
 
 on:
   schedule:
-    # 每 3 小時一次（UTC）。排程 agent 約每 5 小時跑一次，這個頻率確保它讀到的快照夠新。
-    - cron: "0 */3 * * *"
+    # 每 12 小時一次（UTC 00:00 / 12:00 ＝ 台北 08:00 / 20:00）。
+    # 00:00 UTC 這班刻意落在排程 agent 當天第一輪（約 00:50 UTC）之前，讓它讀到最新的快照。
+    # GitHub 排程實測會延遲最多約 1 小時，故最差間隔約 13 小時 —
+    # manifest 的 staleAfterHours 設 16 就是為了容得下這個延遲，改 cron 記得一起評估。
+    - cron: "0 */12 * * *"
   workflow_dispatch: {}
   push:
     branches: [main]

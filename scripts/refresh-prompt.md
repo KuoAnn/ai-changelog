@@ -48,7 +48,7 @@ bash scripts/sync-snapshots.sh        # → /tmp/ai-changelog-snapshots，並印
 
 - **exit 0** → 快照就緒。**所有產品一律改讀 `/tmp/ai-changelog-snapshots/` 內的檔案，不要再 curl 任何官方來源。** 讀 `index.json` 取每個 priority 的 `ok` / `file` / `errorClass`，再照原本的 priority 與 role 語意挑來源（規則完全不變，只是輸入從 HTTP 換成本地檔）。
 - **exit 3**（沒有快照分支 / fetch 失敗）→ 退回本節原本的 live 抓取流程（沙箱內多半只有 `raw.githubusercontent.com` 與 `code.claude.com` 會成功）。
-- 快照 `index.json` 的 `generatedAtIso` 超過 manifest `snapshots.staleAfterHours`（腳本會直接印「過期」）→ 仍可用，但**受影響產品在 `REFRESH_RUN` 記 `transient`**，`detail` 註明快照逾時未更新（例：「來源快照逾 13 小時未更新，Actions 工作流程可能失敗」）。
+- 快照 `index.json` 的 `generatedAtIso` 超過 manifest `snapshots.staleAfterHours`（腳本會直接印「過期」）→ 仍可用，但**受影響產品在 `REFRESH_RUN` 記 `transient`**，`detail` 註明快照逾時未更新（例：「來源快照逾 26 小時未更新，Actions 工作流程可能失敗」）。抓取週期為 12 小時、門檻 16 小時，所以觸發此條代表**至少漏跑一輪**，不是正常延遲。
 - 某來源 `ok: false` → 照 `errorClass` 對應步驟 9 的 `status`（對應表唯一定義在 manifest `snapshots.errorClassToStatus`），並照 priority 退下一層。
 - 讀檔一律用 `index.json` 每筆的 `file` 欄位，**不要自己用 `<product>/p<priority>` 推導路徑** — 同一 URL 被多產品共用時只落地一份，`file` 會指向第一個用到它的產品目錄（該筆另有 `sharedWith` 標明出處）。
 - 某來源 `skipped: true` → 不是失敗，**不計入健康度**；真的需要它才 live 抓（該類來源都挑沙箱連得到的主機）。
@@ -277,7 +277,7 @@ Claude Code +N 筆、Claude Desktop +N 筆、Codex CLI +N 筆、Codex App +N 筆
 Codex CLI 使用 Atom fallback
 Claude Desktop Markdown 解析失敗，改用 HTML
 Codex CLI GitHub API 額度耗盡，改用 Atom
-來源快照逾 13 小時未更新，四產品均以舊快照解析
+來源快照逾 26 小時未更新，四產品均以舊快照解析
 快照分支不可用，改為 live 抓取
 ```
 

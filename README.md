@@ -87,14 +87,15 @@ index.html
 GitHub Actions runner 沒有這兩層限制，所以改由 Actions 代抓：
 
 ```text
-每 3 小時 -> fetch-snapshots.mjs 依 manifest 抓所有來源原文 -> force push 到 data-snapshots 分支
+每 12 小時 -> fetch-snapshots.mjs 依 manifest 抓所有來源原文 -> force push 到 data-snapshots 分支
 排程觸發 -> sync-snapshots.sh 取回快照 -> 照原本的 priority / role 規則解析 -> 更新資料檔
 ```
 
 - 快照分支是**孤兒分支、每次 force push 覆蓋**（單一 commit、無歷史），不進 `main`、不觸發 Pages 重建、repo 體積不隨時間膨脹。
 - 快照只存 **HTTP body 原文**，不做任何解析 — 解析規則仍只有 [`scripts/refresh-prompt.md`](scripts/refresh-prompt.md) 一份，不會 CI 與排程各寫一套而漂移。唯一的例外是 `snapshotDropFields`（與內容無關的體積裁切）：releases API 的 `assets` 陣列佔 openai/codex 回應的 98.7%（8.07MB → 108KB）而排程完全用不到，故不收；被裁切的條目在 `index.json` 帶 `prunedFields` 與 `rawBytes`。
 - `index.json` 逐筆記錄 `ok` / `httpStatus` / `bytes` / `errorClass`，排程據此決定退哪一層 fallback、以及頁面警報列要顯示的 `blocked` / `transient`。
-- 快照超過 `snapshots.staleAfterHours`（預設 8 小時）未更新，排程會把受影響來源記為 `transient` 並在頁面標示，不會假裝資料是新的。
+- 抓取排在 UTC 00:00 / 12:00（台北 08:00 / 20:00），`00:00` 那班刻意落在排程當天第一輪之前。GitHub 排程實測會延遲最多約 1 小時。
+- 快照超過 `snapshots.staleAfterHours`（16 小時；＝12 小時週期＋延遲的餘裕，漏跑一輪才會觸發）未更新，排程會把受影響來源記為 `transient` 並在頁面標示，不會假裝資料是新的。**調整 cron 時必須一起評估這個門檻**，否則正常的快照會被誤判為過期。
 - 本機也可手動跑：`node scripts/fetch-snapshots.mjs`（輸出到已 gitignore 的 `.snapshots/`）。
 
 ## 更新通知（Telegram / Slack）
@@ -151,7 +152,7 @@ bash scripts/push-changelog.sh "手動更新"
 | [`scripts/refresh-prompt.md`](scripts/refresh-prompt.md) | 排程 agent 的完整刷新指示 |
 | [`scripts/fetch-snapshots.mjs`](scripts/fetch-snapshots.mjs) | 依 manifest 抓所有官方來源原文＋`index.json`（Actions 端執行，不解析內容） |
 | [`scripts/sync-snapshots.sh`](scripts/sync-snapshots.sh) | 排程端取回快照分支到 `/tmp/ai-changelog-snapshots` 並印出健康摘要 |
-| [`.github/workflows/fetch-source-snapshots.yml`](.github/workflows/fetch-source-snapshots.yml) | 每 3 小時抓來源快照並 force push 到 `data-snapshots` 分支的 workflow |
+| [`.github/workflows/fetch-source-snapshots.yml`](.github/workflows/fetch-source-snapshots.yml) | 每 12 小時抓來源快照並 force push 到 `data-snapshots` 分支的 workflow |
 | [`scripts/push-changelog.ps1`](scripts/push-changelog.ps1) | Windows 手動 commit/push 腳本 |
 | [`scripts/push-changelog.sh`](scripts/push-changelog.sh) | Linux/遠端排程 commit/push 腳本 |
 | [`.github/workflows/notify-on-update.yml`](.github/workflows/notify-on-update.yml) | 實際更新時發 Telegram / Slack 通知的 workflow |

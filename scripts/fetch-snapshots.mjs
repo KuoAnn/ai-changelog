@@ -102,7 +102,7 @@ function classify({ status, body, error }) {
  * 解析邏輯半行都沒有進到這裡。動機很實際 — GitHub releases API 的 assets 陣列
  * （每個 release 的各平台二進位檔中繼資料）佔了 openai/codex 回應的 98.7%
  * （8.07MB → 108KB），而排程從頭到尾只看 tag_name / published_at / body。
- * 每 3 小時推 8MB 進快照分支，repo 會無謂地肥。
+ * 每輪都推 8MB 進快照分支，repo 會無謂地肥。
  *
  * 解析不了 JSON 就原樣保留 — 寧可肥也不要吃掉內容。
  */
