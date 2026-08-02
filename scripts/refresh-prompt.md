@@ -55,6 +55,7 @@ curl -sfL -A 'Mozilla/5.0 (compatible; ai-changelog/1.0; +https://github.com/Kuo
 
 - `version-primary`：成功即停，不再呼叫任何 version fallback。
 - `version-fallback`：僅 primary 失敗才用，同樣成功即停。
+- `content-fallback`：內容保底 — 只提供版本區塊內文（**無發佈日期欄位**），可補全既定版本的 `body`；日期由更前 priority 來源對照，補不到日期就**不得建立條目**。
 - `product-enrichment` / `notability-enrichment` / `human-readable-canonical` / `code-surface-cross-check`：**enrichment 類**，只能 (1) 補摘要 (2) 判重要性 (3) 補功能名稱。**🚨 不得用 enrichment 建立版本條目，也不得因 enrichment 又提到同版而重複寫入。**
 
 **GitHub API Token：** `TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-}}"`
@@ -62,7 +63,7 @@ curl -sfL -A 'Mozilla/5.0 (compatible; ai-changelog/1.0; +https://github.com/Kuo
 - 有 token → 走 `github-releases-api` 來源，帶 `-H "Authorization: Bearer $TOKEN" -H 'Accept: application/vnd.github+json'`（5000 次/hr per token）。
 - 無 token → **不得打未授權 `api.github.com`**（60 次/hr per 出口 IP，共用 NAT 額度會被其他 tenant 吃光），直接退該產品 Atom 來源。
 - **不要用 WebFetch 打 GitHub API**（帶不了 `Authorization` header，等於未授權）。
-- **🚨 雲端排程沙箱限制（manifest `cloudSandbox`，2026-08-02 實測）：** 沙箱的 GitHub 代理只放行本 session 掛載的 repo，打 anthropics / openai 的 `api.github.com` 與 `github.com`（含 `releases.atom`）一律 403，**帶 token 也一樣被攔**（回應 body 是 JSON、含 `not enabled for this session` 或 `sessions are bound`）。偵測到此簽名＝非暫時性：**不重試、不浪費 retry 額度**，直接退 `raw.githubusercontent.com` / `code.claude.com` 層。本機手動執行不受此限，原 priority 照舊。
+- **🚨 雲端排程沙箱限制（manifest `cloudSandbox`，2026-08-02 實測）：** 沙箱的 GitHub 代理只放行本 session 掛載的 repo，打 anthropics / openai 的 `api.github.com` 與 `github.com`（含 `releases.atom`）一律 403，**帶 token 也一樣被攔**（回應 body 是 JSON、含 `not enabled for this session` 或 `sessions are bound`）。偵測到此簽名＝非暫時性，處置如下：(1) 雲端對這兩個主機的 curl **不帶 `--retry-all-errors`**（`-f` 讓 403 立即以非 0 結束，避免 requestPolicy 重試把同一個 403 連打 3 次）；(2) 同一輪偵測到簽名後，另一個 GitHub 來源（API 或 atom）**直接跳過不打**；(3) 退 `raw.githubusercontent.com` / `code.claude.com` 層。本機手動執行不受此限，原 priority 與 retry 旗標照舊。
 
 **Atom / RSS 解析要點：**
 
