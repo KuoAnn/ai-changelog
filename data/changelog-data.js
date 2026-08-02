@@ -23,7 +23,7 @@
      =========================== */
 
   const REFRESH_RUN = {
-    ranAt: "2026-08-02 04:49 (Taipei)",
+    ranAt: "2026-08-02 13:48 (Taipei)",
     sources: {
       cc: { status: "ok" },
       cd: { status: "blocked", detail: "claude.com 全站遭環境網路政策阻擋（policy denial），版本與 HTML 兩層來源皆無法連線" },
