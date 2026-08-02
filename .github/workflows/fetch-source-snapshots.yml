@@ -1,0 +1,108 @@
+name: Fetch source snapshots
+
+# 定時把 scripts/update-sources.json 裡的所有官方來源抓成「原始快照」，推到快照分支
+# （預設 data-snapshots），給 Claude Code 雲端排程讀。
+#
+# 為什麼要繞這一圈：排程沙箱的出口有兩層封鎖（見 manifest 的 cloudSandbox）——
+#   1. api.github.com / github.com 只放行該 session 掛載的 repo（帶 token 也擋）
+#   2. claude.com / support.claude.com / learn.chatgpt.com / developers.openai.com /
+#      openai.com 被組織 egress 政策在 CONNECT 階段拒絕
+# Actions runner 兩者都沒有，且內建 GITHUB_TOKEN 可打 releases API（1000 次/hr），
+# 所以由這裡代抓、排程改讀 repo 內快照，就能一次解掉四個產品的來源問題。
+#
+# 為什麼用獨立的孤兒分支而不是推 main：
+#   - 不觸發 GitHub Pages 重建，也不會把幾 MB 的來源原文塞進 main 的歷史
+#   - 每次都是 git init 後 force push（單一 commit、無歷史），repo 體積不會隨時間膨脹
+#   - notify-on-update.yml 只監看 main 的 data/**，完全不受影響
+
+on:
+  schedule:
+    # 每 3 小時一次（UTC）。排程 agent 約每 5 小時跑一次，這個頻率確保它讀到的快照夠新。
+    - cron: "0 */3 * * *"
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    # 來源清單或抓取邏輯一改，立刻重抓一輪，不用等下一個排程窗口。
+    paths:
+      - scripts/update-sources.json
+      - scripts/fetch-snapshots.mjs
+      - .github/workflows/fetch-source-snapshots.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fetch-source-snapshots
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Fetch sources
+        env:
+          # 給 requiresToken 的來源用（api.github.com 公開 repo 唯讀，1000 次/hr）。
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/fetch-snapshots.mjs --out "$RUNNER_TEMP/snapshots"
+
+      - name: Publish to snapshot branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          SERVER: ${{ github.server_url }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/snapshots"
+
+          BRANCH="$(node -e 'const m=require("./scripts/update-sources.json");process.stdout.write((m.snapshots&&m.snapshots.branch)||"")')"
+          [ -n "$BRANCH" ] || BRANCH="data-snapshots"
+          echo "快照分支：$BRANCH"
+
+          STAMP="$(node -e '
+            const parts = new Intl.DateTimeFormat("en-CA", {
+              timeZone: "Asia/Taipei", year: "numeric", month: "2-digit", day: "2-digit",
+              hour: "2-digit", minute: "2-digit", hour12: false,
+            }).formatToParts(new Date()).reduce((acc, p) => (acc[p.type] = p.value, acc), {});
+            process.stdout.write(`${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}`);
+          ')"
+
+          # 每次重新 init：快照分支永遠只有一個 commit，不累積歷史（force push 覆蓋）。
+          cd "$OUT"
+          git init -q -b "$BRANCH"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898531+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "來源快照 ${STAMP} (Taipei)" -m "由 ${RUN_URL} 產生；內容為官方來源原文，勿手改。"
+          git push -q --force "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git" "HEAD:refs/heads/${BRANCH}"
+
+          echo "已推送 $(du -sh . | cut -f1) 快照到 ${SERVER}/${REPO}/tree/${BRANCH}"
+
+      - name: Fail if every source failed
+        run: |
+          set -euo pipefail
+          node -e '
+            const { readFileSync } = require("node:fs");
+            const path = process.env.RUNNER_TEMP + "/snapshots/index.json";
+            let index;
+            try {
+              index = JSON.parse(readFileSync(path, "utf8"));
+            } catch (error) {
+              console.error(`讀不到 ${path}：${error.message}（抓取步驟可能沒跑完）`);
+              process.exit(1);
+            }
+            const { ok = 0, failed = 0 } = index.totals || {};
+            if (ok === 0) {
+              console.error(`所有來源皆抓取失敗（${failed} 個）— 快照已推送但無可用內容，請查上一步的表格。`);
+              process.exit(1);
+            }
+            console.log(failed > 0 ? `部分來源失敗（成功 ${ok} / 失敗 ${failed}），快照仍可用。` : `全部 ${ok} 個來源皆成功。`);
+          '

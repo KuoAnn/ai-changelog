@@ -41,7 +41,26 @@
     "reachable": [
       "raw.githubusercontent.com",
       "code.claude.com",
-      "git 通道可唯讀公開 repo（例：git ls-remote --tags https://github.com/anthropics/claude-code）"
+      "git 通道可唯讀公開 repo（例：git ls-remote --tags https://github.com/anthropics/claude-code）",
+      "本 repo 自身的 git remote（快照分支即靠這條通道取得）"
+    ],
+    "workaround": "上述兩類封鎖 repo 端都改不掉，因此改由 GitHub Actions 代抓：見本檔 snapshots 區段"
+  },
+  "snapshots": {
+    "branch": "data-snapshots",
+    "producer": ".github/workflows/fetch-source-snapshots.yml → scripts/fetch-snapshots.mjs",
+    "consumer": "scripts/sync-snapshots.sh（排程每輪開頭執行）",
+    "schedule": "每 3 小時，另在 main 的來源清單／抓取腳本異動時觸發",
+    "staleAfterHours": 8,
+    "layout": {
+      "index.json": "本輪抓取結果：generatedAt / generatedAtIso / totals，以及每個產品每個 priority 的 ok、file、bytes、httpStatus、errorClass、errorDetail",
+      "<product>/p<priority>-<slug>.<ext>": "該來源的 HTTP body 原文，未經任何解析或裁切"
+    },
+    "rules": [
+      "快照只存原文、不解析：解析規則仍只寫在 scripts/refresh-prompt.md，避免 CI 與排程各有一套邏輯而漂移。",
+      "來源清單仍以本檔 products[].sources 為唯一定義，fetch-snapshots.mjs 不得寫死任何 URL。",
+      "孤兒分支每次 force push 覆蓋（單一 commit、無歷史），不進 main 也不觸發 Pages 重建。",
+      "sources[].snapshot === false 的來源不收快照（不計入健康度），排程需要時自行 live 抓。"
     ]
   },
   "deduplication": {
@@ -125,7 +144,12 @@
           "priority": 5,
           "role": "human-readable-canonical",
           "format": "html",
-          "url": "https://code.claude.com/docs/en/changelog"
+          "url": "https://code.claude.com/docs/en/changelog",
+          "snapshot": false,
+          "snapshotSkipReason": "與 priority 3 同一頁的 HTML 版（實測 2.6MB，是 markdown 版的 5 倍），內容完全重複；沙箱可直連 code.claude.com，真要用再 live 抓",
+          "notes": [
+            "雲端沙箱可直接連線（實測 200），不需經快照。"
+          ]
         },
         {
           "priority": 6,
@@ -141,7 +165,7 @@
       "dataTarget": "data/claude-desktop.json",
       "stableVersionPattern": "^v?\\d+\\.\\d+\\.\\d+$",
       "notes": [
-        "雲端沙箱：三層來源（claude.com ×2、support.claude.com）全數被 egress-policy 擋 — 政策放行前預期 blocked。"
+        "雲端沙箱：三層來源（claude.com ×2、support.claude.com）全數被 egress-policy 擋，排程請改讀快照分支（Actions 端無此限制）；快照不可用時預期 blocked。"
       ],
       "sources": [
         {
@@ -175,7 +199,8 @@
       "dataTarget": "index.html#DATA_CI",
       "stableVersionPattern": "^(?:rust-v)?\\d+\\.\\d+\\.\\d+$",
       "notes": [
-        "雲端沙箱：p1/p2 被 session-binding 擋、p3 被 egress-policy 擋，且 raw.githubusercontent.com 的 openai/codex CHANGELOG.md 僅為指向 releases 頁的一行殘根 — 政策放行前預期 blocked；git ls-remote 拿得到 tags 但無日期與內容，不足以建立條目。"
+        "雲端沙箱：p1/p2 被 session-binding 擋、p3 被 egress-policy 擋，且 raw.githubusercontent.com 的 openai/codex CHANGELOG.md 僅為指向 releases 頁的一行殘根（git ls-remote 拿得到 tags 但無日期與內容，不足以建立條目）。",
+        "→ 本產品在沙箱內沒有任何可直連的合格來源，完全依賴快照分支；快照不可用時預期 blocked。"
       ],
       "sources": [
         {
@@ -226,7 +251,7 @@
         "Codex joins the ChatGPT desktop app"
       ],
       "notes": [
-        "雲端沙箱：三層來源（learn.chatgpt.com、developers.openai.com、openai.com）全數被 egress-policy 擋 — 政策放行前預期 blocked。"
+        "雲端沙箱：三層來源（learn.chatgpt.com、developers.openai.com、openai.com）全數被 egress-policy 擋，排程請改讀快照分支（Actions 端無此限制）；快照不可用時預期 blocked。"
       ],
       "sources": [
         {

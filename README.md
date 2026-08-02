@@ -57,7 +57,7 @@ index.html
 內容由 Claude Code 遠端排程維護。排程會抓四個產品面向的官方來源，更新 `data/changelog-data.js` 與 `data/claude-desktop.json`（`index.html` 只碰時間戳），再 commit 並 push 到 `main`，觸發 GitHub Pages 重建。
 
 ```text
-排程觸發 -> 讀 update-sources.json -> 抓官方 changelog -> 更新資料檔 -> commit/push -> Pages 重建
+排程觸發 -> 讀 update-sources.json -> 取來源快照（見下）-> 更新資料檔 -> commit/push -> Pages 重建
 ```
 
 官方來源：
@@ -74,6 +74,28 @@ index.html
 抓取策略：每個產品依 `sources[].priority` 由小到大嘗試，`version-primary` 成功即停，`version-fallback` 只在 primary 失敗時使用；enrichment 類來源只補摘要與重要性判定，不建立版本條目。沒有 `GITHUB_TOKEN` / `GH_TOKEN` 時不打未授權的 GitHub API，直接退到 Atom。
 
 排程設定與 agent 指示集中在 [`scripts/refresh-prompt.md`](scripts/refresh-prompt.md)。
+
+### 來源快照（繞過雲端排程的網路封鎖）
+
+排程跑在 Claude Code 雲端沙箱，出口有兩層封鎖擋住大部分官方來源（實測 2026-08-02，細節見 manifest 的 `cloudSandbox`）：
+
+| 封鎖類型 | 影響網域 | 說明 |
+| --- | --- | --- |
+| session-binding | `api.github.com`、`github.com` | 沙箱的 GitHub 代理只放行該 session 掛載的 repo，**帶 token 也擋** |
+| egress-policy | `claude.com`、`support.claude.com`、`learn.chatgpt.com`、`developers.openai.com`、`openai.com` | 組織 egress 政策在 CONNECT 階段拒絕 |
+
+GitHub Actions runner 沒有這兩層限制，所以改由 Actions 代抓：
+
+```text
+每 3 小時 -> fetch-snapshots.mjs 依 manifest 抓所有來源原文 -> force push 到 data-snapshots 分支
+排程觸發 -> sync-snapshots.sh 取回快照 -> 照原本的 priority / role 規則解析 -> 更新資料檔
+```
+
+- 快照分支是**孤兒分支、每次 force push 覆蓋**（單一 commit、無歷史），不進 `main`、不觸發 Pages 重建、repo 體積不隨時間膨脹。
+- 快照只存 **HTTP body 原文**，不做任何解析 — 解析規則仍只有 [`scripts/refresh-prompt.md`](scripts/refresh-prompt.md) 一份，不會 CI 與排程各寫一套而漂移。
+- `index.json` 逐筆記錄 `ok` / `httpStatus` / `bytes` / `errorClass`，排程據此決定退哪一層 fallback、以及頁面警報列要顯示的 `blocked` / `transient`。
+- 快照超過 `snapshots.staleAfterHours`（預設 8 小時）未更新，排程會把受影響來源記為 `transient` 並在頁面標示，不會假裝資料是新的。
+- 本機也可手動跑：`node scripts/fetch-snapshots.mjs`（輸出到已 gitignore 的 `.snapshots/`）。
 
 ## 更新通知（Telegram / Slack）
 
@@ -127,6 +149,9 @@ bash scripts/push-changelog.sh "手動更新"
 | [`data/claude-desktop.json`](data/claude-desktop.json) | Claude Desktop 的獨立版本資料（`DATA_CD` 的來源） |
 | [`scripts/build-claude-desktop.mjs`](scripts/build-claude-desktop.mjs) | 把 `data/claude-desktop.json` 內嵌成 `data/changelog-data.js` 的 `DATA_CD`（冪等，支援 `--check`） |
 | [`scripts/refresh-prompt.md`](scripts/refresh-prompt.md) | 排程 agent 的完整刷新指示 |
+| [`scripts/fetch-snapshots.mjs`](scripts/fetch-snapshots.mjs) | 依 manifest 抓所有官方來源原文＋`index.json`（Actions 端執行，不解析內容） |
+| [`scripts/sync-snapshots.sh`](scripts/sync-snapshots.sh) | 排程端取回快照分支到 `/tmp/ai-changelog-snapshots` 並印出健康摘要 |
+| [`.github/workflows/fetch-source-snapshots.yml`](.github/workflows/fetch-source-snapshots.yml) | 每 3 小時抓來源快照並 force push 到 `data-snapshots` 分支的 workflow |
 | [`scripts/push-changelog.ps1`](scripts/push-changelog.ps1) | Windows 手動 commit/push 腳本 |
 | [`scripts/push-changelog.sh`](scripts/push-changelog.sh) | Linux/遠端排程 commit/push 腳本 |
 | [`.github/workflows/notify-on-update.yml`](.github/workflows/notify-on-update.yml) | 實際更新時發 Telegram / Slack 通知的 workflow |

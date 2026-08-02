@@ -5,3 +5,6 @@ Thumbs.db
 
 # Claude Code local settings
 .claude/settings.local.json
+
+# scripts/fetch-snapshots.mjs 的預設輸出（來源原文快照，只推快照分支、不進 main）
+.snapshots/

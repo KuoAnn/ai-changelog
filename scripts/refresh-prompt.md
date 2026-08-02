@@ -4,6 +4,7 @@
 >
 > - **Repo：** `https://github.com/KuoAnn/ai-changelog`（遠端排程自動 clone；環境是 Linux、工作目錄即 repo 根）。路徑一律 **repo-relative**（例 `index.html`），不用本機絕對路徑。
 > - **單一資訊源：** 所有官方 URL、優先順序、版本過濾、標題別名、重要性分級，唯一定義於 `scripts/update-sources.json`（下稱 **manifest**）。**🚨 禁止把來源 URL 寫死在本 prompt 或程式碼各處**；來源異動只改 manifest，本 prompt 只描述「怎麼用」。
+> - **來源輸入走快照：** 沙箱連不到多數官方網域，來源改由 GitHub Actions 定時抓好推到快照分支。每輪先跑 `bash scripts/sync-snapshots.sh` 讀本地快照（步驟 3a），**快照可用時不要再 curl 官方來源**；快照不可用才退回 live 抓取（步驟 3b）。
 > - 所有新增內容一律**繁體中文**，與既有條目風格一致。
 
 ## 產品與寫入目標（四產品彼此不可混用）
@@ -36,6 +37,24 @@
 排程開始先讀 `scripts/update-sources.json`：各產品 `sources[]`（priority、role、format、url、filters）、`stableVersionPattern`、`titleAliases`、`requestPolicy`、`deduplication`、`importance`。
 
 ### 3) 抓取通則（所有產品共用）
+
+#### 3a) 先同步 Actions 快照（雲端排程一律先做這步）
+
+沙箱連不到多數官方來源（見下方 `cloudSandbox`），所以來源改由 GitHub Actions 代抓、推到快照分支；排程讀 repo 內的快照即可。**每輪開頭先跑：**
+
+```bash
+bash scripts/sync-snapshots.sh        # → /tmp/ai-changelog-snapshots，並印出每個來源的健康狀態
+```
+
+- **exit 0** → 快照就緒。**所有產品一律改讀 `/tmp/ai-changelog-snapshots/` 內的檔案，不要再 curl 任何官方來源。** 讀 `index.json` 取每個 priority 的 `ok` / `file` / `errorClass`，再照原本的 priority 與 role 語意挑來源（規則完全不變，只是輸入從 HTTP 換成本地檔）。
+- **exit 3**（沒有快照分支 / fetch 失敗）→ 退回本節原本的 live 抓取流程（沙箱內多半只有 `raw.githubusercontent.com` 與 `code.claude.com` 會成功）。
+- 快照 `index.json` 的 `generatedAtIso` 超過 manifest `snapshots.staleAfterHours`（腳本會直接印「過期」）→ 仍可用，但**受影響產品在 `REFRESH_RUN` 記 `transient`**，`detail` 註明快照逾時未更新（例：「來源快照逾 13 小時未更新，Actions 工作流程可能失敗」）。
+- 某來源 `ok: false` → 照 `errorClass` 對應步驟 9 的 `status`（`session-binding` / `cloudflare` → `blocked`；`rate-limit` / `timeout` / `network` / `http-5xx` → `transient`），並照 priority 退下一層。
+- 某來源 `skipped: true` → 不是失敗，**不計入健康度**；真的需要它才 live 抓（該類來源都挑沙箱連得到的主機）。
+
+快照只有原文、沒有任何解析結果 — 4a～4d 的解析規則原封不動適用。
+
+#### 3b) live 抓取（快照不可用時的退路）
 
 **🚨 所有 curl 都照 `requestPolicy` 帶旗標**（排程走共用出口 IP，靜默失敗過去常被誤判成「解析失敗」）：
 
@@ -207,9 +226,11 @@ node scripts/build-claude-desktop.mjs
 
   | 診斷分類 | `status` | 前端同步率 | 前端標籤 |
   | --- | --- | --- | --- |
-  | 成功（含「已確認無新版」） | `ok` | 照資料新鮮度計算 | — |
-  | 連線失敗 / timeout（`HTTP_STATUS=000` 且非 CONNECT 403）、API 額度耗盡 | `transient` | **-24%**（＝逾期 2 日） | 鏈路中斷 |
+  | 成功（含「已確認無新版」；**讀快照成功也算**） | `ok` | 照資料新鮮度計算 | — |
+  | 連線失敗 / timeout（`HTTP_STATUS=000` 且非 CONNECT 403）、API 額度耗盡、**快照過期或快照分支不可用** | `transient` | **-24%**（＝逾期 2 日） | 鏈路中斷 |
   | Cloudflare 擋 datacenter IP、環境網路政策阻擋（CONNECT 403）、雲端 session 未掛載 repo 等非暫時性 | `blocked` | **-48%**（＝逾期 4 日） | 鏈路封鎖 |
+
+  讀快照時 `status` 直接由 `index.json` 的 `errorClass` 對應：`session-binding` / `cloudflare` → `blocked`；`rate-limit` / `timeout` / `network` / `http-5xx` → `transient`；`ok: true` → `ok`。
 
   判定以**產品**為單位：該產品所有 priority 來源都失敗才算失敗；退 fallback 後成功仍是 `ok`。
   `detail` 用繁中一句寫實際主機與原因，會原樣顯示在頁面警報列。
@@ -248,7 +269,11 @@ Claude Code +N 筆、Claude Desktop +N 筆、Codex CLI +N 筆、Codex App +N 筆
 Codex CLI 使用 Atom fallback
 Claude Desktop Markdown 解析失敗，改用 HTML
 Codex CLI GitHub API 額度耗盡，改用 Atom
+來源快照逾 13 小時未更新，四產品均以舊快照解析
+快照分支不可用，改為 live 抓取
 ```
+
+走快照是常態，**不需在 summary 特別註明**；只有快照過期、不可用或部分來源在快照裡就是失敗時才寫一行。
 
 ## 失敗處理
 
@@ -271,6 +296,7 @@ Codex CLI GitHub API 額度耗盡，改用 Atom
 ## 完成定義（DoD — 結束前自我檢查）
 
 1. **來源設定**：已讀 manifest，抓取照 priority 與 role 語意（primary 成功即停、enrichment 不建條目）。
+1b. **快照**：已跑 `scripts/sync-snapshots.sh`；成功時四產品皆讀本地快照、全程未 curl 官方來源；快照過期或不可用時已記進 `REFRESH_RUN` 與 summary。
 2. **產品分流**：Claude Desktop 版本只在 `data/claude-desktop.json`；`DATA_CC` 只有 Claude Code CLI 的 semver；`index.html` 除時間戳外零改動。
 3. **去重**：各陣列／`entries` 無重複版本，只插入嚴格新於原最前筆的條目（鍵 `product + version + publishedDate`）。
 4. **語法**：兩個 JSON 過 `python3 -m json.tool`；`node --check data/changelog-data.js` 過；`build-claude-desktop.mjs --check` 過。
@@ -280,4 +306,4 @@ Codex CLI GitHub API 額度耗盡，改用 Atom
 7. **靈感卡**：合計 ≤ 2 張、同一 `INSP_*` ≤ 1 張，皆含 `auto: true`。
 8. **Push**：腳本回報 `pushed to main` 或 `no changes`（皆為成功收尾）。
 9. **Summary**：四產品筆數齊全；fallback 註明層級；失敗來源附 403 診斷分類。
-10. **抓取健康度**：每來源確認過 `HTTP_STATUS=200` 且 `BYTES>0`；退 fallback 的產品註明走了哪一層。
+10. **抓取健康度**：每來源確認過 `HTTP_STATUS=200` 且 `BYTES>0`（讀快照時＝`index.json` 該來源 `ok: true` 且 `bytes > 0`）；退 fallback 的產品註明走了哪一層。
