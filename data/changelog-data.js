@@ -148,6 +148,7 @@
   ];
 
   const DATA_CA = [
+    {v:"2026-07-30", date:"2026-07-30", cat:"UI/UX", title:"內建瀏覽器強化、跨 Repo Review 與圖片編輯 Canvas View", body:"<b>內建瀏覽器加入網址列</b>：可直接輸入網址重訪瀏覽紀錄或無符合結果時搜尋 Google；瀏覽紀錄可在 Settings 管理，並可讓 ChatGPT 搜尋歷史頁面協助找回先前造訪過的頁面；<b>Chrome 擴充功能強化</b>：可 <code>@mention</code> 已開啟分頁或帶入畫面反白文字進側邊聊天，並可直接對任意 YouTube 影片提問取得摘要；網頁上右鍵新增「Ask ChatGPT」選項。<b>跨 Repo Review</b>：multi-folder project 可一次檢視所有 repo 的異動行數，選擇 Review 即可跨 repo 檢視 diff 而不必切換視窗。<b>圖片編輯 Canvas View</b>：生成圖片新增放大檢視器，可切換 Focused view 與 Canvas view，對多張圖片加註解、選取要套用的版本，直接在對話中送出局部修改而不必離開視窗。其他：側欄新增 Activity view 顯示近期需留意的對話（可按鈴鐺圖示或 <code>Cmd/Ctrl+Opt+U</code> 切換）；瀏覽器設定僅列出支援的瀏覽器；改善 Windows 套件路徑過長時的安裝可靠性；其他效能與 bug 修復。"},
     {v:"2026-07-27", date:"2026-07-27", cat:"UI/UX", title:"語音 ChatGPT 聲音設定、任務重連改善與 Composer 技能補全", body:"<b>語音對話採用所選 ChatGPT 聲音</b>並在接近用量上限時顯示警示；<b>任務重連與連續性改善</b>：返回 App 或以 Face ID 解鎖後，任務恢復更穩定流暢；<b>Composer 自動補全強化</b>：現可對應桌面版的 plugin mention，並納入已安裝 plugin 提供的技能；<b>選取文字參照送出後仍保留</b>，可在傳送後重新預覽所選內容；<b>Goal 控制改善</b>：暫停或繼續時進度顯示更清晰；<b>Inline 視覺化改進</b>：表格與視覺主題渲染更穩定可靠。"},
     {v:"2026-07-23", date:"2026-07-23", cat:"UI/UX", title:"ChatGPT Voice（GPT-Live）+ 多資料夾本地專案", body:"新增 <b>ChatGPT Voice（GPT-Live）</b>：在 ChatGPT 桌面應用程式（macOS/Windows）中透過語音跨 Chat、Work、Codex 協調任務，說一句話即可同時觸發討論、指派 Codex 任務與查詢文件；<b>多資料夾本地專案</b>：本地專案可包含多個相關資料夾，並可指定主要資料夾，適合跨 repo 或 monorepo 工作情境。"},
     {v:"2026-07-20", date:"2026-07-20", cat:"UI/UX", title:"iOS 互動表單 + Mermaid 圖表 inline 渲染", body:"<b>Codex for iOS 任務互動表單</b>：任務中的互動表單（interactive forms）正式支援，可在 iOS 裝置上直接填寫表單與操作；<b>Mermaid 圖表 inline 渲染</b>：任務 transcript 中的 Mermaid 語法可直接在 iOS 上 inline 渲染為視覺化圖表，無需切換外部工具。"},
@@ -441,6 +442,16 @@
        {h:"為什麼有用", p:"GPT-Live 讓語音輸入從「單純聽寫」升級為「跨模組任務協調」。一句話可同時觸發 Chat 討論、指派 Codex 任務、查詢 Work 文件，特別適合雙手忙或移動中的情境。"},
        {h:"設定 / 操作", c:"bash", b:"# ChatGPT 桌面 App（macOS/Windows）\n# 點選右上角麥克風啟動 ChatGPT Voice\n# 範例指令：\n# 「幫我繼續修 feature/payment-fix 分支的 bug」\n# 「把昨天 sprint review 的 TODO 整理成 Jira tickets」\n# Codex 自動開啟對應 session 並在背景執行"},
        {h:"小技巧", l:["搭配 <b>Codex Remote Control</b>：手機說話、Mac 執行，隨時查看進度","會議空檔說「整理一下剛才討論的 TODO」讓 Work 記錄決策","通勤確認方向 → 進公司審 diff → 節省 context switch 時間"]}
+     ],
+     auto: true},
+    {ico:"layers", color:"blue", feat:"跨 Repo Review + 圖片編輯 Canvas View", ver:"2026-07-30",
+     desc:"multi-folder project 可一次檢視所有 repo 的異動並跨 repo review diff；生成圖片新增 Focused / Canvas 檢視與局部註解修改。",
+     scen:"<b>跨 repo 微服務場景：</b>銀行 APP 前後端拆成多個 repo（iOS App、BFF、design-system），改一支 API 常需同時調整多邊程式碼；multi-folder project 的跨 repo Review 可一次看完所有 repo 的異動行數，不必切視窗來回核對。",
+     roles:["frontend","backend","designer"],
+     d:[
+       {h:"為什麼有用", p:"銀行 APP 開發常見前端、後端、design-system 分屬不同 repo，過去 review 得逐一切換視窗核對。multi-folder project 把相關 repo 收進同一個專案，Review 時能一次看見所有 repo 的變更行數與 diff，減少漏看跨 repo 影響的風險。"},
+       {h:"設定 / 操作", c:"bash", b:"# ChatGPT 桌面 App\n# 1. Projects → New project → Add local folders（勾選多個 repo：ios-app、bff、design-system）\n# 2. 指定其中一個為 primary folder\n# 3. 完成一輪修改後點選 Review，可跨 repo 檢視 diff"},
+       {h:"小技巧", l:["圖片相關產出（icon、illustration）可用新版 Canvas view 逐張加註解，選好版本再一次送出修改","Focused view 適合單張精修，Canvas view 適合多版本並排比較","Chrome 擴充可直接 @mention 開啟中的設計稿分頁，帶文字進側邊聊天核對規格"]}
      ],
      auto: true}
   ];
