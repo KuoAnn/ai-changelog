@@ -129,6 +129,11 @@ function applyDropFields(body, dropFields) {
   };
   Array.isArray(parsed) ? parsed.forEach(prune) : prune(parsed);
 
+  // 一個欄位都沒真的移除（API schema 變動、該回應本來就沒這欄位）→ 回原始 body。
+  // 否則會在 prunedFields 為空、index.json 不會標記的情況下，悄悄把快照 minify 掉，
+  // 等於不再是原文卻沒人知道。
+  if (removed.size === 0) return { text: body, prunedFields: [] };
+
   return { text: JSON.stringify(parsed), prunedFields: [...removed] };
 }
 
