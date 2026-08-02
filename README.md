@@ -92,7 +92,7 @@ GitHub Actions runner 沒有這兩層限制，所以改由 Actions 代抓：
 ```
 
 - 快照分支是**孤兒分支、每次 force push 覆蓋**（單一 commit、無歷史），不進 `main`、不觸發 Pages 重建、repo 體積不隨時間膨脹。
-- 快照只存 **HTTP body 原文**，不做任何解析 — 解析規則仍只有 [`scripts/refresh-prompt.md`](scripts/refresh-prompt.md) 一份，不會 CI 與排程各寫一套而漂移。
+- 快照只存 **HTTP body 原文**，不做任何解析 — 解析規則仍只有 [`scripts/refresh-prompt.md`](scripts/refresh-prompt.md) 一份，不會 CI 與排程各寫一套而漂移。唯一的例外是 `snapshotDropFields`（與內容無關的體積裁切）：releases API 的 `assets` 陣列佔 openai/codex 回應的 98.7%（8.07MB → 108KB）而排程完全用不到，故不收；被裁切的條目在 `index.json` 帶 `prunedFields` 與 `rawBytes`。
 - `index.json` 逐筆記錄 `ok` / `httpStatus` / `bytes` / `errorClass`，排程據此決定退哪一層 fallback、以及頁面警報列要顯示的 `blocked` / `transient`。
 - 快照超過 `snapshots.staleAfterHours`（預設 8 小時）未更新，排程會把受影響來源記為 `transient` 並在頁面標示，不會假裝資料是新的。
 - 本機也可手動跑：`node scripts/fetch-snapshots.mjs`（輸出到已 gitignore 的 `.snapshots/`）。
