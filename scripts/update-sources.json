@@ -71,6 +71,7 @@
     },
     "rules": [
       "快照只存原文、不解析：解析規則仍只寫在 scripts/refresh-prompt.md，避免 CI 與排程各有一套邏輯而漂移。",
+      "唯一的例外是 sources[].snapshotDropFields：丟掉指名的 JSON 頂層欄位（與內容無關的體積裁切）。releases API 的 assets 佔 openai/codex 回應 98.7%（8.07MB → 108KB）而排程完全不用，每 3 小時推一次會讓 repo 無謂變肥。被裁切過的條目在 index.json 帶 prunedFields 與 rawBytes，bytes / sha256 描述的是落地檔案。",
       "來源清單仍以本檔 products[].sources 為唯一定義，fetch-snapshots.mjs 不得寫死任何 URL。",
       "孤兒分支每次 force push 覆蓋（單一 commit、無歷史），不進 main 也不觸發 Pages 重建。",
       "sources[].snapshot === false 的來源不收快照（不計入健康度），排程需要時自行 live 抓。"
@@ -120,6 +121,9 @@
           "format": "github-releases-api",
           "url": "https://api.github.com/repos/anthropics/claude-code/releases?per_page=30",
           "requiresToken": true,
+          "snapshotDropFields": [
+            "assets"
+          ],
           "filters": [
             "draft == false",
             "prerelease == false"
@@ -222,6 +226,9 @@
           "format": "github-releases-api",
           "url": "https://api.github.com/repos/openai/codex/releases?per_page=30",
           "requiresToken": true,
+          "snapshotDropFields": [
+            "assets"
+          ],
           "filters": [
             "draft == false",
             "prerelease == false",

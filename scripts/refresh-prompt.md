@@ -53,7 +53,7 @@ bash scripts/sync-snapshots.sh        # → /tmp/ai-changelog-snapshots，並印
 - 讀檔一律用 `index.json` 每筆的 `file` 欄位，**不要自己用 `<product>/p<priority>` 推導路徑** — 同一 URL 被多產品共用時只落地一份，`file` 會指向第一個用到它的產品目錄（該筆另有 `sharedWith` 標明出處）。
 - 某來源 `skipped: true` → 不是失敗，**不計入健康度**；真的需要它才 live 抓（該類來源都挑沙箱連得到的主機）。
 
-快照只有原文、沒有任何解析結果 — 4a～4d 的解析規則原封不動適用。
+快照只有原文、沒有任何解析結果 — 4a～4d 的解析規則原封不動適用。唯一的裁切是 `releases` JSON 的 `assets` 欄位（各平台二進位檔中繼資料，佔回應 98.7% 而排程用不到）已被去除，該筆會帶 `prunedFields`；版本、日期、`body` 一律完整保留。
 
 #### 3b) live 抓取（快照不可用時的退路）
 

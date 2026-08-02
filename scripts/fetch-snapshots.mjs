@@ -95,6 +95,43 @@ function classify({ status, body, error }) {
   return { errorClass: "empty-body", errorDetail: "HTTP 200 但 body 為空" };
 }
 
+/**
+ * 依 manifest 的 sources[].snapshotDropFields 丟掉 JSON 裡用不到的頂層欄位。
+ *
+ * 這不違反「只存原文、不解析」：丟的是指名的 JSON 欄位，與 changelog 內容無關，
+ * 解析邏輯半行都沒有進到這裡。動機很實際 — GitHub releases API 的 assets 陣列
+ * （每個 release 的各平台二進位檔中繼資料）佔了 openai/codex 回應的 98.7%
+ * （8.07MB → 108KB），而排程從頭到尾只看 tag_name / published_at / body。
+ * 每 3 小時推 8MB 進快照分支，repo 會無謂地肥。
+ *
+ * 解析不了 JSON 就原樣保留 — 寧可肥也不要吃掉內容。
+ */
+function applyDropFields(body, dropFields) {
+  if (!Array.isArray(dropFields) || dropFields.length === 0) return { text: body, prunedFields: [] };
+
+  let parsed;
+  try {
+    parsed = JSON.parse(body);
+  } catch {
+    console.warn(`[fetch-snapshots] 內容不是合法 JSON，略過 snapshotDropFields，原樣保留。`);
+    return { text: body, prunedFields: [] };
+  }
+
+  const removed = new Set();
+  const prune = item => {
+    if (!item || typeof item !== "object") return;
+    for (const field of dropFields) {
+      if (field in item) {
+        delete item[field];
+        removed.add(field);
+      }
+    }
+  };
+  Array.isArray(parsed) ? parsed.forEach(prune) : prune(parsed);
+
+  return { text: JSON.stringify(parsed), prunedFields: [...removed] };
+}
+
 /** 只對「可能自己好」的失敗重試：網路錯誤、429、5xx。4xx 重試沒有意義。 */
 const worthRetry = result => Boolean(result.error) || result.status === 429 || result.status >= 500;
 
@@ -188,14 +225,17 @@ for (const [productKey, product] of Object.entries(manifest.products || {})) {
     if (fetched.status === 200 && fetched.body.length > 0) {
       const file = `${productKey}/p${source.priority}-${slugFor(source.url)}.${EXT_BY_FORMAT[source.format] || "txt"}`;
       const abs = join(OUT_DIR, file);
+      const { text, prunedFields } = applyDropFields(fetched.body, source.snapshotDropFields);
       mkdirSync(dirname(abs), { recursive: true });
-      writeFileSync(abs, fetched.body);
+      writeFileSync(abs, text);
       result = {
         ...common,
         ok: true,
         file,
-        bytes: Buffer.byteLength(fetched.body),
-        sha256: createHash("sha256").update(fetched.body).digest("hex"),
+        // bytes / sha256 描述的是「落地的檔案」，被 prune 過就不等於來源原始 body。
+        bytes: Buffer.byteLength(text),
+        sha256: createHash("sha256").update(text).digest("hex"),
+        ...(prunedFields.length ? { prunedFields, rawBytes: Buffer.byteLength(fetched.body) } : {}),
         finalUrl: fetched.finalUrl,
         contentType: fetched.contentType,
         ...(fetched.rateLimitRemaining ? { rateLimitRemaining: fetched.rateLimitRemaining } : {}),
@@ -240,9 +280,11 @@ const rows = [];
 for (const [productKey, product] of Object.entries(products)) {
   for (const source of product.sources) {
     const mark = source.skipped ? "➖" : source.ok ? "✅" : "❌";
-    const note = source.skipped
-      ? source.skipReason
-      : source.ok ? (source.sharedWith ? `共用 ${source.sharedWith}` : "") : source.errorDetail;
+    const okNote = [
+      source.sharedWith ? `共用 ${source.sharedWith}` : "",
+      source.prunedFields ? `已去除 ${source.prunedFields.join("、")}（原 ${(source.rawBytes / 1024 / 1024).toFixed(2)}MB）` : "",
+    ].filter(Boolean).join("；");
+    const note = source.skipped ? source.skipReason : source.ok ? okNote : source.errorDetail;
     rows.push(`| ${productKey} | p${source.priority} | ${mark} | ${source.httpStatus || "-"} | ${source.bytes} | ${note || ""} |`);
   }
 }
