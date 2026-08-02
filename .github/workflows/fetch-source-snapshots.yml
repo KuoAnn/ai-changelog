@@ -86,7 +86,7 @@ jobs:
 
           echo "已推送 $(du -sh . | cut -f1) 快照到 ${SERVER}/${REPO}/tree/${BRANCH}"
 
-      - name: Fail if every source failed
+      - name: Verify snapshot is usable
         run: |
           set -euo pipefail
           node -e '
@@ -100,9 +100,22 @@ jobs:
               process.exit(1);
             }
             const { ok = 0, failed = 0 } = index.totals || {};
+            const unmapped = index.unmappedErrorClasses || [];
+            let bad = false;
+
             if (ok === 0) {
               console.error(`所有來源皆抓取失敗（${failed} 個）— 快照已推送但無可用內容，請查上一步的表格。`);
-              process.exit(1);
+              bad = true;
+            } else {
+              console.log(failed > 0 ? `部分來源失敗（成功 ${ok} / 失敗 ${failed}），快照仍可用。` : `全部 ${ok} 個來源皆成功。`);
             }
-            console.log(failed > 0 ? `部分來源失敗（成功 ${ok} / 失敗 ${failed}），快照仍可用。` : `全部 ${ok} 個來源皆成功。`);
+
+            // 契約破了：排程會讀到不知道怎麼對應 status 的 errorClass。快照本身仍可用，
+            // 所以放在推送之後才擋，讓這一輪的內容不會白抓。
+            if (unmapped.length) {
+              console.error(`errorClass ${unmapped.join("、")} 不在 manifest 的 snapshots.errorClassToStatus 內 — 請補進 manifest 或修正 classify()。`);
+              bad = true;
+            }
+
+            if (bad) process.exit(1);
           '

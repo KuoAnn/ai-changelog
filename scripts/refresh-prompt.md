@@ -49,7 +49,8 @@ bash scripts/sync-snapshots.sh        # → /tmp/ai-changelog-snapshots，並印
 - **exit 0** → 快照就緒。**所有產品一律改讀 `/tmp/ai-changelog-snapshots/` 內的檔案，不要再 curl 任何官方來源。** 讀 `index.json` 取每個 priority 的 `ok` / `file` / `errorClass`，再照原本的 priority 與 role 語意挑來源（規則完全不變，只是輸入從 HTTP 換成本地檔）。
 - **exit 3**（沒有快照分支 / fetch 失敗）→ 退回本節原本的 live 抓取流程（沙箱內多半只有 `raw.githubusercontent.com` 與 `code.claude.com` 會成功）。
 - 快照 `index.json` 的 `generatedAtIso` 超過 manifest `snapshots.staleAfterHours`（腳本會直接印「過期」）→ 仍可用，但**受影響產品在 `REFRESH_RUN` 記 `transient`**，`detail` 註明快照逾時未更新（例：「來源快照逾 13 小時未更新，Actions 工作流程可能失敗」）。
-- 某來源 `ok: false` → 照 `errorClass` 對應步驟 9 的 `status`（`session-binding` / `cloudflare` → `blocked`；`rate-limit` / `timeout` / `network` / `http-5xx` → `transient`），並照 priority 退下一層。
+- 某來源 `ok: false` → 照 `errorClass` 對應步驟 9 的 `status`（對應表唯一定義在 manifest `snapshots.errorClassToStatus`），並照 priority 退下一層。
+- 讀檔一律用 `index.json` 每筆的 `file` 欄位，**不要自己用 `<product>/p<priority>` 推導路徑** — 同一 URL 被多產品共用時只落地一份，`file` 會指向第一個用到它的產品目錄（該筆另有 `sharedWith` 標明出處）。
 - 某來源 `skipped: true` → 不是失敗，**不計入健康度**；真的需要它才 live 抓（該類來源都挑沙箱連得到的主機）。
 
 快照只有原文、沒有任何解析結果 — 4a～4d 的解析規則原封不動適用。
@@ -230,7 +231,14 @@ node scripts/build-claude-desktop.mjs
   | 連線失敗 / timeout（`HTTP_STATUS=000` 且非 CONNECT 403）、API 額度耗盡、**快照過期或快照分支不可用** | `transient` | **-24%**（＝逾期 2 日） | 鏈路中斷 |
   | Cloudflare 擋 datacenter IP、環境網路政策阻擋（CONNECT 403）、雲端 session 未掛載 repo 等非暫時性 | `blocked` | **-48%**（＝逾期 4 日） | 鏈路封鎖 |
 
-  讀快照時 `status` 直接由 `index.json` 的 `errorClass` 對應：`session-binding` / `cloudflare` → `blocked`；`rate-limit` / `timeout` / `network` / `http-5xx` → `transient`；`ok: true` → `ok`。
+  讀快照時 `status` 直接由 `index.json` 的 `errorClass` 對應，**唯一定義在 manifest `snapshots.errorClassToStatus`**（`errorClass` 是封閉集合，精確狀態碼在 `httpStatus` / `errorDetail`，不會編進 class）：
+
+  | `errorClass` | `status` | 說明 |
+  | --- | --- | --- |
+  | `ok: true` | `ok` | — |
+  | `session-binding` / `cloudflare` | `blocked` | 非暫時性，重試無效 |
+  | `http-4xx` | `blocked` | 401/403 權限或額度、404 來源搬家 — **需要人改 manifest**，`detail` 要寫出實際狀態碼與 URL |
+  | `rate-limit` / `timeout` / `network` / `http-5xx` / `unexpected-status` / `empty-body` | `transient` | 下一輪可能自己好 |
 
   判定以**產品**為單位：該產品所有 priority 來源都失敗才算失敗；退 fallback 後成功仍是 `ok`。
   `detail` 用繁中一句寫實際主機與原因，會原樣顯示在頁面警報列。

@@ -30,7 +30,20 @@ fi
 # 立刻定住 SHA：FETCH_HEAD 會被後續任何 fetch 覆寫，別讓它在這之後才被解讀。
 SNAPSHOT_SHA="$(git rev-parse FETCH_HEAD)"
 
-rm -rf "$OUT"
+# 下面要 rm -rf，先擋掉會炸掉整台機器的 SNAPSHOT_DIR：空值、根目錄，
+# 以及「已存在但不是上一輪快照」的目錄（沒有 index.json 就不是我們建的，不准刪）。
+case "$OUT" in
+  "" | "/" | "/.")
+    echo "[snapshots] SNAPSHOT_DIR 不合法（$OUT）→ 中止，避免誤刪。" >&2
+    exit 2
+    ;;
+esac
+if [ -e "$OUT" ] && [ ! -f "$OUT/index.json" ]; then
+  echo "[snapshots] $OUT 已存在但不像上一輪快照（缺 index.json）→ 中止，避免誤刪既有資料。" >&2
+  exit 2
+fi
+
+rm -rf -- "$OUT"
 mkdir -p "$OUT"
 git archive --format=tar "$SNAPSHOT_SHA" | tar -x -C "$OUT"
 

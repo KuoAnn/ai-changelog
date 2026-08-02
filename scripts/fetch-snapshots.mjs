@@ -66,6 +66,12 @@ function slugFor(url) {
 /**
  * 失敗歸類 — 對應 refresh-prompt.md「403 診斷」的分類，讓排程能直接把 errorClass
  * 映射成 REFRESH_RUN 的 status，不必自己重判一次。
+ *
+ * **errorClass 是封閉集合**，與 manifest 的 snapshots.errorClassToStatus 一一對應：
+ *   session-binding / cloudflare / rate-limit / timeout / network /
+ *   http-4xx / http-5xx / unexpected-status / empty-body
+ * 精確狀態碼一律留在 httpStatus 與 errorDetail，**不編進 errorClass**：
+ * 否則 consumer 會遇到 http-418 這種沒列舉過的值而無從對應。
  */
 function classify({ status, body, error }) {
   if (error) {
@@ -80,11 +86,12 @@ function classify({ status, body, error }) {
     if (/cf-mitigated|challenge|attention required/i.test(body)) {
       return { errorClass: "cloudflare", errorDetail: "Cloudflare 擋 datacenter IP" };
     }
-    return { errorClass: `http-${status}`, errorDetail: `HTTP ${status}（權限或額度）` };
+    return { errorClass: "http-4xx", errorDetail: `HTTP ${status}（權限或額度）` };
   }
   if (status === 429) return { errorClass: "rate-limit", errorDetail: "HTTP 429 額度耗盡" };
-  if (status >= 500) return { errorClass: `http-${status}`, errorDetail: `來源伺服器錯誤 HTTP ${status}` };
-  if (status !== 200) return { errorClass: `http-${status}`, errorDetail: `非預期狀態碼 HTTP ${status}` };
+  if (status >= 500) return { errorClass: "http-5xx", errorDetail: `來源伺服器錯誤 HTTP ${status}` };
+  if (status >= 400) return { errorClass: "http-4xx", errorDetail: `HTTP ${status}（來源可能已搬家或失效，需更新 manifest）` };
+  if (status !== 200) return { errorClass: "unexpected-status", errorDetail: `非預期狀態碼 HTTP ${status}` };
   return { errorClass: "empty-body", errorDetail: "HTTP 200 但 body 為空" };
 }
 
@@ -206,6 +213,16 @@ for (const [productKey, product] of Object.entries(manifest.products || {})) {
   products[productKey] = { displayName: product.displayName || productKey, sources: entries };
 }
 
+// 契約自我檢查：本檔吐出的每個 errorClass 都必須在 manifest 的 errorClassToStatus 有對應，
+// 否則排程讀到沒列舉過的值就不知道要記 blocked 還是 transient。靠人同步兩份清單遲早會漏。
+const mappedClasses = new Set(Object.keys(manifest.snapshots?.errorClassToStatus || {}).filter(key => !key.startsWith("_")));
+const unmappedErrorClasses = [...new Set(
+  Object.values(products)
+    .flatMap(product => product.sources)
+    .map(source => source.errorClass)
+    .filter(errorClass => errorClass && !mappedClasses.has(errorClass)),
+)];
+
 const index = {
   schemaVersion: 1,
   generatedAt: taipeiStamp(startedAt),
@@ -214,6 +231,7 @@ const index = {
   runner: process.env.GITHUB_ACTIONS ? `github-actions/${process.env.GITHUB_RUN_ID || "?"}` : "local",
   tokenUsed: Boolean(token),
   totals: { sources: okCount + failCount, ok: okCount, failed: failCount, skipped: skipCount },
+  unmappedErrorClasses,
   products,
 };
 writeFileSync(join(OUT_DIR, "index.json"), `${JSON.stringify(index, null, 2)}\n`);
@@ -236,6 +254,9 @@ const summary = [
   "| 產品 | 優先序 | 結果 | HTTP | bytes | 備註 |",
   "| --- | --- | --- | --- | --- | --- |",
   ...rows,
+  ...(unmappedErrorClasses.length
+    ? ["", `> ⚠️ errorClass \`${unmappedErrorClasses.join("`、`")}\` 不在 manifest 的 snapshots.errorClassToStatus 內，排程無從對應 status — 請補進 manifest 或修正 classify()。`]
+    : []),
 ].join("\n");
 
 console.log(summary);

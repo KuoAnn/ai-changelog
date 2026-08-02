@@ -54,7 +54,20 @@
     "staleAfterHours": 8,
     "layout": {
       "index.json": "本輪抓取結果：generatedAt / generatedAtIso / totals，以及每個產品每個 priority 的 ok、file、bytes、httpStatus、errorClass、errorDetail",
-      "<product>/p<priority>-<slug>.<ext>": "該來源的 HTTP body 原文，未經任何解析或裁切"
+      "<product>/p<priority>-<slug>.<ext>": "該來源的 HTTP body 原文，未經任何解析或裁切",
+      "sharedFiles": "同一 URL 被多個產品共用時（例：Codex RSS 同時是 codex-cli p3 與 codex-app p1）只抓一次、只落地一份，檔案放在第一個用到它的產品目錄下，其餘產品的條目帶 sharedWith 標明出處。🚨 一律讀 index.json 的 file 欄位，不要自己用 <product>/p<priority> 推導路徑。"
+    },
+    "errorClassToStatus": {
+      "_comment": "index.json 的 errorClass 是封閉集合；此表是它對應到 REFRESH_RUN status 的唯一定義（refresh-prompt.md 步驟 9 的表格與此同步）。",
+      "session-binding": "blocked",
+      "cloudflare": "blocked",
+      "http-4xx": "blocked",
+      "rate-limit": "transient",
+      "timeout": "transient",
+      "network": "transient",
+      "http-5xx": "transient",
+      "unexpected-status": "transient",
+      "empty-body": "transient"
     },
     "rules": [
       "快照只存原文、不解析：解析規則仍只寫在 scripts/refresh-prompt.md，避免 CI 與排程各有一套邏輯而漂移。",
