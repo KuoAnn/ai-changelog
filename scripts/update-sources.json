@@ -12,6 +12,38 @@
       "at least one release entry can be parsed"
     ]
   },
+  "cloudSandbox": {
+    "verifiedAt": "2026-08-02",
+    "appliesTo": "Claude Code 雲端排程沙箱（agent proxy 出口）；本機手動執行不受此限",
+    "blockClasses": {
+      "session-binding": {
+        "hosts": [
+          "api.github.com",
+          "github.com"
+        ],
+        "signature": "HTTP 403，body 為 JSON 且含 'not enabled for this session' 或 'sessions are bound to their configured repositories'",
+        "meaning": "雲端 session 的 GitHub 代理只放行本 session 掛載的 repo；帶 GITHUB_TOKEN/GH_TOKEN 亦會被攔截，重試無效",
+        "action": "偵測到即視為非暫時性，不重試，直接退下一個 priority 來源"
+      },
+      "egress-policy": {
+        "hosts": [
+          "claude.com",
+          "support.claude.com",
+          "learn.chatgpt.com",
+          "developers.openai.com",
+          "openai.com"
+        ],
+        "signature": "curl exit 56：'CONNECT tunnel failed, response 403'（HTTP_STATUS=000）",
+        "meaning": "組織 egress 網路政策在 CONNECT 階段拒絕（非 IP 黑名單、非額度耗盡）；WebFetch 同受此政策限制",
+        "action": "REFRESH_RUN 記 blocked；repo 端不可解，需在 claude.ai/code 環境設定的 Network access 放行網域（org 管理的政策需由 org 管理員調整）"
+      }
+    },
+    "reachable": [
+      "raw.githubusercontent.com",
+      "code.claude.com",
+      "git 通道可唯讀公開 repo（例：git ls-remote --tags https://github.com/anthropics/claude-code）"
+    ]
+  },
   "deduplication": {
     "key": "product + version + publishedDate",
     "requireNewerThanCurrentHead": true,
@@ -72,18 +104,31 @@
         },
         {
           "priority": 3,
-          "role": "content-fallback",
+          "role": "version-fallback",
           "format": "markdown",
-          "url": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md"
+          "url": "https://code.claude.com/docs/en/changelog.md",
+          "notes": [
+            "官方由 GitHub CHANGELOG.md 生成，MDX Update 標籤分段（同 Cowork changelog 解析結構）：label → 版本、description → 日期（英文長日期需轉 YYYY-MM-DD）。",
+            "雲端沙箱唯一版本＋日期＋內容齊全的可達來源（2026-08-02 實測 200），priority 1/2 在沙箱內必 403（session-binding）時的實務主來源。"
+          ]
         },
         {
           "priority": 4,
+          "role": "content-fallback",
+          "format": "markdown",
+          "url": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md",
+          "notes": [
+            "無發佈日期欄位，僅內容保底；日期需由 priority 2/3 補，補不到就不得建立條目。"
+          ]
+        },
+        {
+          "priority": 5,
           "role": "human-readable-canonical",
           "format": "html",
           "url": "https://code.claude.com/docs/en/changelog"
         },
         {
-          "priority": 5,
+          "priority": 6,
           "role": "notability-enrichment",
           "format": "html",
           "url": "https://code.claude.com/docs/en/whats-new"
@@ -95,6 +140,9 @@
       "surface": "desktop-app",
       "dataTarget": "data/claude-desktop.json",
       "stableVersionPattern": "^v?\\d+\\.\\d+\\.\\d+$",
+      "notes": [
+        "雲端沙箱：三層來源（claude.com ×2、support.claude.com）全數被 egress-policy 擋 — 政策放行前預期 blocked。"
+      ],
       "sources": [
         {
           "priority": 1,
@@ -126,6 +174,9 @@
       "surface": "cli",
       "dataTarget": "index.html#DATA_CI",
       "stableVersionPattern": "^(?:rust-v)?\\d+\\.\\d+\\.\\d+$",
+      "notes": [
+        "雲端沙箱：p1/p2 被 session-binding 擋、p3 被 egress-policy 擋，且 raw.githubusercontent.com 的 openai/codex CHANGELOG.md 僅為指向 releases 頁的一行殘根 — 政策放行前預期 blocked；git ls-remote 拿得到 tags 但無日期與內容，不足以建立條目。"
+      ],
       "sources": [
         {
           "priority": 1,
@@ -173,6 +224,9 @@
         "ChatGPT desktop app",
         "ChatGPT Voice and multi-folder projects",
         "Codex joins the ChatGPT desktop app"
+      ],
+      "notes": [
+        "雲端沙箱：三層來源（learn.chatgpt.com、developers.openai.com、openai.com）全數被 egress-policy 擋 — 政策放行前預期 blocked。"
       ],
       "sources": [
         {

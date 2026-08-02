@@ -55,6 +55,7 @@ curl -sfL -A 'Mozilla/5.0 (compatible; ai-changelog/1.0; +https://github.com/Kuo
 
 - `version-primary`：成功即停，不再呼叫任何 version fallback。
 - `version-fallback`：僅 primary 失敗才用，同樣成功即停。
+- `content-fallback`：內容保底 — 只提供版本區塊內文（**無發佈日期欄位**），可補全既定版本的 `body`；日期由更前 priority 來源對照，補不到日期就**不得建立條目**。
 - `product-enrichment` / `notability-enrichment` / `human-readable-canonical` / `code-surface-cross-check`：**enrichment 類**，只能 (1) 補摘要 (2) 判重要性 (3) 補功能名稱。**🚨 不得用 enrichment 建立版本條目，也不得因 enrichment 又提到同版而重複寫入。**
 
 **GitHub API Token：** `TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-}}"`
@@ -62,6 +63,7 @@ curl -sfL -A 'Mozilla/5.0 (compatible; ai-changelog/1.0; +https://github.com/Kuo
 - 有 token → 走 `github-releases-api` 來源，帶 `-H "Authorization: Bearer $TOKEN" -H 'Accept: application/vnd.github+json'`（5000 次/hr per token）。
 - 無 token → **不得打未授權 `api.github.com`**（60 次/hr per 出口 IP，共用 NAT 額度會被其他 tenant 吃光），直接退該產品 Atom 來源。
 - **不要用 WebFetch 打 GitHub API**（帶不了 `Authorization` header，等於未授權）。
+- **🚨 雲端排程沙箱限制（manifest `cloudSandbox`，2026-08-02 實測）：** 沙箱的 GitHub 代理只放行本 session 掛載的 repo，打 anthropics / openai 的 `api.github.com` 與 `github.com`（含 `releases.atom`）一律 403，**帶 token 也一樣被攔**（回應 body 是 JSON、含 `not enabled for this session` 或 `sessions are bound`）。偵測到此簽名＝非暫時性，處置如下：(1) 雲端對這兩個主機的 curl **不帶 `--retry-all-errors`**（`-f` 讓 403 立即以非 0 結束，避免 requestPolicy 重試把同一個 403 連打 3 次）；(2) 同一輪偵測到簽名後，另一個 GitHub 來源（API 或 atom）**直接跳過不打**；(3) 退 `raw.githubusercontent.com` / `code.claude.com` 層。本機手動執行不受此限，原 priority 與 retry 旗標照舊。
 
 **Atom / RSS 解析要點：**
 
@@ -72,7 +74,8 @@ curl -sfL -A 'Mozilla/5.0 (compatible; ai-changelog/1.0; +https://github.com/Kuo
 
 #### 4a) Claude Code CLI → `DATA_CC`
 
-- 依 priority：GitHub Releases API（需 token）→ `releases.atom` → `CHANGELOG.md`（raw markdown）→ 官方 HTML changelog；What's New 為 notability-enrichment。
+- 依 priority：GitHub Releases API（需 token）→ `releases.atom` → `code.claude.com/docs/en/changelog.md`（MDX，含日期）→ `CHANGELOG.md`（raw markdown，**無日期**，僅內容保底）→ 官方 HTML changelog；What's New 為 notability-enrichment。
+- **雲端沙箱實務主來源是 priority 3 的 `changelog.md`**（前兩層必 403，見步驟 3）：官方由 GitHub CHANGELOG.md 生成，結構同 Cowork changelog 的 MDX 標籤 —— `<Update label="2.1.220" description="July 25, 2026">`，`label` → 版本、`description` → 日期（英文長日期轉 `YYYY-MM-DD`）。
 - 過濾照 manifest：`draft == false`、`prerelease == false`、版本符合 `stableVersionPattern`。
 - 版本取 `tag_name`／`<title>`（去 `v` 前綴）、日期取 `published_at`／`<updated>`、內容取 `body`／`<content>`。
 - 條目 `{ v, date, cat, body }`；`cat` ∈ {Subagents/Skills, Plugins/MCP, Hooks, Slash Commands, IDE/Editor, Settings/Config, Permissions/Security, UI/UX, Performance/Bug Fix}。
@@ -205,8 +208,8 @@ node scripts/build-claude-desktop.mjs
   | 診斷分類 | `status` | 前端同步率 | 前端標籤 |
   | --- | --- | --- | --- |
   | 成功（含「已確認無新版」） | `ok` | 照資料新鮮度計算 | — |
-  | 連線失敗 / timeout（`HTTP_STATUS=000`）、API 額度耗盡 | `transient` | **-24%**（＝逾期 2 日） | 鏈路中斷 |
-  | Cloudflare 擋 datacenter IP、環境網路政策阻擋等非暫時性 | `blocked` | **-48%**（＝逾期 4 日） | 鏈路封鎖 |
+  | 連線失敗 / timeout（`HTTP_STATUS=000` 且非 CONNECT 403）、API 額度耗盡 | `transient` | **-24%**（＝逾期 2 日） | 鏈路中斷 |
+  | Cloudflare 擋 datacenter IP、環境網路政策阻擋（CONNECT 403）、雲端 session 未掛載 repo 等非暫時性 | `blocked` | **-48%**（＝逾期 4 日） | 鏈路封鎖 |
 
   判定以**產品**為單位：該產品所有 priority 來源都失敗才算失敗；退 fallback 後成功仍是 `ok`。
   `detail` 用繁中一句寫實際主機與原因，會原樣顯示在頁面警報列。
@@ -252,10 +255,12 @@ Codex CLI GitHub API 額度耗盡，改用 Atom
 - **部分來源失敗：跳過該來源、不中止流程**，用成功的來源照常更新；summary 標註（例「Codex App 解析失敗，跳過」）**並在 `REFRESH_RUN` 記下該產品的 `status` 與 `detail`**（步驟 9）— summary 只餵通知，`REFRESH_RUN` 才餵頁面。
 - **四來源全失敗：** 仍更新時間戳、執行 push 腳本，summary 寫「所有來源解析失敗，僅更新時間戳記」。
 - **即使四來源都沒新版**，仍要更新時間戳並執行 push 腳本（腳本會因時間戳差異而 commit）。
-- **🚨 403 診斷（任一來源非 200 時必附分類，不可只寫「解析失敗」）** — 從 `/tmp/hdr.txt` 判斷：
+- **🚨 403 診斷（任一來源非 200 時必附分類，不可只寫「解析失敗」）** — 從 `/tmp/hdr.txt`、body 與 curl stderr／exit code 判斷（依序比對，先中先贏）：
+  - body 是 JSON 且含 `not enabled for this session` 或 `sessions are bound to their configured repositories` → 寫「雲端 session 未掛載該 repo（GitHub 代理攔截，token 無效）」。非 IP、非額度，重試無效 → 直接退下一層；該產品全層失敗才記 `blocked`。
+  - curl exit 56 且 stderr 含 `CONNECT tunnel failed, response 403`（此時 `HTTP_STATUS=000`）→ 寫「環境網路政策阻擋（org egress，connect_rejected）」→ `blocked`。**勿與單純 timeout 混淆** — 有明確 403 回應的 CONNECT 失敗是政策擋、非暫時性。
   - `X-RateLimit-Remaining: 0` → 寫「API 額度耗盡（共用 IP）」。共用 NAT 的未授權額度被其他 tenant 吃光 — **不是本 repo 打太多次，不要降低排程頻率**，要改帶 token 或走 `releases.atom`。
   - `cf-ray` / `cf-mitigated` 或 body 是 challenge HTML → 寫「Cloudflare 擋 datacenter IP」。重試無效，只能換來源。
-  - `HTTP_STATUS=000` 或 timeout → 寫「連線失敗」。
+  - `HTTP_STATUS=000` 或 timeout（且非上述 CONNECT 403）→ 寫「連線失敗」。
   - 其他狀態碼 → 原樣寫出，不要只寫「解析失敗」。
 
 ## 其他硬性約束
