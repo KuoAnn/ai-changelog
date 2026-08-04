@@ -23,7 +23,7 @@
      =========================== */
 
   const REFRESH_RUN = {
-    ranAt: "2026-08-04 05:14 (Taipei)",
+    ranAt: "2026-08-04 17:16 (Taipei)",
     sources: {
       cc: { status: "ok" },
       cd: { status: "ok" },
@@ -37,6 +37,7 @@
      =========================== */
 
   const DATA_CC = [
+    {v:"2.1.221", date:"2026-08-04", cat:"IDE/Editor", body:"<b>VSCode 新增 Focus view</b>：聊天選單切換選項，把工具活動摺疊到可展開的逐輪摘要後方並保留即時執行中工具指示器，可用 <code>Ctrl+Alt+F</code> 或指令選擇區「Claude Code: Toggle Focus view」切換；<b>新增 Linux／WSL 沙箱憑證檔案 <code>mode: \"mask\"</code></b>：沙箱化指令讀取哨兵替身（整檔或僅 <code>extract</code> regex 擷取範圍），沙箱代理在對外連線時代換回真實值（macOS 上退回 <code>deny</code>）；<code>claude plugin validate</code> 新增警告：marketplace 或 plugin 名稱會被 Claude Desktop 受管 marketplace 同步拒絕時提示；<code>claude-api</code> skill 新增 <code>prompt-audit</code> 子指令，可稽核 prompt 與工具描述中針對舊模型撰寫的過時模式。修復：zsh 於 <code>[[ ]]</code> regex 條件式中可執行隱藏指令的 Bash 權限檢查繞過（現會提示權限）；Windows 路徑含引號字元時 PowerShell 權限檢查誤判（現會提示核准）；以關閉思考模式啟動的 session 全程思考切換無效；中途停用 MCP 伺服器不再被靜默還原；<code>--mcp-config</code> 的 MCP 伺服器在 print mode（<code>-p</code>）首輪前未連線，導致模型把工具呼叫當純文字輸出；按 Esc 收回提示再重送時 @-mention 檔案被靜默丟棄；SDK MCP 工具命名為 <code>constructor</code> 等內建物件屬性時崩潰；停用思考時以 <code>xhigh</code>/<code>max</code> effort 呼叫 WebSearch 回傳 400 錯誤；沙箱化大型上傳透過沙箱 proxy 因 TLS 錯誤失敗；Team／Enterprise 支出上限訊息誤指為組織月度上限而非個人支出上限；Windows 機器設定雜散 <code>HOME</code> 環境變數時，桌面受管 session 的 Bedrock AWS SSO named profile 認證失敗；<code>CLAUDE_CODE_RESUME_INTERRUPTED_TURN=0</code> 未能停用中斷 turn 自動恢復；喚醒時兩個 Claude Code 程序同時刷新同一 MCP connector 或 WIF OAuth token 導致的競態重新認證；從 Claude Code Desktop 或 claude.ai 重新命名 session 未同步更新 CLI 的 session 名稱；以終端機專屬內建指令命名的 plugin／org skill（如 <code>/help</code>、<code>/feedback</code>）在非互動 session 中無法呼叫；「Plugins changed」通知在 plugin 重新載入後仍殘留；Vim 模式 yank 暫存器在對話框、歷史搜尋與 transcript 檢視間被靜默清空；Vim 模式復原至空白提示後未正確要求「再按 ← 一次」確認。其他改進：Google Vertex AI 對 Claude 4.5 世代以上模型重新啟用工具搜尋；auto mode 平行工具呼叫權限檢查改為快取化並修正切換模式時的競態；背景 session 改為以 commit/push 保留工作、僅在任務需要時才開 draft PR，並依 CLAUDE.md 的 git 指示行事。"},
     {v:"2.1.220", date:"2026-07-25", cat:"Performance/Bug Fix", body:"本版本為問題修正與可靠性改善，無使用者面向的新功能變更。"},
     {v:"2.1.219", date:"2026-07-24", cat:"Settings/Config", body:"<b>Claude Opus 5 新增為預設 Opus 模型</b>（<code>claude-opus-5</code>，1M context window，Fast mode 定價 $10/$50/Mtok）；新增 <b><code>sandbox.network.strictAllowlist</code></b> 設定，可拒絕沙箱指令存取未列入允許清單的主機而無需提示；<b>新 <code>DirectoryAdded</code> hook</b>：於 <code>/add-dir</code> 或 SDK <code>register_repo_root</code> 新增工作目錄後觸發；新增 <b><code>workflowSizeGuideline</code></b> 設定鍵，可從任意設定檔控制動態 workflow 大小建議；<b>子 Agent 巢狀深度預設升至 3 層</b>（可用 <code>CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1</code> 停用）；MCP server 啟動錯誤納入 stream-json init 事件（<code>mcp_server_errors</code>）；Fast mode 移除 Opus 4.7，<code>/fast</code> 改適用 Opus 5 與 Opus 4.8；新增 nested subagent forwarding（depth ≥ 2 時 stream-json 轉發子 agent 文字）。修復：<code>claude -p</code> 於 turn 中途 API 錯誤時靜默遺失輸出；<code>claude mcp list</code>/<code>/mcp</code> 缺少連線失敗的 HTTP 狀態與錯誤訊息；Fable 模型列誤顯「需要使用點數」；Remote Control 切換模型後 fast-mode 狀態殘留；GNU screen 內複製選取印出 base64 而非複製；<code>CLAUDE_CODE_GIT_BASH_PATH</code> 在 Windows 非 bash/sh 路徑時提前結束；自我托管 runner 重啟後已核准權限被捨棄；<code>claude update</code>/<code>claude doctor</code> 靜默掛起等多項穩定性修復。"},
     {v:"2.1.218", date:"2026-07-22", cat:"Slash Commands", body:"<b><code>/code-review</code> 改為背景子 agent 執行</b>：review 工作不再填滿對話，堆疊 slash 指令以原來的 review 目標繼續；<b>螢幕閱讀器刪除文字播報</b>：<code>--ax-screen-reader</code> 模式下 <code>Option+Delete</code>、<code>Ctrl+W</code>、<code>Cmd+Backspace</code>、<code>Ctrl+U</code>、<code>Ctrl+K</code> 操作自動播報刪除內容；<b>MCP 連線狀態強化</b>：<code>claude mcp list</code> 與 <code>/mcp</code> 顯示伺服器連線失敗的 HTTP 狀態與錯誤訊息，並警告含隱藏前後空白的 config 值；<b><code>/deep-research</code> 改為手動觸發</b>：Claude 不再自動發起深度研究；<b>技能 <code>context: fork</code> 預設背景執行</b>（可設 <code>background: false</code> 停用）；<code>yes</code>/<code>no</code>/<code>on</code>/<code>off</code>/<code>1</code>/<code>0</code>（不分大小寫）現為 frontmatter boolean 接受值；OTel log 事件加入 <code>message.uuid</code>、<code>client_request_id</code>、<code>tool_source</code>；新增 <code>CLAUDE_CODE_OTEL_CONTENT_MAX_LENGTH</code> 可設定 OTel 內容截斷上限（預設 60 KB）；記憶體檔 frontmatter 新增 ISO <code>modified</code> 時間戳；server-managed 設定的良性功能/費用切換不再觸發設定核准提示；agent markdown 名稱禁止含 <code>:</code>（保留給 plugin 命名空間）。修復：Windows 路徑含 <code>\\u</code> 前綴（如 <code>C:\\Users\\unicorn</code>）被誤轉為 CJK 字元使檔案無法存取；← 鍵在編輯後誤棄對話（現要求確認）；終端將換行編碼為 Ctrl+J 導致多行貼上擠成一行；<code>/context</code> 壓縮後顯示舊 token 數；<code>/ultrareview</code> 描述性參數（如「review my auth changes」）現正確對當前分支執行 review；<code>/code-review ultra</code> 非互動 session 靜默走本地 review（現改啟動雲端 review）；gateway 費用計量對 Bedrock 應用推論 ARN 採正確模型費率；長 IDE 選取在 emoji 中間截斷的亂碼；引擎拆解競態及工具中止後殘留 <code>tool_use</code> 區塊；深層監控目錄樹刪除/移動時的 Maximum call stack 崩潰；PR 事件偶爾遺失；Bedrock setup wizard 在分 partition 區域及代理網路的 assume-role profile 驗證失敗；計時器改用單調時鐘，避免系統時鐘調整影響；auto-mode 分類器不再對 dangerous-rm、背景 <code>&amp;</code>、可疑 Windows 路徑開啟 permission dialog；fork-session lineage 壓縮後遺失；含格式錯誤 delta 附件的恢復 session 每輪崩潰或失敗；agent frontmatter hooks 限制只在已信任資料夾執行；遠端 session 心跳在 worker 被替換後仍持續發送。"},
@@ -231,6 +232,7 @@
 
   /* CLAUDE-DESKTOP-DATA:START — 由 scripts/build-claude-desktop.mjs 從 data/claude-desktop.json 產生，勿手改 */
   const DATA_CD = [
+    {v:"1.24012.11", date:"2026-08-03", cat:"Plugins/MCP", sev:"low", title:"MCP 連線時序與 Microsoft 365 連接器修復", body:"修正伺服器仍在連線中時啟動的 session 缺少 connector 工具，需另開新對話才會取得；修正 Microsoft 365 連接器首次登入後要重啟 App 才會出現。General、Code、Cowork 皆無使用者面向變更。"},
     {v:"1.24012.9", date:"2026-07-24", cat:"Hooks", sev:"high", title:"Windows Plugin Hooks 修復、MCP 永久允許控管與 Opus 5 effort", body:"修正 Windows 上 plugin hooks 靜默不執行；新增 mcpPersistentAlwaysAllowEnabled，管理員可停用 MCP 工具的永久 Always allow、保留單次工作階段核准；model picker 為 Claude Opus 5 加入五段式 effort 選擇（Opus 5 一律開啟 extended thinking）。"},
     {v:"1.24012.0", date:"2026-07-21", cat:"Permissions/Security", sev:"critical", title:"worktree 誤動主 repo 修復、iOS Simulator 支援與大量企業設定鍵", body:"修復 Code session 動到錯誤檔案：背景 worktree 清理只刪一半時會切換或重設主 repo checkout，新 session 也可能複製原資料夾的未提交檔案。新增 iOS Simulator 支援（可建置、啟動模擬器並驗證結果）、Pause Project、composer 截圖標註；Cowork 加 /usage 與 /cost 卡片。企業端新增 deploymentDisplayName、enduserAttribution、userContentRendererUrl 與 managed MCP 的 oauth.authorizationUrl/tokenUrl，並修正 managed MCP tool policy 例外反被拒絕的問題。"},
     {v:"1.22209.3", date:"2026-07-19", cat:"Performance/Bug Fix", sev:"medium", title:"企業 TLS 檢查代理下每輪 Socket is closed 修復", body:"修復 Windows 在會檢查加密連線的公司代理環境下，session 每一輪都以「Socket is closed」失敗；內建 Claude Code CLI 升到 2.1.215，中斷的回應改用新連線重試。"},
@@ -260,6 +262,15 @@
   const INSP_CD = [];
 
   const INSP_CC = [
+    {ico:"eye", color:"blue", feat:"VSCode Focus View — 摺疊工具雜訊、只留逐輪摘要", ver:"v2.1.221 · 2026-08-04",
+     desc:"VSCode 擴充新增 Focus view：把工具呼叫活動摺疊到可展開的逐輪摘要後方，只保留即時執行中工具指示器，長時間背景任務畫面不再被大量工具呼叫洗版。",
+     scen:"<b>場景：</b>Backend 工程師跑長時間重構或大量檔案搜尋時按 <code>Ctrl+Alt+F</code> 切換 Focus view，只看逐輪重點與目前執行中的工具；QA 追蹤自動化修復進度時也能用同一視角快速掌握狀態而不被 Read/Grep/Edit 呼叫洗版。",
+     roles:["backend","frontend","qa"],
+     d:[
+       {h:"為什麼有用", p:"背景 session 或大型重構常在單輪內觸發數十次工具呼叫，逐一展開閱讀會拖慢對進度的掌握；Focus view 把雜訊摺疊，只留下逐輪摘要與目前執行中的工具，讓人專注在「做到哪裡」而非「做了哪些呼叫」。"},
+       {h:"設定 / 操作", c:"bash", b:"# VSCode 擴充內：\n# 按 Ctrl+Alt+F 切換 Focus view\n# 或開啟命令選擇區輸入：\n# \"Claude Code: Toggle Focus view\""},
+       {h:"小技巧", l:["適合搭配 Ctrl+T 釘選的背景 session 長跑時使用，減少視覺負擔", "摺疊狀態下仍可展開單一輪次查看完整工具活動，不影響除錯"]}
+     ], auto: true},
     {ico:"bolt", color:"purple", feat:"/ultrareview — 平行多 Agent Code Review", ver:"v2.1.111 · 2026-04-16",
      desc:"非互動式雲端平行多 agent review，可一次跑安全、效能、可讀性、Style 多視角。",
      scen:"<b>iOS 場景：</b>每次 PR 進 develop 前自動跑 <code>claude ultrareview</code>，產出 Swift Concurrency、SwiftUI 效能、銀行交易資安、團隊 Style 四份報告。RD 不再瓶頸於 Senior Reviewer。",

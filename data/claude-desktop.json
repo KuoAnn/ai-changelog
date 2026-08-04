@@ -1,8 +1,17 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-08-04 05:14 (Taipei)",
+  "lastRefreshed": "2026-08-04 17:16 (Taipei)",
   "entries": [
+    {
+      "version": "1.24012.11",
+      "date": "2026-08-03",
+      "severity": "low",
+      "notify": false,
+      "title": "MCP 連線時序與 Microsoft 365 連接器修復",
+      "summary": "修正伺服器仍在連線中時啟動的 session 缺少 connector 工具，需另開新對話才會取得；修正 Microsoft 365 連接器首次登入後要重啟 App 才會出現。General、Code、Cowork 皆無使用者面向變更。",
+      "categories": ["Plugins/MCP", "Performance/Bug Fix"]
+    },
     {
       "version": "1.24012.9",
       "date": "2026-07-24",
