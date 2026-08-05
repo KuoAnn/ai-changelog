@@ -27,7 +27,7 @@ MAGI 三賢者依 EVA 設定固定三節點，所以節點語意是**產品線�
 1. **資料新鮮度** — 10 日內以新鮮度（每日遞減 10%）加上近 14 日更新動能（每筆額外更新 +6%、最高 +60%）計算，因此密集更新時可超過 `100%`；超過 10 日臨界值後直接跌為負數（每逾期一日 -12%，下限 -120%）並亮 **精神汙染**。
 2. **抓取健康度** — 讀 `data/changelog-data.js` 的 `REFRESH_RUN`（每次排程重寫）。資料再新，只要**最近一次排程沒抓到該來源**就一樣壓成負值：`transient`（連線失敗／timeout／API 額度耗盡，可重試）**-24%** 亮 **鏈路中斷**；`blocked`（Cloudflare／環境網路政策阻擋，非暫時性）**-48%** 亮 **鏈路封鎖**。兩個罰則都用「等同資料逾期 N 日」換算，與新鮮度共用同一把尺。
 
-任一軸為負就把 HUD 的 `PATTERN` 由 `BLUE` 轉 `RED`。警報列永遠保留：有異常時列出失聯機體與失敗診斷（`ALERT LV.1` 資料逾期或 ≥2 台鏈路異常／`LV.2` 單台非暫時性阻擋／`LV.3` 單台可重試失敗）；全部正常時才顯示清楚標示「演習／無實質意義」的裝飾性警告（`LV.0`）。
+任一軸為負就把 HUD 的 `PATTERN` 由 `BLUE` 轉 `RED`。警報列永遠保留：有異常時列出失聯機體與失敗診斷（`ALERT LV.1` 資料逾期或 ≥2 台鏈路異常／`LV.2` 單台非暫時性阻擋／`LV.3` 單台可重試失敗）；全部正常時顯示清楚標示為「演習」的單台資料鏈路中斷情境（`LV.0`），供確認來源連線、最近同步時間與重試流程。
 
 > Claude Code CLI 與 Claude Desktop 是**兩個不同產品**，資料刻意分開存放，Desktop 版本不會混入 `DATA_CC`。
 > 另外 **Claude Desktop ≠ Claude Apps**：`Claude Apps` 是 Anthropic 對 web／desktop／iOS／Android 的傘狀稱呼、**沒有版本號**（[Claude Apps Release Notes](https://support.claude.com/en/articles/12138966-release-notes) 依日期分段）；本站追蹤的是可版本化的 **Desktop build**（[Cowork changelog](https://claude.com/docs/cowork/changelog)，自述 `Release notes for Claude Desktop`）。同一天兩邊內容不同，不是同一份資料。

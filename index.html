@@ -263,7 +263,7 @@
     padding: 4px 9px; font: 600 10px var(--mono); letter-spacing: 0.1em; cursor: pointer;
   }
   .filter-reset:hover, .filter-reset:focus-visible { border-color: var(--red); color: var(--red); background: rgba(240,24,24,.08); }
-  /* 每列一種 filter 類型：Agent（含全站搜尋）／Role */
+  /* 每列一種 filter 類型：搜尋／Agent／Role */
   .dock-row {
     display: flex; align-items: center; gap: 10px 10px; min-width: 0;
     flex-wrap: wrap;            /* 寬度不足時換行，不用橫向捲軸 */
@@ -299,8 +299,8 @@
     overflow: visible; min-width: 0;
     flex: 1 1 auto;
   }
-  /* 搜尋框可壓縮，空間不足時整條掉到下一行 */
-  .dock-row .search { flex: 1 1 230px; min-width: 170px; max-width: 320px; margin-left: auto; }
+  /* 搜尋框獨立置頂並靠左；窄螢幕時仍可縮放到容器寬度 */
+  .dock-row--search .search { flex: 0 1 320px; min-width: 170px; max-width: 100%; margin-left: 0; }
   .role-chip, .agent-chip {
     font-family: var(--mono);
     font-size: 14px;
@@ -336,7 +336,6 @@
     box-shadow: 0 0 14px -4px var(--ag-soft, var(--accent-glow));
   }
   .agent-chip.active .cnt { color: inherit; opacity: 0.8; }
-  .agent-chip.active::after { content: "✓"; font-size: 11px; color: inherit; opacity: .9; }
   .agent-chip:not(.active) { opacity: .72; }
   .agent-chip:not(.active):hover, .agent-chip:focus-visible { opacity: 1; }
 
@@ -1045,7 +1044,7 @@
     .dock-row { flex-wrap: wrap; }
     .filter-dock .chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 3px; }
     .filter-summary { width: 100%; justify-content: space-between; margin-left: 0; }
-    .dock-row .search { flex: 1 1 100%; width: 100%; order: 3; }
+    .dock-row--search .search { flex: 1 1 100%; width: 100%; }
     .filter-bar { flex-direction: column; align-items: stretch; }
     .modal-backdrop { padding: 24px 12px; }
     .modal-head { padding: 18px 18px 14px; }
@@ -1274,7 +1273,13 @@
   .sync-legend b { color: var(--o-2); font-weight: 600; }
   .sync-legend .negative { color: var(--red); }
   .sync-legend .negative b { color: inherit; }
-  .deck-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 16px; }
+  .deck-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    padding: 0 16px;
+    overflow-x: auto;
+  }
 
   /* 節點卡 */
   .node {
@@ -1282,6 +1287,7 @@
     background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
     padding: 11px 12px 12px;
     position: relative;
+    min-width: 0;
   }
   .node-top {
     display: flex; align-items: center; justify-content: space-between;
@@ -1481,8 +1487,7 @@
   .chip::after, .agent-chip::after, .role-chip::after, .load-more::after, .expand-btn::after,
   .filter-reset::after, .clear-filter::after, .perf-toggle::after, .void-release::after,
   .code-block .lang-bar .copy-btn::after,
-  .modal-close::after, .alert-close::after,
-  .agent-chip.active::before {   /* active chip 的 ::after 已被 ✓ 佔用，掃描線走 ::before */
+  .modal-close::after, .alert-close::after {
     content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1;
     background: repeating-linear-gradient(0deg, rgba(0,0,0,0.30) 0 1px, transparent 1px 3px);
   }
@@ -1750,13 +1755,15 @@
     </div>
   </section>
 
-  <!-- Filter dock：agent（全站，含全站搜尋）＋ role（影響應用靈感），捲動時懸浮置頂 -->
+  <!-- Filter dock：全站搜尋＋ agent（全站）＋ role（影響應用靈感），捲動時懸浮置頂 -->
   <div class="filter-dock" id="filterDock">
+    <div class="dock-row dock-row--search">
+      <input class="search" id="searchBox" type="search" aria-label="全站搜尋：版本時間軸與應用靈感" placeholder="搜尋版本、靈感卡、指令、model、env var…" />
+      <div class="filter-summary"><span id="agentFilterStatus" aria-live="polite">ALL UNITS</span><button class="filter-reset" id="resetAllFilters" type="button">RESET ALL</button></div>
+    </div>
     <div class="dock-row dock-row--agent">
       <span class="dock-label" title="Agent 篩選（影響時間軸與靈感卡）">Agent</span>
       <div class="chips" id="agentChips"></div>
-      <input class="search" id="searchBox" type="search" aria-label="全站搜尋：版本時間軸與應用靈感" placeholder="搜尋版本、靈感卡、指令、model、env var…" />
-      <div class="filter-summary"><span id="agentFilterStatus" aria-live="polite">ALL UNITS</span><button class="filter-reset" id="resetAllFilters" type="button">RESET ALL</button></div>
     </div>
     <div class="dock-row dock-row--role">
       <span class="dock-label" title="角色篩選（影響應用靈感）">Role</span>
@@ -2385,9 +2392,7 @@
     if (showCount < total){
       moreRow.style.display = "flex";
       const btn = document.getElementById("loadMoreBtn");
-      const remain = total - showCount;
-      const next = Math.min(PAGE_SIZE, remain);
-      btn.innerHTML = `顯示更多版本（再 ${next} 筆，共剩 ${remain}）<span class="arrow">↓</span>`;
+      btn.innerHTML = `顯示更多版本 ${showCount}/${total}<span class="arrow">↓</span>`;
     } else {
       moreRow.style.display = "none";
     }
@@ -2499,9 +2504,7 @@
 
     if (showCount < total){
       moreRow.style.display = "flex";
-      const remain = total - showCount;
-      const next = Math.min(INSP_PAGE_SIZE, remain);
-      document.getElementById("inspMoreBtn").innerHTML = `顯示更多靈感卡（再 ${next} 張，共剩 ${remain}）<span class="arrow">↓</span>`;
+      document.getElementById("inspMoreBtn").innerHTML = `顯示更多靈感卡 ${showCount}/${total}<span class="arrow">↓</span>`;
     } else {
       moreRow.style.display = "none";
     }
@@ -2860,7 +2863,7 @@
     renderWave();
 
     /* --- 警報：真異常（資料逾期／本次抓取失敗）顯示 LIVE；
-           兩者皆無時才回到明確標示「無實質意義」的演習警告。 --- */
+           兩者皆無時顯示明確標示的資料鏈路中斷演習。 --- */
     const alertBox = $el("alertBar"), msg = $el("alertMsg"), lv = $el("alertLv");
     const alertTitle = $el("alertTitle"), alertMode = $el("alertMode"), alertSum = $el("alertSum");
     if (alertBox && msg) {
@@ -2889,13 +2892,16 @@
         /* LV.1 資料逾期或 ≥2 台鏈路異常／LV.2 單台非暫時性阻擋／LV.3 單台可重試失敗 */
         if (lv) lv.textContent = (stale.length || linkDown.length >= 2) ? "1" : (blocked.length ? "2" : "3");
       } else {
-        if (alertTitle) alertTitle.textContent = "WARNING DISPLAY TEST · ALL SYSTEMS NOMINAL";
-        if (alertMode) alertMode.textContent = "演習 / 無實質意義";
-        if (alertSum) alertSum.textContent = "全機同步正常 " + AGENTS.length + " / " + AGENTS.length + " 台";
+        const drillAgent = AGENTS[0];
+        if (alertTitle) alertTitle.textContent = "DRILL · PATTERN RED · DATA LINK LOST";
+        if (alertMode) alertMode.textContent = "演習";
+        if (alertSum) alertSum.textContent = "模擬 1 / " + AGENTS.length + " 台資料鏈路中斷";
         msg.innerHTML =
           '<li>' +
-            '<span class="alert-tag">裝飾性警告</span>' +
-            '<span class="alert-why">目前沒有機體精神污染；此訊息只用於維持警告介面與監視氣氛，不代表真實異常。</span>' +
+            '<span class="alert-tag">演習情境</span>' +
+            '<span class="alert-pct">-24%</span>' +
+            '<span class="alert-unit">' + escapeHtml(drillAgent.eva + " " + drillAgent.label) + '</span>' +
+            '<span class="alert-why">模擬資料鏈路中斷；請確認來源連線、最近同步時間與重試流程。</span>' +
           '</li>';
         if (lv) lv.textContent = "0";
       }
