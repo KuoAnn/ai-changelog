@@ -1379,7 +1379,7 @@
   .wave polygon { fill: rgba(255,194,74,0.13); }
   .wave .base { stroke: rgba(255,255,255,0.16); stroke-width: 1; vector-effect: non-scaling-stroke; }
 
-  /* 波形圖示波器化：靜態掃描線 + 由左掃到右的掃描游標 */
+  /* 波形圖示波器化：掃描線前後帶淡入／淡出的磷光包絡，經過時逐步提亮資料區域 */
   .wave-scope { position: relative; overflow: hidden; margin-top: 6px; }
   .wave-scope .wave { margin-top: 0; }
   .wave-scope::before {
@@ -1387,12 +1387,28 @@
     background: repeating-linear-gradient(0deg, rgba(0,0,0,0.30) 0 1px, transparent 1px 3px);
   }
   .wave-scope::after {
-    content: ""; position: absolute; top: 0; bottom: 0; left: -72px; width: 72px;
+    content: ""; position: absolute; top: 0; bottom: 0; left: -64px; width: 64px;
     z-index: 3; pointer-events: none;
-    background: linear-gradient(90deg, rgba(255,194,74,0) 0, rgba(255,194,74,0.10) 62%, rgba(255,194,74,0.42) 94%, rgba(255,241,199,0.85) 100%);
-    animation: waveSweep 4.2s linear infinite;
+    background: linear-gradient(90deg,
+      rgba(255,194,74,0) 0%,
+      rgba(255,176,0,.06) 18%,
+      rgba(255,194,74,.18) 36%,
+      rgba(255,224,179,.48) 47%,
+      rgba(255,248,224,.96) 50%,
+      rgba(255,224,179,.48) 53%,
+      rgba(255,194,74,.18) 64%,
+      rgba(255,176,0,.06) 82%,
+      rgba(255,194,74,0) 100%);
+    filter: drop-shadow(0 0 5px rgba(255,194,74,.20));
+    mix-blend-mode: screen;
+    animation: waveSweep 3.6s linear infinite;
   }
-  @keyframes waveSweep { from { left: -72px; } to { left: 100%; } }
+  @keyframes waveSweep {
+    0%   { left: -64px; opacity: 0; }
+    8%   { opacity: 1; }
+    92%  { opacity: 1; }
+    100% { left: 100%; opacity: 0; }
+  }
 
   /* 雷達／掃描：四個光點對應四個資料來源 */
   .radar {
@@ -1441,6 +1457,7 @@
   }
   /* 關閉動態時掃描線不轉，光點必須改回常駐，否則永遠是空盤 */
   @media (prefers-reduced-motion: reduce) {
+    .wave-scope::after { display: none; }
     .radar-blip { opacity: 1; box-shadow: 0 0 7px var(--o-1); }
     .radar-blip.contaminated { box-shadow: 0 0 9px var(--red); }
   }
