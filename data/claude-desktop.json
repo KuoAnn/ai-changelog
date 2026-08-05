@@ -1,8 +1,17 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-08-05 05:12 (Taipei)",
+  "lastRefreshed": "2026-08-05 17:16 (Taipei)",
   "entries": [
+    {
+      "version": "1.25927.0",
+      "date": "2026-08-04",
+      "severity": "high",
+      "notify": true,
+      "title": "內建 GitHub Connector、Chat Projects 與巢狀 Bootstrap Schema 破壞性變更",
+      "summary": "新增 managedMcpServers 內建 GitHub connector，可指向 GitHub Enterprise Server、選擇載入的 toolset 並提供唯讀模式；3P 新增 Chat Projects 整理對話（Cowork tab 關閉時仍可用）、skillCreationEnabled 控管使用者自建與上傳 skill、trustBootstrapLocalExec 讓管理員預先同意會執行本機指令的 bootstrap 設定，並支援把 Windows 對應網路磁碟機掛載進 Cowork sandbox。破壞性變更：巢狀 v2 bootstrap 回應中 deploymentDisplayName／deploymentDisplaySubtitle 移到 appearance 下，endUserAttribution／userContentRendererUrl 移到 workspace 下（扁平 MDM 鍵名不受影響）。Code 新增電腦休眠中斷 session 後自動恢復、瀏覽器分頁截圖標註；Cowork 修復排程任務 cron 用 7 代表週日永不觸發、卡住的 run 需重啟 App 才會停止等問題；General 新增口述／語音模式切換鈕，並修復多語系下 macOS Touch ID 崩潰與更新中斷進行中任務。",
+      "categories": ["Plugins/MCP", "Settings/Config", "Permissions/Security"]
+    },
     {
       "version": "1.24012.11",
       "date": "2026-08-03",
