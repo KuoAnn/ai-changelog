@@ -23,7 +23,7 @@
      =========================== */
 
   const REFRESH_RUN = {
-    ranAt: "2026-08-05 17:16 (Taipei)",
+    ranAt: "2026-08-06 17:16 (Taipei)",
     sources: {
       cc: { status: "ok" },
       cd: { status: "ok" },
@@ -191,6 +191,7 @@
   ];
 
   const DATA_CI = [
+    {v:"0.146.1", date:"2026-08-05", cat:"Permissions/Security", title:"CLI 0.146.1：cyber-capable 模型自動審查更保守預設值", body:"<b>調整自動審查（auto-review）預設值</b>：針對具備網路安全能力（cyber-capable）的模型套用更保守的自動審查預設設定；<b>終端機介面顯示更清楚的權限異動說明</b>，指令因權限受限時可清楚了解變更原因。純安全性 backport patch 版本（#37057）。"},
     {v:"0.146.0", date:"2026-07-29", cat:"Plugins/MCP", title:"CLI 0.146.0：命名 Session + Agent Plugins + 執行緒分叉 + 遠端 Code Mode", body:"<b>命名 Session 與釘選</b>：<code>/new</code> 或 <code>/clear</code> 可為 session 命名，支援釘選重要 thread 並在多個側邊對話間切換；<b>Agent Plugins manifest</b>：支援 Workspace plugin 發布，並新增 Amazon Bedrock 與 Claude Code 的 Plugin marketplace；<b>執行緒分叉含分頁歷史</b>：可從任意歷史點分叉 thread，包含不出現在列表的臨時分叉；<b>遠端 Code Mode</b>：app-server 可透過 WebSocket 連接遠端 Code Mode 主機；<b>Executor 技能探索</b>：可探索 executor 提供的技能並安全讀取其關聯資源（含明確選取的技能）；<b>獨立網路搜尋</b>：支援相容自訂 model provider 的 standalone web search。Bug 修復：全面修正 proxy 支援（認證、plugin 下載、MCP 授權、遠端執行、WebSocket、重導、LM Studio）；MCP 連線在認證或設定變更後自動重連（不重啟正常伺服器）；終端機響應性改善（非阻塞中斷、鍵盤處理、窄版面、超連結、mention 刷新）；Windows 導覽鍵修復、sandbox process tree 可靠終止、代理設定在安全審查期間保留；技能目錄在 context 預算緊張時保留更多可用技能並顯示截斷警告；macOS helper 執行檔在打包前簽署並公證；新增企業方案識別與管理員控制 in-app 更新。"},
     {v:"0.145.0", date:"2026-07-21", cat:"UI/UX", title:"CLI 0.145.0：分頁式對話歷史 + /import 遷移設定 + Bedrock 登入 + 音訊輸入", body:"<b>實驗性分頁式對話歷史</b>：支援高效 resume、搜尋、持久化名稱、子 agent 支援與記憶功能；<b><code>/import</code> 擴充遷移能力</b>：可從 Cursor 與 Claude Code 遷移 MCP servers、plugins、sessions、commands 與專案記憶體；<b>Amazon Bedrock 實驗性登入</b>：支援自訂 endpoint 與認證，預設模型改為 GPT-5.6 Sol；<b>音訊輸入支援</b>：新增音訊輸入處理與工具輸出，支援 Realtime V3 串流對話；<b>Multi-Agent V2 穩定化</b>：可設定子 agent 模型、推理等級、並發數，還原角色並改善導覽；<b>終端機內聯視覺化連結</b>（安全可點擊）；改善：增量 Markdown 渲染與快取提升終端機響應速度；修復：MCP 啟動超時、Windows 執行與 sandbox 可靠性；更新 ripgrep 至 15.2.0；並行技能／插件探索降低啟動開銷。"},
     {v:"0.144.6", date:"2026-07-18", cat:"Models/Inference", title:"CLI 0.144.6：GPT-5.6 Sol/Terra/Luna 模型 metadata 修正", body:"<b>更新 GPT-5.6 Sol、Terra、Luna 的內建指令</b>：修正三款模型的 context window 至正確的 <b>272,000 tokens</b>；同步更新對應的模型 metadata 與 prompt 內容。純模型資訊修正版本，無其他使用者面向變更。"},
