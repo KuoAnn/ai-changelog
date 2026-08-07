@@ -23,7 +23,7 @@
      =========================== */
 
   const REFRESH_RUN = {
-    ranAt: "2026-08-06 17:16 (Taipei)",
+    ranAt: "2026-08-07 17:16 (Taipei)",
     sources: {
       cc: { status: "ok" },
       cd: { status: "ok" },
@@ -235,6 +235,7 @@
 
   /* CLAUDE-DESKTOP-DATA:START — 由 scripts/build-claude-desktop.mjs 從 data/claude-desktop.json 產生，勿手改 */
   const DATA_CD = [
+    {v:"1.26832.0", date:"2026-08-06", cat:"Settings/Config", sev:"high", title:"Chat／Cowork 統一首頁、Code Session 視窗還原與唯讀工作資料夾模式", body:"Chat 與 Cowork 合併為統一首頁（Home 並列顯示對話與任務，「New」可一鍵開始聊天或任務）；Code session 視窗還原：關閉 App 時開啟的 Code session 視窗於下次啟動時自動重開。企業／3P 設定：allowedWorkspaceFolders 新增 mode: \"ro\" 唯讀存取（Cowork 寫入會被導向 session outputs 資料夾，Code tab 目前僅涵蓋檔案工具，Bash／SSH 尚未強制）；coworkEgressAllowedHosts 支援 <code>:port<\/code> 限定連接埠；新增 updateViaUpdatesHost，可改用僅提供更新 feed、不含模型 API 的 releases.claude.com（適合封鎖 api.anthropic.com 的網路，安裝檔仍來自 downloads.claude.ai）；trustBootstrapLocalExec 更名為 trustBootstrapDelivery（涵蓋登入來源與 helper／connector 信任，舊名稱仍相容）；一次性 bootstrap 同意提示新增 Azure AI Foundry、Bedrock IAM Identity Center、Vertex OAuth 與 gateway OIDC 登入目標設定，可用 trustBootstrapDelivery 預先為全員同意。修復：自訂 gateway 端點閒置逾時誤判（忽略仍在送達的 keep-alive）；管理員關閉非必要遙測後 gateway／API key 部署仍傳送流量至 api.anthropic.com；裝置上過期的 Claude Code managed-settings.json 覆蓋部署提供的模型選項；bootstrap-config-v2.schema.json 文件描述扁平鍵名，與 App 實際匯出的巢狀格式不符；Project 內開新對話未套用 Project 的 Instructions 與 Context 連結。"},
     {v:"1.25927.0", date:"2026-08-04", cat:"Plugins/MCP", sev:"high", title:"內建 GitHub Connector、Chat Projects 與巢狀 Bootstrap Schema 破壞性變更", body:"新增 managedMcpServers 內建 GitHub connector，可指向 GitHub Enterprise Server、選擇載入的 toolset 並提供唯讀模式；3P 新增 Chat Projects 整理對話（Cowork tab 關閉時仍可用）、skillCreationEnabled 控管使用者自建與上傳 skill、trustBootstrapLocalExec 讓管理員預先同意會執行本機指令的 bootstrap 設定，並支援把 Windows 對應網路磁碟機掛載進 Cowork sandbox。破壞性變更：巢狀 v2 bootstrap 回應中 deploymentDisplayName／deploymentDisplaySubtitle 移到 appearance 下，endUserAttribution／userContentRendererUrl 移到 workspace 下（扁平 MDM 鍵名不受影響）。Code 新增電腦休眠中斷 session 後自動恢復、瀏覽器分頁截圖標註；Cowork 修復排程任務 cron 用 7 代表週日永不觸發、卡住的 run 需重啟 App 才會停止等問題；General 新增口述／語音模式切換鈕，並修復多語系下 macOS Touch ID 崩潰與更新中斷進行中任務。"},
     {v:"1.24012.11", date:"2026-08-03", cat:"Plugins/MCP", sev:"low", title:"MCP 連線時序與 Microsoft 365 連接器修復", body:"修正伺服器仍在連線中時啟動的 session 缺少 connector 工具，需另開新對話才會取得；修正 Microsoft 365 連接器首次登入後要重啟 App 才會出現。General、Code、Cowork 皆無使用者面向變更。"},
     {v:"1.24012.9", date:"2026-07-24", cat:"Hooks", sev:"high", title:"Windows Plugin Hooks 修復、MCP 永久允許控管與 Opus 5 effort", body:"修正 Windows 上 plugin hooks 靜默不執行；新增 mcpPersistentAlwaysAllowEnabled，管理員可停用 MCP 工具的永久 Always allow、保留單次工作階段核准；model picker 為 Claude Opus 5 加入五段式 effort 選擇（Opus 5 一律開啟 extended thinking）。"},
