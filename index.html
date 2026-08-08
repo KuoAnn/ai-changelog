@@ -692,6 +692,7 @@
   .entry .e-sum {
     color: var(--ink-soft); font-size: 15px; line-height: 1.62;
     padding-top: 2px;
+    min-width: 0;                 /* grid 子項要能收縮，否則長標題撐破欄寬 */
   }
   .entry .e-sum .sum-text b { color: var(--ink); font-weight: 600; }
   .entry .e-sum .sum-text code {
@@ -700,6 +701,32 @@
     border-radius: 4px; color: var(--accent);
     border: 1px solid var(--line);
   }
+  /* 摘要改成「每項一行」的清單：長句用 ellipsis 截在自己那行，不再把後面的項目擠掉 */
+  .entry .e-sum .sum-title {
+    color: var(--ink); font-weight: 600; font-size: 15px;
+    line-height: 1.5; margin-bottom: 5px;
+  }
+  .entry .e-sum .sum-list { list-style: none; margin: 0; padding: 0; }
+  .entry .e-sum .sum-list li {
+    position: relative; padding-left: 15px;
+    font-size: 14.5px; line-height: 1.55;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .entry .e-sum .sum-list li + li { margin-top: 2px; }
+  .entry .e-sum .sum-list li::before {
+    content: "▸"; position: absolute; left: 0;
+    color: var(--ag, var(--accent)); opacity: 0.8;
+  }
+  .entry .e-sum .sum-list li b { color: var(--ink); font-weight: 600; }
+  .entry .e-sum .sum-list li code {
+    font-family: var(--mono); font-size: 13.5px;
+    background: var(--surface-2); padding: 1px 5px;
+    color: var(--accent); border: 1px solid var(--line);
+  }
+  .entry .e-sum .sum-list li.is-group { color: var(--ink-muted); }
+  .entry .e-sum .sum-list li.is-group .n { font-family: var(--mono); font-size: 12px; color: var(--ag, var(--accent)); }
+  .entry .e-sum .sum-list li.is-rest { color: var(--ink-muted); font-family: var(--mono); font-size: 12.5px; }
+  .entry .e-sum .sum-list li.is-rest::before { content: "＋"; opacity: 0.6; }
   .expand-btn {
     width: 27px; height: 27px;
     display: grid; place-items: center;
@@ -733,6 +760,8 @@
   }
   .entry.expanded .entry-detail { display: block; animation: revealIn .22s ease both; }
   @keyframes revealIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  /* 明細是要拿來讀／複製的區域：游標是文字游標，點它不收合（見 renderTimeline 的 toggle 判斷） */
+  .entry-detail { cursor: text; user-select: text; -webkit-user-select: text; }
   .entry-detail b { color: var(--ink); font-weight: 600; }
   .entry-detail code {
     font-family: var(--mono); font-size: 13.5px;
@@ -741,6 +770,52 @@
     border: 1px solid var(--line);
   }
   .entry-detail .title-line { color: var(--ink); font-weight: 600; margin-bottom: 4px; font-size: 15px; }
+  .entry-detail .d-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 12px; margin-bottom: 9px;
+  }
+  .entry-detail .d-head .title-line { margin-bottom: 0; }
+  .entry-detail .d-copy {
+    flex-shrink: 0; cursor: pointer;
+    font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.06em;
+    padding: 3px 9px;
+    background: var(--surface-2); border: 1px solid var(--line);
+    color: var(--ink-muted);
+    transition: color .15s, border-color .15s, background .15s;
+  }
+  .entry-detail .d-copy:hover {
+    color: var(--ag, var(--accent));
+    border-color: var(--ag-line, var(--accent-dim));
+    background: var(--ag-soft, var(--accent-soft));
+  }
+  /* 明細清單：一項一列，標題在上、內容在下 */
+  .entry-detail .d-list { list-style: none; margin: 0; padding: 0; }
+  .entry-detail .d-it { padding: 6px 0; }
+  .entry-detail .d-it + .d-it { border-top: 1px dotted var(--line); }
+  .entry-detail .d-t {
+    color: var(--ink); font-weight: 600; font-size: 14px; line-height: 1.5;
+    position: relative; padding-left: 13px;
+    min-width: 0; overflow-wrap: anywhere;
+  }
+  /* 標記用絕對定位做垂懸縮排，換行的第二行才不會凸到標記左邊 */
+  .entry-detail .d-t::before,
+  .entry-detail .d-it.no-title .d-b::before {
+    content: "▹"; position: absolute; left: 0;
+    color: var(--ag, var(--accent)); font-weight: 400;
+  }
+  .entry-detail .d-t code { white-space: normal; overflow-wrap: anywhere; }
+  /* 內容縮排對齊標題文字（跟標記切齊會讓層級看不出來） */
+  .entry-detail .d-b {
+    color: var(--ink-soft); line-height: 1.62;
+    position: relative; padding-left: 13px; margin-top: 1px;
+  }
+  .entry-detail .d-grp { margin-top: 10px; padding-top: 9px; border-top: 1px dashed var(--line); }
+  .entry-detail .d-grp-h {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em;
+    color: var(--ink-muted); margin-bottom: 4px;
+  }
+  .entry-detail .d-grp-h .n { color: var(--ag, var(--accent)); }
+  .entry-detail .d-grp .d-it { padding: 4px 0; }
 
   /* ===================== CATEGORY COLORS =====================
      單一色相、五段亮度分層（亮 → 暗），不再使用彩虹配色。 */
@@ -1060,8 +1135,9 @@
   /* ---------- 全域直角化：清掉殘留圓角 ---------- */
   .agent-tag, .role-chip, .agent-chip, .dock-label, .refresh-badge,
   .auto-badge, .cat-bar, .chip, .load-more, .expand-btn, .cat-badge,
-  .insp-role-tag, .clear-filter, .search, .modal-close,
+  .insp-role-tag, .clear-filter, .search, .modal-close, .entry-detail .d-copy,
   .insp p code, .insp .scenario code, .entry .e-sum .sum-text code,
+  .entry .e-sum .sum-list code,
   .entry-detail code, .col li code, .modal-body .lead code,
   .modal-section p code, .modal-section ul li code { border-radius: 0; }
 
@@ -2013,27 +2089,136 @@
   function stripHtml(s){ const t = document.createElement("div"); t.innerHTML = s; return t.textContent || ""; }
   function entriesForAgent(){ return state.agent === "all" ? ENTRIES : ENTRIES.filter(e => e.agent === state.agent); }
 
-  // 摘要：title 優先；否則取 body 第一句（括號內的句號／分號不切）
-  function firstSentence(text){
-    let depth = 0;
-    for (let i = 0; i < text.length; i++){
-      const ch = text[i];
-      if (ch === "（" || ch === "(") depth++;
-      else if (ch === "）" || ch === ")") depth = Math.max(0, depth - 1);
-      else if ((ch === "。" || ch === "；" || ch === ";") && depth === 0) return text.slice(0, i);
+  /* ===========================
+     BODY 拆項：把一段長敘述切成「標題／內容」條列
+     -----------------------------------------------------------------
+     body 是人工撰寫的 HTML（只會出現 <b> 與 <code>），格式慣例：
+       <b>標題</b>：內容；<b>標題</b>：內容。修復：內容；內容；內容。
+     - 「；」「。」是項目分隔；「。」同時代表一個群組結束。
+     - 「：」之前是該項標題（可能整段包在 <b> 裡）。
+     - 群組首項的標題若是「修復／其他／變更…」這種通用字眼，視為群組標
+       題，之後同群組但自己沒標題的項目掛在它底下（而不是各自變孤兒）。
+     切割一律略過標籤內部與括號內部，避免把 <code>a；b</code> 或
+     （含 A；B）切開造成 HTML 破損。
+     =========================== */
+  const GROUP_LABEL_RE = /^(修復|修正|已修復|其他|改進|改善|優化|強化|變更|移除|棄用|效能|文件|安全|受管設定|企業|已知問題|Bug|Fix|Improve|Other)/i;
+  const OPEN_CH = "（(「《[", CLOSE_CH = "）)」》]";
+
+  function splitTop(html, seps){
+    const out = [];
+    let buf = "", inTag = false, el = 0, paren = 0;
+    for (let i = 0; i < html.length; i++){
+      const ch = html[i];
+      if (!inTag && ch === "<"){ inTag = true; if (html[i + 1] === "/") el--; else el++; buf += ch; continue; }
+      if (inTag){ if (ch === ">") inTag = false; buf += ch; continue; }
+      if (OPEN_CH.includes(ch)) paren++;
+      else if (CLOSE_CH.includes(ch)) paren = Math.max(0, paren - 1);
+      if (el <= 0 && paren === 0 && seps.includes(ch)){ out.push({ text: buf, sep: ch }); buf = ""; continue; }
+      buf += ch;
     }
-    return text;
+    if (buf) out.push({ text: buf, sep: "" });
+    return out;
   }
-  function summarize(d){
-    if (d.title){
-      const bodyText = stripHtml(d.body).replace(/\s+/g, " ").trim();
-      return { html: d.title, hasMore: bodyText.length > 0 };
+  function plainOf(html){ return stripHtml(html).replace(/\s+/g, " ").trim(); }
+
+  function parseBodyItems(body){
+    if (!body) return [];
+    const segs = splitTop(body, "；。").filter(s => plainOf(s.text));
+    const items = [];
+    let group = "", atGroupStart = true;
+    segs.forEach(s => {
+      const parts = splitTop(s.text, "：");
+      let label = "", text = s.text.trim();
+      if (parts.length > 1 && plainOf(parts[0].text)){
+        label = parts[0].text.trim();
+        text = s.text.slice(parts[0].text.length + 1).trim();
+      }
+      const lp = plainOf(label);
+      if (atGroupStart){
+        group = (lp && lp.length <= 8 && !/<code/i.test(label) && GROUP_LABEL_RE.test(lp)) ? lp : "";
+        if (group) label = "";
+      }
+      items.push({ group, label, text });
+      atGroupStart = s.sep === "。";
+    });
+    return items;
+  }
+
+  // 摘要清單：一般項目各一行；同群組的項目收成一行「群組 ×N」
+  function summaryLines(items){
+    const lines = [];
+    let i = 0;
+    while (i < items.length){
+      if (items[i].group){
+        const name = items[i].group;
+        let n = 0;
+        while (i < items.length && items[i].group === name){ n++; i++; }
+        lines.push({ kind: "group", html: escapeHtml(name), n });
+      } else {
+        lines.push({ kind: "item", html: items[i].label || items[i].text });
+        i++;
+      }
     }
-    const text = stripHtml(d.body).replace(/\s+/g, " ").trim();
-    let cut = firstSentence(text);
-    let truncated = cut.length < text.length;
-    if (cut.length > 96){ cut = cut.slice(0, 94); truncated = true; }
-    return { html: escapeHtml(cut) + (truncated ? "…" : ""), hasMore: truncated };
+    return lines;
+  }
+
+  function summarize(d){
+    const items = parseBodyItems(d.body);
+    const lines = summaryLines(items);
+    const cap = d.title ? 4 : 6;
+    const shown = lines.slice(0, cap);
+    const rest = lines.length - shown.length;
+    let html = d.title ? `<div class="sum-title">${d.title}</div>` : "";
+    if (shown.length){
+      html += `<ul class="sum-list">` + shown.map(l => l.kind === "group"
+        ? `<li class="is-group">${l.html}${l.n > 1 ? ` <span class="n">×${l.n}</span>` : ""}</li>`
+        : `<li>${l.html}</li>`).join("")
+        + (rest > 0 ? `<li class="is-rest">還有 ${rest} 項，展開看完整明細</li>` : "")
+        + `</ul>`;
+    }
+    if (!html) html = `<span class="sum-text">${escapeHtml(plainOf(d.body))}</span>`;
+    return { html, hasMore: items.length > 0, items };
+  }
+
+  // 明細：標題／內容分欄；同群組的項目收在群組標題底下
+  function detailHtml(d, items){
+    let out = "", grp = null;
+    const itemHtml = it => it.label
+      ? `<li class="d-it"><div class="d-t">${it.label}</div><div class="d-b">${it.text}</div></li>`
+      : `<li class="d-it no-title"><div class="d-b">${it.text}</div></li>`;
+    items.forEach((it, i) => {
+      if (it.group !== grp){
+        if (grp !== null) out += `</ul>` + (grp ? `</div>` : "");
+        grp = it.group;
+        if (grp){
+          let n = 0;
+          while (items[i + n] && items[i + n].group === grp) n++;
+          out += `<div class="d-grp"><div class="d-grp-h">${escapeHtml(grp)} <span class="n">${n}</span></div>`;
+        }
+        out += `<ul class="d-list">`;
+      }
+      out += itemHtml(it);
+    });
+    if (grp !== null) out += `</ul>` + (grp ? `</div>` : "");
+    return out;
+  }
+
+  // 複製用純文字：Markdown 條列，群組縮排一層
+  function detailPlainText(d, items){
+    const head = `${AGENT_MAP[d.agent].label} ${fmtVer(d.v)} · ${d.date} · ${catLabel(d.cat)}`;
+    const lines = [head];
+    if (d.title) lines.push(plainOf(d.title));
+    let grp = null;
+    items.forEach(it => {
+      if (it.group !== grp){
+        grp = it.group;
+        if (grp) lines.push(`- ${grp}`);
+      }
+      const pad = it.group ? "  " : "";
+      const t = plainOf(it.label), b = plainOf(it.text);
+      lines.push(`${pad}- ${t ? t + "：" + b : b}`);
+    });
+    return lines.join("\n");
   }
 
   /* ===========================
@@ -2366,7 +2551,13 @@
         const expandBtn = sum.hasMore
           ? `<button class="expand-btn" type="button" aria-expanded="false" aria-label="展開明細" title="展開明細">▾</button>` : "";
         const detail = sum.hasMore
-          ? `<div class="entry-detail">${d.title ? `<div class="title-line">${d.title}</div>` : ""}${d.body}</div>` : "";
+          ? `<div class="entry-detail">
+               <div class="d-head">
+                 <div class="title-line">${d.title || `${a.label} ${fmtVer(d.v)}`}</div>
+                 <button class="d-copy" type="button" title="複製本次更新明細">複製</button>
+               </div>
+               ${detailHtml(d, sum.items)}
+             </div>` : "";
         e.innerHTML = `
           <span class="e-date">${d.date}</span>
           <div class="e-id">
@@ -2374,7 +2565,7 @@
             <span class="cat-badge ${catClass(d.cat)}" title="${d.cat}">${catLabel(d.cat)}</span>
             ${d.sev ? `<span class="sev-badge sev-${d.sev}" title="重要性 ${d.sev}">${d.sev}</span>` : ""}
           </div>
-          <div class="e-sum"><span class="sum-text">${sum.html}</span></div>
+          <div class="e-sum">${sum.html}</div>
           ${expandBtn}
           ${detail}
         `;
@@ -2396,9 +2587,26 @@
         }
         if (sum.hasMore) {
           e.addEventListener("click", (ev) => {
-            if (ev.target === btn || ev.target.closest(".expand-btn")) return;
+            if (ev.target.closest(".expand-btn")) return;
+            // 明細要能選取／複製：點在明細裡不收合，拖曳選取後放開也不收合
+            if (ev.target.closest(".entry-detail")) return;
+            const sel = window.getSelection();
+            if (sel && !sel.isCollapsed && String(sel).trim()) return;
             toggleExpand();
           });
+          const copyBtn = e.querySelector(".d-copy");
+          if (copyBtn){
+            copyBtn.addEventListener("click", async (ev) => {
+              ev.stopPropagation();
+              try {
+                await navigator.clipboard.writeText(detailPlainText(d, sum.items));
+                copyBtn.textContent = "已複製 ✓";
+              } catch (err) {
+                copyBtn.textContent = "複製失敗";
+              }
+              setTimeout(() => copyBtn.textContent = "複製", 1400);
+            });
+          }
         }
         wrap.appendChild(e);
       });
