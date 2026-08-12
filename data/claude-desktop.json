@@ -1,8 +1,17 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-08-11 22:28 (Taipei)",
+  "lastRefreshed": "2026-08-12 10:13 (Taipei)",
   "entries": [
+    {
+      "version": "1.28929.0",
+      "date": "2026-08-11",
+      "severity": "high",
+      "notify": true,
+      "title": "歷史記錄匯入、Gateway 位址同意提示與 1M Context 預設偏好",
+      "summary": "新增歷史記錄匯入（claudeAiImport.enabled）：可將 Claude.ai 資料匯出、同機其他 Claude 安裝的 Cowork／Code／Chat session，或終端機 Claude Code CLI session 匯入 App（Settings > Import），claudeAiImport.bannerBehavior 控制新任務的匯入橫幅（off／detect／show）；新增 modelPrefer1mContext，未選過模型的使用者若部署將該模型標示為 1M-capable（含自動探索的模型）即預設使用 1M context 變體，已儲存的選擇不受影響；新增一次性 bootstrap 同意提示涵蓋 gateway 位址 inferenceGatewayBaseUrl，未透過裝置管理設定 bootstrap URL 時，使用者需在啟動時同意該位址（變更時再次詢問），未同意前不會連線至 gateway，可用 trustBootstrapDelivery 預先為全員同意；管理員停用 Code 時 Code tab 改為完全隱藏而非顯示為灰色。General：新增標準 macOS 全螢幕快捷鍵（View 選單提供 Enter/Exit Full Screen）；修復部分 Linux 系統（尤其重新打包或容器化安裝）啟動錯誤導致缺少系統匣圖示且每次系統主題變更都重現；修復 macOS 內建終端機指令因權限不足以錯誤 -1743 失敗、未顯示 Automation 權限提示；修復 macOS 登入反覆出現「Failed to login, it may have been cancelled」（現改為在系統登入頁不可用時開啟預設瀏覽器登入）；修復部分 Windows 安裝（MSIX 套件與企業管理的漫遊設定檔）無法儲存對話歷史、設定與排程任務，且 App 更新後 Cowork 以「Download failed」無法啟動；修復長時間執行 session 時記憶體用量無限成長。Code：移除排程任務與其他無人值守 session 在 Browser preview 啟動 dev server 的權限，其他 session 現改為對每個不同 dev server 指令只核准一次而非每次啟動都詢問；修復外部編輯器以 UTF-8 BOM 重新儲存後，App 設定與 session worktree 紀錄被捨棄；修復分叉的 session 從原始 base branch 而非父 session 目前分支啟動；修復匯入 Claude Code CLI session 會改變 <code>claude --resume</code> 既有 session 順序；修復 session 被移入 worktree 後無法復原、對話歷史誤報遺失；修復從 Code session 透過 Claude in Chrome 上傳檔案以「Invalid arguments for tool file_upload」失敗。Cowork：修復 Claude 仍在撰寫回覆時傳送的後續訊息偶爾被丟棄、回覆被截斷。3P：修復系統 keychain 暫時鎖定時已儲存的登入遺失；修復 Chat tab 忽略 toolSearchEnabled，導致每次請求都送出所有 connector 的工具定義並可能塞爆 context window（現改為 true 時按需載入，與 Cowork／Code 一致）；修復憑證來自 helper script（inferenceCredentialHelper）時，憑證過期通知與 Cowork／Code 的 session 錯誤橫幅未提供重新登入方式（現顯示「Sign in again」重新執行 helper）；修復選過 1M context 變體後，新 session、重啟或切換 Chat／Cowork 時 model picker 誤退回標準 context 變體。",
+      "categories": ["Settings/Config", "Models/Inference", "Performance/Bug Fix"]
+    },
     {
       "version": "1.26832.0",
       "date": "2026-08-06",
