@@ -1,8 +1,17 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-08-13 22:46 (Taipei)",
+  "lastRefreshed": "2026-08-14 10:20 (Taipei)",
   "entries": [
+    {
+      "version": "1.30096.1",
+      "date": "2026-08-13",
+      "severity": "high",
+      "notify": true,
+      "title": "Cowork Rewind 支援雲端 Session、OTel 免靜態 Header 認證與多項穩定性修復",
+      "summary": "Code 新增 Rewind 支援雲端與 Remote Control session（訊息選單、Esc Esc 或 <code>/rewind</code>）；3P 新增 <code>otlpAuthMode</code>／<code>otlpHeadersHelper</code> 免用靜態 <code>otlpHeaders</code> 即可認證遙測匯出，新增 <code>inferenceGatewayOidc.resource</code> 供會限制 audience 的身分識別提供者使用；使用者自行輸入 bootstrap 網址時，變更 <code>inferenceBedrockBaseUrl</code>／<code>inferenceVertexBaseUrl</code> 現需一次性同意（受管部署或 <code>trustBootstrapDelivery: true</code> 不受影響）；<code>claudeAiImport</code> 匯入的 session 首次接續前需使用者確認「Trust and resume」。General：修復啟動後首次按 Cmd+F 無反應、composer 內右到左文字與左到右內嵌詞混排錯亂、Windows 無法跑本機 Cowork 時側欄缺少 Artifacts 入口、macOS 一啟動就要求通知權限、部分 Linux（尤其重新打包安裝）啟動或系統主題切換時當機。Code：修復中斷的 Claude Code 下載讓該機器 Code session 無法啟動（多見於 Windows）、雲端 session 環境斷線後未回應的權限或 plan 核准提示被誤判為已核准、需要輸入的雲端 session 有時開啟卻不顯示問題或核准提示、Remote Control session 閒置時開啟有時永遠連不上、停止或中斷後在其他裝置持續顯示離線、transcript 貼到富文字 App 遺失行內程式碼／粗體／斜體前後空格與程式碼區塊錯亂、Plan 檢視選取文字後 Cmd+C 複製不到內容。Cowork：修復失敗的任務恢復按「Go back」或 App 重啟後立刻編輯訊息會捨棄先前對話、Claude Code <code>managed-settings.json</code> 設定 <code>allowManagedPermissionRulesOnly</code> 時記憶體儲存失敗、Windows 背景服務停止後 Cowork 每次啟動都顯示「VM service not running」（現自動重啟服務，否則提示重開機可修復）、sub-agent 步驟完成時把已往上捲動的畫面拉回底部。3P：修復單一格式錯誤的 <code>allowedPluginMarketplaces</code>（beta）項目會停用所有已設定的 marketplace（現改為跳過並回報）、bootstrap 伺服器關閉 <code>coworkTabEnabled</code> 時傳送訊息會失敗（現改為首頁直接開啟 Chat）、閘道同時作為遙測收集端點時 OpenTelemetry 匯出被拒絕。",
+      "categories": ["Settings/Config", "Performance/Bug Fix"]
+    },
     {
       "version": "1.28929.0",
       "date": "2026-08-11",
