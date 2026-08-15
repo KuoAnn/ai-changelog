@@ -1,8 +1,17 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-08-15 00:08 (Taipei)",
+  "lastRefreshed": "2026-08-15 10:11 (Taipei)",
   "entries": [
+    {
+      "version": "1.30096.5",
+      "date": "2026-08-14",
+      "severity": "low",
+      "notify": false,
+      "title": "維護性更新（無使用者面向變更）",
+      "summary": "General、Code、Cowork、3P 皆無使用者面向變更，僅內部維護性更新。",
+      "categories": ["Performance/Bug Fix"]
+    },
     {
       "version": "1.30096.1",
       "date": "2026-08-13",
