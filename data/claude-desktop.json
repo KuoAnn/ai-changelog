@@ -1,8 +1,17 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-08-17 22:23 (Taipei)",
+  "lastRefreshed": "2026-08-18 10:14 (Taipei)",
   "entries": [
+    {
+      "version": "1.32352.0",
+      "date": "2026-08-17",
+      "severity": "high",
+      "notify": true,
+      "title": "Plugin URL Marketplace、對話／任務匯出與多項連線修復",
+      "summary": "General：修復 Windows 更新偶爾安裝到一半、後續更新接連失敗；修復網路 proxy 擋下首次連線時卡在「Couldn't connect to Claude」，現改為持續重試數分鐘，回到視窗時再試一次；修復組織關閉或未設定額外用量時，用量上限提示後 composer 持續停用；修復聊天內設定與 connector 連結點擊無反應或另開瀏覽器，現改為開啟 App 自身設定；修復開啟無痕模式時 new chat 頁面已輸入文字消失；修復 Claude 建立或連結檔名含百分號的檔案時，聊天顯示錯誤畫面而非對話。Code：用量上限自動接續改為預設開啟，session 於上限重置後自動恢復，可在用量提示橫幅取消勾選「Auto-continue when limits reset」關閉；修復 resume 後 session 偶爾卡住，第一則訊息後顯示「session 已停止回應」，或檔案系統／MCP 伺服器卡住時完全無法啟動；修復訊息輸入框 Undo（Cmd+Z，Windows／Linux 為 Ctrl+Z）偶爾出錯後失效；修復剛建立的雲端 session 傳送第一則訊息數秒內切換畫面會遺失該訊息；修復 App 剛開啟後立即建立的 session 有時以比已存權限模式更寬鬆的模式執行；修復 Remote Control session 完成登入或裝置驗證後仍卡在「connecting」，從其他電腦檢視 session 時檔案連結無法開啟。Cowork：移除 Claude in Chrome 權限卡片的「Allow all browser actions」選項，改為逐網站授權，Settings 內開關不變；修復磁碟空間不足時 workspace 啟動錯誤建議重開機或重灌，現改為提示釋放空間後重試；修復本機 MCP 伺服器於呼叫中當機導致工具呼叫卡住整整一分鐘，現改為立即失敗；修復 macOS 拍攝螢幕截圖後或畫面錄製中，computer use 每次點擊都被拒絕；修復核准模式在組織政策已封鎖「Skip all approvals」時仍顯示為該選項，切回「Manually approve」現會在 Claude 於核准關閉期間造訪過的網頁前再次詢問；修復檔案於聊天旁開啟時活動面板按鈕無反應，現會關閉檔案並顯示面板。3P：新增 <code>claudeAiImport.exportEnabled</code>，與 <code>claudeAiImport.enabled</code> 同時為 true 時，使用者可從 Settings > Import & export 將本機對話、Cowork 任務與 Code session 匯出成 zip 供其他安裝匯入，預設關閉；<code>allowedPluginMarketplaces</code>（beta）新增 <code>url</code> 來源，可透過 HTTPS 以 zip 封存檔提供 hosted <code>marketplace.json</code>、免安裝 git，並可用 <code>manifestSha256</code> 釘選 manifest（自動安裝的 plugin 必填）；同功能新增 <code>inferenceCredential</code> 作為 <code>credentialKind</code>，讓掛在推論 gateway 的 <code>url</code> marketplace 直接沿用 App 既有推論憑證；<code>coworkEgressAllowedHosts</code> 的 <code>:port</code> 限定現亦適用於 Cowork session 的 shell 指令與套件安裝；管理員設定的 plugin marketplace（含自動安裝與必要 plugin）現亦套用至 Code session、不僅限 Cowork；來自本機設定（非裝置管理）bootstrap URL 需使用者核准的項目現全有或全無生效，使用者選 Allow 前一律不生效，Quit 則關閉 App 並於下次啟動再問一次；受管設定中連線值不合法時，現改為指名該欄位並保留組織其餘設定生效，非 Anthropic 的 model 項目改為跳過並警告而非讓整份設定失效；新 Cowork session 磁碟資料夾名稱大幅縮短，避免超出 Windows 路徑長度限制，既有 session 沿用原資料夾，比對 <code>local_</code> 前綴的工具亦相容新命名；修復未設定 <code>claudeAiImport.enabled</code>、僅由裝置管理提供登入匯入的部署，Settings > Import & export 誤報匯入未啟用，該鍵現僅控管檔案／舊 session 匯入、匯入提示與 session 匯出；修復 Setup 視窗允許誤植的推論區域、Azure AI Foundry 資源名稱、空白 Vertex AI 專案 ID 或非 Anthropic model ID 到裝置端才被拒絕，現於儲存前即檢查；修復匯入的專案指示以獨立檔案呈現而非可編輯的專案 Instructions，現於專案頁顯示待審閱、接受後才套用。",
+      "categories": ["Plugins/MCP", "Settings/Config", "Performance/Bug Fix"]
+    },
     {
       "version": "1.30096.5",
       "date": "2026-08-14",
