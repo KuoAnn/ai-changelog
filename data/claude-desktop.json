@@ -1,8 +1,17 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-08-18 10:14 (Taipei)",
+  "lastRefreshed": "2026-08-18 22:17 (Taipei)",
   "entries": [
+    {
+      "version": "1.32352.1",
+      "date": "2026-08-18",
+      "severity": "low",
+      "notify": false,
+      "title": "Windows 首次啟動失敗修復",
+      "summary": "General：修復 Windows 全新安裝後首次啟動時，第一個視窗偶發初始化失敗的罕見問題。Code、Cowork、3P 皆無使用者面向變更。",
+      "categories": ["Performance/Bug Fix"]
+    },
     {
       "version": "1.32352.0",
       "date": "2026-08-17",
