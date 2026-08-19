@@ -1,8 +1,17 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-08-18 22:17 (Taipei)",
+  "lastRefreshed": "2026-08-19 10:13 (Taipei)",
   "entries": [
+    {
+      "version": "1.32885.1",
+      "date": "2026-08-18",
+      "severity": "medium",
+      "notify": true,
+      "title": "訊息佇列、電腦使用權限延遲防護與 3P bootstrapHeaders 認證",
+      "summary": "General：新增 Research 執行中傳送的訊息會排隊，待報告完成後才送出；修復 Claude in Chrome 於多個瀏覽器設定檔登入時 1Password 憑證請求失敗；修復 Windows 於背景更新檢查仍在執行時安裝更新導致當機，以及較新更新取代已預先安裝版本後，更新安裝反覆失敗；修復停止回覆後立即傳送的訊息有時被放回輸入框而非送出；修復重新載入或重開暫時聊天會在載入後稍微延遲重建頁面，可能遺失提早輸入的文字；修復 Cowork 與 Claude Code session 的 computer-use 權限提示會誤接受瞄準訊息框或其他畫面元素的鍵盤快捷鍵，現增加短暫延遲，避免提示剛出現時的送出按鍵誤觸核准。Code：修復用量上限觸發自動接續時卡進已匯入 session 確認提示或過期登入狀態，現會等待伺服器額度重置並顯示更清楚的接續訊息；修復前一指令仍在等待回應（如互動式登入）時，行內 bash 指令被靜默截取為該指令的輸入，現會在 transcript 註記卡住的指令並於下一指令執行前清除；修復 session 之間互傳的訊息有時被靜默捨棄，導致寄件 session 顯示「thinking」長達數分鐘；修復 <code>~/.claude.json</code> 設有 MCP 伺服器時 session 啟動緩慢；修復 Code 分頁在只有 Apple Command Line Tools、沒有 Xcode 的 Mac 上仍誤要求安裝 Git；修復 <code>WorktreeCreate</code> hook 於印出路徑前先輸出狀態訊息時，worktree session 因「path contains control characters」錯誤而失敗。Cowork：修復 Claude 提出的問題卡片切換為新一組問題時偶發「Something went wrong」錯誤；修復 Claude 有時回報檔案已儲存，實際卻寫入使用者無法開啟的暫存位置；修復 Cowork 在 Intel Mac 上無法啟動。3P：新增 <code>bootstrapHeaders</code>／<code>bootstrapHeadersHelper</code>，可用服務帳號憑證認證 bootstrap 設定擷取，取代自 1.32352.0 起遭拒的、內嵌於 <code>bootstrapUrl</code> 的 <code>user:password@</code> 寫法；新增從匯入精靈直接登入 claude.ai 擷取資料匯出檔，免手動下載 zip；變更新版 Cowork session 改以短固定資料夾名稱儲存 Claude Code transcript（需搭配內建 Claude Code 2.1.234 以上），進一步縮短 Windows 路徑長度；變更組織 plugin 端點自設定移除時，成員裝置上該端點安裝的 plugin 會一併移除，與移除 marketplace 時的行為一致；修復管理員設定的 plugin marketplace 與組織 plugin，在登入後或延遲設定擷取套用後，未能在下次定期刷新前重新同步。",
+      "categories": ["Settings/Config", "Permissions/Security", "Performance/Bug Fix"]
+    },
     {
       "version": "1.32352.1",
       "date": "2026-08-18",
