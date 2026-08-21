@@ -1,8 +1,17 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-08-20 22:20 (Taipei)",
+  "lastRefreshed": "2026-08-21 10:14 (Taipei)",
   "entries": [
+    {
+      "version": "1.34493.0",
+      "date": "2026-08-20",
+      "severity": "medium",
+      "notify": true,
+      "title": "macOS 啟動當機、排程任務日期錯誤與 SSH worktree 遺失修復",
+      "summary": "General：修復 macOS 上將應用程式放在 iCloud Drive 並開啟 Optimize Mac Storage 時啟動卡死；修復排程任務問題：「每 N 天／月」排程跑錯日期（既有任務會於下次執行時自動改到正確日期）、重新啟用任務或改排程會立即為已過去的時段補跑一次、手動執行的任務有時未記錄最後執行時間；修復 macOS 以 Touch ID 登入時當機（Touch ID passkey 登入暫時停用）；修復 macOS 磁碟空間不足或停止口述時 App 直接關閉。Code：修復封存含未提交或未合併變更的 SSH session 會捨棄其遠端 worktree 的工作內容，現改為保留 worktree，取消封存時若已遺失會自動重建以接續進行；修復資料夾名稱含重音、韓文或日文字元時，macOS 上的 session 歷史記錄不再更新或顯示遺失；修復 30 天以上未開啟、App 仍正常使用中的 session 遺失對話歷史；修復 SSH 連線在不穩定或慢速網路下第一次嘗試必失敗、需手動重試；修復 SSH session 在 App 更新後重新連線時遺失仍在執行中的任務；修復側邊聊天在長 session 中首次回答後即因認證錯誤而全部失敗。Cowork：修復訊息內含極長的中括號文字、極長且未閉合的 <code>[</code> 起始行，或極長的連續 <code>&gt;</code> 字元時對話無法開啟；修復組織關閉產品意見回饋時仍偶爾出現訊息評分與「Send feedback」連結；修復受管 Mac 上 App 暫存目錄不可寫入導致 session 無法啟動。3P：變更 gateway device-code 登入在 gateway 同時發出 refresh token 時改為靜默更新，不再每次 access token 到期就要求重新登入；修復 App 閒置時未察覺已結束的 gateway device-code 登入，現會於下次定期設定檢查或電腦喚醒後不久察覺並要求重新登入，Setup 視窗現顯示「Session expired」而非「Denied」；修復關閉數分鐘的 Cowork 檔案預覽面板重新開啟後持續顯示「Preview unavailable」，需重啟 App 才會恢復。",
+      "categories": ["Settings/Config", "Performance/Bug Fix"]
+    },
     {
       "version": "1.32885.1",
       "date": "2026-08-18",
