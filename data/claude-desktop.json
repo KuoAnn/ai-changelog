@@ -1,8 +1,17 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-08-21 10:14 (Taipei)",
+  "lastRefreshed": "2026-08-21 22:21 (Taipei)",
   "entries": [
+    {
+      "version": "1.34493.1",
+      "date": "2026-08-21",
+      "severity": "low",
+      "notify": false,
+      "title": "Inference Gateway Session 的 Prompt Caching 修復",
+      "summary": "General、Code、Cowork 皆無使用者面向變更。3P：修復透過 inference gateway 或自訂 endpoint 的 session 未套用 prompt caching。",
+      "categories": ["Performance/Bug Fix"]
+    },
     {
       "version": "1.34493.0",
       "date": "2026-08-20",

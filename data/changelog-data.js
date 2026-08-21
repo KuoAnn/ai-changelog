@@ -23,7 +23,7 @@
      =========================== */
 
   const REFRESH_RUN = {
-    ranAt: "2026-08-21 10:14 (Taipei)",
+    ranAt: "2026-08-21 22:21 (Taipei)",
     sources: {
       cc: { status: "ok" },
       cd: { status: "ok" },
@@ -255,6 +255,7 @@
 
   /* CLAUDE-DESKTOP-DATA:START — 由 scripts/build-claude-desktop.mjs 從 data/claude-desktop.json 產生，勿手改 */
   const DATA_CD = [
+    {v:"1.34493.1", date:"2026-08-21", cat:"Performance/Bug Fix", sev:"low", title:"Inference Gateway Session 的 Prompt Caching 修復", body:"General、Code、Cowork 皆無使用者面向變更。3P：修復透過 inference gateway 或自訂 endpoint 的 session 未套用 prompt caching。"},
     {v:"1.34493.0", date:"2026-08-20", cat:"Settings/Config", sev:"medium", title:"macOS 啟動當機、排程任務日期錯誤與 SSH worktree 遺失修復", body:"General：修復 macOS 上將應用程式放在 iCloud Drive 並開啟 Optimize Mac Storage 時啟動卡死；修復排程任務問題：「每 N 天／月」排程跑錯日期（既有任務會於下次執行時自動改到正確日期）、重新啟用任務或改排程會立即為已過去的時段補跑一次、手動執行的任務有時未記錄最後執行時間；修復 macOS 以 Touch ID 登入時當機（Touch ID passkey 登入暫時停用）；修復 macOS 磁碟空間不足或停止口述時 App 直接關閉。Code：修復封存含未提交或未合併變更的 SSH session 會捨棄其遠端 worktree 的工作內容，現改為保留 worktree，取消封存時若已遺失會自動重建以接續進行；修復資料夾名稱含重音、韓文或日文字元時，macOS 上的 session 歷史記錄不再更新或顯示遺失；修復 30 天以上未開啟、App 仍正常使用中的 session 遺失對話歷史；修復 SSH 連線在不穩定或慢速網路下第一次嘗試必失敗、需手動重試；修復 SSH session 在 App 更新後重新連線時遺失仍在執行中的任務；修復側邊聊天在長 session 中首次回答後即因認證錯誤而全部失敗。Cowork：修復訊息內含極長的中括號文字、極長且未閉合的 <code>[<\/code> 起始行，或極長的連續 <code>&gt;<\/code> 字元時對話無法開啟；修復組織關閉產品意見回饋時仍偶爾出現訊息評分與「Send feedback」連結；修復受管 Mac 上 App 暫存目錄不可寫入導致 session 無法啟動。3P：變更 gateway device-code 登入在 gateway 同時發出 refresh token 時改為靜默更新，不再每次 access token 到期就要求重新登入；修復 App 閒置時未察覺已結束的 gateway device-code 登入，現會於下次定期設定檢查或電腦喚醒後不久察覺並要求重新登入，Setup 視窗現顯示「Session expired」而非「Denied」；修復關閉數分鐘的 Cowork 檔案預覽面板重新開啟後持續顯示「Preview unavailable」，需重啟 App 才會恢復。"},
     {v:"1.32885.1", date:"2026-08-18", cat:"Settings/Config", sev:"medium", title:"訊息佇列、電腦使用權限延遲防護與 3P bootstrapHeaders 認證", body:"General：新增 Research 執行中傳送的訊息會排隊，待報告完成後才送出；修復 Claude in Chrome 於多個瀏覽器設定檔登入時 1Password 憑證請求失敗；修復 Windows 於背景更新檢查仍在執行時安裝更新導致當機，以及較新更新取代已預先安裝版本後，更新安裝反覆失敗；修復停止回覆後立即傳送的訊息有時被放回輸入框而非送出；修復重新載入或重開暫時聊天會在載入後稍微延遲重建頁面，可能遺失提早輸入的文字；修復 Cowork 與 Claude Code session 的 computer-use 權限提示會誤接受瞄準訊息框或其他畫面元素的鍵盤快捷鍵，現增加短暫延遲，避免提示剛出現時的送出按鍵誤觸核准。Code：修復用量上限觸發自動接續時卡進已匯入 session 確認提示或過期登入狀態，現會等待伺服器額度重置並顯示更清楚的接續訊息；修復前一指令仍在等待回應（如互動式登入）時，行內 bash 指令被靜默截取為該指令的輸入，現會在 transcript 註記卡住的指令並於下一指令執行前清除；修復 session 之間互傳的訊息有時被靜默捨棄，導致寄件 session 顯示「thinking」長達數分鐘；修復 <code>~/.claude.json<\/code> 設有 MCP 伺服器時 session 啟動緩慢；修復 Code 分頁在只有 Apple Command Line Tools、沒有 Xcode 的 Mac 上仍誤要求安裝 Git；修復 <code>WorktreeCreate<\/code> hook 於印出路徑前先輸出狀態訊息時，worktree session 因「path contains control characters」錯誤而失敗。Cowork：修復 Claude 提出的問題卡片切換為新一組問題時偶發「Something went wrong」錯誤；修復 Claude 有時回報檔案已儲存，實際卻寫入使用者無法開啟的暫存位置；修復 Cowork 在 Intel Mac 上無法啟動。3P：新增 <code>bootstrapHeaders<\/code>／<code>bootstrapHeadersHelper<\/code>，可用服務帳號憑證認證 bootstrap 設定擷取，取代自 1.32352.0 起遭拒的、內嵌於 <code>bootstrapUrl<\/code> 的 <code>user:password@<\/code> 寫法；新增從匯入精靈直接登入 claude.ai 擷取資料匯出檔，免手動下載 zip；變更新版 Cowork session 改以短固定資料夾名稱儲存 Claude Code transcript（需搭配內建 Claude Code 2.1.234 以上），進一步縮短 Windows 路徑長度；變更組織 plugin 端點自設定移除時，成員裝置上該端點安裝的 plugin 會一併移除，與移除 marketplace 時的行為一致；修復管理員設定的 plugin marketplace 與組織 plugin，在登入後或延遲設定擷取套用後，未能在下次定期刷新前重新同步。"},
     {v:"1.32352.1", date:"2026-08-18", cat:"Performance/Bug Fix", sev:"low", title:"Windows 首次啟動失敗修復", body:"General：修復 Windows 全新安裝後首次啟動時，第一個視窗偶發初始化失敗的罕見問題。Code、Cowork、3P 皆無使用者面向變更。"},
