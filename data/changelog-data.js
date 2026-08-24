@@ -23,7 +23,7 @@
      =========================== */
 
   const REFRESH_RUN = {
-    ranAt: "2026-08-24 10:10 (Taipei)",
+    ranAt: "2026-08-24 22:20 (Taipei)",
     sources: {
       cc: { status: "ok" },
       cd: { status: "ok" },
@@ -212,6 +212,7 @@
   ];
 
   const DATA_CI = [
+    {v:"0.149.1", date:"2026-08-24", cat:"Performance/Bug Fix", title:"CLI 0.149.1：維護更新（無使用者面向變更）", body:"純版本更新，官方未提供詳細變更說明。"},
     {v:"0.149.0", date:"2026-08-20", cat:"UI/UX", title:"CLI 0.149.0：codex agents 儀表板、/cd 系列指令與 codex queue 跨 Session 傳訊", body:"新增：<b>互動式 <code>codex agents</code> 儀表板</b>：可搜尋、啟動、開啟、重新命名與停止任務，並提供可自訂捷徑；<b><code>/cd</code>、<code>/pwd</code>、<code>/cwd</code> 指令</b>：於 TUI session 內管理工作目錄；<b><code>codex queue</code></b>：向既有本機或遠端 session 傳送訊息；<b>Vim 編輯擴充</b>：新增字元取代與更多變更動作（如 <code>cw</code>、<code>c$</code>、<code>cc</code>）；<b><code>codex doctor</code> 擴充診斷</b>：新增端點防護、網路／proxy 故障、桌面應用狀態與更新連線的檢測；<b>SDK 支援精確 CLI 設定覆寫</b>：並可選擇 <code>max</code> 或 <code>ultra</code> reasoning effort。修復：佇列訊息現可可靠喚醒閒置 session、更妥善解決重複 session 名稱，並保留貼上或延遲指令的語意；恢復或 fork 的 thread 現正確還原使用中的權限設定，不再靜默退回目前預設值；修正 sub-agent 活動重複顯示，並收緊 TUI 對 sub-agent 通知與核准的路由；Realtime WebRTC sideband 連線於傳輸意外中斷後可重新連線，不遺失待送輸出；Windows Terminal scrollback 現保留內嵌 TUI 歷史記錄；閒置 TUI thread 的重播緩衝區現有上限，避免過量保留串流輸出。文件：說明外部貢獻應透過 issue 與設計討論、而非直接送 PR；補充安全 devcontainer 的 DNS 外洩風險與信任限制說明。"},
     {v:"0.148.0", date:"2026-08-18", cat:"Models/Inference", title:"CLI 0.148.0：Bedrock Runtime 內建供應商、Hooks 呼叫 MCP 工具與 /export 匯出對話", body:"新增：<b>/export 匯出完整 TUI 對話為 Markdown</b>：可複製到剪貼簿或存成新檔；<b><code>codex exec fork</code> 分支 session</b>：並可於 TUI 恢復選單封存或還原 session，TUI 初始化期間可預先草擬 prompt，並顯示恢復與 fork 進度；<b><code>/status</code>、狀態列與終端機標題顯示預估 thread 額度或成本</b>（限合資格 workspace）；<b>Amazon Bedrock Runtime 內建供應商</b>：支援 AWS profile、region 與 GPT-5.6 路由；<b>Hooks 現可非同步執行指令並呼叫 MCP 工具</b>。修復：切換 model 或更新設定不再遺留過時指令、也不會在執行中途變更該輪內容；恢復的 session 現會還原其持久化工作目錄與核准政策，並更精確預覽 transcript；連線暫時中斷時 turn 會自動重連，MCP 伺服器於 OAuth 重新認證後可自行恢復而不需重啟 Codex；TUI 啟動時緩衝的終端機輸入不再意外觸發 prompt，認證缺失時會顯示引導畫面；composer 與 transcript 渲染現正確處理 CRLF 貼上、換行空白與長網址；沙箱限制對遭拒或無法讀取的路徑現於 Linux 與 Windows 上一律封閉失敗（fail closed）。文件：內建 skill-creator 指南更聚焦，驗證現會拒絕未完成的 TODO 佔位。"},
     {v:"0.147.0", date:"2026-08-07", cat:"Plugins/MCP", title:"CLI 0.147.0：Agent Plugins 可攜式安裝 + 持久化對話分區 + --approve-for-me", body:"<b>Agent Plugins 可攜式安裝與跨目錄搜尋</b>：支援安裝可攜式 Agent Plugins，並可跨本機、個人、workspace 與遠端 plugin 目錄搜尋；<b>持久化對話分區</b>：對話可依人工排序整理進持久分區，並可逐步瀏覽長 transcript；<b>新增 <code>--approve-for-me</code> CLI 旗標</b>：啟用自動審查核准；<b>匯入 Cursor 管理的 skill</b>：可匯入 Cursor skill，並同步已匯入的 Claude／Cursor 對話變更而不產生重複；<b>支援 MCP 2026-07-28 協定（opt-in）</b>：含分頁探索、多輪請求與非阻塞伺服器啟動；<b>Amazon Bedrock 支援快取網路搜尋與遠端對話壓縮</b>。修復：顯示指令與重播對話歷史時遮罩機密與完整 bearer token；修正焦點恢復、MCP 伺服器初始化或 Ghostty 處理鍵盤快捷鍵時終端機輸入遺失或卡住；修正日文字元、emoji、超連結與視窗邊界附近文字的渲染與游標定位；正確中斷 Windows 背景程序並一致處理 Windows 檔案路徑；不熟悉的本機專案需明確信任、憑證使用前強制受管認證限制；強化 plugin 隔離，政策更新失敗時拒絕網路存取。其他：MCP SDK 升至 3.0.0、Ratatui 升至 0.30.2、V8 升至 150.4.0；移除已棄用的 <code>codex exec --full-auto</code> 旗標（改用 <code>--sandbox workspace-write</code>）；停止發佈重複的 Linux bundle 壓縮檔。"},
