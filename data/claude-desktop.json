@@ -1,8 +1,17 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-08-26 10:16 (Taipei)",
+  "lastRefreshed": "2026-08-26 22:19 (Taipei)",
   "entries": [
+    {
+      "version": "1.37937.1",
+      "date": "2026-08-25",
+      "severity": "medium",
+      "notify": true,
+      "title": "MCP 遠端連線自動重連修復與 Linear 登入錯誤修正",
+      "summary": "General：內建 Claude Code CLI 更新至 2.1.246。Code：修復遠端 MCP 伺服器連線中斷後未能恢復，現改為自動重新連線或回報為失敗狀態；修復部分 MCP 伺服器（如 Linear）登入時以「Invalid redirect URI」錯誤失敗。Cowork、3P：無使用者面向變更。",
+      "categories": ["Plugins/MCP", "Performance/Bug Fix"]
+    },
     {
       "version": "1.37937.0",
       "date": "2026-08-25",
