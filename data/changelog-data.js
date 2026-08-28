@@ -23,7 +23,7 @@
      =========================== */
 
   const REFRESH_RUN = {
-    ranAt: "2026-08-27 22:22 (Taipei)",
+    ranAt: "2026-08-28 10:10 (Taipei)",
     sources: {
       cc: { status: "ok" },
       cd: { status: "ok" },
@@ -216,6 +216,7 @@
   ];
 
   const DATA_CI = [
+    {v:"0.150.1", date:"2026-08-27", cat:"Performance/Bug Fix", title:"CLI 0.150.1：Remote Compaction 圖片保留計入 Token 預算修復", body:"修復：Remote compaction（遠端對話壓縮）現預設將保留的圖片一併計入 token 預算，並依需要修剪較舊圖片。"},
     {v:"0.150.0", date:"2026-08-26", cat:"UI/UX", title:"CLI 0.150.0：Task @ 提及、Interrupt Hooks 與多項終端機體驗改善", body:"新增：<b>@ 提及其他 Codex 任務</b>：可從終端機直接讀取、建立或向其他任務傳訊；<b><code>/copy</code> 新增選取器</b>：可挑選完整回應、單個程式碼區塊或引言區塊複製；<b>自動任務標題</b>：未命名的終端機任務會自動取得描述性標題，<code>/rename</code> 亦會依對話內容建議可編輯標題；<b>Markdown 連結可點擊</b>：支援的終端機中會顯示為可點擊標籤，其他終端機仍保留原始網址；新增<b>循環權限模式的快捷鍵</b>，Vim mode 新增 <code>.</code> 重複上次編輯動作；新增 <b>Interrupt hooks</b>：可在最上層回合被中斷時執行指令或 MCP handler。修復：不受信任的專案不再提供該專案層級的 <code>AGENTS.md</code> 指示，且受管的拒絕讀取規則在權限變更後仍持續生效；強化 app-server 診斷資訊中憑證遮罩，涵蓋供應商、認證更新與 attestation 欄位；修正遠端 MCP bearer token 查找與必要伺服器啟動的問題，同時保留與較舊 executor 的相容性；修正 Windows 提升權限沙箱設定與啟動別名在 Unicode 使用者路徑下的問題；避免因分離程序保留終端機或塞滿終端機輸出緩衝區而導致 Unix 關閉時卡住；修正 Amazon Bedrock 模型的對話壓縮與 multi-agent 相容性問題。"},
     {v:"0.149.1", date:"2026-08-24", cat:"Performance/Bug Fix", title:"CLI 0.149.1：維護更新（無使用者面向變更）", body:"純版本更新，官方未提供詳細變更說明。"},
     {v:"0.149.0", date:"2026-08-20", cat:"UI/UX", title:"CLI 0.149.0：codex agents 儀表板、/cd 系列指令與 codex queue 跨 Session 傳訊", body:"新增：<b>互動式 <code>codex agents</code> 儀表板</b>：可搜尋、啟動、開啟、重新命名與停止任務，並提供可自訂捷徑；<b><code>/cd</code>、<code>/pwd</code>、<code>/cwd</code> 指令</b>：於 TUI session 內管理工作目錄；<b><code>codex queue</code></b>：向既有本機或遠端 session 傳送訊息；<b>Vim 編輯擴充</b>：新增字元取代與更多變更動作（如 <code>cw</code>、<code>c$</code>、<code>cc</code>）；<b><code>codex doctor</code> 擴充診斷</b>：新增端點防護、網路／proxy 故障、桌面應用狀態與更新連線的檢測；<b>SDK 支援精確 CLI 設定覆寫</b>：並可選擇 <code>max</code> 或 <code>ultra</code> reasoning effort。修復：佇列訊息現可可靠喚醒閒置 session、更妥善解決重複 session 名稱，並保留貼上或延遲指令的語意；恢復或 fork 的 thread 現正確還原使用中的權限設定，不再靜默退回目前預設值；修正 sub-agent 活動重複顯示，並收緊 TUI 對 sub-agent 通知與核准的路由；Realtime WebRTC sideband 連線於傳輸意外中斷後可重新連線，不遺失待送輸出；Windows Terminal scrollback 現保留內嵌 TUI 歷史記錄；閒置 TUI thread 的重播緩衝區現有上限，避免過量保留串流輸出。文件：說明外部貢獻應透過 issue 與設計討論、而非直接送 PR；補充安全 devcontainer 的 DNS 外洩風險與信任限制說明。"},
