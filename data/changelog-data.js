@@ -23,7 +23,7 @@
      =========================== */
 
   const REFRESH_RUN = {
-    ranAt: "2026-08-29 10:17 (Taipei)",
+    ranAt: "2026-08-29 22:11 (Taipei)",
     sources: {
       cc: { status: "ok" },
       cd: { status: "ok" },
@@ -219,6 +219,7 @@
   ];
 
   const DATA_CI = [
+    {v:"0.151.0", date:"2026-08-29", cat:"MCP/Tools", title:"CLI 0.151.0：MCP 探索寬限期、Extension 攔截工具結果與 Plugin 目錄逐儲存庫設定", body:"新增：<b>MCP 選用伺服器探索寬限期可設定</b>：可調整探索選用 MCP 伺服器工具前的等待時間；<b>Extension 可攔截 MCP 工具結果</b>：擴充功能現可在結果送達模型前檢視或替換 MCP 工具回傳內容；<b>Plugin 目錄合併逐儲存庫設定</b>：目錄現會整合各儲存庫的個別設定，並回報無效的專案 marketplace，同時不影響其餘合法 plugin 顯示。修復：跨 TUI 回合保留還原後的權限設定，並防止 <code>/cd</code> 削弱 sandbox 限制；切換模型或退回其他模型時維持正確的工具可用性與 reasoning effort；改善遠端 sandbox 執行限制，改用執行端實際的家目錄、作業系統與路徑慣例；app-server 回應中保留結構化的 MCP 工具／資源錯誤；巢狀 subagent 的 token 用量現計入根目標預算；防止權限狀態變更後，過期的 Guardian 判定仍可用於授權動作。"},
     {v:"0.150.1", date:"2026-08-27", cat:"Performance/Bug Fix", title:"CLI 0.150.1：Remote Compaction 圖片保留計入 Token 預算修復", body:"修復：Remote compaction（遠端對話壓縮）現預設將保留的圖片一併計入 token 預算，並依需要修剪較舊圖片。"},
     {v:"0.150.0", date:"2026-08-26", cat:"UI/UX", title:"CLI 0.150.0：Task @ 提及、Interrupt Hooks 與多項終端機體驗改善", body:"新增：<b>@ 提及其他 Codex 任務</b>：可從終端機直接讀取、建立或向其他任務傳訊；<b><code>/copy</code> 新增選取器</b>：可挑選完整回應、單個程式碼區塊或引言區塊複製；<b>自動任務標題</b>：未命名的終端機任務會自動取得描述性標題，<code>/rename</code> 亦會依對話內容建議可編輯標題；<b>Markdown 連結可點擊</b>：支援的終端機中會顯示為可點擊標籤，其他終端機仍保留原始網址；新增<b>循環權限模式的快捷鍵</b>，Vim mode 新增 <code>.</code> 重複上次編輯動作；新增 <b>Interrupt hooks</b>：可在最上層回合被中斷時執行指令或 MCP handler。修復：不受信任的專案不再提供該專案層級的 <code>AGENTS.md</code> 指示，且受管的拒絕讀取規則在權限變更後仍持續生效；強化 app-server 診斷資訊中憑證遮罩，涵蓋供應商、認證更新與 attestation 欄位；修正遠端 MCP bearer token 查找與必要伺服器啟動的問題，同時保留與較舊 executor 的相容性；修正 Windows 提升權限沙箱設定與啟動別名在 Unicode 使用者路徑下的問題；避免因分離程序保留終端機或塞滿終端機輸出緩衝區而導致 Unix 關閉時卡住；修正 Amazon Bedrock 模型的對話壓縮與 multi-agent 相容性問題。"},
     {v:"0.149.1", date:"2026-08-24", cat:"Performance/Bug Fix", title:"CLI 0.149.1：維護更新（無使用者面向變更）", body:"純版本更新，官方未提供詳細變更說明。"},
