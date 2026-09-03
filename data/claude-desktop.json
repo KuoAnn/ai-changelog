@@ -1,8 +1,20 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-09-03 10:13 (Taipei)",
+  "lastRefreshed": "2026-09-03 22:19 (Taipei)",
   "entries": [
+    {
+      "version": "1.44121.4",
+      "date": "2026-09-03",
+      "severity": "medium",
+      "notify": true,
+      "title": "Chat 版 Plugin Skill 支援、Marketplace 安裝修復與 OAuth Connector 登入改善",
+      "summary": "General、Code、Cowork 皆無使用者面向變更。3P：新增 Chat 內支援使用組織提供 plugin 的 skill，Chat-only 使用者現可在 Customize 檢視並管理這些 plugin，與 Cowork、Code 一致；修復組織開啟 <code>chatAdvancedFileAnalysisEnabled</code> 但以 <code>coworkTabEnabled: false</code> 關閉 Cowork 時，Chat 進階檔案分析以「Workspace unavailable」失敗；修復受管 OAuth connector 於 App 啟動時無可用登入狀態（憑證過期且無 refresh token，或從未登入過此裝置）時顯示連線錯誤而非提示登入，含僅以 URL 新增的伺服器，此情況下 Connect 可能失敗而非開啟登入頁；修復組織設定的 URL plugin marketplace 安裝或載入 plugin 失敗並顯示「marketplace entry path does not stay inside the marketplace directory」錯誤。",
+      "categories": [
+        "Plugins/MCP",
+        "Permissions/Security"
+      ]
+    },
     {
       "version": "1.44121.2",
       "date": "2026-09-02",
