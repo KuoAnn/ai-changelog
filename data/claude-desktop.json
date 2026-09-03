@@ -1,8 +1,32 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-09-02 22:19 (Taipei)",
+  "lastRefreshed": "2026-09-03 10:13 (Taipei)",
   "entries": [
+    {
+      "version": "1.44121.2",
+      "date": "2026-09-02",
+      "severity": "low",
+      "notify": false,
+      "title": "回退 Windows Cowork Session 啟動修復",
+      "summary": "General、Code、3P 皆無使用者面向變更。Cowork：修復 session 於 Windows 上無法執行指令或擷取網頁，此變更同時回退 1.44121.1 針對「擁有大量已儲存 artifact、排程任務或已連結資料夾的帳號於 Windows 上 session 無法啟動」的修復。",
+      "categories": [
+        "Performance/Bug Fix"
+      ]
+    },
+    {
+      "version": "1.44121.1",
+      "date": "2026-09-02",
+      "severity": "high",
+      "notify": true,
+      "title": "Claude Code Output Styles、Split View、Proxy 設定與多項 MCP／Cowork 修復",
+      "summary": "General：新增將 Claude 加入 macOS 與 Windows（Microsoft Store 與 MSIX 安裝）常見工作檔案（試算表、PDF、Word、PowerPoint、文字檔與圖片）的「以此開啟」選單；修復 App 設定檔無法讀取時啟動即當機；修復需重新登入或裝置驗證時，新對話的第一則訊息被捨棄，現改為以對話框請求該步驟並保留訊息；修復設定檔損毀可能導致所有 App 設定被重設；修復 Claude 找不到 Cowork 與 Chat 中附加的檔案（含貼上的檔案與同名重新附加的檔案），無法讀取的附件現會明確標示而非靜默捨棄；修復排程任務在權限核准後以錯誤失敗；修復 App 於啟動後隨即再次當機時無限重新載入，現會停止並顯示下一步指引。Code：新增 View 選單的 <b>Split View</b> 子選單，可在目前 session 旁或下方開啟新 session，各側邊面板（diff、終端機、plan、preview 等）現可獨立開成新視窗；新增 <b>Claude Code output styles</b>：session 選單新增「Output style」子選單與 <code>/output-style</code> 指令供檢視與切換風格，「New style…」可依文字描述草擬自訂風格，Settings › Claude Code 新增預設風格設定；變更 Files 面板：檔案改以分頁形式在可收合的檔案樹旁開啟，支援單擊預覽分頁、多選、更豐富的右鍵選單，並為 PDF、Word、Excel、PowerPoint 檔案提供行內預覽；修復離開 session 再返回時 <code>/rewind</code> 顯示為未還原，可能導致下一則訊息靜默遺失近期對話歷史；修復 macOS 上因 Claude Code 下載損毀、Linux arm64 上，Code session 反覆無法啟動，以及 SSH 與 WSL session 於慢速連線下設定失敗，現一次性安裝會顯示進度並可改用從電腦上傳 Claude Code 作為後備；修復 macOS 12（Monterey）上 session 無法啟動；修復訊息於回合尾聲附近排入佇列時 session 卡在「responding」。Cowork：變更即時 artifact 分享改遵循組織的 Artifacts 設定與分享政策：組織已關閉的分享選項對成員不再顯示，已分享的連結仍保留 Copy link 與 Unshare；變更從檔案卡片或 skill 提案更新 skill 改為一步完成並附 Undo 提示，而非確認對話框；仍出現確認對話框時，其 Update 按鈕為預先選取的動作；變更組織未開放 web fetch 時的處理：Claude 現會直接說明，而非重試並回報擷取失敗；修復預覽空白或實際為文字內容的圖片檔時當機；修復含無法讀取或過大附件的訊息反覆送出失敗且無說明，現改為 Claude 標示該附件的問題、說明處理方式，並在可行時提供 Retry；修復擁有大量已儲存 artifact、排程任務或已連結資料夾的帳號，session 於 Windows 上無法啟動；修復組織於 Claude Code 受管設定（<code>managed-settings.json</code>、MDM 設定檔或登錄檔）設定 <code>disableSideloadFlags</code> 時，直接在裝置上執行 Claude Code 的 session 無法啟動；此類 session 中 Claude Code 現不載入桌面版任何 plugin，其指令、agent 與 hook 因而無法使用；修復連結需經瀏覽器登入的 connector 後 session 頁面重新載入。3P：新增 <code>claudeAiImport.automatic3pImport</code>（beta）：<code>true</code> 且已設定 <code>deploymentOrganizationUuid</code> 時，App 會在背景將本機於設定組織 ID 前既有的第三方 session 逐一複製進該組織的 session store（每台裝置僅一次），獨立於 <code>claudeAiImport.enabled</code>，複製途中若 App 結束會於下次啟動接續；新增 <code>egressProxyUrl</code> 與 <code>egressProxyPacUrl</code>：可讓 App 與 agent 流量改走企業 HTTP proxy，或由 PAC 檔逐請求選擇 proxy，而非沿用作業系統 proxy 設定，macOS 與 Windows 上 Cowork 的 workspace 亦會遵循已釘選的 proxy，兩鍵僅由裝置管理或本機設定檔讀取，同時設定時以 PAC 檔為準；新增 <code>inferenceStreamIdleTimeoutSec</code>：供 gateway 於上游模型無回應期間持續送出 keep-alive 的情境，設定 Chat、Cowork 與 Code session 在串流回應僅含 keep-alive 訊號時的額外等待秒數（300 至 1800，預設 300），僅適用 gateway 供應商；新增匯入精靈的 Duplicates 步驟：匯入的 Project 與既有 Project 同名時，可選擇將匯入的 session 併入既有 Project 並移除重複項，Projects 頁面亦提供相同合併功能；新增 OpenTelemetry 匯出的對話標題：<code>otlpDesktopLogLevel</code> 為 <code>info</code> 或更低時，<code>desktop_session_title_set</code> 事件會攜帶每個 Cowork 與 Code session 的標題與可對應的 Claude Code session ID，僅當 <code>otlpContentCapture</code> 含 <code>userPrompts</code> 時才包含標題文字本身；新增在未提供 Cowork 的裝置上，可從 Code tab 或 Cowork tab 安裝與更新管理員設定的 marketplace plugin；新增本機排程任務至 Code tab（含 <code>/schedule</code> 指令與 Scheduled 頁面），與 Cowork 既有功能一致；新增可在 SSH Code session 中附加檔案；<b>（重大變更）</b>Usage 頁面成本估算改為需開啟 <code>inferenceModelPricingEnabled</code> 才會顯示，<code>inferenceModelPricingMultiplier</code> 與 <code>inferenceModelPricing</code> 現僅在其開啟時微調估算值，不再自行開啟該功能；變更 Claude Code 受管設定（<code>managed-settings.json</code> 或組織伺服器端受管設定）<code>env</code> 區塊設定的 <code>HTTPS_PROXY</code>、<code>HTTP_PROXY</code>、<code>NO_PROXY</code>，現即使電腦已設定系統 proxy 仍套用至 Chat、Cowork 與 Code session；變更 <code>isClaudeCodeForDesktopEnabled</code>：設為 <code>false</code> 時 App 不再啟動 Code session（即使被直接要求），Preview 不再為專案掃描 dev server，該電腦亦不再提供給 Remote Control，此時要求 Code session 會顯示「Code sessions are turned off by your organization」而非重試提示；修復 Bedrock 與 Bedrock Mantle session 在 Opus 4.7 及後續模型長時間思考期間被網路閒置逾時中斷；修復部署憑證過期時 Code tab session 未提示重新認證，現改為顯示與 Cowork 相同的登入提示；同時修復使用 SSO、憑證 helper、Vertex 或 Bedrock SSO 部署上 Live Artifact 的 <code>askClaude()</code> 呼叫與 Code tab 的「Detect dev server」失敗；修復身分識別提供者不再認得 App 註冊的 OAuth client 時，受管 MCP connector 登入永久卡住，現 App 會自動重新註冊新 client；修復設定 <code>managedMcpServers</code> 時，由 plugin 提供的 MCP 伺服器未在 Code 與 Cowork session 中連線；此情況下若 <code>isLocalDevMcpEnabled</code> 設為 <code>false</code>，plugin 的遠端 MCP 伺服器會連線、其本機（stdio）伺服器則維持封鎖；修復頂層為單一元件資料夾（如 <code>skills/</code> 或 <code>commands/</code>）的 zip 形式 plugin 安裝後沒有任何 skill、指令或 agent；修復 <code>allowedWorkspaceFolders</code> 政策未一律套用至經 SSH 的 Code session；修復 Code tab 首頁的用量統計顯示最愛模型、各模型細目與活動時，誤用同機其他 Claude Code 歷史紀錄而非此部署自身的 session。",
+      "categories": [
+        "IDE/Editor",
+        "Plugins/MCP",
+        "Settings/Config"
+      ]
+    },
     {
       "version": "1.40609.1",
       "date": "2026-08-30",
