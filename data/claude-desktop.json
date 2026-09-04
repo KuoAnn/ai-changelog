@@ -1,8 +1,21 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-09-04 10:14 (Taipei)",
+  "lastRefreshed": "2026-09-04 22:17 (Taipei)",
   "entries": [
+    {
+      "version": "1.46388.1",
+      "date": "2026-09-04",
+      "severity": "high",
+      "notify": true,
+      "title": "訊息佇列與 Keep Awake、受管設定讀取失敗改為拒絕啟動（重大變更）",
+      "summary": "General：移除聊天的「標示為未讀」操作；修復點按 App 內 artifact 與分享連結時開啟瀏覽器或遺失分享金鑰，現改為原地開啟，無權限的隊友會看到申請存取畫面而非「not available」；修復 macOS 上處理檔案時記憶體持續成長，最終可能導致系統回報應用程式記憶體用盡；修復重新開啟尚未有回覆的對話時，新訊息被排入佇列而非送出；修復停止或遺失回覆後從訊息框移除檔案，有時會刪除已送出訊息中的該檔案，導致該訊息的「Try again」失敗；修復組織部署 Claude Code <code>managed-mcp.json</code> 的機器上，側邊聊天、斜線指令選單、用量洞察等快速操作靜默失敗；修復訊息含文字、附加檔案或引用回覆後，聊天輸入框的口述麥克風按鈕消失。Code：新增 5 小時用量上限觸發時的訊息佇列：訊息於輸入框上方等待而非失敗，可編輯、取消或於準備好時送出；新增 Claude 執行期間<b>保持喚醒</b>：Code tab 工作時電腦不再閒置睡眠，Settings > Claude Code 新增「Keep computer awake while Claude works」設定（含「Keep awake on battery power」選項）、session 選單新增本次 session 保持喚醒項目，並於長任務後顯示一次性提示；移除 session Transcript 檢視選單的 Summary 檢視，原選取該檢視的 session 改開 Normal 檢視；修復 Claude Opus 5 關閉思考時 Extra high 與 Max effort 靜默降為 High，現改為該 session 開啟思考執行；修復部分使用者的組織受管設定未能載入、Remote Control 未自動連線，需登出再登入才恢復；修復 session 開啟失敗：「Couldn't load this」現會自行恢復而不需手動重新整理，Windows 上使用 FSLogix 等設定檔容器的主機不再顯示「No messages yet」，無法讀取的 transcript 會顯示原因並提供 Retry 按鈕；修復部分重連後 SSH session 被重啟、導致遠端機器留下重複的 Claude Code 程序，並修復送給無法連線主機的訊息：現於 App 重啟後重試，主機恢復但需密碼或已解鎖 SSH agent 時會詢問使用者而非標示「needs you」；修復切換模型：因「plugin hooks could not be loaded」被拒後現會以所選模型重啟該 session 的 Claude Code，model picker 不再顯示 Claude Code 拒絕的模型，Remote Control session 也不再提供已連線 Claude Code 版本無法執行的模型；修復組織受管 plugin 的 marketplace 或 plugin hook 載入失敗時，切換模型在該 session 剩餘時間內持續被封鎖；修復記住的資料夾偶爾與遠端機器路徑混淆，導致所有本機 session 啟動皆以「working directory no longer exists」失敗。Cowork：新增完全連不上模型的排程任務自動於 5、15、30 分鐘後重跑（如電腦於 VPN 後喚醒時）；修復 Windows 上 Record a skill 開啟無回應的選擇視窗；修復儲存 Claude 於對話中提出的 skill：與既有 skill 同名時現改為提議更新該 skill 而非以「Try again」失敗，需重新登入才能儲存時 Save skill 按鈕會開啟登入提示而非顯示通用錯誤；修復排程任務與其他自動啟動 session 的方式選到已安裝版本無法執行的模型，導致每個回合皆失敗；修復切換 session 為自動核准後，輸入框下方列（Add folder、權限模式、模型）消失。3P：新增 <code>blockReadsOutsideWorkingDirectories</code>：將 Code session 限制在讀取 session 資料夾與 <code>allowedWorkspaceFolders</code> 內的檔案，檔案工具拒絕讀取其他位置，沙箱化 shell 指令亦失去 home 目錄存取權；新增 <code>configRecheckIntervalMinutes</code>：App 重新檢查受管設定變更的頻率，可設 2 至 30 分鐘，未設定預設為 10 分鐘（先前固定 30 分鐘），下發值免重啟生效，亦可由裝置管理設定；新增 <code>disableBypassPermissionsMode</code>：移除 Code session 與 Cowork 任務的 bypass permissions 模式，使 Claude 一律遵循設定的權限政策；新增 <code>sshClientPath</code>（beta）：指定 App 執行 SSH session 所用 OpenSSH 程式的絕對路徑，未設定則使用使用者 PATH 上第一個 <code>ssh</code>；新增 Cowork 與 Chat session 最近一則訊息的 Edit 按鈕，可修改後重送，並修復 Chat session 的「Restart conversation from here」無作用；新增裝置管理設定（受管 plist、Windows 政策登錄檔或 Linux managed-settings 檔）於 App 執行期間變更時顯示重啟提示，逾 <code>relaunchEnforcementHours</code> 後升級為強制重啟，先前僅客戶 bootstrap 端點下發的設定變更會提示；<b>（重大變更）</b><code>relaunchEnforcementHours</code> 下發路徑由 <code>bootstrap.relaunchEnforcementHours</code> 改為 <code>lifecycle.relaunchEnforcementHours</code>，本版不再讀取舊路徑、舊版亦不讀新路徑，請將值移至 <code>lifecycle</code>（扁平格式與裝置管理鍵名不變），該鍵現亦可由裝置管理設定，且觸發強制重啟前的預設等待時間由 1 小時改為 24 小時，裝置管理設定的其他行為鍵優先於下發值，故此類設定檔亦應一併設定該鍵；<b>（重大變更）</b>變更無法讀取的 Claude Code 受管設定處理方式：裝置的 <code>managed-settings.json</code>、drop-in、裝置管理 plist 或 Windows 政策登錄檔值無法解析時，Claude Code 現拒絕啟動並標明來源，該裝置上的 session 需修正或移除該檔案／值才能啟動（先前會在不套用這些設定的情況下照常執行），升級此版本前請先確認受管裝置上這些來源可正常解析；變更 <code>allowedPluginMarketplaces</code> 中設為 <code>auto_install</code> 或 <code>required</code> 但未釘選 commit SHA（或 <code>url</code> 來源未設 <code>manifestSha256</code>）的項目，現改為顯示於 marketplace 清單並附設定警告，而非直接移除；變更 Claude Code 的 <code>allowedMcpServers</code> 設定（其 <code>managed-settings.json</code> 內，非受管設定 schema）僅管控使用者自行新增的伺服器，先前被允許清單過濾掉的 <code>managed-mcp.json</code> 伺服器現會載入，需改用 <code>deniedMcpServers</code> 才能關閉；修復聊天搜尋無結果，現可依標題與訊息內容搜尋到對話；修復未開通雲端功能或關閉 Cowork tab 的部署仍顯示無法作用的控制項，包含 Remote Control、自動 pull request、Cloud 與 Slack session 篩選、Add marketplace 與 Cowork 斜線指令；修復管理員自系統 <code>org-plugins</code> 目錄移除 plugin 資料夾後，使用者裝置上該組織 plugin 仍維持已安裝狀態；修復以 <code>headersHelper</code> 產生憑證的遠端 MCP connector，於伺服器拒絕過期憑證後持續失敗長達數分鐘，現改為 helper 立即重新執行並自動重試一次遭拒的請求。",
+      "categories": [
+        "Settings/Config",
+        "Permissions/Security",
+        "Plugins/MCP"
+      ]
+    },
     {
       "version": "1.44121.4",
       "date": "2026-09-03",
