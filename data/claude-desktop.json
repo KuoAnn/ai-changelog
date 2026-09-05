@@ -1,8 +1,26 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-09-04 22:17 (Taipei)",
+  "lastRefreshed": "2026-09-05 10:14 (Taipei)",
   "entries": [
+    {
+      "version": "1.46388.3",
+      "date": "2026-09-04",
+      "severity": "medium",
+      "notify": true,
+      "title": "Cowork 支援掛載家目錄與整個磁碟機（含系統與憑證資料夾防護）",
+      "summary": "General、Code、3P 皆無使用者面向變更。Cowork：新增可附加家目錄、Windows 的 Documents／AppData、macOS 的 Library 資料夾與整個磁碟機；Claude 自身的設定與 session 資料仍禁止存取，特定憑證與 shell 啟動位置（如 SSH 金鑰、AWS／Google Cloud 憑證，以及 bash、zsh、PowerShell 設定檔）同樣排除在外。",
+      "categories": ["Permissions/Security"]
+    },
+    {
+      "version": "1.46388.2",
+      "date": "2026-09-04",
+      "severity": "low",
+      "notify": false,
+      "title": "修復 Windows 上 Git Worktree Code Session 初始化失敗",
+      "summary": "General、Cowork、3P 皆無使用者面向變更。Code：修復於 git worktree 中啟動的 Code session 在 Windows 上無法初始化。",
+      "categories": ["Performance/Bug Fix"]
+    },
     {
       "version": "1.46388.1",
       "date": "2026-09-04",
