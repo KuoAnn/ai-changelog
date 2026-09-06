@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xml:lang="en-US">
+  <id>tag:github.com,2008:https://github.com/openai/codex/releases</id>
+  <link type="text/html" rel="alternate" href="https://github.com/openai/codex/releases"/>
+  <link type="application/atom+xml" rel="self" href="https://github.com/openai/codex/releases.atom"/>
+  <title>Release notes from codex</title>
+  <updated>2026-09-05T00:59:27Z</updated>
+  <entry>
+    <id>tag:github.com,2008:Repository/965415649/rust-v0.154.0-alpha.4</id>
+    <updated>2026-09-05T00:59:27Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/openai/codex/releases/tag/rust-v0.154.0-alpha.4"/>
+    <title>rust-v0.154.0-alpha.4</title>
+    <content type="html">&lt;p&gt;Release 0.154.0-alpha.4&lt;/p&gt;</content>
+    <author>
+      <name>rhan-oai</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/214716640?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/965415649/rust-v0.153.4</id>
+    <updated>2026-09-04T23:27:38Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/openai/codex/releases/tag/rust-v0.153.4"/>
+    <title>0.153.4</title>
+    <content type="html">&lt;h2&gt;Bug Fixes&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Fixed Astra’s visibility in the bundled model picker and made it the bundled default when no model is explicitly configured. (&lt;a class=&quot;issue-link js-issue-link&quot; data-error-text=&quot;Failed to load title&quot; data-id=&quot;5353618742&quot; data-permission-text=&quot;Title is private&quot; data-url=&quot;https://github.com/openai/codex/issues/42874&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42874/hovercard&quot; href=&quot;https://github.com/openai/codex/pull/42874&quot;&gt;#42874&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Updated Astra’s guidance to use asynchronous questions only when the tool is available in the session. (&lt;a class=&quot;issue-link js-issue-link&quot; data-error-text=&quot;Failed to load title&quot; data-id=&quot;5353787347&quot; data-permission-text=&quot;Title is private&quot; data-url=&quot;https://github.com/openai/codex/issues/42878&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42878/hovercard&quot; href=&quot;https://github.com/openai/codex/pull/42878&quot;&gt;#42878&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Changelog&lt;/h2&gt;
+&lt;p&gt;Full Changelog: &lt;a class=&quot;commit-link&quot; href=&quot;https://github.com/openai/codex/compare/rust-v0.153.3...rust-v0.153.4&quot;&gt;&lt;tt&gt;rust-v0.153.3...rust-v0.153.4&lt;/tt&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&quot;issue-link js-issue-link&quot; data-error-text=&quot;Failed to load title&quot; data-id=&quot;5353618742&quot; data-permission-text=&quot;Title is private&quot; data-url=&quot;https://github.com/openai/codex/issues/42874&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42874/hovercard&quot; href=&quot;https://github.com/openai/codex/pull/42874&quot;&gt;#42874&lt;/a&gt; [0.153 hotfix] Show Astra in bundled model picker &lt;a class=&quot;user-mention notranslate&quot; data-hovercard-type=&quot;user&quot; data-hovercard-url=&quot;/users/rhan-oai/hovercard&quot; data-octo-click=&quot;hovercard-link-click&quot; data-octo-dimensions=&quot;link_type:self&quot; href=&quot;https://github.com/rhan-oai&quot;&gt;@rhan-oai&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&quot;issue-link js-issue-link&quot; data-error-text=&quot;Failed to load title&quot; data-id=&quot;5353787347&quot; data-permission-text=&quot;Title is private&quot; data-url=&quot;https://github.com/openai/codex/issues/42878&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42878/hovercard&quot; href=&quot;https://github.com/openai/codex/pull/42878&quot;&gt;#42878&lt;/a&gt; [0.153 hotfix] Qualify Astra async-question guidance by tool availability &lt;a class=&quot;user-mention notranslate&quot; data-hovercard-type=&quot;user&quot; data-hovercard-url=&quot;/users/rhan-oai/hovercard&quot; data-octo-click=&quot;hovercard-link-click&quot; data-octo-dimensions=&quot;link_type:self&quot; href=&quot;https://github.com/rhan-oai&quot;&gt;@rhan-oai&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content>
+    <author>
+      <name>github-actions[bot]</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/in/15368?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/965415649/rust-v0.153.3</id>
+    <updated>2026-09-04T19:02:49Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/openai/codex/releases/tag/rust-v0.153.3"/>
+    <title>0.153.3</title>
+    <content type="html">&lt;h2&gt;New Features&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Added GPT-6-Astra to the Amazon Bedrock model picker for Mantle and Runtime global/US routes. (&lt;a class=&quot;issue-link js-issue-link&quot; data-error-text=&quot;Failed to load title&quot; data-id=&quot;5351107797&quot; data-permission-text=&quot;Title is private&quot; data-url=&quot;https://github.com/openai/codex/issues/42805&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42805/hovercard&quot; href=&quot;https://github.com/openai/codex/pull/42805&quot;&gt;#42805&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Bug Fixes&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Corrected GPT-6-Astra’s guidance for asynchronous clarification questions to use the supported tool and recognize that it accepts text only. (&lt;a class=&quot;issue-link js-issue-link&quot; data-error-text=&quot;Failed to load title&quot; data-id=&quot;5351301559&quot; data-permission-text=&quot;Title is private&quot; data-url=&quot;https://github.com/openai/codex/issues/42809&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42809/hovercard&quot; href=&quot;https://github.com/openai/codex/pull/42809&quot;&gt;#42809&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Changelog&lt;/h2&gt;
+&lt;p&gt;Full Changelog: &lt;a class=&quot;commit-link&quot; href=&quot;https://github.com/openai/codex/compare/rust-v0.153.2...rust-v0.153.3&quot;&gt;&lt;tt&gt;rust-v0.153.2...rust-v0.153.3&lt;/tt&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&quot;issue-link js-issue-link&quot; data-error-text=&quot;Failed to load title&quot; data-id=&quot;5351107797&quot; data-permission-text=&quot;Title is private&quot; data-url=&quot;https://github.com/openai/codex/issues/42805&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42805/hovercard&quot; href=&quot;https://github.com/openai/codex/pull/42805&quot;&gt;#42805&lt;/a&gt; [0.153 hotfix] Add GPT-6-Astra to Amazon Bedrock catalogs &lt;a class=&quot;user-mention notranslate&quot; data-hovercard-type=&quot;user&quot; data-hovercard-url=&quot;/users/celia-oai/hovercard&quot; data-octo-click=&quot;hovercard-link-click&quot; data-octo-dimensions=&quot;link_type:self&quot; href=&quot;https://github.com/celia-oai&quot;&gt;@celia-oai&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&quot;issue-link js-issue-link&quot; data-error-text=&quot;Failed to load title&quot; data-id=&quot;5351301559&quot; data-permission-text=&quot;Title is private&quot; data-url=&quot;https://github.com/openai/codex/issues/42809&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42809/hovercard&quot; href=&quot;https://github.com/openai/codex/pull/42809&quot;&gt;#42809&lt;/a&gt; [0.153 hotfix] Update Astra async-question guidance &lt;a class=&quot;user-mention notranslate&quot; data-hovercard-type=&quot;user&quot; data-hovercard-url=&quot;/users/rhan-oai/hovercard&quot; data-octo-click=&quot;hovercard-link-click&quot; data-octo-dimensions=&quot;link_type:self&quot; href=&quot;https://github.com/rhan-oai&quot;&gt;@rhan-oai&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content>
+    <author>
+      <name>github-actions[bot]</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/in/15368?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/965415649/rust-v0.154.0-alpha.3</id>
+    <updated>2026-09-04T01:01:00Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/openai/codex/releases/tag/rust-v0.154.0-alpha.3"/>
+    <title>0.154.0-alpha.3</title>
+    <content type="html">&lt;p&gt;Release 0.154.0-alpha.3&lt;/p&gt;</content>
+    <author>
+      <name>github-actions[bot]</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/in/15368?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/965415649/rust-v0.154.0-alpha.2</id>
+    <updated>2026-09-03T22:01:53Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/openai/codex/releases/tag/rust-v0.154.0-alpha.2"/>
+    <title>0.154.0-alpha.2</title>
+    <content type="html">&lt;p&gt;Release 0.154.0-alpha.2&lt;/p&gt;</content>
+    <author>
+      <name>github-actions[bot]</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/in/15368?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/965415649/rust-v0.154.0-alpha.1</id>
+    <updated>2026-09-03T09:33:04Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/openai/codex/releases/tag/rust-v0.154.0-alpha.1"/>
+    <title>0.154.0-alpha.1</title>
+    <content type="html">&lt;p&gt;Release 0.154.0-alpha.1&lt;/p&gt;</content>
+    <author>
+      <name>github-actions[bot]</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/in/15368?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/965415649/rust-v0.153.2</id>
+    <updated>2026-09-03T23:54:50Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/openai/codex/releases/tag/rust-v0.153.2"/>
+    <title>0.153.2</title>
+    <content type="html">&lt;h2&gt;Bug Fixes&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Corrected the GPT-6-Astra Fast tier description to say “2x speed, increased usage” instead of “1.5x.” This changes only the displayed text, not how requests run. (&lt;a class=&quot;issue-link js-issue-link&quot; data-error-text=&quot;Failed to load title&quot; data-id=&quot;5342292023&quot; data-permission-text=&quot;Title is private&quot; data-url=&quot;https://github.com/openai/codex/issues/42632&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42632/hovercard&quot; href=&quot;https://github.com/openai/codex/pull/42632&quot;&gt;#42632&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Changelog&lt;/h2&gt;
+&lt;p&gt;Full Changelog: &lt;a class=&quot;commit-link&quot; href=&quot;https://github.com/openai/codex/compare/rust-v0.153.1...rust-v0.153.2&quot;&gt;&lt;tt&gt;rust-v0.153.1...rust-v0.153.2&lt;/tt&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&quot;issue-link js-issue-link&quot; data-error-text=&quot;Failed to load title&quot; data-id=&quot;5342292023&quot; data-permission-text=&quot;Title is private&quot; data-url=&quot;https://github.com/openai/codex/issues/42632&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42632/hovercard&quot; href=&quot;https://github.com/openai/codex/pull/42632&quot;&gt;#42632&lt;/a&gt; Fix GPT-6-Astra Fast tier description for 0.153.2 &lt;a class=&quot;user-mention notranslate&quot; data-hovercard-type=&quot;user&quot; data-hovercard-url=&quot;/users/anp-oai/hovercard&quot; data-octo-click=&quot;hovercard-link-click&quot; data-octo-dimensions=&quot;link_type:self&quot; href=&quot;https://github.com/anp-oai&quot;&gt;@anp-oai&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content>
+    <author>
+      <name>github-actions[bot]</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/in/15368?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/965415649/rust-v0.153.1</id>
+    <updated>2026-09-03T21:05:14Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/openai/codex/releases/tag/rust-v0.153.1"/>
+    <title>0.153.1</title>
+    <content type="html">&lt;h2&gt;New Features&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Added support for configuring GPT-6-Astra through the API without changing the default model or showing it in the model picker. (&lt;a class=&quot;issue-link js-issue-link&quot; data-error-text=&quot;Failed to load title&quot; data-id=&quot;5340870352&quot; data-permission-text=&quot;Title is private&quot; data-url=&quot;https://github.com/openai/codex/issues/42605&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42605/hovercard&quot; href=&quot;https://github.com/openai/codex/pull/42605&quot;&gt;#42605&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Changelog&lt;/h2&gt;
+&lt;p&gt;Full Changelog: &lt;a class=&quot;commit-link&quot; href=&quot;https://github.com/openai/codex/compare/rust-v0.153.0...rust-v0.153.1&quot;&gt;&lt;tt&gt;rust-v0.153.0...rust-v0.153.1&lt;/tt&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&quot;issue-link js-issue-link&quot; data-error-text=&quot;Failed to load title&quot; data-id=&quot;5340870352&quot; data-permission-text=&quot;Title is private&quot; data-url=&quot;https://github.com/openai/codex/issues/42605&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42605/hovercard&quot; href=&quot;https://github.com/openai/codex/pull/42605&quot;&gt;#42605&lt;/a&gt; Backport GPT-6-Astra model catalog to 0.153 &lt;a class=&quot;user-mention notranslate&quot; data-hovercard-type=&quot;user&quot; data-hovercard-url=&quot;/users/anp-oai/hovercard&quot; data-octo-click=&quot;hovercard-link-click&quot; data-octo-dimensions=&quot;link_type:self&quot; href=&quot;https://github.com/anp-oai&quot;&gt;@anp-oai&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content>
+    <author>
+      <name>github-actions[bot]</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/in/15368?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/965415649/rust-v0.153.0</id>
+    <updated>2026-09-03T01:39:03Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/openai/codex/releases/tag/rust-v0.153.0"/>
+    <title>0.153.0</title>
+    <content type="html">&lt;h2&gt;New Features&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Vim mode now supports undo with &lt;code&gt;u&lt;/code&gt; and redo with &lt;code&gt;Ctrl+R&lt;/code&gt;, preserving complete drafts including pasted content and attachments. (&lt;a href=&quot;https://github.com/openai/codex/pull/41941&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41941/hovercard&quot;&gt;#41941&lt;/a&gt;, &lt;a href=&quot;https://github.com/openai/codex/pull/42140&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42140/hovercard&quot;&gt;#42140&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;The plugin CLI can list, install, and remove plugins from remote marketplaces. (&lt;a href=&quot;https://github.com/openai/codex/pull/42150&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42150/hovercard&quot;&gt;#42150&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Set &lt;code&gt;tui.auto_recap = false&lt;/code&gt; to disable automatic recaps while keeping manual &lt;code&gt;/recap&lt;/code&gt; available. (&lt;a href=&quot;https://github.com/openai/codex/pull/42101&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42101/hovercard&quot;&gt;#42101&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;TUI history shows complete patches, input sent to background terminals, and individual completed commands. (&lt;a href=&quot;https://github.com/openai/codex/pull/41893&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41893/hovercard&quot;&gt;#41893&lt;/a&gt;, &lt;a href=&quot;https://github.com/openai/codex/pull/42107&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42107/hovercard&quot;&gt;#42107&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Plus and Team users receive an earlier warning when less than half of their allowance remains in an approximately five-hour usage window. (&lt;a href=&quot;https://github.com/openai/codex/pull/42142&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42142/hovercard&quot;&gt;#42142&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Bug Fixes&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;TUI sessions reconnect after an external app-server connection drops, preserving drafts and transcripts while keeping uncertain or queued submissions paused for review. (&lt;a href=&quot;https://github.com/openai/codex/pull/41911&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41911/hovercard&quot;&gt;#41911&lt;/a&gt;, &lt;a href=&quot;https://github.com/openai/codex/pull/41916&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41916/hovercard&quot;&gt;#41916&lt;/a&gt;, &lt;a href=&quot;https://github.com/openai/codex/pull/41918&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41918/hovercard&quot;&gt;#41918&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Full Access skips Guardian reviews for confirmation-only actions. User approval mode skips background Guardian scoring and prewarming, while sensitive-action checks and requests for user input retain their existing handling. (&lt;a href=&quot;https://github.com/openai/codex/pull/42147&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42147/hovercard&quot;&gt;#42147&lt;/a&gt;, &lt;a href=&quot;https://github.com/openai/codex/pull/42256&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42256/hovercard&quot;&gt;#42256&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Guardian review history survives compaction, restarts, and user-created forks while respecting rollback boundaries and isolating subagent history. (&lt;a href=&quot;https://github.com/openai/codex/pull/41879&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41879/hovercard&quot;&gt;#41879&lt;/a&gt;, &lt;a href=&quot;https://github.com/openai/codex/pull/42065&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42065/hovercard&quot;&gt;#42065&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Remembered MCP tool approvals are scoped to the selected app account, and relative MCP executable paths start more reliably on macOS. (&lt;a href=&quot;https://github.com/openai/codex/pull/42133&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42133/hovercard&quot;&gt;#42133&lt;/a&gt;, &lt;a href=&quot;https://github.com/openai/codex/pull/42117&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42117/hovercard&quot;&gt;#42117&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Rollout compression includes shared histories, &lt;code&gt;codex exec resume&lt;/code&gt; handles compressed rollouts when selecting by working directory, and thread forks work with symlinked session roots. (&lt;a href=&quot;https://github.com/openai/codex/pull/42039&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42039/hovercard&quot;&gt;#42039&lt;/a&gt;, &lt;a href=&quot;https://github.com/openai/codex/pull/42135&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42135/hovercard&quot;&gt;#42135&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Configuration and API Updates&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;App-server thread metadata includes nullable &lt;code&gt;model&lt;/code&gt; and &lt;code&gt;reasoningEffort&lt;/code&gt; fields. Structured asynchronous questions are supported through &lt;code&gt;request_user_input_async&lt;/code&gt; when enabled by the model catalog. (&lt;a href=&quot;https://github.com/openai/codex/pull/42151&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42151/hovercard&quot;&gt;#42151&lt;/a&gt;, &lt;a href=&quot;https://github.com/openai/codex/pull/42178&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42178/hovercard&quot;&gt;#42178&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;tui.disable_paste_burst&lt;/code&gt; replaces the top-level setting, which remains supported as a fallback. (&lt;a href=&quot;https://github.com/openai/codex/pull/41976&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41976/hovercard&quot;&gt;#41976&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Adds the disabled-by-default &lt;code&gt;features.context_management.experimental_mode&lt;/code&gt; configuration. When enabled for eligible ChatGPT Plus, Pro, or Pro Lite sessions using the Codex backend, it activates token-budget context, history notes, and the &lt;code&gt;new_context&lt;/code&gt; tool. API-key sessions, custom providers, and temporary structured threads remain excluded. (&lt;a href=&quot;https://github.com/openai/codex/pull/42385&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42385/hovercard&quot;&gt;#42385&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Changelog&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/openai/codex/compare/rust-v0.152.1...rust-v0.153.0&quot;&gt;Full Changelog&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41870&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41870/hovercard&quot;&gt;#41870&lt;/a&gt; Use shared transcript collection for Guardian reviews&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41879&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41879/hovercard&quot;&gt;#41879&lt;/a&gt; Preserve Guardian review evidence across compaction&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41884&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41884/hovercard&quot;&gt;#41884&lt;/a&gt; Add pinned native voice source preparation&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41890&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41890/hovercard&quot;&gt;#41890&lt;/a&gt; Add native voice dependency build recipe&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41892&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41892/hovercard&quot;&gt;#41892&lt;/a&gt; Retain the MCP client for event streams&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41893&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41893/hovercard&quot;&gt;#41893&lt;/a&gt; Show successful TUI commands individually&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41894&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41894/hovercard&quot;&gt;#41894&lt;/a&gt; Fix Windows native voice dependency builds&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41897&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41897/hovercard&quot;&gt;#41897&lt;/a&gt; Add the voice helper lifecycle foundation&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41899&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41899/hovercard&quot;&gt;#41899&lt;/a&gt; Keep MCP event subscriptions alive after task unloading&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41901&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41901/hovercard&quot;&gt;#41901&lt;/a&gt; Load bounded context after empty wake turns&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41902&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41902/hovercard&quot;&gt;#41902&lt;/a&gt; Add installed voice host lifecycle support&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41906&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41906/hovercard&quot;&gt;#41906&lt;/a&gt; Add a manager for MCP event streams&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41908&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41908/hovercard&quot;&gt;#41908&lt;/a&gt; Avoid scanning archived rollouts when archiving threads&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41909&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41909/hovercard&quot;&gt;#41909&lt;/a&gt; Make permission transforms aware of executor path context&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41911&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41911/hovercard&quot;&gt;#41911&lt;/a&gt; Preserve TUI drafts after app-server disconnects&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41912&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41912/hovercard&quot;&gt;#41912&lt;/a&gt; Persist response token usage in rollout history&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41913&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41913/hovercard&quot;&gt;#41913&lt;/a&gt; Preserve TUI status timing when the status row is hidden&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41915&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41915/hovercard&quot;&gt;#41915&lt;/a&gt; Move the config schema generator into a dedicated crate&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41916&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41916/hovercard&quot;&gt;#41916&lt;/a&gt; Reconnect TUI app-server sessions automatically&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41917&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41917/hovercard&quot;&gt;#41917&lt;/a&gt; Open the agents overview from an empty composer&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41918&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41918/hovercard&quot;&gt;#41918&lt;/a&gt; Restore agent navigation after TUI reconnects&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41923&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41923/hovercard&quot;&gt;#41923&lt;/a&gt; Allow per-call sideband endpoints for existing realtime calls&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41924&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41924/hovercard&quot;&gt;#41924&lt;/a&gt; Record realtime conversation history in Core&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41925&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41925/hovercard&quot;&gt;#41925&lt;/a&gt; Test repository-wide Rust formatter discovery&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41928&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41928/hovercard&quot;&gt;#41928&lt;/a&gt; Use executor path context for permission preapproval&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41929&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41929/hovercard&quot;&gt;#41929&lt;/a&gt; Open the agents overview directly in the reconnect test&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41933&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41933/hovercard&quot;&gt;#41933&lt;/a&gt; Report configured sandbox policy consistently&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41934&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41934/hovercard&quot;&gt;#41934&lt;/a&gt; Omit undersized WAV output from Code Mode&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41936&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41936/hovercard&quot;&gt;#41936&lt;/a&gt; Attach failed Guardian reviews to diagnostic reports&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41937&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41937/hovercard&quot;&gt;#41937&lt;/a&gt; Limit background terminal input previews&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41938&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41938/hovercard&quot;&gt;#41938&lt;/a&gt; Clarify resume guidance in exit summaries&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41940&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41940/hovercard&quot;&gt;#41940&lt;/a&gt; Preserve transcript layout caches during backtrack selection&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41941&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41941/hovercard&quot;&gt;#41941&lt;/a&gt; Add Vim undo to the TUI composer&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41944&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41944/hovercard&quot;&gt;#41944&lt;/a&gt; Emit turn cost telemetry for ChatGPT sessions&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41946&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41946/hovercard&quot;&gt;#41946&lt;/a&gt; Expand extension permission regression coverage&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41949&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41949/hovercard&quot;&gt;#41949&lt;/a&gt; Add plugin reconciliation app-server API&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41950&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41950/hovercard&quot;&gt;#41950&lt;/a&gt; Improve tracing for nested tool calls and exec processes&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41953&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41953/hovercard&quot;&gt;#41953&lt;/a&gt; Enforce marketplace source policy for curated plugins&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41974&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41974/hovercard&quot;&gt;#41974&lt;/a&gt; Track TUI starts by app server mode&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41976&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41976/hovercard&quot;&gt;#41976&lt;/a&gt; Move &lt;code&gt;disable_paste_burst&lt;/code&gt; under &lt;code&gt;[tui]&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/41980&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/41980/hovercard&quot;&gt;#41980&lt;/a&gt; Preserve raw response usage metadata&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42003&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42003/hovercard&quot;&gt;#42003&lt;/a&gt; Report turn trigger and source in turn analytics&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42031&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42031/hovercard&quot;&gt;#42031&lt;/a&gt; Share Guardian user-message retention logic&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42033&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42033/hovercard&quot;&gt;#42033&lt;/a&gt; Improve Guardian report diagnostics&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42039&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42039/hovercard&quot;&gt;#42039&lt;/a&gt; Include shared histories in rollout compression&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42043&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42043/hovercard&quot;&gt;#42043&lt;/a&gt; Tag Codex home size metrics with compression state&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42047&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42047/hovercard&quot;&gt;#42047&lt;/a&gt; Add per-account approval settings for apps&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42054&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42054/hovercard&quot;&gt;#42054&lt;/a&gt; Honor explicit account selectors for Apps tool calls&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42056&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42056/hovercard&quot;&gt;#42056&lt;/a&gt; Honor app link settings for MCP tool approvals&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42065&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42065/hovercard&quot;&gt;#42065&lt;/a&gt; Preserve Guardian history across thread reconstruction&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42066&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42066/hovercard&quot;&gt;#42066&lt;/a&gt; Remove selected core test cases&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42068&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42068/hovercard&quot;&gt;#42068&lt;/a&gt; Detect standalone installs from the macOS CLI bundle&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42069&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42069/hovercard&quot;&gt;#42069&lt;/a&gt; Remove redundant test coverage&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42071&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42071/hovercard&quot;&gt;#42071&lt;/a&gt; Detect Vite+-managed Codex installs&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42076&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42076/hovercard&quot;&gt;#42076&lt;/a&gt; Unify Guardian context section collection&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42082&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42082/hovercard&quot;&gt;#42082&lt;/a&gt; Attribute nested REPL reviews to their tool calls&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42085&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42085/hovercard&quot;&gt;#42085&lt;/a&gt; Centralize Guardian context composition&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42086&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42086/hovercard&quot;&gt;#42086&lt;/a&gt; Attribute Guardian reviews to OpenAI app tools&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42094&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42094/hovercard&quot;&gt;#42094&lt;/a&gt; Record Windows MXC availability&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42096&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42096/hovercard&quot;&gt;#42096&lt;/a&gt; Make diagnostic report uploads resilient to slow networks&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42100&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42100/hovercard&quot;&gt;#42100&lt;/a&gt; Prefer remote Sites over the bundled plugin&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42101&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42101/hovercard&quot;&gt;#42101&lt;/a&gt; Add a TUI setting to disable automatic recaps&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42102&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42102/hovercard&quot;&gt;#42102&lt;/a&gt; Extract OTEL trace WebSocket into a reusable crate&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42104&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42104/hovercard&quot;&gt;#42104&lt;/a&gt; Show recent sessions in the agent command center&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42107&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42107/hovercard&quot;&gt;#42107&lt;/a&gt; Show full patches and terminal input in TUI history&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42109&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42109/hovercard&quot;&gt;#42109&lt;/a&gt; Format Python scripts across the repository&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42110&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42110/hovercard&quot;&gt;#42110&lt;/a&gt; Treat bundled cleanup hooks as built-ins&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42113&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42113/hovercard&quot;&gt;#42113&lt;/a&gt; Apply remote platform semantics to exec safety checks&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42114&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42114/hovercard&quot;&gt;#42114&lt;/a&gt; Centralize remote plugin mutations in &lt;code&gt;PluginsManager&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42117&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42117/hovercard&quot;&gt;#42117&lt;/a&gt; Fix relative MCP server spawning on macOS&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42118&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42118/hovercard&quot;&gt;#42118&lt;/a&gt; Refine hook activity rendering in the TUI&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42121&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42121/hovercard&quot;&gt;#42121&lt;/a&gt; Allow updating the approval reviewer for active turns&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42123&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42123/hovercard&quot;&gt;#42123&lt;/a&gt; Preserve descriptive labels on local file links&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42126&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42126/hovercard&quot;&gt;#42126&lt;/a&gt; Ignore non-JSON files in plugin catalog test helpers&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42128&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42128/hovercard&quot;&gt;#42128&lt;/a&gt; Prepare MCP connections for coordinated OAuth refresh&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42132&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42132/hovercard&quot;&gt;#42132&lt;/a&gt; Bound Git root discovery for metadata enrichment&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42133&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42133/hovercard&quot;&gt;#42133&lt;/a&gt; Scope session MCP approvals to app account links&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42134&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42134/hovercard&quot;&gt;#42134&lt;/a&gt; Include app link metadata in MCP approval elicitations&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42135&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42135/hovercard&quot;&gt;#42135&lt;/a&gt; Support thread forks from symlinked session roots&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42137&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42137/hovercard&quot;&gt;#42137&lt;/a&gt; Prewarm shell snapshots for eligible turns&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42140&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42140/hovercard&quot;&gt;#42140&lt;/a&gt; Add redo support to Vim composer history&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42142&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42142/hovercard&quot;&gt;#42142&lt;/a&gt; Add early rate-limit warnings for Plus and Team plans&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42144&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42144/hovercard&quot;&gt;#42144&lt;/a&gt; Add Guardian V2 analytics events&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42146&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42146/hovercard&quot;&gt;#42146&lt;/a&gt; Resolve permission requests in the executor context&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42147&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42147/hovercard&quot;&gt;#42147&lt;/a&gt; Skip Guardian reviews in Full Access&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42149&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42149/hovercard&quot;&gt;#42149&lt;/a&gt; Upgrade Git marketplaces from merged configuration&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42150&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42150/hovercard&quot;&gt;#42150&lt;/a&gt; Support remote marketplaces in the plugin CLI&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42151&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42151/hovercard&quot;&gt;#42151&lt;/a&gt; Expose model settings in app-server thread metadata&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42161&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42161/hovercard&quot;&gt;#42161&lt;/a&gt; Split tool JSON Schema code into focused modules&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42164&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42164/hovercard&quot;&gt;#42164&lt;/a&gt; Record result sources in app tool analytics&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42173&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42173/hovercard&quot;&gt;#42173&lt;/a&gt; Support header injections in network requirements&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42174&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42174/hovercard&quot;&gt;#42174&lt;/a&gt; Add a cacheable Bazel app-server schema bundle&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42178&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42178/hovercard&quot;&gt;#42178&lt;/a&gt; Add structured asynchronous user input requests&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42256&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42256/hovercard&quot;&gt;#42256&lt;/a&gt; Skip Guardian scoring in User approval mode&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex/pull/42385&quot; data-hovercard-type=&quot;pull_request&quot; data-hovercard-url=&quot;/openai/codex/pull/42385/hovercard&quot;&gt;#42385&lt;/a&gt; Add experimental context management activation&lt;/li&gt;
+&lt;/ul&gt;</content>
+    <author>
+      <name>github-actions[bot]</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/in/15368?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/965415649/rust-v0.153.0-alpha.6</id>
+    <updated>2026-09-02T11:29:21Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/openai/codex/releases/tag/rust-v0.153.0-alpha.6"/>
+    <title>0.153.0-alpha.6</title>
+    <content type="html">&lt;p&gt;Release 0.153.0-alpha.6&lt;/p&gt;</content>
+    <author>
+      <name>github-actions[bot]</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/in/15368?s=60&amp;v=4"/>
+  </entry>
+</feed>
