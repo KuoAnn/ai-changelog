@@ -1,8 +1,21 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-09-08 22:16 (Taipei)",
+  "lastRefreshed": "2026-09-09 10:13 (Taipei)",
   "entries": [
+    {
+      "version": "1.49585.0",
+      "date": "2026-09-08",
+      "severity": "high",
+      "notify": true,
+      "title": "macOS 13 起最低需求、Electron 44 升級與 Microsoft 365 Continuous Access Evaluation",
+      "summary": "General：新增裝置原則的「Required organization」值不合法時，改為以設定錯誤阻擋登入並顯示於診斷報告，而非直接忽略；<b>（重大變更）</b>App 執行環境升級至 Electron 44（Chromium 152），現要求 macOS 13 Ventura 以上；修復從選單列或 Quick Entry 面板開啟的對話，在回覆出現前會先顯示長達一分鐘的空白頁面，且未套用 Settings > Instructions for Claude 的指示；修復 macOS 上結束 App 但仍有 session 開啟時，偶爾重複出現「bash would like to access data from other apps」提示；修復排程任務與 Mac 睡眠相關問題：Mac 睡眠中執行的任務喚醒後有時被誤判為無回應而停止、睡眠期間錯過的任務有時在短暫背景喚醒時啟動並失敗（現改為等 Mac 完全喚醒才啟動）、一次性任務偶爾在喚醒後同時啟動多個 session。Code：改善終端機分頁：現會顯示指令仍在執行中，關閉執行中的分頁前會先詢問，shell 當機或被終止的分頁保留開啟並提供 Restart，而非靜默關閉並遺失輸出；移除未使用 worktree 的本機 session 對 Git 的需求，Windows 上啟動 session 不再需要 Git for Windows（Git Bash）；修復 Files 面板：關閉面板、展開其他面板或於新視窗開啟時，未提示即捨棄未儲存的編輯；修正混用 Windows 與 Unix 換行符的檔案在編輯器中誤將行合併；儲存失敗現會明確說明檔案無法儲存並提供 Try again，而非誤報檔案已在磁碟上變更；修復切換模型時因 session 仍在啟動、重新啟動或回覆中而被還原或拒絕，現改為採用所選模型，SSH 與 WSL session 的模型切換也不再以「plugin hooks could not be loaded」失敗；新增達到 5 小時用量上限而暫留的訊息於額度重置時自動送出，期間仍可編輯、取消或提前送出。Cowork：修復從 artifact 或 artifact 留言的 Send to Claude 開始的對話，未使用你所選的模型；修復刪除任務時若其中檔案正被使用，任務會從 App 消失但檔案仍留在磁碟，現改為保留任務以便重試刪除；修復 Cowork 任務數量極多時 App 可能於啟動時當機；修復「Can't reach the Claude API」警示在連線恢復後仍停留畫面上直到重啟 App，現改為自動清除。3P：新增 <code>managedMcpServers</code> 中 Microsoft 365 項目的 <code>continuousAccessEvaluation</code>：內建連接器透過作業系統登入代理與瀏覽器登入時，會向 Microsoft 請求 Continuous Access Evaluation token（最長可用約 28 小時，但管理員撤銷 session 或租戶網路原則不再允許時會於數分鐘內失效），設為 <code>disabled</code> 可讓所有登入途徑維持標準一小時 token，預設為 <code>enabled</code>；新增從 gateway 探索模型的部署，model picker 顯示各模型來自 gateway 的說明文字；變更 <code>microsoftAuthBroker</code>：新增 <code>required</code> 選項，作業系統登入代理無法使用時 Microsoft 365 登入直接失敗而非退回瀏覽器，確保 refresh token 一律由代理持有，並移除先前瀏覽器登入遺留在磁碟上的 token 快取，較舊版本會將 <code>required</code> 視為 <code>disabled</code>（僅瀏覽器登入），請待所有裝置更新至此版本以上再設定；變更未設定自訂 base URL 的 Claude API、Google Vertex AI、Amazon Bedrock 與 Bedrock Mantle 部署，不再抑制 Claude Code 的實驗性功能，故這些部署（Vertex AI 上為 Claude 4.5 以上模型）預設開啟 tool search、不再需要 <code>toolSearchEnabled</code>，gateway、Foundry 部署與自訂 base URL 部署則不受影響；修復採用 IAM Identity Center 登入的 Amazon Bedrock session，於 session 啟動時無法連線 AWS 登入會顯示內部錯誤或單純的「operation was aborted」，現會說明 IAM Identity Center 是無法連線、暫時無法使用、拒絕該帳號或角色，還是回傳無法解析的回應，並提供下一步建議；修復頁內搜尋（⌘F）漏掉已捲動出畫面的訊息；修復 Google Cloud（Vertex AI）session 有時改用電腦自身的 Google 登入而非組織設定的憑證，且 Google session 過期後未提示重新登入；修復 inference gateway 對模型清單請求回應 403 時，App 約每秒重新刷新一次登入 token；修復內建 Microsoft 365 連接器在尚未有人登入前即顯示為 Connected，現改為於對話中第一次請求才提示登入，取消登入不再隱藏其工具，內建連接器並新增可讀取 Teams 頻道訊息的工具。",
+      "categories": [
+        "Settings/Config",
+        "IDE/Editor",
+        "Plugins/MCP"
+      ]
+    },
     {
       "version": "1.46388.4",
       "date": "2026-09-05",
