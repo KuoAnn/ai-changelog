@@ -1,8 +1,21 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-09-10 22:14 (Taipei)",
+  "lastRefreshed": "2026-09-11 10:13 (Taipei)",
   "entries": [
+    {
+      "version": "1.52386.0",
+      "date": "2026-09-10",
+      "severity": "high",
+      "notify": true,
+      "title": "Session 保留政策、SSH/WSL 連線修復與 Cowork IPv6 支援",
+      "summary": "General：發送訊息時若 Claude 仍在回覆中，訊息會先在對話中以「已送出」外觀等待，第一則等待訊息提供 Send now（會中止目前回覆並接著送出），Cmd/Ctrl+Enter 可立即送出並中斷目前回合；修復內建瀏覽器分頁被隱藏或視窗縮到最小／背景執行時，Claude 的點擊、捲動、截圖與網頁腳本停滯、逾時或失敗，並修正以「Select element」選取的元素傳給 Claude 時遺失樣式或截圖範圍錯誤；修復 Upgrade 按鈕與部分下載連結等原本開新分頁前往 claude.ai 或 claude.com 的連結點擊無反應，現改為在預設瀏覽器開啟；修復私人網路（VPN、Tailscale 或內部網站）在內建瀏覽器中載入時遺失樣式、腳本或資料，以及雲端 session 於內建瀏覽器輸入的網址無法連到私人網路網站；修復更新或顯示器變更後 App 視窗大小與位置重設為預設值。Code：新增預設逐字稿檢視設定：可在 Settings > Claude Code 選擇新 session 開啟時採用 Normal、Thinking 或 Verbose 檢視，也可從 session 的 Transcript view 選單將目前檢視設為預設，此選擇會在桌面版與 claude.ai 間同步；修復部分 Windows Microsoft Store 與 MSIX 安裝下 Code session 無法啟動；修復管理 Claude Code plugin 的組織中，因無法檢查組織受管 hooks 而拒絕切換模型，現改為以所選模型重新啟動 session；修復安裝大量 plugin 的帳號在 Windows 上 session 無法啟動；修復多項 SSH session 問題：主機上舊版 Claude 留下的背景行程緩慢累積直到 session 失敗、第二台電腦的 Claude App 清理同一主機時中止了第一台電腦的 session、編輯已儲存連線的主機或連接埠後 session 永久斷線，以及啟動或重新連線後不久歷史記錄遺漏最新訊息；修復 WSL session 在 WSL 回報暫時性錯誤時無法啟動或重新連線，包括 App 更新後不久的背景重新連線。Cowork：因 2026 年 9 月 8 日發佈的 Windows 更新導致 Claude 工作區無法存取檔案的 Windows 電腦，App 現會標明此原因而非刪除並重裝工作區（此變更不修復根本問題，受影響電腦上工作區仍無法存取檔案）；修復組織 hook 阻擋訊息時 session 顯示為卡住執行中，現會顯示訊息遭阻擋的原因；修復 Office 檔案預覽有時顯示「Failed to load PDF document」而非試算表或文件檢視；修復 App 在背景更新登入後，長時間執行的任務因驗證錯誤而失敗，現改為讓執行中任務採用更新後的登入並繼續。3P：新增 <b><code>coworkVmIpv6Enabled</code></b>：讓 Cowork 工作區 VM 取得 IPv6 位址與路由，使 agent 工具可透過裝置自身 IPv6 連線存取僅支援 IPv6 的主機（macOS 與 Windows，預設關閉；<code>coworkEgressAllowedHosts</code> 仍決定工具可連線的主機名稱）；新增 <b><code>sshTransport</code></b>（beta）：選擇承載 Code session 的 SSH 引擎，<code>system-openssh</code> 使用裝置上的 OpenSSH <code>ssh</code> 程式（可用組織自有 SSH 設定，例如 Kerberos 登入，含 Windows），<code>builtin</code> 使用 App 內建 SSH 函式庫，未設定或 <code>auto</code> 則沿用建置版本預設值；Setup 視窗中即將停止接受的受管設定項目下新增淘汰通知，標明日期與替代方式；新增組織可設定的 session 保留天數：<code>chatSessionRetentionDays</code>、<code>coworkSessionRetentionDays</code> 與 <code>codeSessionRetentionDays</code> 會在各自介面的 session 閒置滿設定天數（1 至 3650 天）後，從裝置刪除該 session 與其檔案，未設定則不刪除；<code>sessionRetentionHold</code> 可對指定使用者暫停所有自動刪除，作為法律保留；Projects、Spaces 與記憶不受影響，Code session 未提交的工作仍留在磁碟；App 啟動改為開啟上次使用的 Chat 或 Cowork 模式首頁，而非一律先開 Cowork；來自組織 plugin 的 hooks 現也會在 Chat 中執行，與 Cowork、Code 一致；淘汰一個未公開文件化的用戶端憑證 fallback 設定，1.49585.0 以上版本已不再讀取（因 App 現以原生方式提供 TLS 用戶端憑證），仍設定該項的部署可照常運作，但使用者將自 2026 年 11 月 3 日起看到應用內淘汰警告，該設定將於 2026 年 11 月 17 日起不再被接受，待所有裝置升級至 1.49585.0 以上後應移除；改善對要求 TLS 用戶端憑證但裝置未持有的 gateway 連線測試：現會說明裝置未出示 gateway 可接受的憑證因而無法測試連線，而非回報模型遭拒；修復裝置上 Claude Code 自身設定（使用者或專案設定檔、或 <code>managed-settings.json</code>）可在管理員設定關閉 trace 的 collector 後，重新開啟 OpenTelemetry trace 匯出，現改為僅在設定 <code>otlpEndpoint</code> 且 <code>otlpTracesEnabled</code> 為 <code>true</code> 時，Cowork 與 Code session 才匯出 trace；修復裝置上 AWS 或 Google Cloud 憑證過期時，Amazon Bedrock 與 Google Vertex AI session 會持續重試失敗的請求達數分鐘，現改為重試一次後即停止，以便憑證得以更新。",
+      "categories": [
+        "Settings/Config",
+        "Permissions/Security",
+        "IDE/Editor"
+      ]
+    },
     {
       "version": "1.49585.0",
       "date": "2026-09-08",
@@ -32,7 +45,9 @@
       "notify": true,
       "title": "Cowork 支援掛載家目錄與整個磁碟機（含系統與憑證資料夾防護）",
       "summary": "General、Code、3P 皆無使用者面向變更。Cowork：新增可附加家目錄、Windows 的 Documents／AppData、macOS 的 Library 資料夾與整個磁碟機；Claude 自身的設定與 session 資料仍禁止存取，特定憑證與 shell 啟動位置（如 SSH 金鑰、AWS／Google Cloud 憑證，以及 bash、zsh、PowerShell 設定檔）同樣排除在外。",
-      "categories": ["Permissions/Security"]
+      "categories": [
+        "Permissions/Security"
+      ]
     },
     {
       "version": "1.46388.2",
@@ -41,7 +56,9 @@
       "notify": false,
       "title": "修復 Windows 上 Git Worktree Code Session 初始化失敗",
       "summary": "General、Cowork、3P 皆無使用者面向變更。Code：修復於 git worktree 中啟動的 Code session 在 Windows 上無法初始化。",
-      "categories": ["Performance/Bug Fix"]
+      "categories": [
+        "Performance/Bug Fix"
+      ]
     },
     {
       "version": "1.46388.1",
