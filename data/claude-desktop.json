@@ -1,8 +1,20 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-09-11 22:15 (Taipei)",
+  "lastRefreshed": "2026-09-12 10:15 (Taipei)",
   "entries": [
+    {
+      "version": "1.52386.3",
+      "date": "2026-09-11",
+      "severity": "medium",
+      "notify": false,
+      "title": "排程任務雲端遷移時序調整與 Local Project 遷移穩定性修復",
+      "summary": "General：無使用者可見變更。Code：無使用者可見變更。Cowork：已開始將排程任務自動移至雲端的帳號，App 現改為在電腦喚醒後等待約一分鐘，離線期間則每分鐘再次檢查，而非立即嘗試後於失敗時等待數小時；修復已開始將本機 project 移至 claude.ai 的帳號兩項問題：project 記憶體複製作業於伺服器端等待時可能拒絕新任務長達數小時（現改為可接受新任務，複製於背景完成），以及已遷移 project 較早任務中顯示的記憶檔案無法開啟。3P：無使用者可見變更。",
+      "categories": [
+        "Cowork",
+        "Performance/Bug Fix"
+      ]
+    },
     {
       "version": "1.52386.0",
       "date": "2026-09-10",
