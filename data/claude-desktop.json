@@ -1,8 +1,20 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-09-14 10:10 (Taipei)",
+  "lastRefreshed": "2026-09-14 22:14 (Taipei)",
   "entries": [
+    {
+      "version": "1.52386.6",
+      "date": "2026-09-13",
+      "severity": "low",
+      "notify": false,
+      "title": "內建 Claude Code CLI 更新至 2.1.270、超長提示卡住與模型限制誤判修復",
+      "summary": "General：內建 Claude Code CLI 更新至 2.1.270；修復透過 Claude Code 受管設定啟用的組織 plugin 未能載入，現改為於下一次 session 生效；修復提示內容極長的 session 永久卡在「Prompt is too long」錯誤。Code：修復使用者有時被誤告知其實際擁有存取權的模型遭限制，且執行中 session 悄悄切換為組織預設模型。Cowork、3P：無使用者面向變更。",
+      "categories": [
+        "Plugins/MCP",
+        "Performance/Bug Fix"
+      ]
+    },
     {
       "version": "1.52386.3",
       "date": "2026-09-11",
