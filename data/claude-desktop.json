@@ -1,8 +1,21 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-09-15 22:13 (Taipei)",
+  "lastRefreshed": "2026-09-16 10:14 (Taipei)",
   "entries": [
+    {
+      "version": "2.110.0",
+      "date": "2026-09-15",
+      "severity": "high",
+      "notify": true,
+      "title": "Model Catalog 對齊、MCP Plugin 工具權限擴大與 SSH 預設改用系統 OpenSSH",
+      "summary": "General：新增 <code>chromiumFlags</code> 設定，可在 <code>claude_desktop_config.json</code> 設定如 <code>--disable-gpu</code> 等 GPU 相關旗標，於圖形啟動前套用，供排解啟動時的 GPU 驅動當機與繪圖問題（含 Microsoft Store 安裝無法傳入命令列旗標的情境）；連續當機或啟動失敗後的錯誤畫面現會說明發生了什麼並提供 Restart Claude 按鈕，當機復原重試間隔改為漸進拉長；修復新對話首則訊息重新載入後偶爾送出兩次、對先前對話嘗試上傳的附件重複顯示「Missing files」、或首則回覆遭中斷後回到空白新對話頁面，以及編輯訊息時在保持開啟的編輯框按 Enter 會重送一次已編輯訊息；修復 Windows（Microsoft Store 與其他 MSIX 安裝）App 於背景下載更新時凍結後重新載入；修復 Windows 上設定檔短暫無法開啟時 App 有時無法啟動；修復 Code 分頁的 agent 偵測、輸出風格等桌面功能，於續期登入遇單次網路或伺服器錯誤後需要重新登入 Claude 帳號的問題。Code：SSH 與 WSL session 改為閒置於背景時持續執行，不再被停止，並修復桌面版關閉或電腦休眠期間每次回覆後停滯長達 10 分鐘的問題；移除 Routines 頁面的行事曆檢視，routine 現一律以卡片顯示；修復 SSH session 於斷線前後送出的訊息遭遺失、以錯誤捨棄或被要求重送，App 現會確認訊息是否送達並於 session 復原後才遞送一次；修復主視窗切離 Code 分頁後，權限請求與問題未顯示於彈出視窗與分割窗格；修復 session 開啟期間提示框內輸入的文字連同復原紀錄偶爾消失；修復儲存了超大型未送出提示時，啟動或切換 session 會凍結，現改為以可編輯的「Saved draft」附件形式還原。Cowork：修復 Dispatch 中瀏覽器、電腦使用與網站存取權限提示有時在你回答前就自行遭拒；修復連接資料夾相關問題：兩個連接資料夾同名時刪除檔案會以「Could not find mount for path」失敗，且新連接名為 <code>.claude</code> 的資料夾時 Claude 可能讀到錯誤的檔案；修復 Cowork 任務無法讀取或更新既有 artifact；修復 Windows 上 Cowork 啟動問題：部分任務無法啟動、磁碟機無法連線時任務會顯示為已啟動（現改為以明確錯誤停止）、對應網路磁碟機不再拖慢啟動，且採用 FSLogix 等設定檔容器的虛擬桌面現可正常載入與儲存 project；修復企業受管連接器的 Reconnect 於 SSO session 過期時無反應，現會重新以 SSO 登入，並於首次嘗試失敗後提供以個人帳號登入的選項。3P：新增 <code>inferenceCredentialHelperArgs</code>：依序傳給 <code>inferenceCredentialHelper</code> 指令稿的參數清單，讓單一已安裝的指令稿可服務多個環境；新增 <code>inferenceFoundryBaseUrl</code>：讓 Chat、Cowork 與 Code 的 Azure AI Foundry 請求改經自架 gateway 或 proxy，採用與 Claude Code <code>ANTHROPIC_FOUNDRY_BASE_URL</code> 相同的值；於 <code>bootstrapOidc</code>、<code>inferenceGatewayOidc</code>（互動式 gateway 登入）與 <code>inferenceVertexWorkforceOidc</code>（Vertex workforce 登入）新增 <code>redirectHost</code>，供僅接受 <code>localhost</code> 作為註冊 redirect URI 的身分提供者完成瀏覽器登入；新增 <code>scheduledTasksEnabled</code>：設為 <code>false</code> 可關閉 Cowork 與 Code 的排程任務；新增 effort 與預設模型控管：<code>defaultModelEffort</code> 設定預設模型起始 effort 等級，<code>inferenceModels</code> 項目上的 <code>maxEffort</code> 會隱藏該模型較高的 effort 等級並限制 Code session 上限，<code>alwaysStartWithDefaultModel</code> 讓每個新對話或任務一律以預設模型啟動；Code 分頁改用標準 model picker，effort 獨立於模型名稱旁顯示；新增 model catalog 支援：model picker 中的模型名稱、說明與思考／effort 選項改依循 Anthropic 發佈的 Claude Code model catalog，App 預設每 5～15 分鐘向 <code>downloads.claude.ai</code> 取得已簽署的 catalog，無法連線時沿用上次取得或內建版本，可用 <code>modelCatalogEnabled</code>／<code>modelCatalogUrl</code> 調整；變更 Chat：Claude 交回其產生的檔案時，以及開啟進階檔案分析（<code>chatAdvancedFileAnalysisEnabled</code>）逐步分析附加檔案時，不再要求核准，行為與 Cowork 一致；變更 macOS 上 Cowork 工作區與其他原生元件的日誌檔，改寫入 <code>~/Library/Logs/Claude-3p</code>；變更 MCP 工具權限：<code>managedMcpServers</code> 與 <code>orgPluginSettings</code> 的項目現適用於任何已安裝 plugin 提供的 MCP 伺服器（含本機執行者），<code>managedMcpServers</code> 項目可用 <code>transport: \"policy-only\"</code> 為 plugin 提供的伺服器設定工具權限而不需宣告啟動方式，權限規則現也適用於名稱含點號或空格的工具；變更 macOS 與 Linux 上 Code session 的 SSH 連線，預設改經裝置上的 OpenSSH <code>ssh</code> 程式執行，套用組織自有 SSH 設定，設定 <code>sshTransport</code>（beta）為 <code>builtin</code> 可保留 App 內建 SSH 函式庫；修復 Settings 中「Instructions for Claude」儲存後短暫顯示空白，以及要求登入的啟動流程會讓設定檔切換為另一份已儲存版本；修復設定檔案暫時無法讀取時 Duplicate 會儲存出空白設定複本，且 Claude API key 登入會覆寫已儲存設定；修復登入指引：部署憑證本身無登入可重試時顯示該憑證專屬指引，登入成功但組織設定無法載入時登入卡片會說明實際失敗原因，gateway 403 現回報為供應商錯誤而非要求重新輸入憑證；修復 gateway 回傳多個同名模型時 model picker 重複列出，現歸入 More models 並以模型 ID 差異部分標示；修復排程任務於提供者登入（如 AWS IAM Identity Center）過期後靜默不再執行，現改為等待重新登入後執行，且任務無法啟動時顯示「Scheduled task failed」通知。",
+      "categories": [
+        "Models",
+        "MCP/Permissions",
+        "Settings/Config"
+      ]
+    },
     {
       "version": "1.52386.6",
       "date": "2026-09-13",
