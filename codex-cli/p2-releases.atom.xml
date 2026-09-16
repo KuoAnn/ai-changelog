@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xml:lang="en-US">
+  <id>tag:github.com,2008:https://github.com/openai/codex/releases</id>
+  <link type="text/html" rel="alternate" href="https://github.com/openai/codex/releases"/>
+  <link type="application/atom+xml" rel="self" href="https://github.com/openai/codex/releases.atom"/>
+  <title>Release notes from codex</title>
+  <updated>2026-09-15T22:35:16Z</updated>
+  <entry>
+    <id>tag:github.com,2008:Repository/965415649/rust-v0.155.0-alpha.9</id>
+    <updated>2026-09-15T22:35:16Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.9"/>
+    <title>rust-v0.155.0-alpha.9</title>
+    <content type="html">&lt;p&gt;Release 0.155.0-alpha.9&lt;/p&gt;</content>
+    <author>
+      <name>anp-oai</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/u/286154589?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/965415649/rust-v0.155.0-alpha.8</id>
+    <updated>2026-09-15T22:29:30Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.8"/>
+    <title>0.155.0-alpha.8</title>
+    <content type="html">&lt;p&gt;Release 0.155.0-alpha.8&lt;/p&gt;</content>
+    <author>
+      <name>github-actions[bot]</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/in/15368?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/965415649/rust-v0.155.0-alpha.7</id>
+    <updated>2026-09-15T21:12:08Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.7"/>
+    <title>0.155.0-alpha.7</title>
+    <content type="html">&lt;p&gt;Release 0.155.0-alpha.7&lt;/p&gt;</content>
+    <author>
+      <name>github-actions[bot]</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/in/15368?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/965415649/rust-v0.155.0-alpha.6</id>
+    <updated>2026-09-15T02:02:06Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.6"/>
+    <title>0.155.0-alpha.6</title>
+    <content type="html">&lt;p&gt;Release 0.155.0-alpha.6&lt;/p&gt;</content>
+    <author>
+      <name>github-actions[bot]</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/in/15368?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/965415649/rust-v0.155.0-alpha.5</id>
+    <updated>2026-09-15T00:33:33Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.5"/>
+    <title>0.155.0-alpha.5</title>
+    <content type="html">&lt;p&gt;Release 0.155.0-alpha.5&lt;/p&gt;</content>
+    <author>
+      <name>github-actions[bot]</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/in/15368?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/965415649/rust-v0.155.0-alpha.4</id>
+    <updated>2026-09-14T11:49:25Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.4"/>
+    <title>0.155.0-alpha.4</title>
+    <content type="html">&lt;p&gt;Release 0.155.0-alpha.4&lt;/p&gt;</content>
+    <author>
+      <name>github-actions[bot]</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/in/15368?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/965415649/rust-v0.155.0-alpha.2.4</id>
+    <updated>2026-09-14T23:05:41Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.2.4"/>
+    <title>0.155.0-alpha.2.4</title>
+    <content type="html">&lt;p&gt;Release 0.155.0-alpha.2.4&lt;/p&gt;</content>
+    <author>
+      <name>github-actions[bot]</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/in/15368?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/965415649/rust-v0.155.0-alpha.3.10</id>
+    <updated>2026-09-11T15:56:17Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3.10"/>
+    <title>0.155.0-alpha.3.10</title>
+    <content type="html">&lt;p&gt;Release 0.155.0-alpha.3.10&lt;/p&gt;</content>
+    <author>
+      <name>github-actions[bot]</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/in/15368?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/965415649/rust-v0.155.0-alpha.3.9</id>
+    <updated>2026-09-11T12:01:54Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3.9"/>
+    <title>0.155.0-alpha.3.9</title>
+    <content type="html">&lt;p&gt;Release 0.155.0-alpha.3.9&lt;/p&gt;</content>
+    <author>
+      <name>github-actions[bot]</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/in/15368?s=60&amp;v=4"/>
+  </entry>
+  <entry>
+    <id>tag:github.com,2008:Repository/965415649/rust-v0.155.0-alpha.3.8</id>
+    <updated>2026-09-11T10:30:09Z</updated>
+    <link rel="alternate" type="text/html" href="https://github.com/openai/codex/releases/tag/rust-v0.155.0-alpha.3.8"/>
+    <title>0.155.0-alpha.3.8</title>
+    <content type="html">&lt;p&gt;Release 0.155.0-alpha.3.8&lt;/p&gt;</content>
+    <author>
+      <name>github-actions[bot]</name>
+    </author>
+    <media:thumbnail height="30" width="30" url="https://avatars.githubusercontent.com/in/15368?s=60&amp;v=4"/>
+  </entry>
+</feed>
