@@ -1,8 +1,19 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-09-18 10:18 (Taipei)",
+  "lastRefreshed": "2026-09-18 22:16 (Taipei)",
   "entries": [
+    {
+      "version": "2.2553.1",
+      "date": "2026-09-18",
+      "severity": "low",
+      "notify": false,
+      "title": "已儲存逐字稿格式錯誤與 Rewind 還原檔案損毀修復",
+      "summary": "General：修復已儲存逐字稿含格式錯誤項目時 session 無法啟動或續接的問題。Code：修復 forked 與背景 session 執行 rewind 時，有時還原出損毀或截斷檔案的問題。Cowork、3P：無使用者面向變更。",
+      "categories": [
+        "Performance/Bug Fix"
+      ]
+    },
     {
       "version": "2.2553.0",
       "date": "2026-09-17",
