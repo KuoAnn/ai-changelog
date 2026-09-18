@@ -1,8 +1,21 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-09-17 22:15 (Taipei)",
+  "lastRefreshed": "2026-09-18 10:18 (Taipei)",
   "entries": [
+    {
+      "version": "2.2553.0",
+      "date": "2026-09-17",
+      "severity": "high",
+      "notify": true,
+      "title": "Plugin MCP 伺服器白名單、內建瀏覽器與 OAuth Token 背景更新修復",
+      "summary": "General：側邊欄 Pinned 清單改為僅顯示前 20 項，其餘項目提供 Show more 連結；修復 Cowork 與 Code session 中連接器與擴充功能工具，於 Claude 省略帶有預設值的選用參數時以「expected nonoptional」失敗；修復 marketplace 中排序在前 100 名之後的 plugin 無法從 Customize 開啟；修復 Read Aloud 於重新產生、編輯或重試回覆後仍播放舊回覆，以及伺服器錯誤結束朗讀時提早中斷的問題；修復部分使用內建 Node.js runtime 的擴充功能啟動後隨即以「Server disconnected」錯誤停止；修復從 Microsoft Store 套件安裝、部分 Windows-on-ARM（Snapdragon）電腦上 App 關閉後無法重新開啟的問題；修復更新重啟時直接中止 Code 分頁 session 與 MCP 伺服器，而非比照退出程式的方式正常關閉；修復已重新啟用的 plugin 有時會自行再度關閉，以及新 session 有時在顯示為已啟用的情況下仍未載入該 plugin 的問題。Code：新增雲端 session 檔案檢視功能，逐字稿中的檔案連結可於 App 內開啟，Files 面板可搜尋該 session 的檔案，Background tasks 面板會顯示背景指令輸出；修復終端機未就緒時 <code>!</code> 指令與程式碼區塊的 Run 會被捨棄的問題，現改為數秒內執行、於已選終端機分頁閒置時使用該分頁、Claude 仍在作業時送出者顯示為終端機列，且輸出送出後不再讓 session 卡在執行中狀態；修復 App 重新啟動或電腦喚醒後，session 有時會停止接受訊息直到重啟 App 才恢復的問題；修復移除所有連接器後建立的 routine 仍使用全部連接器的問題；修復新 session 有時因另一 session 的 worktree 正在清理或回收而需數分鐘才能啟動的問題；修復 Bypass permissions 開啟且 session 於更新下載期間退回較舊的內建 Claude Code CLI 時，Plan mode 會略過權限提示的問題；修復 session 執行數小時後以「OAuth token has expired」失敗的問題，現改為在背景更新 token，真正需要重新登入時會先詢問並保留你的訊息；修復大型 repository（含使用 <code>.worktreeinclude</code> 檔案者）啟動緩慢，以及 worktree 偶爾未帶入本機設定檔啟動的問題。Cowork：修復參照 <code>${CLAUDE_PLUGIN_ROOT}</code> 或 <code>${CLAUDE_SKILL_DIR}</code> 的 plugin skill 有時以空白路徑執行指令的問題；修復 <code>require()</code> 找不到預先安裝的 Node.js 套件（如 <code>pptxgenjs</code>、<code>docx</code>、<code>pdf-lib</code>、<code>sharp</code>）的問題；修復極長對話中搜尋與 session 載入當機的問題；修復疊加的權限提示於其中一則獲回答後立即上滑至滑鼠游標下方，導致下一次點擊送到錯誤提示的問題；修復更新於磁碟空間足以取代舊版本的電腦上仍以「Not enough disk space」失敗的問題。3P：新增 <code>allowedPluginMcpServers</code>：設定後 Cowork、Chat 與 Code session 僅連線網址符合清單項目的 plugin MCP 伺服器（空清單表示皆不允許），與 <code>managedMcpServers</code> 及組織 plugin 並行運作，即使 <code>managedMcpServers</code> 為空亦然，App 也停止在裝置上啟動組織 plugin 以外的 plugin MCP 伺服器，Setup 視窗現可為此鍵與 <code>allowedWorkspaceFolders</code> 建立空清單；新增 <code>builtinBrowserEnabled</code>，可在 Cowork 與 Code session 中提供內建瀏覽器，並以 <code>builtinBrowserDefaultDomainPolicy</code>、<code>builtinBrowserAllowedDomains</code>、<code>builtinBrowserBlockedDomains</code> 控管 Claude 可開啟的網站；新增 <code>inferenceCredentialHelperWindows</code>：Windows 裝置上使用的憑證輔助程式絕對路徑，取代該裝置上的 <code>inferenceCredentialHelper</code>，讓單一設定可同時服務 Windows 與 macOS／Linux 裝置；Setup 視窗的 plugin marketplace 選擇器新增 Salesforce 預設；變更 <code>inferenceFoundryResource</code>：由使用者自行設定（於 Settings 或本機設定檔）之 bootstrap URL 提供的值，現改為需經使用者核准才會生效，比照 Foundry base URL 與其他供應商端點的既有做法，拒絕核准則結束 App，因資源名稱為必要欄位，每次此類 Foundry 安裝更新後皆會提示一次；經裝置管理提供，或由裝置管理設定、或 <code>trustBootstrapDelivery: true</code> 涵蓋之 bootstrap URL 提供的值不受影響、不會提示；Customize 更新為完整頁面，重新設計 Skills、Plugins 與 Connectors 清單（含搜尋、Add 選單與逐項頁面）取代 Settings 中的舊表格，Memory 移至 Settings 底下；修復 <code>disabledBuiltinTools</code> 或 <code>builtinToolPolicy</code> 中的 <code>Bash</code> 項目，於未安裝 Git for Windows 的 Windows 電腦上未套用至 PowerShell 指令的問題，<code>Bash(**)</code> 項目現視同 <code>Bash</code> 處理；修復 macOS 上 Settings > Desktop app > General 提供無法作用的語音快速鍵選項，先前選擇的 Caps Lock 或自訂快速鍵不再無法開啟聽寫列；修復推論供應商拒絕已設定的 API key 時，App 持續重新自設定伺服器抓取設定並反覆測試推論連線的問題；修復 Code 分頁的 <code>/status</code> 卡片顯示佔位帳號，現會顯示你已登入的身分與部署名稱；修復設定 <code>egressProxyUrl</code> 且網路僅能透過該 proxy 連線時，模型清單、組織設定或 MCP 伺服器偶爾於啟動後隨即載入失敗的問題；修復 gateway 的 <code>/v1/models</code> 端點同時回傳 <code>&lt;id&gt;</code> 與 <code>&lt;id&gt;[1m]</code> 時，模型選單重複列出同一模型的問題，現會以該模型與其 1M 情境列成對顯示。",
+      "categories": [
+        "MCP/Permissions",
+        "Settings/Config",
+        "Performance/Bug Fix"
+      ]
+    },
     {
       "version": "2.110.0",
       "date": "2026-09-15",
