@@ -23,7 +23,7 @@
      =========================== */
 
   const REFRESH_RUN = {
-    ranAt: "2026-09-21 10:09 (Taipei)",
+    ranAt: "2026-09-21 22:14 (Taipei)",
     sources: {
       cc: { status: "ok" },
       cd: { status: "ok" },
