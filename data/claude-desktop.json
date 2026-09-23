@@ -1,8 +1,21 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-09-22 22:10 (Taipei)",
+  "lastRefreshed": "2026-09-23 10:13 (Taipei)",
   "entries": [
+    {
+      "version": "2.2553.13",
+      "date": "2026-09-21",
+      "severity": "high",
+      "notify": true,
+      "title": "支援 Claude Opus 5.5、AGENTS.md 支援與內部錯誤卡死修復",
+      "summary": "General：新增支援 Claude Opus 5.5；修復內部錯誤發生時 session 可能卡住且無回應的問題，現會顯示該錯誤；修復部分對話每則訊息皆以「text content blocks must be non-empty」錯誤失敗的問題，含續接對話後的情況。Code：新增 <code>AGENTS.md</code> 支援：專案資料夾若無 <code>CLAUDE.md</code>，Claude 改讀取 <code>AGENTS.md</code> 作為專案指示（第三方部署尚未支援）；修復受管理員允許工作區資料夾限制的 session 中，Claude 無法讀取自己背景指令輸出的問題。Cowork、3P：無使用者面向變更。",
+      "categories": [
+        "Models",
+        "Settings/Config",
+        "Performance/Bug Fix"
+      ]
+    },
     {
       "version": "2.2553.1",
       "date": "2026-09-18",
