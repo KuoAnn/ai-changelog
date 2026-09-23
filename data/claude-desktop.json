@@ -1,8 +1,22 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-09-23 10:13 (Taipei)",
+  "lastRefreshed": "2026-09-23 22:11 (Taipei)",
   "entries": [
+    {
+      "version": "2.7032.0",
+      "date": "2026-09-22",
+      "severity": "high",
+      "notify": true,
+      "title": "SSH 連線改於遠端執行 MCP 伺服器、企業 OIDC 登入與多項效能修復",
+      "summary": "General：修復離線時傳送的訊息會顯示傳送中約一分鐘才失敗的問題，現改為數秒內失敗並顯示已離線，電腦喚醒或網路變更後轉為靜默的連線現會立即重新連線；修復 Claude 仍在回覆時送出的訊息有時會被忽略、或在逐字稿中順序錯亂並讓前一步驟顯示未完成的問題；修復 Claude 成為 <code>.md</code>、<code>.docx</code> 等檔案的預設開啟程式、Windows 對已有預設程式的檔案詢問要用哪個應用程式開啟的問題，Claude 也不再出現在 macOS Excel／PowerPoint 檔案的「打開方式」選單中（選單裡的「其他…」仍可用 Claude 開啟）；修復編輯訊息期間另一則回覆仍在執行、且伺服器拒絕該次編輯時編輯內容遺失的問題，編輯框現會保留原文重新開啟；修復部分機器（以 Windows 居多）啟動或重新載入後應用程式凍結數秒的問題；修復對話側邊面板下載失敗時整個視窗被替換為錯誤畫面的問題，現對話會保持開啟，面板按鈕會顯示問題並提供重試按鈕。Code：<b>SSH 連線改於遠端執行 MCP 伺服器</b>：新連線引擎（macOS／Linux 預設的系統原生 OpenSSH）改在遠端機器上以 Claude Code 執行桌面設定中的 MCP 伺服器，讓應用程式關閉時工具仍可運作，MCP 清單會標示伺服器未安裝於遠端或主機已有自己的伺服器；修復 Remote Control 開啟時仍在本機操作卻要求核准每個終端機指令的問題，現僅於工作由其他裝置啟動或操控時才詢問，該卡片並可關閉本次 session 的 Remote Control；修復大型 repository 啟動新 worktree session、封存或刪除 session 時的長時間延遲，含 macOS 上 <code>node_modules</code> 過大時應用程式凍結長達 30 秒的問題；修復僅該 session 自己的 worktree（位於應用程式 worktrees 資料夾）已簽出該分支時，卻回報「branch is checked out somewhere else」而無法恢復 session 的問題；修復多個 session 同時開啟時啟動緩慢、既有 session 短暫停頓的問題；修復等待回覆的 session 於應用程式重啟後很快被自動封存、側邊欄遺失待輸入標記的問題；修復部分 Windows 電腦上 SSH 連線失敗或永遠不詢問密碼、以及私密金鑰檔案被其他帳號讀取時連線失敗的問題，現會分別退回內建 SSH 引擎或將金鑰檔案設為私密後連線；修復兩種造成重複要求重新登入的原因：短暫網路中斷不再讓 Code 分頁登出而 Chat 仍保持登入，且伺服器回應剛好於 30 秒限制後送達時不再捨棄該次登入更新。Cowork：新增連接器（透過對話建議或建議卡片加入）前顯示健康資料同意對話框與 Microsoft 365 工作帳號提示；修復 Windows 上刪除執行中或剛完成工作時失敗的問題；修復內建與帳號 skill 未透過 Skill 工具載入的問題，現與 plugin skill 一致改為透過該工具載入，使 skill 自身資料夾的參照得以正確解析；修復對話中的連接器建議對組織未啟用的連接器仍顯示 Connect 並因權限訊息失敗的問題，現若組織接受請求會改顯示 Request，否則提示需請組織擁有者協助；修復以檔案路徑或檔名開頭（如 <code>/tmp/notes.txt</code>）的訊息被誤判為「Unknown skill」而遭拒送出的問題；修復下載檔案損毀（含離線安裝程式）時每次啟動皆使工作區設定失敗的問題。3P：新增 <code>inferenceCredentialKind: \"external-idp\"</code>（gateway 與 Bedrock 供應商）：使用者透過組織的 OpenID Connect 身分提供者登入，登入後的 token 會作為 Bearer 憑證隨每次推論請求送出，於 Bedrock 上該 token 會送至驗證用 proxy，因此需設定 <code>inferenceBedrockBaseUrl</code> 且模型須列於 <code>inferenceModels</code>，原僅限 gateway 的寫法已棄用但無停用期限仍可繼續使用；新增 <code>keepAwakeEnabled</code>：設為 <code>false</code> 可讓 Claude 永不讓電腦保持喚醒，設定、Scheduled 頁面與 Code 分頁中的保持喚醒開關會隱藏，但已排程的工作本身仍會執行；新增 <code>mcpScheduledTaskApprovalLifetimeDays</code>：限制排程工作可沿用長效 MCP 工具核准的天數，設為 <code>0</code> 可移除該選項；變更效能計時遙測改為先送往 <code>claude.ai</code> 而非直接送往 Datadog，因此必要遙測現在也需要 <code>claude.ai</code>，Datadog 的 intake 主機仍保留為備援路徑；移除自訂連接器驗證中的臨時廠商專屬例外，OAuth issuer 與中繼資料網址不符時將再次驗證失敗；修復 Windows 上 Microsoft 365 連接器或其他 Microsoft Entra 登入與帳號 broker 溝通時可能造成應用程式當機的問題；修復以自有 OAuth client 設定的受管連接器於伺服器接受未驗證連線時直接連線而非提示登入的問題；修復透過 Company Portal 或帳號 broker 登入 Microsoft 365 連接器時僅要求 <code>offline_access</code> 而非連接器 <code>scope</code> 設定中權限的問題；修復以 Microsoft Entra ID 進行組織登入時 <code>bootstrapOidc.scopes</code> 使用 <code>/.default</code> 會在重啟後要求重新登入的問題；修復 Code 分頁 session、側邊面板、side chat 的「Open in new window」與 Cowork live artifact 的 Pop out 彈出視窗無作用的問題。",
+      "categories": [
+        "MCP/Permissions",
+        "Settings/Config",
+        "Performance/Bug Fix",
+        "Cowork"
+      ]
+    },
     {
       "version": "2.2553.13",
       "date": "2026-09-21",
