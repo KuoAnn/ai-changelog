@@ -1,8 +1,22 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-09-24 22:09 (Taipei)",
+  "lastRefreshed": "2026-09-25 10:11 (Taipei)",
   "entries": [
+    {
+      "version": "2.9939.2",
+      "date": "2026-09-24",
+      "severity": "high",
+      "notify": true,
+      "title": "內建瀏覽器站台安全確認、MCP 伺服器重新導向阻擋與多項啟動修復",
+      "summary": "General：移除側邊欄顯示／隱藏的 <code>Cmd+.</code>（Windows／Linux 為 <code>Ctrl+.</code>）快捷鍵，<code>Cmd+B</code>／<code>Ctrl+B</code> 仍可使用；修復 1Password 自動填入在多分頁工作時填錯分頁的問題；修復再次要求登入時遺失新對話或工作中已輸入訊息的問題；修復阿拉伯文與希伯來文訊息的引用線、清單項目符號方向錯誤，以及程式碼與數學公式遭鏡像顯示的問題；修復部分已更新至 2.9939.1 的 Mac 上 Code 分頁與 Cowork session 無法啟動的問題；修復複製含數學公式回覆的部分內容時貼上亂碼而非公式的問題；修復含 <code>.zip</code> 檔的 plugin 在 claude.ai 啟用後，於應用程式內永遠無法安裝的問題；修復部分 Windows 電腦更新後因「Cannot create a stable subkey under a volatile parent key」錯誤而無法啟動的問題。Code：變更刪除 session 時一併移除該 session 的 Claude Code 逐字稿與相關檔案，<code>claude --resume</code> 將無法再重新開啟；修復應用程式更新後、對應 Claude Code 版本仍在下載時，新 session 第一則訊息失敗顯示「does not support this model」的問題，現會等待下載完成；修復 Auto 模式有時將剛輸入的請求當作未詢問而直接拒絕的問題；修復長對話中向上捲動時部分較早訊息未載入的問題；修復 Mac 上 Homebrew 等非 Apple <code>ssh</code> 排在 <code>PATH</code> 前面時連線本機網路機器出現「no route to host」、以及新連線引擎連到登入殼層為 <code>cmd.exe</code> 的 Windows 主機時出現「SSH master exited before the connection was established」的問題；修復封存 session 的 worktree 清理後，Windows 上應用程式占滿整顆 CPU 核心的問題。Cowork：修復對話檔案面板下載 Claude 存到專案文件失敗的問題；修復描述為空的排程工作不顯示提示詞、Run now 被停用、編輯失敗且 Move to cloud 被封鎖的問題；修復標準部署下帳號連接多個資料夾時 Windows 上 session 啟動失敗的問題；修復部分 Windows MSIX（企業封裝）安裝出現「Claude Code crashed」而啟動失敗的問題；修復新工作畫面仍提供已被組織管理員關閉的模型、導致新工作失敗的問題；修復 Windows 工作區背景服務停止後顯示「VM service not running」需重開機才能啟動的問題，現應用程式會自行重啟該服務。3P：新增 Cowork 訊息框中 effort 控制項旁的 extended-thinking 切換開關；變更 <code>allowedPluginMarketplaces</code>：<code>url</code> marketplace 的 <code>credentialHelper</code> 現可印出 HTTP 標頭 JSON 物件並隨每次請求送出；變更 <code>autoModeEnabled</code> 語意：未設為 <code>false</code> 時，支援的模型其新 Code 分頁 session 預設啟用 Auto 模式，Cowork／Chat 行為不變；<b>內建瀏覽器新增站台安全確認</b>：<code>builtinBrowserDefaultDomainPolicy: \"allow\"</code> 下，Claude 對 Anthropic 站台安全清單標記的網站會在每次動作前先詢問，僅 <code>builtinBrowserAllowedDomains</code> 中的網站可略過確認；<b>受管 MCP 伺服器不再跟隨重新導向</b>：URL 會重新導向的伺服器現回報設定錯誤，需提供最終網址；修復唯讀工具原本顯示可修改資料才有的核准警告的問題，現除非 <code>mcpPersistentAlwaysAllowEnabled</code> 為 <code>false</code> 否則會提供「永久允許」；修復 Windows 上無 Git for Windows 的 Code 分頁 session 對所有 shell 指令回報「Enterprise policy requires sandboxing」而拒絕執行的問題。",
+      "categories": [
+        "MCP/Permissions",
+        "Settings/Config",
+        "Performance/Bug Fix",
+        "Cowork"
+      ]
+    },
     {
       "version": "2.7032.0",
       "date": "2026-09-22",
