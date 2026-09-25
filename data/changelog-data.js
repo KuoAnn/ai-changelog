@@ -23,7 +23,7 @@
      =========================== */
 
   const REFRESH_RUN = {
-    ranAt: "2026-09-25 10:11 (Taipei)",
+    ranAt: "2026-09-25 22:17 (Taipei)",
     sources: {
       cc: { status: "ok" },
       cd: { status: "ok" },
@@ -244,6 +244,7 @@
   ];
 
   const DATA_CI = [
+    {v:"0.157.0", date:"2026-09-25", cat:"Models/Inference", title:"CLI 0.157.0：GPT-6 Sol／Luna 正式加入模型選單、全螢幕逐字稿預設開啟與網路政策強制執行", body:"新增：模型選單新增 <b>GPT-6 Sol</b> 與 <b>GPT-6 Luna</b>，支援 Amazon Bedrock 並於偵測到舊模型時提供遷移提示；<b>全螢幕逐字稿</b>預設開啟，並新增 Shift+點擊可延伸選取範圍；符合條件的互動式 session 預設啟用<b>背景伺服器自動啟動</b>，伺服器設定不相容時提供復原選項；新增 <code>f</code> 快捷鍵可將在其他 App 中開啟的對話分岔（fork），並保留草稿與待送出提示；<code>/import</code> 現可用於遠端 session 與本機背景伺服器 session；改善終端機渲染，支援 Unicode 項目符號、核取方塊、對齊方程式與最佳化記號。修復：切換討論串時保留進行中的語音對話；回合結束時將未送出的問題答案還原至輸入框，且不中斷進行中的歷史搜尋；於自動全螢幕模式下遵循 tmux 滑鼠設定，並復原 SSH 連線下 Terminal.app 的原生捲動；修正透過 proxy 的即時連線與獨立網頁搜尋（含搜尋重新導向）路由設定；新增檔案上傳暫時性失敗的重試機制，並將上傳逾時由 60 秒延長為 5 分鐘；<b>強制網路政策涵蓋重新導向與持續中的 HTTP／WebSocket 流量，政策變更撤銷存取權限時會一併取消連線</b>。（GitHub Releases API）"},
     {v:"0.156.1", date:"2026-09-23", cat:"Models/Inference", title:"CLI 0.156.1：模型選單新增 GPT-6 Sol／Luna（0.156.0 hotfix）", body:"新增：模型選單可選擇 <b>GPT-6 Sol</b> 或 <b>GPT-6 Luna</b>，達速率限制時的切換提示現改為建議 <code>GPT-6 Luna</code>。（GitHub Releases API · 0.156.0 hotfix）"},
     {v:"0.156.0", date:"2026-09-22", cat:"Permissions/Security", title:"CLI 0.156.0：全螢幕 TUI（/tui）、預設語音對話與 /usage 用量儀表板", body:"新增：可用 <code>/tui</code> 為下次啟動選用<b>全螢幕 UI</b>，具備逐字稿搜尋、滑鼠選取與右鍵複製；語音對話<b>預設開啟</b>，具備 F8 快速鍵、<code>/voice settings</code> 選擇器與 Linux／Windows 內建音訊執行環境；新增 <code>/usage</code> <b>用量分析儀表板</b>，可檢視帳號用量、token 總量與 plugin／skill 使用情形；agent command center 新增依狀態篩選工作，並可直接建立 worktree session（worktree 支援現已預設開啟）；終端機新增六款佈景主題，並可直接檢視 Mermaid 圖表與行內數學公式；新增 <code>/daemon</code> 可更新本機背景伺服器，或以 <code>--no-daemon</code> 略過。修復：回合失敗、被中斷或收到 subagent 完成事件時，現會保留已串流的回覆與 plan；修正 tmux 與 SSH session 的剪貼簿轉發問題，並保留終端機以個別按鍵送出貼上文字時的 Tab 縮排；恢復 session 時 Plan mode 現能正確還原，編輯先前提示時討論串身分與設定亦予保留；改善透過系統 proxy 的登入復原，並於 OAuth discovery 回傳 503 時刷新 MCP 憑證；修正語音播放於暫停或連續音訊湧入時遺漏語音內容的問題；<b>封鎖沙箱隔離漏洞：包含 Windows 對內連線、Linux／macOS 特權 socket，以及透過唯讀 macOS 檔案控制代碼寫入</b>。其他：淘汰的 <code>friendly</code> 與 <code>pragmatic</code> 個性設定不再影響回覆風格；文件說明網路 proxy 允許／拒絕規則中 <code>?</code> 代表比對單一字元；更新內建 TLS 相依套件，Linux musl 版本改用 OpenSSL 3.6.4。（GitHub Releases API）"},
     {v:"0.155.1", date:"2026-09-18", cat:"Performance/Bug Fix", title:"CLI 0.155.1：TUI 推理摘要預設值回復修復", body:"修復：新建立的本機 TUI session 現預設關閉推理摘要，修正部分不支援該功能的 provider 會拒絕請求的問題；已明確設定推理摘要的使用者設定值維持不受影響。（GitHub Releases API）"},
@@ -684,6 +685,15 @@
   ];
 
   const INSP_CI = [
+    {ico:"star", color:"gold", feat:"GPT-6 Sol／Luna 模型上線", ver:"0.157.0 · 2026-09-25",
+     desc:"Codex CLI 模型選單新增 GPT-6 Sol 與 GPT-6 Luna，兩者皆支援 Amazon Bedrock，並於偵測到舊模型時提供遷移提示。",
+     scen:"<b>場景：</b>後端／QA 想比較不同模型在同一任務的表現與速度時，可直接於 model picker 切換 GPT-6 Sol／Luna，不需改動任何設定或重新登入；達速率限制時，切換提示也會建議改用 Luna，維持工作不中斷。",
+     roles:["backend","qa"],
+     d:[
+       {h:"為什麼有用", p:"模型選項增加後，團隊可依任務性質（如高負載時段改用備援模型）彈性切換，不必等待原有模型額度釋出，Bedrock 部署也同步支援。"},
+       {h:"設定 / 操作", c:"bash", b:"codex\n# TUI 內按 /model 開啟選單，選擇 GPT-6 Sol 或 GPT-6 Luna"},
+       {h:"小技巧", l:["達速率限制時，切換提示會直接建議改用 GPT-6 Luna","Amazon Bedrock 部署已同步支援兩款新模型，無需額外設定"]}
+     ], auto: true},
     {ico:"layout", color:"blue", feat:"codex agents 儀表板", ver:"0.149.0 · 2026-08-20",
      desc:"互動式儀表板可搜尋、啟動、開啟、重新命名與停止多個 Codex session，取代逐一切換視窗管理。",
      scen:"<b>場景：</b>後端／QA 同時跑多條 Codex 任務（跑測試、寫 migration、修 bug）時，用 <code>codex agents</code> 一次盤點所有任務狀態，直接在儀表板重新命名、停止或跳轉，不用記哪個視窗對應哪個任務。",
