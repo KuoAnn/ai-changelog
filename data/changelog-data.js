@@ -23,7 +23,7 @@
      =========================== */
 
   const REFRESH_RUN = {
-    ranAt: "2026-09-26 10:14 (Taipei)",
+    ranAt: "2026-09-26 22:10 (Taipei)",
     sources: {
       cc: { status: "ok" },
       cd: { status: "ok" },
@@ -245,6 +245,7 @@
   ];
 
   const DATA_CI = [
+    {v:"0.157.1", date:"2026-09-26", cat:"Performance/Bug Fix", title:"CLI 0.157.1：版本維護性發佈", body:"修復：本版官方 release notes 未提供詳細變更說明（GitHub 版本比對查無結果，無法判定與上一版的差異），研判為版號遞增之維護性發佈，無使用者面向說明可揭露。"},
     {v:"0.157.0", date:"2026-09-25", cat:"Models/Inference", title:"CLI 0.157.0：GPT-6 Sol／Luna 正式加入模型選單、全螢幕逐字稿預設開啟與網路政策強制執行", body:"新增：模型選單新增 <b>GPT-6 Sol</b> 與 <b>GPT-6 Luna</b>，支援 Amazon Bedrock 並於偵測到舊模型時提供遷移提示；<b>全螢幕逐字稿</b>預設開啟，並新增 Shift+點擊可延伸選取範圍；符合條件的互動式 session 預設啟用<b>背景伺服器自動啟動</b>，伺服器設定不相容時提供復原選項；新增 <code>f</code> 快捷鍵可將在其他 App 中開啟的對話分岔（fork），並保留草稿與待送出提示；<code>/import</code> 現可用於遠端 session 與本機背景伺服器 session；改善終端機渲染，支援 Unicode 項目符號、核取方塊、對齊方程式與最佳化記號。修復：切換討論串時保留進行中的語音對話；回合結束時將未送出的問題答案還原至輸入框，且不中斷進行中的歷史搜尋；於自動全螢幕模式下遵循 tmux 滑鼠設定，並復原 SSH 連線下 Terminal.app 的原生捲動；修正透過 proxy 的即時連線與獨立網頁搜尋（含搜尋重新導向）路由設定；新增檔案上傳暫時性失敗的重試機制，並將上傳逾時由 60 秒延長為 5 分鐘；<b>強制網路政策涵蓋重新導向與持續中的 HTTP／WebSocket 流量，政策變更撤銷存取權限時會一併取消連線</b>。（GitHub Releases API）"},
     {v:"0.156.1", date:"2026-09-23", cat:"Models/Inference", title:"CLI 0.156.1：模型選單新增 GPT-6 Sol／Luna（0.156.0 hotfix）", body:"新增：模型選單可選擇 <b>GPT-6 Sol</b> 或 <b>GPT-6 Luna</b>，達速率限制時的切換提示現改為建議 <code>GPT-6 Luna</code>。（GitHub Releases API · 0.156.0 hotfix）"},
     {v:"0.156.0", date:"2026-09-22", cat:"Permissions/Security", title:"CLI 0.156.0：全螢幕 TUI（/tui）、預設語音對話與 /usage 用量儀表板", body:"新增：可用 <code>/tui</code> 為下次啟動選用<b>全螢幕 UI</b>，具備逐字稿搜尋、滑鼠選取與右鍵複製；語音對話<b>預設開啟</b>，具備 F8 快速鍵、<code>/voice settings</code> 選擇器與 Linux／Windows 內建音訊執行環境；新增 <code>/usage</code> <b>用量分析儀表板</b>，可檢視帳號用量、token 總量與 plugin／skill 使用情形；agent command center 新增依狀態篩選工作，並可直接建立 worktree session（worktree 支援現已預設開啟）；終端機新增六款佈景主題，並可直接檢視 Mermaid 圖表與行內數學公式；新增 <code>/daemon</code> 可更新本機背景伺服器，或以 <code>--no-daemon</code> 略過。修復：回合失敗、被中斷或收到 subagent 完成事件時，現會保留已串流的回覆與 plan；修正 tmux 與 SSH session 的剪貼簿轉發問題，並保留終端機以個別按鍵送出貼上文字時的 Tab 縮排；恢復 session 時 Plan mode 現能正確還原，編輯先前提示時討論串身分與設定亦予保留；改善透過系統 proxy 的登入復原，並於 OAuth discovery 回傳 503 時刷新 MCP 憑證；修正語音播放於暫停或連續音訊湧入時遺漏語音內容的問題；<b>封鎖沙箱隔離漏洞：包含 Windows 對內連線、Linux／macOS 特權 socket，以及透過唯讀 macOS 檔案控制代碼寫入</b>。其他：淘汰的 <code>friendly</code> 與 <code>pragmatic</code> 個性設定不再影響回覆風格；文件說明網路 proxy 允許／拒絕規則中 <code>?</code> 代表比對單一字元；更新內建 TLS 相依套件，Linux musl 版本改用 OpenSSL 3.6.4。（GitHub Releases API）"},
