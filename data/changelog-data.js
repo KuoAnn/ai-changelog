@@ -23,7 +23,7 @@
      =========================== */
 
   const REFRESH_RUN = {
-    ranAt: "2026-09-28 10:09 (Taipei)",
+    ranAt: "2026-09-28 22:21 (Taipei)",
     sources: {
       cc: { status: "ok" },
       cd: { status: "ok" },
@@ -245,6 +245,7 @@
   ];
 
   const DATA_CI = [
+    {v:"0.158.0", date:"2026-09-28", cat:"Permissions/Security", title:"CLI 0.158.0：終端機輸入核准預設開啟、Exec-Server WebSocket Bearer 驗證與 MCP OAuth Client Secret 支援", body:"新增：<b>全螢幕 TUI 複製／貼上強化</b>：可設定 copy-on-select 與右鍵貼上，複製的逐字稿選取範圍現會保留 Markdown 格式；<b>MCP OAuth Client Secret</b>：可連線需預先註冊 OAuth client secret 的 MCP 伺服器，包含透過 <code>codex mcp add --oauth-client-secret</code>；<b>Exec-Server WebSocket Bearer Token 驗證</b>：為直接 exec-server WebSocket 連線加上 bearer token 驗證，含透過 app-server 設定的連線；<b>圖片生成／編輯</b>：可明確要求透明背景，編輯功能現也接受檔案形式的對話圖片；<b>終端機輸入核准預設開啟</b>：以提升權限執行的指令現預設啟用終端機輸入核准，僅執行期授予的權限不再觸發不必要的審查。修復：Windows 一般路徑觸發的沙箱失敗、遭拒的已儲存憑證與過大的權限政策；Linux 沙箱於巢狀可寫入根目錄下的啟動問題，並於 Linux／macOS 保留可寫入根目錄間的 Git 中繼資料保護；macOS patch 操作現可辨識既有權限涵蓋的系統路徑別名，避免不必要的核准提示；審核於收到新使用者輸入時會重試，狀態詢問不會再自動中止進行中的動作；Mermaid 流程圖現支援含引號的標籤與 <code>&amp;</code> 符號，不支援的圖表會說明為何回退為原始碼；指令完成事件現含早期輸出，並向客戶端回報行程啟動失敗。（GitHub Releases API）"},
     {v:"0.157.1", date:"2026-09-26", cat:"Performance/Bug Fix", title:"CLI 0.157.1：版本維護性發佈", body:"修復：本版官方 release notes 未提供詳細變更說明（GitHub 版本比對查無結果，無法判定與上一版的差異），研判為版號遞增之維護性發佈，無使用者面向說明可揭露。"},
     {v:"0.157.0", date:"2026-09-25", cat:"Models/Inference", title:"CLI 0.157.0：GPT-6 Sol／Luna 正式加入模型選單、全螢幕逐字稿預設開啟與網路政策強制執行", body:"新增：模型選單新增 <b>GPT-6 Sol</b> 與 <b>GPT-6 Luna</b>，支援 Amazon Bedrock 並於偵測到舊模型時提供遷移提示；<b>全螢幕逐字稿</b>預設開啟，並新增 Shift+點擊可延伸選取範圍；符合條件的互動式 session 預設啟用<b>背景伺服器自動啟動</b>，伺服器設定不相容時提供復原選項；新增 <code>f</code> 快捷鍵可將在其他 App 中開啟的對話分岔（fork），並保留草稿與待送出提示；<code>/import</code> 現可用於遠端 session 與本機背景伺服器 session；改善終端機渲染，支援 Unicode 項目符號、核取方塊、對齊方程式與最佳化記號。修復：切換討論串時保留進行中的語音對話；回合結束時將未送出的問題答案還原至輸入框，且不中斷進行中的歷史搜尋；於自動全螢幕模式下遵循 tmux 滑鼠設定，並復原 SSH 連線下 Terminal.app 的原生捲動；修正透過 proxy 的即時連線與獨立網頁搜尋（含搜尋重新導向）路由設定；新增檔案上傳暫時性失敗的重試機制，並將上傳逾時由 60 秒延長為 5 分鐘；<b>強制網路政策涵蓋重新導向與持續中的 HTTP／WebSocket 流量，政策變更撤銷存取權限時會一併取消連線</b>。（GitHub Releases API）"},
     {v:"0.156.1", date:"2026-09-23", cat:"Models/Inference", title:"CLI 0.156.1：模型選單新增 GPT-6 Sol／Luna（0.156.0 hotfix）", body:"新增：模型選單可選擇 <b>GPT-6 Sol</b> 或 <b>GPT-6 Luna</b>，達速率限制時的切換提示現改為建議 <code>GPT-6 Luna</code>。（GitHub Releases API · 0.156.0 hotfix）"},
