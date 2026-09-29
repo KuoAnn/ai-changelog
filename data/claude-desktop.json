@@ -1,8 +1,20 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-09-28 22:21 (Taipei)",
+  "lastRefreshed": "2026-09-29 10:10 (Taipei)",
   "entries": [
+    {
+      "version": "2.9939.4",
+      "date": "2026-09-27",
+      "severity": "high",
+      "notify": true,
+      "title": "新增 Claude Sonnet 5.5 支援與對話歷史 API 錯誤修復",
+      "summary": "General：新增支援 Claude Sonnet 5.5；修復對話歷史含特定網頁搜尋結果或先前 extended thinking 時，session 於每則訊息皆以 API 錯誤失敗的問題。Code：修復切換組織後的變更警告未顯示於 session 中的問題。Cowork：本版無使用者面向變更。3P：本版無使用者面向變更。（隨附 Claude Code 2.1.284）",
+      "categories": [
+        "Models",
+        "Performance/Bug Fix"
+      ]
+    },
     {
       "version": "2.9939.2",
       "date": "2026-09-24",
