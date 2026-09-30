@@ -1,8 +1,21 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-09-29 23:35 (Taipei)",
+  "lastRefreshed": "2026-09-30 10:10 (Taipei)",
   "entries": [
+    {
+      "version": "2.16120.0",
+      "date": "2026-09-29",
+      "severity": "high",
+      "notify": true,
+      "title": "Worktree 信任判斷修復、deniedPluginMcpServers 封鎖清單與 Google 文件建立整合",
+      "summary": "General：新增可從新對話輸出選單直接建立已連接 Google Drive 的 Google 文件、試算表或簡報，並修復 Google 面板誤顯示「Owner unknown」的問題；修復傳送失敗訊息覆蓋較新輸入、口述文字於佇列訊息送出時遺失、語音對話後第一則訊息回覆到舊回覆，以及從指令面板開新對話卻送進已開啟隱身對話或遺失的問題；修復編輯已送出訊息遺漏部分原文、回覆 Claude 提問卡片時打字導致附加檔案消失、已移除文字檔案仍留在對話檔案清單，以及連接應用程式的大型文件阻擋傳送的問題；修復獨立視窗開啟對話時，主視窗縮到最小會使串流內容跳動、用量與點數按鈕失效、瀏覽器與 artifact／檔案預覽面板變空白的問題；修復 Quick Entry：App 仍在載入時送出的提示可能遺失、傳給既有對話的檔案遺失檔名（導致文字、程式碼與 Office 文件無法讀取）、更新後立即使用可能造成當機；修復卡片（如天氣或地圖卡片）繪製失敗時整個對話被錯誤畫面取代，現改為僅該卡片顯示「Couldn't load this.」；修復 <code>/docx</code>、<code>/pdf</code>、<code>/pptx</code>、<code>/xlsx</code> 被誤判為未知 skill 而無法於 Cowork 選單使用，並自 Code 分頁選單移除無法執行的 Cowork 專屬 skill。Code：變更 Max effort 改為僅套用於目前 session（與 Claude Code CLI 一致），新 session 不再預設沿用 Max，並修復在已開啟 session 中變更 effort 等級會連動改變新 session 起始模型的問題；變更 worktree 清理邏輯：session 的 worktree 在封存前都會保留，且使用者或 CLI 於 <code>.claude/worktrees</code> 下建立的 worktree 永不被 App 移除；修復封存 session 會刪除較早前 worktree 位置變更前建立之 worktree 中未提交工作的問題（macOS／Linux）；修復 worktree 中的 Code session 被以「This workspace isn't trusted」拒絕且不顯示信任對話框、forked session 於 App 重啟後被自身 worktree 的信任檢查中止的問題；修復 SSH session 於 App 關閉時遠端 Claude Code 已停止卻以閒置狀態重新開啟、以及 Linux 上 SSH 連線未使用 shell 啟動檔案中 ssh-agent 的問題；修復彈出視窗 session 對話發生錯誤時主視窗被錯誤畫面取代，現改為顯示 Try again；變更 Claude Code 2.1.275 以上版本的 worktree session，改為讀取所開啟專案資料夾（而非 worktree 簽出分支）的專案設定、hooks 與 MCP 伺服器，現亦適用於 Windows SSH 主機；修復 App 更新後對話停留在舊版 Claude Code、API 拒絕時現改為以目前版本接續同一對話的問題；修復遠端伺服器於重新連線後首次回應緩慢時 SSH session 被重啟、執行中回合被中止的問題；修復 Windows 上路徑含名為 <code>claude</code> 資料夾的 repository 中 worktree session 偶爾被拒絕的問題。Cowork：變更本機工作中的組織工具政策：連接器工具設為「Restrict to Ask」時現會要求核准（含「Skip all approvals」模式下新啟動的工作），檔案工具的 ask 政策現顯示核准提示而非直接拒絕；修復 Windows 上 Claude 安裝於非系統磁碟機時「Failed to start Claude's workspace」的問題；修復同時從其他視窗或裝置送出訊息，與重新啟動或編輯較早訊息互相干擾導致訊息被中止或遺失的問題；修復 Office 檔案預覽在 Claude 工作區卡住後持續失敗直到重啟 App 的問題，現會說明實際失敗原因並可於第三方部署原地重啟工作區；修復對話中 Claude 提議或撰寫的 skill 可在無指示內容時被儲存，導致儲存出空白 skill 或清空既有 skill 的問題；修復 Cowork 資料匯出保留檔名中隱藏字元的問題；新增檔案面板影片輸出的行內播放與對話中縮圖預覽。3P：新增 <code>deniedPluginMcpServers</code>：可設定 URL 樣式封鎖清單，禁止 plugin 於 Cowork、Chat 與 Code session 中連線指定的遠端 MCP 伺服器，符合的伺服器即使 <code>allowedPluginMcpServers</code> 允許仍會被擋；變更 <code>userPluginMarketplacesEnabled</code>：設為 <code>false</code> 時會隱藏組織未提供的 plugin marketplace、拒絕其安裝與更新，並告知 Code 與 Cowork session 不要載入其 plugin（先前僅封鎖新增 marketplace）；移除非必要遙測網路需求清單中的 <code>a-cdn.anthropic.com</code> 與 <code>a-api.anthropic.com</code>；更新 Code 分頁輸入框為重新設計樣式，<code>+</code> 選單移至列中最前；修復診斷報告的網路可達性檢查與 Setup 視窗連線測試，誤判使用非預設連接埠的伺服器為無法連線；修復 App 設為其他語言時，兩處模型選單說明文字仍顯示英文的問題。",
+      "categories": [
+        "MCP/Permissions",
+        "Settings/Config",
+        "Cowork"
+      ]
+    },
     {
       "version": "2.9939.4",
       "date": "2026-09-27",
