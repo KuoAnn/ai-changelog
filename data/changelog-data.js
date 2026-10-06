@@ -23,12 +23,12 @@
      =========================== */
 
   const REFRESH_RUN = {
-    ranAt: "2026-10-05 22:21 (Taipei)",
+    ranAt: "2026-10-06 10:08 (Taipei)",
     sources: {
-      cc: { status: "ok" },
-      cd: { status: "ok" },
-      ca: { status: "ok" },
-      ci: { status: "ok" }
+      cc: { status: "transient", detail: "來源快照逾 23 小時未更新，Actions 工作流程可能失敗（已確認無新版）" },
+      cd: { status: "transient", detail: "來源快照逾 23 小時未更新，Actions 工作流程可能失敗（已確認無新版）" },
+      ca: { status: "transient", detail: "來源快照逾 23 小時未更新，Actions 工作流程可能失敗（已確認無新版）" },
+      ci: { status: "transient", detail: "來源快照逾 23 小時未更新，Actions 工作流程可能失敗（已確認無新版）" }
     }
   };
 
