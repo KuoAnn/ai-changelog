@@ -1,8 +1,19 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-10-06 10:08 (Taipei)",
+  "lastRefreshed": "2026-10-06 22:23 (Taipei)",
   "entries": [
+    {
+      "version": "2.19675.1",
+      "date": "2026-10-05",
+      "severity": "medium",
+      "notify": true,
+      "title": "Chat 資料夾唯讀存取擴充與 Skill 壓縮檔案遺失修復",
+      "summary": "General、Code、Cowork：本版無使用者面向變更。3P：新增 Chat 可讀取此更新後加入專案的資料夾（此前加入的資料夾需重新加入專案並開啟新對話才能使用）；修復以 <code>.zip</code> 或 <code>.skill</code> 上傳的 skill 僅保留 <code>SKILL.md</code>、其餘檔案遺失的問題，現會一併保存，重新命名 skill 也會保留這些檔案；修復名稱含其他文字系統或標點符號的 skill 無法被 Cowork 與 Code session 找到，以及壓縮檔含高壓縮比檔案、或 <code>SKILL.md</code> 深埋於 repository 下載內容中時上傳被拒的問題。（隨附 Claude Code 2.1.288）",
+      "categories": [
+        "Cowork"
+      ]
+    },
     {
       "version": "2.19675.0",
       "date": "2026-10-01",
