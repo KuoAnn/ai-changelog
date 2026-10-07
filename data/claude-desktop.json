@@ -1,8 +1,20 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-10-07 10:10 (Taipei)",
+  "lastRefreshed": "2026-10-07 22:24 (Taipei)",
   "entries": [
+    {
+      "version": "2.26454.0",
+      "date": "2026-10-06",
+      "severity": "high",
+      "notify": true,
+      "title": "SSH Worktree 連線與訊息遺失修復、Microsoft 365 Teams 搜尋權限異動",
+      "summary": "General：修復：回覆或工具步驟繪製失敗會讓整個對話一併當掉，現改為該回覆顯示為純文字、該步驟顯示「Couldn't load this.」，其餘對話照常顯示；語音模式下編輯訊息可能把對話截回第一則，現改為顯示提示並保留你的文字；Ubuntu 22.04、Debian 12 等較舊 Linux 發行版圖片與文件附加檔案載入失敗；App 無法讀取已安裝 plugin 清單期間上傳 plugin，會導致既有已安裝 plugin 消失；Cowork 工作數量極多的使用者於啟動後不久當機；內建瀏覽器分頁當機後再縮放、重新載入或切換裝置尺寸會讓整個 App 關閉。Code：修復：輸入訊息期間所選的 Remote Control 電腦或雲端環境消失時，新 session 會靜默切回 Local 並在本機執行提示；<code>Cmd+Q</code>、選單與系統匣的 Quit 會略過「Claude is still working」提示，未經詢問直接中止執行中的 session；使用 worktree 的 Linux 主機 SSH session，於 App 關閉或電腦睡眠期間會略過檔案編輯；新 session 中 Claude 有時無法在 App 內執行動作（如變更設定、於編輯器開啟檔案或讓電腦保持喚醒）；遠端主機上 Claude Code 重啟後，SSH session 會無訊息中止或閒置而非接續執行，現會顯示錯誤並提供 Try again，重新開啟後可接續；訊息送出失敗、或新 session 啟動失敗或於啟動中被停止時，已輸入文字、貼上圖片與附加檔案會遺失。Cowork：變更：macOS 上的電腦使用功能不再編輯或儲存家目錄中的隱藏檔案與資料夾（如 <code>~/.vimrc</code>、<code>~/.aws</code>）。修復：已移至雲端的排程工作，於雲端工作載入失敗時會在本機顯示為另一個暫停中的工作，開啟它可能讓工作執行兩次；App 在背景執行時，Claude 無法使用 Keynote 等文件的選單指令（如 New Slide、Undo），或在部分畫布上點擊拖曳；同一 Windows 帳號開啟第二份 App 時 Cowork 工作無法啟動；新工作尚未啟動完成前送出第二則訊息會讓 App 凍結。3P：新增：<code>claudeAiImport.allowedOrganizationUuids</code>：限制使用者可匯入對話記錄的 Claude.ai 組織，設定後僅能透過登入 Claude.ai 匯入、且僅限清單內組織，停用以檔案匯入；<code>microsoftAuthDefaultAccount</code> 設為 <code>enabled</code> 時，Windows 上 Microsoft 365 connector 的 Connect 會直接以已登入 Windows 的工作帳號登入、不顯示帳號選擇器（預設 <code>disabled</code>）；Microsoft 365 connector 新增「Use a different account」按鈕與目前登入帳號顯示列；SSH 主機未執行設定要求的沙箱時，新增送往 OTLP collector 的事件；OpenTelemetry 匯出新增 <code>desktop_claude_ai_import</code> 事件（<code>info</code> 層級），每次以登入或檔案匯入 Claude.ai 歷史記錄皆會記錄，內建 Claude.ai 登入匯入並會標明來源組織。變更：此版本起 <code>inferenceGatewayAuthScheme: 「sso」</code> 不再設到期日，未設定 <code>inferenceCredentialKind</code> 時於 2026 年 10 月 7 日後仍會持續讀作 <code>interactive</code>（較舊版本仍於當天停止接受）；多人共用電腦登入時，各自保留自己的內建與 OAuth connector 登入狀態，換人登入會以未連接狀態開始，原使用者的登入狀態予以保留；Microsoft 365 connector 的 Teams 對話搜尋現需要 <code>ChannelMessage.Read.All</code> 權限，未授予時搜尋會回傳附同意連結的訊息，需由 Entra 管理員同意後將 Access（<code>scope</code>）設為現有權限加上此項，並請使用者重新連線。修復：管理員重新部署 plugin 資料夾後，使用者自行安裝的組織 plugin 會消失；儲存描述極長的 skill 會移除此電腦上所有已保留的 skill，現描述超過 1,024 字元會直接拒絕並說明原因；系統管理員新增一項權限時，Microsoft 365 connector 的 Access 設定會以該單一權限取代預設權限（mail、calendar、files），現 Access 會顯示預設權限為已選取，新增權限不影響其餘項目，自訂清單也可重設回預設值。",
+      "categories": [
+        "MCP/Permissions",
+        "Performance/Bug Fix"
+      ]
+    },
     {
       "version": "2.19675.1",
       "date": "2026-10-05",
