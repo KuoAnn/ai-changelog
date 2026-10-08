@@ -23,7 +23,7 @@
      =========================== */
 
   const REFRESH_RUN = {
-    ranAt: "2026-10-07 22:24 (Taipei)",
+    ranAt: "2026-10-08 10:10 (Taipei)",
     sources: {
       cc: { status: "ok" },
       cd: { status: "ok" },
@@ -255,6 +255,7 @@
   ];
 
   const DATA_CI = [
+    {v:"0.161.0", date:"2026-10-07", cat:"Models/Inference", title:"CLI 0.161.0：GPT-6.1 Sol 成為預設模型、MCP 登入指令與語音裝置選擇", body:"新增：<b>GPT-6.1 Sol</b> 成為內建與 Amazon Bedrock 型錄的預設模型；Amazon Bedrock 於相容模型上支援 multi-agent V2 與 Ultra reasoning，Bedrock Mantle 並新增支援 AWS GovCloud 區域；可於現有終端機 session 以 <code>/mcp login &lt;name&gt;</code> 直接登入 MCP 伺服器；語音對話新增麥克風、喇叭與麥克風輸入聲道選擇，偏好設定會存於本機；Daybreak 改為須以 <code>--enable cli_daybreak</code> 或 <code>features.cli_daybreak=true</code> 明確啟用，單獨設定 <code>daybreak=true</code> 已不足，未啟用時控制項與指示器預設隱藏、<code>/daybreak</code> 不可用、自動 Cyber 路由也會略過（含既有 Daybreak 對話串），opt-in 路由需符合資格的 ChatGPT 登入與 OpenAI 供應商；可用 <code>codex exec --cyber-access-program</code> 或 TypeScript SDK 的 <code>cyberAccessProgram</code> 選項逐回合選擇 Cyber access program。修復：修復已核准的檔案系統權限升級可授予更廣寫入權限、同時保留被拒讀取與網路限制，背景工作並沿用發起回合的權限；明確設定的啟動權限在終端機重新連線與新 session 間得以保留，隱性客戶端設定不再覆寫伺服器或已儲存對話串的網頁搜尋設定；提升權限的 Windows 終端機 session 現可用內嵌伺服器啟動，沙箱化 PowerShell 於受保護使用者設定檔下方保留相對路徑；貼上偵測逾時後 Enter 鍵現可正確送出緩衝輸入（含 Vim insert 模式）；對話串續接會納入最新已提交的歷史記錄，啟動時更早偵測可復原的 SQLite 損毀並保留損毀資料庫備份；Responses 重試與 WebSocket 轉 HTTP 的 fallback 現遵循伺服器重試建議，減少過載時的提前失敗。（GitHub Releases API）"},
     {v:"0.160.1", date:"2026-10-05", cat:"MCP/Tools", title:"CLI 0.160.1：Windows Remote MCP 環境變數保留修復", body:"修復：修復透過遠端 stdio MCP 伺服器啟動、且已明確設定 remote 環境變數時，未保留 <code>SYSTEMROOT</code>、<code>TEMP</code> 與 <code>TMP</code> 的問題，使 Unix 主機得以維持 Windows executor 的啟動環境（回移植自 PR #51121，適用 0.160 分支）。（GitHub Releases API）"},
     {v:"0.160.0", date:"2026-10-01", cat:"Performance/Bug Fix", title:"CLI 0.160.0：Agent Command Center 分頁瀏覽、Guardian Review 強化與 Windows 沙箱修復", body:"新增：<b>Agent Command Center 分頁瀏覽</b>：新增鍵盤可及的「Show more」可檢視較舊工作；全螢幕模式下 Linux X11 本機終端機支援以滑鼠中鍵貼上選取文字；政策允許時可於專案外啟動 session 並套用工作區預設值，續接時還原已儲存的權限；新增選用的 <b>Guardian Review</b> 強化，可取得先前使用者指示並納入 agent 交接脈絡。修復：修復排隊中未送出訊息於重新連線後才接續送出、避免重複傳送的問題；修復終端機 UI 未保留伺服器提供者、reasoning-summary 與詳細度設定，以及續接／分岔歷史顯示錯誤 session 的問題；修復 Windows 沙箱 PowerShell 備援與長路徑權限修復問題，並抑制背景輔助程式跳出的主控台視窗；subagent 現會保留仍在啟動中的環境並接收其設定或準備失敗原因；修復 SQLite 於連線建立與記錄過程卡住的問題，初始化錯誤現會直接顯示而非誤判為逾時；明確指定的 provider 模型目錄不再包含未支援的內建模型，也不再於重新整理失敗後沿用過期項目。其他：減少重複的 plugin 載入工作，改為快取已解析的 manifest 並重複使用遠端 plugin 請求的 HTTP 連線；新增背景回收未使用的紀錄資料庫磁碟空間以降低磁碟用量。（GitHub Releases API）"},
     {v:"0.159.3", date:"2026-09-30", cat:"Permissions/Security", title:"CLI 0.159.3：ChatGPT 登入帳號安全設定提醒（0.159.2 backport）", body:"新增：符合條件、以 ChatGPT 登入的本機 session 現可顯示選用提醒，引導完成帳號安全設定。（GitHub Releases API · 0.159.2 backport）"},
@@ -888,6 +889,15 @@
        {h:"為什麼有用", p:"預設終端機模式下要回頭找先前輸出得靠終端機本身的捲動與搜尋；全螢幕 TUI 內建逐字稿搜尋與滑鼠選取，長 session 回頭核對先前工具呼叫或除錯輸出更快，佈景主題與圖表顯示也讓長時間盯螢幕更舒適。"},
        {h:"設定 / 操作", c:"bash", b:"codex /tui\n# 下次啟動 codex 時即採用全螢幕 UI\n# 於 /tui 內可切換佈景主題"},
        {h:"小技巧", l:["逐字稿可用右鍵直接複製選取內容，不必先進入複製模式", "支援 Mermaid 圖表與行內數學公式的專案文件，改用全螢幕模式檢視更完整"]}
+     ], auto: true},
+    {ico:"key", color:"teal", feat:"/mcp login 終端機內登入 MCP 伺服器", ver:"0.161.0 · 2026-10-07",
+     desc:"Codex CLI 新增 <code>/mcp login &lt;name&gt;</code>，可直接在現有終端機 session 內對指定 MCP 伺服器完成登入，不必中斷工作或重開設定檔。",
+     scen:"<b>場景：</b>Backend／QA 在除錯中途發現某個 MCP 伺服器的憑證過期或尚未授權時，可直接下 <code>/mcp login &lt;name&gt;</code> 原地重新登入，登入完成後立刻接續原本的工具呼叫，不必離開目前對話串或重啟 session。",
+     roles:["backend","qa"],
+     d:[
+       {h:"為什麼有用", p:"過去 MCP 伺服器的 OAuth／登入流程多半只能在啟動設定或獨立指令中處理，session 中途憑證失效時得中斷工作重新設定；<code>/mcp login</code> 把登入動作搬進終端機互動指令，讓授權與除錯工作留在同一個對話串完成。"},
+       {h:"設定 / 操作", c:"bash", b:"/mcp login <server-name>\n# 於任一 Codex CLI 終端機 session 內執行\n# 完成瀏覽器或裝置碼登入後即可繼續原本的工具呼叫"},
+       {h:"小技巧", l:["伺服器名稱與 <code>config.toml</code> 中 mcp_servers 設定的 key 一致", "登入狀態與一般啟動流程共用，重啟 session 後不必重新登入"]}
      ], auto: true}
   ];
 
