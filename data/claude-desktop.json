@@ -1,8 +1,21 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-10-09 10:09 (Taipei)",
+  "lastRefreshed": "2026-10-09 22:32 (Taipei)",
   "entries": [
+    {
+      "version": "2.31226.0",
+      "date": "2026-10-08",
+      "severity": "high",
+      "notify": true,
+      "title": "新增 Unified Claude（beta）合併 Chat 與 Cowork、環境變數改存已儲存環境與多項 SSH／Plugin 修復",
+      "summary": "General：新增 Settings > Import 開啟本機第三方歷史記錄匯入時支援匯入 skill 與本機 MCP 伺服器：儲存於 Claude（third-party）的 skill 會自動上傳至你自己的 skill，本機 MCP 伺服器則可於確認各自執行指令與設定後新增並啟動；修復對話因伺服器或連線問題無法載入時顯示「Page not found」，現改為說明對話無法載入並提供重試；修復放開麥克風按鈕後仍持續錄音的問題（App 啟動後第一次以按住方式使用麥克風時發生）；修復頁面切換組織後訊息送往錯誤組織的問題：遭登入提示卡住的訊息不再送出、顯示為未送達的訊息改回到輸入框而非稍後自動送出，中止的按鈕或回覆送出並會說明原因；修復 Linux 上 App 當機或被強制結束後，session 啟動的程式（如 MCP 伺服器）與本機 MCP 伺服器的輔助行程仍持續執行的問題。Code：變更環境變數改存於已儲存環境：「This computer」以乾淨狀態啟動，既有機器層級變數會複製進為你建立的環境，session 的 Environment 卡片會顯示所沿用的已儲存環境；變更 SSH session 不再自行接續中斷的工作：需於側邊欄選取該 session 才會恢復，已停止的工作會顯示訊息並提供 Try again，App 關閉期間因主機登入過期而中斷的工作會說明原因；修復關閉選單列圖示的視窗（Windows、Linux）會在未顯示「Claude is still working」提示下逕自中止執行中的 session；修復批次刪除 Code session：worktree 資料夾中途出現確認清單未列出的未提交變更時，現會保留該 session 並顯示提示；修復 SSH session 問題：閒置或載入大型檔案時斷線、連到傳輸前會先列印提示的主機時失敗、卡在「Setting up plugins...」、重試本可成功卻要求重新登入，以及 Windows 上使用 <code>cmd.exe</code> 或 PowerShell 的主機遺失較早訊息；修復 Files 面板遺失未儲存編輯的問題：<code>Auto save</code> 關閉時離開 session 現會先提示，檔案於磁碟上被刪除、移動或變更不再捨棄你的編輯或誤判下一次按鍵。Cowork：改善 macOS 電腦使用功能：不再存入隱藏資料夾或對未回應的 App 打字、App 短暫忙碌後選單指令不再被誤報為停用、螢幕截圖顯示於正確步驟下，且未實際打字時不再誤報已輸入文字；修復工作清單仍在載入時建立的排程工作，覆寫同名既有工作提示詞的問題；修復 Claude 要求存取 session 已擁有權限的資料夾，導致排程執行卡在無人可核准的授權等待；修復緊接著另一次操作啟動時，plugin 安裝、更新與 marketplace 重新整理偶爾失敗或使 plugin 從清單消失的問題，以及移除 marketplace 後殘留項目阻擋新增同名 marketplace 的問題；修復排程工作略過組織核准政策標示為「ask」的工具：執行現會顯示核准提示並等待，同一工作較新一次執行會取代較舊一次未回應的提示；修復排程工作沙箱無法啟動時未顯示「Scheduled task failed」通知。3P：<b>新增 <code>desktopHome</code>：Unified Claude（beta）合併 Chat 與 Cowork 為單一具 Cowork agentic 能力的體驗</b>，設為 <code>standard</code> 可開啟、設為 <code>off</code> 可完全關閉 Chat 與 Cowork（不影響 Code），未設定則維持目前 Chat／Cowork 分離介面，直到 11 月 10 日全組織統一開啟；此鍵設定期間 <code>chatTabEnabled</code>、<code>chatAdvancedFileAnalysisEnabled</code>、<code>coworkTabEnabled</code> 不生效，App 無法識別的值（如 <code>Standard</code>）會讀作 <code>off</code>；新增 <code>otlpAttrMaxChars</code>：設定 Cowork 工作與 Code session 於 OpenTelemetry 匯出中擷取內容（如原始 API 內文）的裁切長度（256 至 15,000,000 字元，未設定時為 61,440）；擴充 <code>claudeAiImport.automatic3pImport</code> 帶入新組織電腦的項目：新增 Cowork artifact、project、記憶與全域指示、Cowork 與 Code 的排程工作、已上傳 plugin、已儲存 skill，以及使用者原本從組織 plugin 目錄或其 gateway／bootstrap 伺服器自身位址提供的 marketplace 開啟的選用 plugin；Setup 視窗的 Allowed surfaces 區段新增 <code>desktopHome</code> 的兩個開關：「Opt into the new Chat and Cowork unified view」與「Chat and Cowork unified view」，此鍵設定期間 Allow Chat、Allow Cowork 與 Advanced file analysis 會隱藏（其值仍保留），並以單一「Chat and Cowork unified retention period」同時設定兩者保留期間；變更 <code>allowedWorkspaceFolders</code>：SSH session 中 Claude 的檔案工具不再能修改標為 <code>ro</code> 的資料夾，與本機 Code session 行為一致（Windows 主機或自有 Claude Code 受管設定的主機不受此限，鍵的說明文字列出其他限制）；變更 <code>inferenceModels[].prefer1m</code> 與 <code>modelPrefer1mContext</code>：同時提供 1M 與該偏好設定的模型現合併為 model picker 中單一項目、不再並列標準項目，新 session（含原本選標準項目者）皆採用 1M 情境窗，已啟動 session 維持原狀；先前此偏好僅移動起始選取、且僅對第一個模型生效；變更 <code>claudeAiImport.automatic3pImport</code> 無需詢問即生效的範圍：帶入的 Cowork 記憶與全域指示現立即套用，排程工作、plugin 與 skill 依原啟用狀態到達；僅帶入 project 的指示仍需使用者確認後新工作才會套用，此行為也適用於已在較早版本遷移、於此版本首次啟動的電腦；移除 Code 分頁建議工作卡片中的「Send to cloud」選項（第三方部署無法使用）；修復於 Customize 關閉的 skill 仍提供給 Claude 且以名稱指定時仍可執行，以及於該處刪除的 skill 仍在已執行中的 Code session 內被提供；修復 worktree session 中 Claude 的檔案編輯有時落入主要簽出或其他 session 的 worktree（Linux 主機透過 OpenSSH 的 SSH session 除外）；修復記憶索引極長時 Cowork 工作於 Linux 上啟動失敗；修復推論供應商可連線但回應緩慢時仍顯示「Can't reach」連線警告；修復指令面板第一列（「New chat」或「New session」）點擊無法開始新對話；修復 model catalog 或管理員模型清單對多個模型 ID 使用同一名稱時，model picker 顯示重複列的問題，現各列會標示其 ID 差異部分，游標停留顯示完整 ID；修復 OpenTelemetry 匯出誤計無人開啟的 session：背景讀取 Code 分頁的斜線指令與 agent 清單不再送出紀錄或計入 <code>claude_code.session.count</code>；修復 <code>managedMcpServers</code> 中以 OAuth 驗證的伺服器提早拒絕權杖（有時顯示空白錯誤）時，工具呼叫在下次排程權杖更新前持續失敗，以及裝置長時間離線後重新上線最長 30 分鐘內持續失敗的問題。（隨附 Claude Code 2.1.293）",
+      "categories": [
+        "Settings/Config",
+        "MCP/Permissions",
+        "Cowork"
+      ]
+    },
     {
       "version": "2.26454.2",
       "date": "2026-10-07",
