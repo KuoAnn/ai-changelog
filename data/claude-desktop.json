@@ -1,8 +1,20 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-10-10 10:10 (Taipei)",
+  "lastRefreshed": "2026-10-10 22:12 (Taipei)",
   "entries": [
+    {
+      "version": "2.31226.1",
+      "date": "2026-10-09",
+      "severity": "medium",
+      "notify": true,
+      "title": "1M Context 模型請求失敗修復與 Windows MSIX 安裝調整",
+      "summary": "General、Code、Cowork：本版無使用者面向變更。3P：變更 Windows 上以 MSIX 安裝時，session 中透過 Git Bash 啟動的程式會隨 App 更新而結束，不再殘留執行；修復 1M context 模型於推論 gateway 或雲端供應商拒絕 1M context 能力時所有請求失敗，現改為不帶該能力重新送出請求。（隨附 Claude Code 2.1.295）",
+      "categories": [
+        "Models",
+        "Performance/Bug Fix"
+      ]
+    },
     {
       "version": "2.31226.0",
       "date": "2026-10-08",
