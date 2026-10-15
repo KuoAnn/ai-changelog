@@ -32,7 +32,7 @@ git config user.email >/dev/null 2>&1 || git config user.email "bot@users.norepl
 git fetch origin main || true
 git pull --rebase --autostash origin main || true
 
-git add index.html data/changelog-data.js data/claude-desktop.json scripts/update-sources.json
+git add index.html data/changelog-data.js data/claude-desktop.json scripts/update-sources.json scripts/push-changelog.sh
 
 if git diff --cached --quiet; then
   echo "[push-changelog] no changes staged — skipping commit."
@@ -43,7 +43,8 @@ git commit -m "chore(auto): 自動更新 changelog ($TAIPEI Taipei)
 
 $MSG
 
-Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01RCQzDsXsDwYRF28WkVMhnK"
 
 # Push current HEAD straight to main, regardless of the local branch name.
 git push origin HEAD:main
