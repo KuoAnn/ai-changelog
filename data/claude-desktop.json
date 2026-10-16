@@ -1,8 +1,21 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-10-15 22:14 (Taipei)",
+  "lastRefreshed": "2026-10-16 10:12 (Taipei)",
   "entries": [
+    {
+      "version": "2.42304.0",
+      "date": "2026-10-15",
+      "severity": "high",
+      "notify": true,
+      "title": "SSH Session 跨應用程式重啟自動接續、MCP 永久允許擴及 Code Session 與 Windows 憑證更新",
+      "summary": "General：變更 Windows 上內建 Claude Code 輔助程式（<code>claude.exe</code>）簽署憑證為自 v2.37337.1 起應用程式與安裝程式已採用的更新憑證，僅釘住憑證本身的規則（如 Microsoft Defender 憑證指標）需另外加入新憑證；變更裝置管理已開啟時的 Claude（third-party）匯入：匯入後會自動新增本機 MCP 伺服器並啟動原本已開啟者、安裝組織允許的桌面擴充功能與已上傳 plugin，並於組織允許建立 skill 時上傳具工具或宣告 hook 的 skill，皆不經逐一詢問確認（先前每個本機 MCP 伺服器皆需確認其指令與設定），HIPAA 限制組織不適用上述自動行為；改善 Claude（third-party）匯入：複製的排程工作會保留附加檔案，且可於 Settings > Import 一併帶入 Instructions for Claude 與 Cowork 全域指示，裝置管理已開啟時複製的排程工作也會保留資料夾，且本機 MCP 伺服器未變更時會保留其工具核准狀態；修復：修復聊天標題、session 標題、訊息、計畫、搜尋結果、檔案檢視、意見回饋對話框與 Code 分頁中阿拉伯文與希伯來文文字顯示順序錯誤；修復部分 plugin 因其檔案內容過度重複（如超長空白表格）而在 claude.ai 啟用後永遠無法安裝；修復部分 Update 按鈕於 session 執行中仍規劃重新啟動卻無任何畫面提示，現會先詢問並可取消；修復應用程式有時啟動後無任何視窗開啟，包含 Windows 與 Linux 上登入時自動啟動後透過說明選單重新啟動的情況；修復工具核准提示於關閉聊天預覽後被全螢幕 MCP 應用程式遮住的問題。Code：變更應用程式代為執行的 Git 操作（分支切換前後的 commit 與 stash、資料夾內分支切換，以及「Continue in cloud」背後的 push）不再觸發 repository 的 Git hooks，請於接續雲端前先從終端機推送 Git LFS 物件；移除側邊欄「Get started with Claude Code」檢核清單；修復：修復雲端與自架 session 中除最新訊息外任一則訊息執行「Rewind to here」會以「Can't rewind to this message.」失敗；修復 SSH 主機上輔助程式尚未更新時刪除 session 會一併刪除含未推送 commit 的分支；修復 SSH session 靜默遺失部分 Claude 輸出、同一主機另一 session 啟動失敗後卡在重新連線，以及主機關閉連線時 Windows 電腦上終端機被結束的問題；修復 session 於 Claude 移至雲端後封存時其 worktree 中未追蹤檔案遭刪除的問題。Cowork：變更 macOS 上電腦使用功能不再將檔案存入隱藏或受保護資料夾（如 Homebrew 資料夾與 shell 啟動設定位置），也不會以隱藏或受保護名稱命名文件；變更 Settings › Import 對 HIPAA 限制組織不再提供第三方應用程式的本機 MCP 伺服器；修復：修復電腦使用功能於忙碌中的背景應用程式網頁重複輸入文字兩次；修復「/」開頭字詞（如「/s」）接在其他文字之後時按 Enter 會選取斜線選單項目而非送出訊息；修復 Claude 回覆期間以 Page Up、Shift+Space 或向上鍵捲動對話有時跳回底部；修復工作區有時於 Windows 上因連線逾時錯誤而啟動失敗。3P：新增 macOS 與 Linux 應用程式支援 SSH session 跨應用程式重啟接續，主機上 Claude Code 於任務執行中遺失時各平台皆會自動復原：應用程式重新啟動並接續任務，即使當下無人在電腦前；變更 <code>claudeAiImport.automatic3pImport</code>：新舊組織來源相同時（不限 gateway 或 bootstrap 來源，含 GitHub、git 或任一主機的 URL），會不經詢問重新安裝使用者原本自任一選用 <code>allowedPluginMarketplaces</code> 項目開啟的選用 plugin，此行為也適用於此版本前已換組織、首次以此版本啟動的電腦；變更 <code>mcpPersistentAlwaysAllowEnabled</code>：現也適用於裝置上、WSL 中與透過 SSH 的 Code session，設為 <code>false</code> 時 MCP 工具提示改顯示「Allow for this session」而非「Always allow」，且排程工作僅於 <code>mcpScheduledTaskApprovalLifetimeDays</code> 設為 1 天以上時才提供長效核准；變更 Chat 的檔案分析沙箱（<code>chatAdvancedFileAnalysisEnabled</code>）現可連線 <code>coworkEgressAllowedHosts</code> 中的主機（例如安裝套件），其指令與 Cowork 一致不經核准提示即執行（先前預設無網路存取，清單為空或未設定時仍維持無存取）；變更 Settings > Import & export 中的 session 匯出，預設涵蓋全部而非最近 30 天，並列出檔案所含與不含內容，匯入 Claude Desktop 匯出檔同樣預設匯入全部；修復：修復於字數上限時輸入的訊息在 Cowork 與 Chat 中遭捨棄，達上限提示現會同時顯示重置時間，並於 Cowork 與 Chat 提供 View usage 按鈕；修復 Windows 主機未安裝 Git for Windows 的 Code 分頁 SSH session 對所有 shell 指令一律以「Enterprise policy requires sandboxing」拒絕執行（組織對 Bash 指令依樣式拒絕或詢問，或 <code>disabledBuiltinTools</code> 含 <code>Bash</code>（含或不含樣式）、含樣式的 <code>PowerShell</code>，或應用程式無法辨識的名稱時仍維持拒絕）；修復 macOS 鑰匙圈鎖定時啟動 Claude 會讓連接器遺失已儲存登入狀態，連接器現會說明應採取的動作。（隨附 Claude Code 2.1.299）",
+      "categories": [
+        "MCP/Permissions",
+        "Performance/Bug Fix",
+        "Cowork"
+      ]
+    },
     {
       "version": "2.37337.1",
       "date": "2026-10-13",
