@@ -44,7 +44,7 @@ git commit -m "chore(auto): 自動更新 changelog ($TAIPEI Taipei)
 $MSG
 
 Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
-Claude-Session: https://claude.ai/code/session_015txc7vQ23WXk7XBKD2a8eV"
+Claude-Session: https://claude.ai/code/session_01SNUBMBxNXGKVeibX5g5LD6"
 
 # Push current HEAD straight to main, regardless of the local branch name.
 git push origin HEAD:main
