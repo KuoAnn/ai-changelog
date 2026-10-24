@@ -1,8 +1,17 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-10-23 22:12 (Taipei)",
+  "lastRefreshed": "2026-10-24 10:08 (Taipei)",
   "entries": [
+    {
+      "version": "3.6556.2",
+      "date": "2026-10-22",
+      "severity": "low",
+      "notify": false,
+      "title": "例行版本，無使用者面向變更",
+      "summary": "General、Code、Cowork、3P 四個子區塊皆標註無使用者面向變更，內建 Claude Code 版本維持 2.1.308。",
+      "categories": []
+    },
     {
       "version": "3.6556.1",
       "date": "2026-10-22",
