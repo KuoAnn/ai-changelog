@@ -1,0 +1,268 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-07 11:41 (Taipei)",
+  "generatedAtIso": "2026-11-07T03:41:34.295Z",
+  "manifestSchemaVersion": 1,
+  "runner": "github-actions/42335142712",
+  "tokenUsed": true,
+  "totals": {
+    "sources": 14,
+    "ok": 13,
+    "failed": 1,
+    "skipped": 1
+  },
+  "unmappedErrorClasses": [],
+  "products": {
+    "claude-code": {
+      "displayName": "Claude Code",
+      "sources": [
+        {
+          "priority": 1,
+          "role": "version-primary",
+          "format": "github-releases-api",
+          "url": "https://api.github.com/repos/anthropics/claude-code/releases?per_page=30",
+          "fetchedAt": "2026-11-07T03:41:35.346Z",
+          "attempts": 1,
+          "httpStatus": 200,
+          "ok": true,
+          "file": "claude-code/p1-releases.json",
+          "bytes": 380017,
+          "sha256": "ea6f6e78c77d323e0452f3ccc9de334538ddf566670689604c5745888e3124e1",
+          "prunedFields": [
+            "assets"
+          ],
+          "rawBytes": 834967,
+          "finalUrl": "https://api.github.com/repos/anthropics/claude-code/releases?per_page=30",
+          "contentType": "application/json; charset=utf-8",
+          "rateLimitRemaining": "4999"
+        },
+        {
+          "priority": 2,
+          "role": "version-fallback",
+          "format": "atom",
+          "url": "https://github.com/anthropics/claude-code/releases.atom",
+          "fetchedAt": "2026-11-07T03:41:35.659Z",
+          "attempts": 1,
+          "httpStatus": 200,
+          "ok": true,
+          "file": "claude-code/p2-releases.atom.xml",
+          "bytes": 141422,
+          "sha256": "2f6845b65f3d021e753e934bad91a12215d2e839b421cb75e0fdc748379149d2",
+          "finalUrl": "https://github.com/anthropics/claude-code/releases.atom",
+          "contentType": "application/atom+xml; charset=utf-8"
+        },
+        {
+          "priority": 3,
+          "role": "version-fallback",
+          "format": "markdown",
+          "url": "https://code.claude.com/docs/en/changelog.md",
+          "fetchedAt": "2026-11-07T03:41:35.966Z",
+          "attempts": 1,
+          "httpStatus": 200,
+          "ok": true,
+          "file": "claude-code/p3-changelog.md",
+          "bytes": 1197862,
+          "sha256": "a058698343515f68d9e8bd38f9424264a7560514f420392a30aa2f4f2ff5d9dc",
+          "finalUrl": "https://code.claude.com/docs/en/changelog.md",
+          "contentType": "text/markdown; charset=utf-8"
+        },
+        {
+          "priority": 4,
+          "role": "content-fallback",
+          "format": "markdown",
+          "url": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md",
+          "fetchedAt": "2026-11-07T03:41:36.058Z",
+          "attempts": 1,
+          "httpStatus": 200,
+          "ok": true,
+          "file": "claude-code/p4-changelog.md",
+          "bytes": 1176779,
+          "sha256": "7c124cc46a362ab85dddb66b6b9b18efef761578def15c761c164447a125ad03",
+          "finalUrl": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md",
+          "contentType": "text/plain; charset=utf-8"
+        },
+        {
+          "priority": 5,
+          "role": "human-readable-canonical",
+          "format": "html",
+          "url": "https://code.claude.com/docs/en/changelog",
+          "ok": false,
+          "skipped": true,
+          "file": null,
+          "bytes": 0,
+          "skipReason": "與 priority 3 同一頁的 HTML 版（實測 2.6MB，是 markdown 版的 5 倍），內容完全重複；沙箱可直連 code.claude.com，真要用再 live 抓"
+        },
+        {
+          "priority": 6,
+          "role": "notability-enrichment",
+          "format": "html",
+          "url": "https://code.claude.com/docs/en/whats-new",
+          "fetchedAt": "2026-11-07T03:41:36.116Z",
+          "attempts": 1,
+          "httpStatus": 200,
+          "ok": true,
+          "file": "claude-code/p6-whats-new.html",
+          "bytes": 294330,
+          "sha256": "1343f1c5ac8ba7b142d3ffbd1e8c2e5444973ba30dc837a3a5b814bc20e9d935",
+          "finalUrl": "https://code.claude.com/docs/en/whats-new",
+          "contentType": "text/html; charset=utf-8"
+        }
+      ]
+    },
+    "claude-desktop": {
+      "displayName": "Claude Desktop",
+      "sources": [
+        {
+          "priority": 1,
+          "role": "version-primary",
+          "format": "markdown",
+          "url": "https://claude.com/docs/cowork/changelog.md",
+          "fetchedAt": "2026-11-07T03:41:36.253Z",
+          "attempts": 1,
+          "httpStatus": 200,
+          "ok": true,
+          "file": "claude-desktop/p1-changelog.md",
+          "bytes": 268975,
+          "sha256": "fe4a6b24ddb2a12e52602e5aa6f1b2041147ca0f36239c8838325c46459ce04a",
+          "finalUrl": "https://claude.com/docs/cowork/changelog.md",
+          "contentType": "text/markdown; charset=utf-8"
+        },
+        {
+          "priority": 2,
+          "role": "version-fallback",
+          "format": "html",
+          "url": "https://claude.com/docs/cowork/changelog",
+          "fetchedAt": "2026-11-07T03:41:36.573Z",
+          "attempts": 1,
+          "httpStatus": 200,
+          "ok": true,
+          "file": "claude-desktop/p2-changelog.html",
+          "bytes": 960211,
+          "sha256": "f416d2c29776d884547e4a9704b75a6cce90661f7de5ac625e5fb4a778bd3605",
+          "finalUrl": "https://claude.com/docs/cowork/changelog",
+          "contentType": "text/html; charset=utf-8"
+        },
+        {
+          "priority": 3,
+          "role": "product-enrichment",
+          "format": "html",
+          "url": "https://support.claude.com/en/articles/12138966-release-notes",
+          "fetchedAt": "2026-11-07T03:41:37.031Z",
+          "attempts": 1,
+          "httpStatus": 200,
+          "ok": true,
+          "file": "claude-desktop/p3-12138966-release-notes.html",
+          "bytes": 368045,
+          "sha256": "9ff4108c4060921145747adbfe83a559d48d16402b97a4b94ba405ff287992e7",
+          "finalUrl": "https://support.claude.com/en/articles/12138966-release-notes",
+          "contentType": "text/html; charset=utf-8"
+        }
+      ]
+    },
+    "codex-cli": {
+      "displayName": "Codex CLI",
+      "sources": [
+        {
+          "priority": 1,
+          "role": "version-primary",
+          "format": "github-releases-api",
+          "url": "https://api.github.com/repos/openai/codex/releases?per_page=30",
+          "fetchedAt": "2026-11-07T03:41:40.562Z",
+          "attempts": 1,
+          "httpStatus": 200,
+          "ok": true,
+          "file": "codex-cli/p1-releases.json",
+          "bytes": 132955,
+          "sha256": "2116b1aacbcf3bb92e9dbd7845d18e5dba7d57687c57a5899c4846e14d295207",
+          "prunedFields": [
+            "assets"
+          ],
+          "rawBytes": 13129281,
+          "finalUrl": "https://api.github.com/repos/openai/codex/releases?per_page=30",
+          "contentType": "application/json; charset=utf-8",
+          "rateLimitRemaining": "4999"
+        },
+        {
+          "priority": 2,
+          "role": "version-fallback",
+          "format": "atom",
+          "url": "https://github.com/openai/codex/releases.atom",
+          "fetchedAt": "2026-11-07T03:41:40.899Z",
+          "attempts": 1,
+          "httpStatus": 200,
+          "ok": true,
+          "file": "codex-cli/p2-releases.atom.xml",
+          "bytes": 119365,
+          "sha256": "be1b75f26e78c318034c1966fd5122d1bb28f881ca9bffddeede00940bf94edc",
+          "finalUrl": "https://github.com/openai/codex/releases.atom",
+          "contentType": "application/atom+xml; charset=utf-8"
+        },
+        {
+          "priority": 3,
+          "role": "version-fallback",
+          "format": "rss",
+          "url": "https://learn.chatgpt.com/docs/changelog/rss.xml",
+          "fetchedAt": "2026-11-07T03:41:41.047Z",
+          "attempts": 1,
+          "httpStatus": 200,
+          "ok": true,
+          "file": "codex-cli/p3-rss.rss.xml",
+          "bytes": 4761262,
+          "sha256": "e7d72e677ec00a0359ede83ad1758f475c53be2d292408449938ed8e86c3c0ca",
+          "finalUrl": "https://learn.chatgpt.com/docs/changelog/rss.xml",
+          "contentType": "application/xml"
+        }
+      ]
+    },
+    "codex-app": {
+      "displayName": "Codex App / ChatGPT Desktop",
+      "sources": [
+        {
+          "priority": 1,
+          "role": "version-primary",
+          "format": "rss",
+          "url": "https://learn.chatgpt.com/docs/changelog/rss.xml",
+          "fetchedAt": "2026-11-07T03:41:41.047Z",
+          "attempts": 1,
+          "httpStatus": 200,
+          "ok": true,
+          "file": "codex-cli/p3-rss.rss.xml",
+          "bytes": 4761262,
+          "sha256": "e7d72e677ec00a0359ede83ad1758f475c53be2d292408449938ed8e86c3c0ca",
+          "finalUrl": "https://learn.chatgpt.com/docs/changelog/rss.xml",
+          "contentType": "application/xml",
+          "sharedWith": "codex-cli#p3"
+        },
+        {
+          "priority": 2,
+          "role": "human-readable-canonical",
+          "format": "html",
+          "url": "https://developers.openai.com/codex/changelog",
+          "fetchedAt": "2026-11-07T03:41:41.288Z",
+          "attempts": 1,
+          "httpStatus": 200,
+          "ok": true,
+          "file": "codex-app/p2-changelog.html",
+          "bytes": 4755848,
+          "sha256": "f39aa5b358d50c381d74030dc40ffec5c2fe8680cb4929c89210f04f3f9d34bc",
+          "finalUrl": "https://learn.chatgpt.com/docs/changelog",
+          "contentType": "text/html; charset=utf-8"
+        },
+        {
+          "priority": 3,
+          "role": "product-enrichment",
+          "format": "html",
+          "url": "https://openai.com/products/release-notes/",
+          "fetchedAt": "2026-11-07T03:41:41.359Z",
+          "attempts": 1,
+          "httpStatus": 403,
+          "ok": false,
+          "file": null,
+          "bytes": 0,
+          "errorClass": "cloudflare",
+          "errorDetail": "Cloudflare 擋 datacenter IP"
+        }
+      ]
+    }
+  }
+}
