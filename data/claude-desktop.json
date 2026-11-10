@@ -1,8 +1,21 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-11-09 22:11 (Taipei)",
+  "lastRefreshed": "2026-11-10 10:11 (Taipei)",
   "entries": [
+    {
+      "version": "4.23118.1",
+      "date": "2026-11-09",
+      "severity": "medium",
+      "notify": true,
+      "title": "mod 工具呼叫不再顯示核准卡片、macOS 簽署憑證更新與 TLS 交握中斷修復",
+      "summary": "General：變更 Windows 上 Claude Code 尋找自行啟動程式（如 git）的方式，不再透過網路（UNC）或相對 PATH 項目、或指向網路磁碟的連結尋找，僅能以此方式找到 Git 時 session 改用 PowerShell 而非 Git Bash；變更 macOS 上為 Claude Code 簽署的憑證，改用同一 Anthropic 團隊（Team ID Q6L2SF6YDW）較新的 Developer ID 憑證，比對 Team ID 的規則不受影響，直接釘選憑證本身的規則須將新憑證加入舊憑證旁；修復回合中連線於回覆傳送到一半中斷時出現「API Error: EPROTO: The TLS handshake failed」，現會保留已送達內容並接續。Code：變更子資料夾 <code>.claude/skills</code> 中的 skill，於 Claude Code 沙箱開啟時 session 中不再載入，須於該子資料夾啟動 session 才能使用；修復 Claude 一次送出多個 Bash 指令、其中較早指令變更資料夾時，後續指令有時於錯誤資料夾執行；修復 project 的 skill、command 與 agent（含 git 未追蹤的檔案）於 worktree 缺少該項目時，自選單消失的問題，進入 worktree 後現會改列出並執行主 project 資料夾的複本。Cowork：修復儲存狀態檔案遭截斷時，工作或聊天於下一則訊息顯示「Claude Code crashed」。3P：變更 plugin 自身程式碼（mod）而非 Claude 發出的工具呼叫，不再顯示核准卡片，改為在僅使用者核准或 Auto mode 才會阻擋之處直接執行，含未設定 <code>toolPolicy</code> 的連接器工具，設為 <code>ask</code> 的工具呼叫則一律拒絕；修復 Cowork 的 Progress 面板未勾選 subagent 已標記完成的步驟。（隨附 Claude Code 2.1.321）",
+      "categories": [
+        "Permissions/Security",
+        "IDE/Editor",
+        "Performance/Bug Fix"
+      ]
+    },
     {
       "version": "4.23118.0",
       "date": "2026-11-05",
