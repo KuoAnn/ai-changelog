@@ -23,7 +23,7 @@
      =========================== */
 
   const REFRESH_RUN = {
-    ranAt: "2026-11-12 10:07 (Taipei)",
+    ranAt: "2026-11-12 22:09 (Taipei)",
     sources: {
       cc: { status: "ok" },
       cd: { status: "ok" },
@@ -284,6 +284,7 @@
   ];
 
   const DATA_CI = [
+    {v:"0.167.2", date:"2026-11-11", cat:"Models/Inference", title:"CLI 0.167.2：Google Cloud Vertex AI 預設啟用漸進式工具更新", body:"新增：Codex 現預設在 <b>Google Cloud Vertex AI</b> 上以漸進方式傳送工具更新，如需停用請在 <code>config.toml</code> 的 <code>[features]</code> 下設定 <code>incremental_tools_legacy_gcp = false</code>。（GitHub Releases API）"},
     {v:"0.167.1", date:"2026-11-10", cat:"Performance/Bug Fix", title:"CLI 0.167.1：例行修正版本（官方未提供詳細 changelog）", body:"修復：官方僅提供與 0.167.0 的 GitHub Compare 連結，未附帶任何功能或缺陷說明；如需了解確切改動請至該連結查看程式碼差異。（GitHub Releases API）"},
     {v:"0.167.0", date:"2026-11-06", cat:"UI/UX", title:"CLI 0.167.0：Agent Command Center 未讀標記、終端機內建後端切換與 Google Cloud Vertex AI 設定精靈", body:"新增：新增以 <code>codex agents --no-daemon</code> 開啟 agent command center，command center 與 session 選取器現會標示未讀結果；終端機 session 選取器可直接切換已連線的後端，切換時保留草稿；支援的終端機可在撰寫訊息時預覽本機圖片附件，並可從可點擊的逐字稿路徑開啟已檢視的本機圖片；「Sign in another way」選單新增 API 金鑰與雲端供應商選項，啟用 <code>gcp_setup_wizard</code> 可用應用程式預設憑證或憑證檔案設定 <b>Google Cloud Vertex AI</b>；<code>/experimental</code> 新增選用 macOS 或 Windows 系統代理設定；核准提示開啟時可直接在逐字稿中展開 patch 詳情。修復：修復切換 model provider 後已儲存對話消失，若對話無法接續，現可讀取其逐字稿並準備可編輯提示以在新對話中接續；<code>Ctrl+L</code> 清除終端機畫面同時保留先前訊息，可用 <code>Ctrl+T</code> 取回；在 chat 模式下刪除文字使訊息開頭露出 <code>!</code> 時，仍維持一般草稿而非誤判為指令；修復網路核准提示於請求結束後未關閉的問題，對同一端點的並行請求現會逐一詢問；長時間的 realtime V3 對話隨逐字稿增長會將已完成語音存入對話歷史；自動 context compaction 現會計入失敗回應保留的輸出與缺少 token 用量資料的回應。（GitHub Releases API）"},
     {v:"0.166.0", date:"2026-10-29", cat:"UI/UX", title:"CLI 0.166.0：鍵盤驅動逐字稿選取、GPT-6.1 Terra 模型目錄擴充與 /doctor 網路診斷", body:"新增：新增鍵盤驅動的逐字稿選取，提供逐字、逐行與逐頁的游標移動、整合搜尋與可自訂快速鍵；async 問題、選項、回覆與逐字稿回覆的 Markdown 現會一致呈現；內建、Vertex AI 與 Amazon Bedrock 模型目錄新增 <b>GPT-6.1 Terra</b>；新增 <code>codex queue --resume</code>，可在佇列訊息後接續尚未載入的 thread；TUI 新增更清楚的安全封鎖說明與可選取的較安全後續提示；新增 <code>codex doctor --network-only</code>，可專注診斷網路設定、連線與 WebSocket。修復：修復接續或分叉 thread 時遺失已確認的核准與權限設定；修復還原已中止的輸入框文字時遺失本機圖片附件；修復 macOS 上獨立版清理在安裝使用中或路徑含非 ASCII 字元時失敗；修復取消封存父 thread 時未一併還原其衍生的子 thread；修復 app-server thread 啟動與關閉時的競速問題，並即時釋放已完成的執行環境；改善 TUI 重新連線復原，含離線狀態下的 <code>/quit</code> 與 <code>/exit</code> 處理；修復接續與分叉時的推理 token 計數未保留，避免提前觸發壓縮。（GitHub Releases API）"},
