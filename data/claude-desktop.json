@@ -1,8 +1,19 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-11-14 10:07 (Taipei)",
+  "lastRefreshed": "2026-11-14 22:12 (Taipei)",
   "entries": [
+    {
+      "version": "5.11492.5",
+      "date": "2026-11-13",
+      "severity": "high",
+      "notify": true,
+      "title": "沙箱化 Shell 指令預設改為先詢問、憑證檢查收緊與用量額度自動續跑",
+      "summary": "General：無使用者面向變更。Code：變更 macOS 與 Linux 上沙箱化 shell 指令，多數於 Manual 與 Accept edits 模式下改為先詢問，Auto mode 亦會檢查其中多數，可能使例行工作卡在提示處，如需維持不詢問請在 <code>~/.claude/settings.json</code> 的 <code>sandbox</code> 區塊加入 <code>\"autoAllowBashIfSandboxed\": true</code>（不存在則新建）；變更沙箱化 shell 指令，使 <code>git worktree add</code>、<code>move</code> 與 <code>remove</code>，以及在非該 session 建立或指派的 worktree 中提交，一律失敗；變更指名變數的部分 shell allow 規則（如 <code>Bash(NODE_ENV*)</code>）不再比對成功，相關指令將改為詢問核准；變更本機 session 的工作流程，於你 Claude 方案的用量額度上限暫停，若額度將於一天內重置且已開啟「額度重置後自動續跑」，重置後會自動繼續；修復另一個 session 對同一 session 重送相同訊息兩次或一次送出多則訊息後，該 session 持續停留忙碌狀態。Cowork：無使用者面向變更。3P：變更憑證檢查，公司 CA 限制 DNS 名稱時，若憑證僅含 IP 位址且無 DNS 名稱，其 Common Name 為 IP 位址或 CA 不允許的網域將遭拒絕，連至此類 gateway 的回合將失敗，直到憑證列出允許的 DNS 名稱為止；變更 Claude Code 沙箱（受管 macOS 與 Linux 預設開啟）中多數 shell 指令改為先詢問（參見 Code），如需還原請在其 <code>managed-settings.json</code>（SSH 則於主機上）的 <code>sandbox</code> 區塊加入 <code>\"autoAllowBashIfSandboxed\": true</code>，新檔案需於頂層加上 <code>\"parentSettingsBehavior\": \"merge\"</code>；修復組織受管設定過長（如很長的模型清單或大量允許主機）時 Windows 上 session 無法啟動；修復 gateway 對已過期的憑證輔助程式 token，或已過宣告到期時間的登入，回應 403 導致回合失敗，現 Claude 會取得新 token 並重試。（隨附 Claude Code 2.1.325）",
+      "categories": [
+        "Permissions/Security"
+      ]
+    },
     {
       "version": "5.11492.2",
       "date": "2026-11-13",
