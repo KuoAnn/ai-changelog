@@ -23,7 +23,7 @@
      =========================== */
 
   const REFRESH_RUN = {
-    ranAt: "2026-11-13 23:16 (Taipei)",
+    ranAt: "2026-11-14 10:07 (Taipei)",
     sources: {
       cc: { status: "ok" },
       cd: { status: "ok" },
@@ -285,6 +285,7 @@
   ];
 
   const DATA_CI = [
+    {v:"0.169.0", date:"2026-11-13", cat:"UI/UX", title:"CLI 0.169.0：終端機多分頁側邊對話、自訂模型供應商強化與 Cloud 連線操作", body:"新增：選擇性啟用的終端機 workspace 支援多個側邊聊天分頁，可用鍵盤或滑鼠切換，並在重新啟動 Codex 後重新開啟已儲存的本機側邊聊天；可依名稱、提示預覽或工作目錄搜尋 agent command center 中較舊的任務；全螢幕逐字稿開啟 <b>Collapse turn details</b> 可將已完成活動收合至每則提示下方，同時保留答案可見、工具輸出可搜尋；可在終端機新增或編輯自訂模型供應商，開啟自訂 gateway onboarding 後可於登入時建立供應商，並透過裝置代碼在 SSH 或無本機瀏覽器環境下使用支援的 gateway；終端機診斷報告編輯器中按 <code>Ctrl+S</code> 可在本機儲存診斷 ZIP，即使已關閉上傳功能；選擇性啟用的 macOS／Linux Cloud 連線可於終端機傳送圖片、選擇模型與推理等級，並封存或還原 Cloud 對話。修復：<code>codex exec</code> 於不受信任目錄中維持專案設定與 MCP 伺服器為停用，即使搭配 <code>--sandbox workspace-write</code>，需明確信任專案請用 <code>--trust</code>；「Yes, clear context and implement」現會把完整核准計畫交給新 session，交接失敗時原 session 會維持開啟；修復 Windows 沙箱處理含引號的 <code>cmd.exe</code> 路徑，以及工作目錄父層不可讀的 PowerShell session；修復 macOS 貼上圖片時方向跑掉，現會在可用時使用原生 PNG 或 JPEG 剪貼簿資料；修復終端機於共用 app server 未回報的 MCP 伺服器上持續顯示忙碌；修復被中斷的回合現在能正常關閉，延遲中止或取消檔案核准不再打斷後續回合。（GitHub Releases API）"},
     {v:"0.168.0", date:"2026-11-13", cat:"UI/UX", title:"CLI 0.168.0：Model Providers 瀏覽頁、TUI 側邊對話與終端機動態 GIF", body:"新增：新增 <b>Model providers</b> 瀏覽頁（Sessions → Model providers），可選擇新對話的預設供應商；開啟 <code>features.tui_workspace</code> 可在主對話旁開啟側邊對話，拖曳分隔線調整面板大小或按 <code>leader z</code> 放大聚焦面板；支援語音模型附加錄音，Codex 會略過已確認拒絕的錄音並以片段長度保留更多短錄音於上下文；開啟 <code>features.image_generation_animation</code> 可產生或編輯動態 GIF，並可設定影格數與時間控制；全螢幕 Codex 在 Ghostty、Kitty（<code>allow-passthrough all</code>）的 tmux 中可顯示圖片預覽與寵物動畫；設定 <code>tui.notification_method = \"osc777\"</code> 可使用終端機通知，核准通知現會顯示更長的指令預覽並區分終端機輸入與網路存取請求。修復：修復本機 TUI 歷史與接續選擇器未依目前登入的 ChatGPT 帳號篩選新建 thread；修復開啟或接續的對話在變更預設供應商後未沿用自身已儲存的供應商；修復 TUI 將被工具呼叫打斷的回覆正確渲染為單一 Markdown 訊息，並在重播對話時還原推理摘要；修復在逐字稿最終儲存期間或切回長時間執行對話後送出的 steering 訊息未送達執行中的對話；改進模糊檔案搜尋，讓檔名相符項目有更高權重，避免符合的上層資料夾蓋過結果；修復 Windows 上閒置的本機 MCP 伺服器佔用檔案系統 I/O 導致 Codex 其餘功能無法存取。"},
     {v:"0.167.2", date:"2026-11-11", cat:"Models/Inference", title:"CLI 0.167.2：Google Cloud Vertex AI 預設啟用漸進式工具更新", body:"新增：Codex 現預設在 <b>Google Cloud Vertex AI</b> 上以漸進方式傳送工具更新，如需停用請在 <code>config.toml</code> 的 <code>[features]</code> 下設定 <code>incremental_tools_legacy_gcp = false</code>。（GitHub Releases API）"},
     {v:"0.167.1", date:"2026-11-10", cat:"Performance/Bug Fix", title:"CLI 0.167.1：例行修正版本（官方未提供詳細 changelog）", body:"修復：官方僅提供與 0.167.0 的 GitHub Compare 連結，未附帶任何功能或缺陷說明；如需了解確切改動請至該連結查看程式碼差異。（GitHub Releases API）"},
