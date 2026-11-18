@@ -23,7 +23,7 @@
      =========================== */
 
   const REFRESH_RUN = {
-    ranAt: "2026-11-17 22:15 (Taipei)",
+    ranAt: "2026-11-18 10:08 (Taipei)",
     sources: {
       cc: { status: "ok" },
       cd: { status: "ok" },
@@ -237,6 +237,15 @@
   ];
 
   const DATA_CA = [
+    {v:"2026-11-12", date:"2026-11-12", cat:"Performance/Bug Fix", title:"價格格式誤判為方程式修復、複製格式化內容保留排版與 Plugin 編輯入口修復", body:"修復：修復含錢字號連結時，後方 <code>$5/month</code> 等價格可能被誤判為方程式的格式問題；複製格式化回覆的部分內容後貼至富文字編輯器，現會保留連結、清單編號與核取方塊狀態；修復重新開啟已安裝的私人 workspace plugin（自 <b>Personal &gt; Created by you</b>）時 <b>Edit plugin</b> 消失的問題。"},
+    {v:"2026-11-10", date:"2026-11-10", cat:"UI/UX", title:"結束或當機後自動接續本機聊天、切換帳號側邊欄遺失修復與 Pages 留言聚焦修復", body:"新增：重新開啟因結束或當機中斷的應用程式時，Codex 現會自動接續符合資格的本機聊天，須為過去 24 小時內仍在進行、且屬同一 ChatGPT 帳號的中斷聊天。修復：修復切換帳號可能使側邊欄的本機專案、遠端專案與已釘選工作消失的問題；於 Pages 對內文留言時，留言框現會在輸入時保持聚焦並將留言附加於所選文字；回覆現可將以單一錢字號包住的行內方程式（如 <code>$x + y$</code>）正確渲染，並將如 <code>$5 each</code> 的價格維持為方程式旁的一般文字。"},
+    {v:"2026-11-05", date:"2026-11-05", cat:"Performance/Bug Fix", title:"macOS／Windows 啟動與回覆速度優化、終端機亂碼修復與按鈕停用樣式修復", body:"改善：macOS 與 Windows 上主畫面載入更快、既有聊天首則回覆出現更快，PDF 預覽與 code review 開啟亦更快速。修復：修復 macOS 上應用程式於未設定語言時，內建終端機可能錯誤顯示非 ASCII 字元；11 月 8 日更新修復 <b>Send</b>、<b>Queue</b> 與 <b>Steer</b> 按鈕無法使用時未顯示淡化樣式的問題。"},
+    {v:"2026-11-03", date:"2026-11-03", cat:"UI/UX", title:"內建瀏覽器支援長按鍵控制項與 PDF／聊天搜尋結果時機修復", body:"新增：Codex 現可使用內建瀏覽器中需要長按鍵的控制項。修復：搜尋聊天或 PDF 時，Find 列現會等待搜尋完成才回報「找不到結果」。"},
+    {v:"2026-10-29", date:"2026-10-29", cat:"Performance/Bug Fix", title:"Windows 捷徑更新後失效修復、重新開啟接續對話提示與 Git 分支切換暫存還原", body:"新增：Windows 上指向 <code>%LOCALAPPDATA%\\Microsoft\\WindowsApps\\chatgpt-desktop.exe</code> 的捷徑，應用程式更新後仍可持續使用；10 月 31 日更新新增重新開啟因結束或當機中斷的應用程式時，提供 <b>Resume</b> 或 <b>Keep paused</b> 選項，涵蓋以同一 ChatGPT 帳號登入、過去 24 小時內仍在進行的本機聊天。修復：切換 Git 分支失敗時，現會還原切換前已暫存與未暫存的變更。"},
+    {v:"2026-10-27", date:"2026-10-27", cat:"Performance/Bug Fix", title:"Steer 回覆排版調整與 Code Review 定位捲動修復", body:"修復：於 Codex 回覆過程中使用 <b>Steer</b>，現會將被中斷的回覆保留在你的訊息上方，並將修改後的回覆顯示於下方；選取 code review 發現項目時，現會正確跳至對應行並於 diff 載入時維持該行可見。"},
+    {v:"2026-10-23", date:"2026-10-23", cat:"UI/UX", title:"新增 Worktree 刪除前詢問設定、檔案類型變更暫存與企業瀏覽器政策修復", body:"新增：10 月 23 日修補版（<code>26.1021.31345</code>）於 <b>Settings &gt; Worktrees</b> 新增 <b>Ask before deleting worktrees</b>，關閉後手動刪除 Worktree 將不再詢問確認。修復：於 <b>Changes</b> 面板中暫存檔案類型變更，現不會連帶暫存無關的編輯；同一修補版亦修復內建瀏覽器中企業瀏覽器政策失效的問題。"},
+    {v:"2026-10-20", date:"2026-10-20", cat:"Performance/Bug Fix", title:"大小寫相異檔名拖曳附加順序修復與 Worktree 啟動問題修復", body:"修復：於區分大小寫的檔案系統上，將 <code>Report.txt</code> 與 <code>report.txt</code> 等檔案拖曳進聊天時，現會依拖放順序一併附加兩者；10 月 21 日更新修復於新 Worktree 中可能無法啟動聊天的問題。"},
+    {v:"2026-10-15", date:"2026-10-15", cat:"Performance/Bug Fix", title:"壓縮對話時 Steer 提示與佇列訊息純文字預覽", body:"修復：於 Codex 壓縮對話時選擇 <b>Steer</b>，現會提示訊息將於壓縮完成後自動送出；開頭為縮排程式碼的佇列訊息現顯示純文字預覽，開啟預覽可見原始縮排。"},
     {v:"2026-10-08", date:"2026-10-08", cat:"Performance/Bug Fix", title:"佇列訊息卡在 Sending 狀態修復與 Changes 面板瀏覽優化", body:"修復：修復佇列訊息卡在「Sending」狀態，並恢復次要視窗中的 Steer 功能；改善 Changes 面板中檔案間的捲動與瀏覽；新增工具呼叫需要核准但聊天權限禁止核准請求時的復原指引，並視情況附上該權限設定的連結。"},
     {v:"2026-10-07", date:"2026-10-07", cat:"Performance/Bug Fix", title:"Windows Sandbox 更新後重新整理失敗修復與 WSL Worktree 路徑衝突修復", body:"修復：修復 Windows 沙箱於應用程式更新後重新整理失敗；修復路徑與 Windows 目錄衝突的 WSL repository 建立 worktree 與分叉聊天失敗；切換聊天時保持「最近聊天」區段收合；修復「Remove from section」會順帶將聊天釘選的問題，現僅將其自側邊欄區段移除、不會連帶釘選。"},
     {v:"2026-10-01", date:"2026-10-01", cat:"UI/UX", title:"新增批次搬移聊天至 Project 功能與多項復原改善", body:"新增：新增可一次將已選取的多個聊天搬移至同一個 Project。修復：修復附加受管 worktree 至聊天時的復原機制；修復部分縮放比例下大型 diff 顯示空白；改善佇列訊息傳送失敗或聊天開啟失敗後的重試機制。"},
