@@ -1,8 +1,21 @@
 {
   "product": "Claude Desktop",
   "canonicalSource": "https://claude.com/docs/cowork/changelog",
-  "lastRefreshed": "2026-11-21 10:08 (Taipei)",
+  "lastRefreshed": "2026-11-21 22:15 (Taipei)",
   "entries": [
+    {
+      "version": "6.28899.6",
+      "date": "2026-11-20",
+      "severity": "high",
+      "notify": true,
+      "title": "SSH 主機需升級 Claude Code 2.1.330、Bedrock SSH /resume 與 Cowork 匯入 Session 誤刪修復",
+      "summary": "General：無使用者可見變更。Code：新增 plugin 佈景主題的訊息樣式與音效，需按下 session 標題列的喇叭圖示後音效才會播放；變更 SSH 主機所需的 Claude Code 版本至 2.1.330，自行於 SSH 主機安裝 Claude Code 或自架鏡像者，請於電腦套用本次更新前一併加入 2.1.330，否則已更新的電腦將無法於該處啟動 SSH session，也可能無法連回執行中的 session。Cowork：變更 Windows 上的附件：以 EFS 加密的檔案，若非位於應用程式資料磁碟機的本機磁碟或部分同步資料夾，現不會附加，應用程式會提示無法附加該檔案，訊息或排程工作會在缺少該檔案下繼續進行，並告知 Claude；變更 macOS 與 Linux 上的已連接資料夾，於應用程式需要檢查但無法開啟某資料夾時維持關閉狀態，同時（如第三方部署等檔案工具於你電腦上執行的情形）含已連接資料夾的工作將不會啟動，錯誤訊息會指出需修正的資料夾。3P：新增於 Amazon Bedrock 上新 SSH session 中使用 <code>/resume</code>，可接續主機上僅限 Bedrock 的 Claude Code 終端機 session，該 session 會複製至本機電腦；變更 Code session 中的新週期性工作（如 <code>/loop</code>），最長可執行 30 天（原為 7 天），SSH 主機上即使關閉應用程式仍可延續使用你的供應商，將 <code>scheduledTasksEnabled</code> 設為 <code>false</code> 可自各 session 下次啟動起關閉所有排程工作；修復 Cowork workspace 於將 Claude 資料存於應用程式套件內的 Windows 版本（如 Windows 10、Windows Server 2022）上啟動失敗，且組織 plugin 未能載入；修復匯入的 Code session 於匯入後不久，若其最後活動早於 <code>codeSessionRetentionDays</code> 即遭無預警刪除，現該期限改自匯入時間或較晚的活動時間起算。",
+      "categories": [
+        "SSH",
+        "Cowork",
+        "Plugins"
+      ]
+    },
     {
       "version": "6.28899.2",
       "date": "2026-11-19",
