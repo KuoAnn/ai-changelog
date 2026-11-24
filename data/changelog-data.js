@@ -23,7 +23,7 @@
      =========================== */
 
   const REFRESH_RUN = {
-    ranAt: "2026-11-24 10:08 (Taipei)",
+    ranAt: "2026-11-24 22:09 (Taipei)",
     sources: {
       cc: { status: "ok" },
       cd: { status: "ok" },
@@ -301,6 +301,7 @@
   ];
 
   const DATA_CI = [
+    {v:"0.172.0", date:"2026-11-24", cat:"UI/UX", title:"CLI 0.172.0：搜尋結果與逐字稿 Thread 連結導航、Slash 指令 Tab 補全與連接 App 工具核准審查者", body:"新增：支援自搜尋結果與逐字稿點擊 thread 連結，開啟已儲存的對話與巢狀 agent；支援 slash 指令以 <code>Tab</code> 鍵補全參數，例如 <code>/mcp lo</code> 補全為 <code>/mcp login</code>；新增以 <code>Shift+Up</code>／<code>Shift+Down</code> 在 agent command center 的工作群組間跳轉；具快取工具清單的選用性 stdio MCP 伺服器，現預設於首次工具呼叫時才啟動；新增可於 <code>config.toml</code> 為個別已連接 App 工具設定核准審查者；app-server 用戶端於設定或登入階段現可選擇 Amazon Bedrock Runtime。修復：<code>codex exec resume</code> 現會還原已儲存的沙箱權限、工作目錄與 workspace roots，除非明確覆寫；修復用戶端與伺服器執行於不同作業系統時，遠端 session 未保留工作目錄、workspace roots 與可寫入路徑；改善 Codex 於回應串流出現供應商錯誤時立即回報，並標示觸及哪一項 API 額度上限；修復中斷父回合時遺失子 agent 已佇列的回覆，現會保留供下一回合使用；支援以 <code>PageUp</code>／<code>PageDown</code> 捲動並送出超出終端機可視範圍的回答選項；修復雲端回覆於歷史載入後才完成時未就地更新，導致終端機逐字稿順序錯亂。文件：內建 <code>openai-docs</code> skill 新增遷移至 GPT-6.2 Astra 與 Sol 的說明，涵蓋端點選擇與工具呼叫需求。（GitHub Releases API）"},
     {v:"0.171.0", date:"2026-11-20", cat:"Models/Inference", title:"CLI 0.171.0：GPT-6.2 Sol／Astra 模型上線、TUI Workspace 預設啟用與遠端 App Server 支援", body:"新增：新增模型目錄的 GPT-6.2 Sol 與 Astra，Sol 為目錄預設選項；預設啟用 TUI workspace，可於主對話旁搜尋文件預覽、圖片預覽與 subagent 逐字稿；新增可設定的復原／取消復原快捷鍵至非 Vim 提示編輯器，含附件與大型貼上內容還原；新增 <code>codex exec --remote &lt;ADDR&gt;</code>，可於既有 app server 上啟動或接續非互動 session；新增 <code>/rc</code> 與 <code>/remote</code>，可於 TUI 內管理本機 remote control 並顯示裝置配對碼；開啟 <code>tui_extensions_statusline</code> 後，新增透過 <code>/statusline</code> 自訂 MCP 狀態列選擇與編寫。修復：修復切換或接續 session 時，草稿、已排入佇列的後續訊息與被中斷的輸入未隨原本的 thread 保留；修復變更工作目錄時權限設定檔遭清空；修復較新回合的核准被延遲送達的完成事件取消；修復在執行中回合插話操作時，彙整 diff 遺失較早的編輯；修復捲動時插入雜亂字元、編輯器輸入游標跳動，以及重繪使用過時的終端機尺寸；修復未核發 refresh token 的身分提供者於企業 MCP 登入失敗。更新：建置與發佈工具更新至 Rust 1.99.1；更新 XML 相依套件並移除過時的資安通告例外清單。（GitHub Releases API）"},
     {v:"0.170.0", date:"2026-11-18", cat:"UI/UX", title:"CLI 0.170.0：TUI 即時語音通話、MCP 跨環境同名伺服器支援與 Windows 沙箱修復", body:"新增：新增 TUI 內即時語音通話的 WebRTC 協商；新增 OpenTelemetry HTTP exporter 的自動更新驗證標頭；新增實驗性支援，可跨環境使用同名 MCP 伺服器。修復：修復過大的 WebSocket 請求，現會直接退回 HTTP 而不先重試；修復取消、登入與登出期間 MCP OAuth 憑證的競爭狀態；改善 Cloud 對話的自動重新連線，並於用戶端重新連線時保留執行中的恢復回合；修復 Windows 上檔案替換、沙箱權限保留與執行環境註冊復原的問題；修復權限更新與子執行緒遺失既有沙箱限制的問題；移除重複的檔案搜尋結果，並修復含空白字元查詢的執行緒搜尋片段。文件：更新沙箱文件，說明權限設定檔與檔案系統規則。"},
     {v:"0.169.1", date:"2026-11-17", cat:"Performance/Bug Fix", title:"CLI 0.169.1：例行維護版本", body:"本版為例行維護版本（Chores），官方未提供可驗證的版本重點說明，無新增使用者可見變更。"},
